@@ -6,8 +6,7 @@ packages:
   - 'cli'
 
   # Only include specific examples we're building
-  - 'examples/foundry/web'
-  - 'examples/foundry/docs'
+  - 'examples/foundry'
   - 'examples/astronera'
   - 'examples/starter/web'
   - 'examples/starter/docs'

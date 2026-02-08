@@ -1,5 +1,5 @@
 {
-  "name": "@ff/web",
+  "name": "@foundry/web",
   "private": true,
   "type": "module",
   "scripts": {

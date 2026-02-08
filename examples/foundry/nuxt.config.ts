@@ -1,33 +1,21 @@
 import { createResolver } from '@nuxt/kit'
-import { getActiveConfigSource } from '../../../layer/shared/config-resolver'
 
 const { resolve } = createResolver(import.meta.url)
-const { contentRoot, publicDir } = getActiveConfigSource(resolve, 'web')
-const SITE_URL = process.env.NUXT_SITE_URL
+
+const SITE_URL = process.env.NUXT_PUBLIC_SITE_URL || 'https://founderfunnel.dev'
 
 export default defineNuxtConfig({
   extends: ['@incubrain/foundry'],
 
+  modules: ['nuxt-studio', 'nuxt-llms'],
+
   site: {
     name: 'Founder Funnel',
+    url: SITE_URL,
     description: 'Open-source funnel for technical founders',
   },
 
-  dir: {
-    public: publicDir,
-  },
-
   routeRules: {
-    '/docs/**': {
-      appLayout: 'docs',
-    },
-    '/rss/**': {
-      swr: 3600,
-      headers: {
-        'Content-Type': 'application/xml; charset=utf-8',
-        'Cache-Control': 'public, max-age=3600',
-      },
-    },
     // Landing pages
     '/': { appLayout: 'default', ssr: true, prerender: false },
     '/about': { appLayout: 'default', ssr: true, prerender: false },
@@ -38,6 +26,29 @@ export default defineNuxtConfig({
     // Documentation
     '/decisions': { appLayout: 'default', swr: 3600 },
     '/decisions/**': { appLayout: 'article', swr: 3600 },
+
+    // RSS
+    '/rss/**': {
+      swr: 3600,
+      headers: {
+        'Content-Type': 'application/xml; charset=utf-8',
+        'Cache-Control': 'public, max-age=3600',
+      },
+    },
+  },
+
+  vite: {
+    server: {
+      fs: {
+        allow: [
+          resolve('../../'),
+          resolve('../../layer'),
+        ],
+      },
+      watch: {
+        followSymlinks: true,
+      },
+    },
   },
 
   llms: {
@@ -47,7 +58,6 @@ export default defineNuxtConfig({
       'Open-source landing page template for technical founders validating product ideas',
 
     sections: [
-      // High Priority: Revenue Pages (Offers)
       {
         title: 'Product Offers',
         description:
@@ -55,30 +65,24 @@ export default defineNuxtConfig({
         contentCollection: 'pages',
         contentFilters: [
           { field: 'path', operator: 'LIKE', value: '/offers/%' },
-          { field: 'path', operator: 'NOT LIKE', value: '%-success' }, // Exclude success pages
+          { field: 'path', operator: 'NOT LIKE', value: '%-success' },
         ],
       },
-
-      // Medium Priority: About/Story
       {
         title: 'About',
         description: 'Our story and mission',
         contentCollection: 'pages',
         contentFilters: [{ field: 'path', operator: '=', value: '/about' }],
       },
-
-      // Medium Priority: Decisions
       {
         title: 'Decisions',
         description: 'Founders strategic decisions',
-        contentCollection: 'pages',
+        contentCollection: 'decisions',
         contentFilters: [
           { field: 'path', operator: 'LIKE', value: '/decisions/%' },
-          { field: 'label', operator: 'IS NOT NULL' }, // Only labeled decisions
+          { field: 'label', operator: 'IS NOT NULL' },
         ],
       },
-
-      // Low Priority: Home Page
       {
         title: 'Overview',
         description: 'Product overview and value proposition',
@@ -95,16 +99,13 @@ export default defineNuxtConfig({
   },
 
   studio: {
-    // Studio admin route (default: '/_studio')
     route: '/_studio',
-
-    // GitHub repository configuration (owner and repo are required)
     repository: {
-      provider: 'github', // only GitHub is currently supported
-      owner: 'incubrain', // your GitHub username or organization
-      repo: 'foundry', // your repository name
-      branch: 'main', // the branch to commit to (default: main)
-      rootDir: contentRoot,
+      provider: 'github',
+      owner: 'incubrain',
+      repo: 'foundry',
+      branch: 'main',
+      rootDir: resolve('./'),
       private: false,
     },
   },
