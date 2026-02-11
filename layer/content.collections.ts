@@ -87,6 +87,17 @@ export const baseGlossarySchema = z.object({
   ),
 })
 
+export const baseChangelogSchema = z.object({
+  label: z.string(),
+  version: z.string(),
+  date: z.string().optional(),
+  title: z.string(),
+  description: z.string().optional(),
+  excerpt: z.string().optional(),
+  image: property(z.string().optional()).editor({ input: 'media' }),
+  author: z.string().optional(), // team member slug
+})
+
 // Reusable navigation link schema
 const navigationLinkSchema = z.object({
   label: z.string(),
@@ -121,6 +132,31 @@ export const bannerSchema = z.object({
         color: z.string().optional(),
         size: z.string().optional(),
         variant: z.string().optional(),
+      }),
+    )
+    .optional(),
+})
+
+export const baseTeamSchema = z.object({
+  slug: z.string(),
+  given_name: z.string(),
+  surname: z.string(),
+  email: z.string().email().optional(),
+  role: z.string().optional(),
+  bio: z.string().optional(),
+  avatar: z.object({
+    src: property(z.string()).editor({ input: 'media' }),
+    alt: z.string(),
+  }),
+  links: z
+    .array(
+      z.object({
+        label: z.string(),
+        url: z.string().url(),
+        icon: property(z.string().optional()).editor({
+          input: 'icon',
+          iconLibraries: [...ICON_LIBRARIES],
+        }),
       }),
     )
     .optional(),

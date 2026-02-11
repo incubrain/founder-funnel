@@ -27,6 +27,8 @@ declare module 'nuxt/schema' {
         pages: CollectionConfig
         glossary: CollectionConfig
         references: CollectionConfig
+        changelog: CollectionConfig
+        team: CollectionConfig
         faq: CollectionConfig
         config: CollectionConfig
         navigation: CollectionConfig

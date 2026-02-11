@@ -7,6 +7,31 @@ import {
 
 const ICON_LIBRARIES = ['lucide', 'logos']
 
+export const baseTeamSchema = z.object({
+  slug: z.string(),
+  given_name: z.string(),
+  surname: z.string(),
+  email: z.string().email().optional(),
+  role: z.string().optional(),
+  bio: z.string().optional(),
+  avatar: z.object({
+    src: property(z.string()).editor({ input: 'media' }),
+    alt: z.string(),
+  }),
+  links: z
+    .array(
+      z.object({
+        label: z.string(),
+        url: z.string().url(),
+        icon: property(z.string().optional()).editor({
+          input: 'icon',
+          iconLibraries: [...ICON_LIBRARIES],
+        }),
+      }),
+    )
+    .optional(),
+})
+
 export const baseConfigSchema = z.object({
   business: z.object({
     name: z.string(),
@@ -211,6 +236,14 @@ export default defineContentConfig({
         include: 'config/navigation.yml',
       },
       schema: baseNavigationSchema,
+    }),
+
+    team: defineCollection({
+      type: 'data',
+      source: {
+        include: 'team/*.yml',
+      },
+      schema: baseTeamSchema,
     }),
   },
 })

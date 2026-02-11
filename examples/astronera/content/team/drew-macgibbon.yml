@@ -1,5 +1,13 @@
-name: Drew Macgibbon
 slug: drew-macgibbon
-bio: Drew Macgibbon is a space enthusiast with a passion for business and software development.
-avatar: /team/drew-macgibbon.jpg
-linkedin: https://linkedin.com/in/drew-macgibbon
+given_name: Drew
+surname: MacGibbon
+bio:
+  Drew MacGibbon is a space enthusiast with a passion for business and software
+  development.
+avatar:
+  src: /team/drew-macgibbon.jpg
+  alt: Drew MacGibbon
+links:
+  - label: LinkedIn
+    url: https://linkedin.com/in/drew-macgibbon
+    icon: i-lucide-linkedin

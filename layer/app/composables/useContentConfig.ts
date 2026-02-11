@@ -11,9 +11,9 @@ type CollectionType = 'page' | 'data'
 /**
  * Collection config can be a string (name only) or object with routing info
  */
-type CollectionConfig
-  = | keyof Collections
-    | {
+type CollectionConfig =
+  | keyof Collections
+  | {
       name: keyof Collections
       type?: CollectionType
       prefix?: string
@@ -128,7 +128,8 @@ export const useContentConfig = () => {
         if (collectionType === 'page' && prefix) {
           patterns.push({
             pattern: prefix,
-            collection: ((config as { name?: string }).name || key) as keyof Collections,
+            collection: ((config as { name?: string }).name ||
+              key) as keyof Collections,
           })
         }
       }
@@ -178,7 +179,7 @@ export const useContentConfig = () => {
 
   const seperatePathAndHash = (
     path: string,
-  ): { path: string, hash: string } => {
+  ): { path: string; hash: string } => {
     const hashIndex = path.indexOf('#')
     return hashIndex !== -1
       ? { path: path.slice(0, hashIndex), hash: path.slice(hashIndex) }
@@ -214,7 +215,10 @@ export const useContentConfig = () => {
     // Check if path already matches any configured collection prefix
     const patterns = getRoutePatterns()
     for (const { pattern } of patterns) {
-      if (normalizedPath === pattern || normalizedPath.startsWith(`${pattern}/`)) {
+      if (
+        normalizedPath === pattern ||
+        normalizedPath.startsWith(`${pattern}/`)
+      ) {
         // Path already has a collection prefix, return as-is
         return `${normalizedPath}${hash}`
       }
@@ -239,7 +243,7 @@ export const useContentConfig = () => {
   const flattenNavigation = (
     items?: ContentNavigationItem[],
   ): ContentNavigationItem[] =>
-    items?.flatMap(item =>
+    items?.flatMap((item) =>
       item.children ? flattenNavigation(item.children) : [item],
     ) || []
 
@@ -249,8 +253,7 @@ export const useContentConfig = () => {
    * Expects a fully resolved path (with collection prefix already applied)
    */
   const getPageMetadata = (path: string) => {
-    const navigationAll
-      = inject<Ref<ContentNavigationItem[]>>('navigation_all')
+    const navigationAll = inject<Ref<ContentNavigationItem[]>>('navigation_all')
     if (!navigationAll?.value) return null
 
     const { path: pathWithoutHash } = seperatePathAndHash(path)
@@ -261,12 +264,12 @@ export const useContentConfig = () => {
 
     // Try exact match
     const flatNav = flattenNavigation(navigationAll.value)
-    const match = flatNav.find(item => item.path === normalizedPath)
+    const match = flatNav.find((item) => item.path === normalizedPath)
     if (match) return match
 
     // Handle potential trailing slash differences
     return flatNav.find(
-      item =>
+      (item) =>
         item.path?.replace(/\/$/, '') === normalizedPath.replace(/\/$/, ''),
     )
   }
@@ -283,6 +286,8 @@ export const useContentConfig = () => {
     glossary: getCollectionName('glossary'),
     faq: getCollectionName('faq'),
     config: getCollectionName('config'),
+    changelog: getCollectionName('changelog'),
+    team: getCollectionName('team'),
     navigation: getCollectionName('navigation'),
   }
 

@@ -26,8 +26,10 @@ export default defineAppConfig({
       references: { name: 'references', type: 'data' },
       navigation: { name: 'navigation', type: 'data' },
       config: { name: 'config', type: 'data' },
+      team: { name: 'team', type: 'data' },
       searchable: ['docs'],
     },
+    defaultAuthor: 'shweta-kulkarni',
     routing: {
       sources: '/resources/references',
     },

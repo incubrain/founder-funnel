@@ -8,6 +8,8 @@ import {
   baseNavigationSchema,
   baseConfigSchema,
   baseFaqSchema,
+  baseChangelogSchema,
+  baseTeamSchema,
 } from './content.collections'
 
 const { options } = useNuxt()
@@ -34,6 +36,15 @@ export default defineContentConfig({
         prefix: '/docs',
       },
       schema: basePageSchema,
+    }),
+
+    changelog: defineCollection({
+      type: 'page',
+      source: {
+        include: 'changelog/*.md',
+        cwd,
+      },
+      schema: baseChangelogSchema,
     }),
 
     references: defineCollection({
@@ -81,6 +92,15 @@ export default defineContentConfig({
         cwd,
       },
       schema: baseNavigationSchema,
+    }),
+
+    team: defineCollection({
+      type: 'data',
+      source: {
+        include: 'team/*.yml',
+        cwd,
+      },
+      schema: baseTeamSchema,
     }),
   },
 })

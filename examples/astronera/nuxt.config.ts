@@ -27,6 +27,9 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/': {
+      appLayout: 'landing',
+    },
+    '/team': {
       appLayout: 'default',
     },
     '/darksky/**': {

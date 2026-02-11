@@ -15,6 +15,8 @@ export default defineAppConfig({
       },
       // Data collections (not routable - type: 'data' or string shorthand)
       references: { name: 'references', type: 'data' },
+      changelog: { name: 'changelog', type: 'data' },
+      team: { name: 'team', type: 'data' },
       glossary: { name: 'glossary', type: 'data' },
       faq: { name: 'faq', type: 'data' },
       config: { name: 'config', type: 'data' },
