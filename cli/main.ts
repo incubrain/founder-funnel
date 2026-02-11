@@ -3,7 +3,7 @@ import { createCLI } from './cli'
 
 const cli = createCLI({
   name: 'create-foundry',
-  description: 'Create a new Founder Funnel project',
+  description: 'Create a new IncuBrain Foundry project',
   setup: {
     defaults: {},
   },

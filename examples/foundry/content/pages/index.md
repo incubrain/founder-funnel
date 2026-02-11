@@ -1,6 +1,6 @@
 ---
-title: Founder Funnel
-description: Open-source landing page template for experienced technical founders.
+title: IncuBrain Foundry
+description: Open-source product validator for experienced technical founders.
 ---
 
 ::section-hero

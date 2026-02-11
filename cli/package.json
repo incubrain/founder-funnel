@@ -1,7 +1,7 @@
 {
   "name": "create-foundry",
   "version": "0.1.0",
-  "description": "Create a new Founder Funnel project",
+  "description": "Create a new IncuBrain Foundry project",
   "license": "MIT",
   "type": "module",
   "bin": {

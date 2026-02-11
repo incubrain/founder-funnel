@@ -2,7 +2,8 @@ import { createResolver } from '@nuxt/kit'
 
 const { resolve } = createResolver(import.meta.url)
 
-const SITE_URL = process.env.NUXT_PUBLIC_SITE_URL || 'https://founderfunnel.dev'
+const SITE_URL =
+  process.env.NUXT_PUBLIC_SITE_URL || 'https://foundry.incubrain.org'
 
 export default defineNuxtConfig({
   extends: ['@incubrain/foundry'],
@@ -10,52 +11,48 @@ export default defineNuxtConfig({
   modules: ['nuxt-studio', 'nuxt-llms'],
 
   site: {
-    name: 'Founder Funnel',
+    name: 'IncuBrain Foundry',
     url: SITE_URL,
-    description: 'Open-source funnel for technical founders',
+    description: 'Open-source product validator for technical founders',
   },
 
   routeRules: {
     // Landing pages
-    '/': { appLayout: 'default', ssr: true, prerender: false },
-    '/about': { appLayout: 'default', ssr: true, prerender: false },
-    '/offers/**': { appLayout: 'conversion', ssr: true, prerender: false },
-    '/success': { appLayout: 'conversion', ssr: true, prerender: false },
-    '/success/**': { appLayout: 'conversion', ssr: true, prerender: false },
+    '/': { appLayout: 'landing' },
+    '/about': { appLayout: 'default' },
+    '/offers/**': { appLayout: 'landing' },
+    '/success': { appLayout: 'landing' },
+    '/success/**': { appLayout: 'landing' },
 
     // Documentation
-    '/decisions': { appLayout: 'default', swr: 3600 },
-    '/decisions/**': { appLayout: 'article', swr: 3600 },
+    '/decisions': { appLayout: 'default' },
+    '/decisions/**': { appLayout: 'article' },
 
     // RSS
-    '/rss/**': {
-      swr: 3600,
-      headers: {
-        'Content-Type': 'application/xml; charset=utf-8',
-        'Cache-Control': 'public, max-age=3600',
-      },
-    },
+    // '/rss/**': {
+    //   headers: {
+    //     'Content-Type': 'application/xml; charset=utf-8',
+    //     'Cache-Control': 'public, max-age=3600',
+    //   },
+    // },
   },
 
-  vite: {
-    server: {
-      fs: {
-        allow: [
-          resolve('../../'),
-          resolve('../../layer'),
-        ],
-      },
-      watch: {
-        followSymlinks: true,
-      },
-    },
-  },
+  // vite: {
+  //   server: {
+  //     fs: {
+  //       allow: [resolve('../../'), resolve('../../layer')],
+  //     },
+  //     watch: {
+  //       followSymlinks: true,
+  //     },
+  //   },
+  // },
 
   llms: {
     domain: SITE_URL,
-    title: 'Founder Funnel',
+    title: 'IncuBrain Foundry',
     description:
-      'Open-source landing page template for technical founders validating product ideas',
+      'Open-source product validator for technical founders validating product ideas',
 
     sections: [
       {
@@ -74,15 +71,15 @@ export default defineNuxtConfig({
         contentCollection: 'pages',
         contentFilters: [{ field: 'path', operator: '=', value: '/about' }],
       },
-      {
-        title: 'Decisions',
-        description: 'Founders strategic decisions',
-        contentCollection: 'decisions',
-        contentFilters: [
-          { field: 'path', operator: 'LIKE', value: '/decisions/%' },
-          { field: 'label', operator: 'IS NOT NULL' },
-        ],
-      },
+      // {
+      //   title: 'Decisions',
+      //   description: 'Founders strategic decisions',
+      //   contentCollection: 'changelog',
+      //   contentFilters: [
+      //     { field: 'path', operator: 'LIKE', value: '/decisions/%' },
+      //     { field: 'label', operator: 'IS NOT NULL' },
+      //   ],
+      // },
       {
         title: 'Overview',
         description: 'Product overview and value proposition',

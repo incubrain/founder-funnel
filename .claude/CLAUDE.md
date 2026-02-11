@@ -1,4 +1,4 @@
-# Founder Funnel
+# IncuBrain Foundry
 
 A validation tool for technical founders — captures signal (email, presales, bookings) to prove demand before building product.
 
