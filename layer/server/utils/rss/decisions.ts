@@ -8,9 +8,8 @@ import {
 
 // Export as named function (not default export)
 export async function generateDecisionsFeed(event: H3Event): Promise<string> {
-  const { getSiteConfig } = await import('#site-config/server/composables')
-
   const siteConfig = getSiteConfig(event)
+  console.log('siteConfig', siteConfig)
 
   const authorName = await getAuthorName(event)
   const businessName = await getBusinessName(event)
@@ -18,23 +17,21 @@ export async function generateDecisionsFeed(event: H3Event): Promise<string> {
   // Get articles config from appConfig (with fallback)
   // Pages collection can be string or { name, prefix, backLabel }
   const appConfig = useAppConfig()
-  const pagesConfig = appConfig.content?.collections?.pages
-  const articlesBasePath
-    = typeof pagesConfig === 'object'
-      ? pagesConfig?.prefix || '/articles'
-      : '/articles'
+  const changelogConfig = appConfig.content?.collections?.changelog
+  const changelogBasePath =
+    typeof changelogConfig === 'object'
+      ? changelogConfig?.prefix || '/changelog'
+      : '/changelog'
 
   // Fetch articles
-  const articles = await queryCollection(event, 'pages')
+  const changelogs = await queryCollection(event, changelogConfig.name)
     .select('path', 'title', 'description', 'date', 'label')
-    .where('path', 'LIKE', `${articlesBasePath}/%`)
-    .where('date', 'IS NOT NULL')
     .order('date', 'DESC')
     .limit(50)
     .all()
 
   // Transform to RSS items
-  const items: RSSItem[] = articles.map((d: any) => ({
+  const items: RSSItem[] = changelogs.map((d: any) => ({
     title: d.title,
     link: `${siteConfig.url}${d.path}`,
     guid: `${siteConfig.url}${d.path}`,
@@ -47,9 +44,9 @@ export async function generateDecisionsFeed(event: H3Event): Promise<string> {
   // Build RSS feed
   return buildRSSFeed(
     {
-      title: `${businessName} Articles`,
-      link: `${siteConfig.url}${articlesBasePath}`,
-      description: `Latest articles and updates from ${businessName}`,
+      title: `${businessName} Changelog`,
+      link: `${siteConfig.url}${changelogBasePath}`,
+      description: `Latest changelogs from ${businessName}`,
       items,
     },
     siteConfig.url,

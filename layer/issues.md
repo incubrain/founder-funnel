@@ -19,6 +19,7 @@
 
 - [ ] flickering of layout in between layout navigation, use transitions, but this is likely a bandaid to a larger issue with how we are using layouts and a catchall page
 - [ ] editing inline components with a span passed inside [here] is not possible inside of nuxt studio as far as I can tell
+- [ ] internal linking is using double slash as prefix in some instances, for example `Internal link to: //research/ecology`
 
 # General
 

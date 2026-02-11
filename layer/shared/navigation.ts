@@ -48,16 +48,16 @@ export interface NavigationConfig {
 
 export const useNavigation = async () => {
   const appConfig = useAppConfig()
-  const searchableCollections
-    = appConfig.content?.collections?.searchable || ['docs']
+  const searchableCollections = appConfig.content?.collections?.searchable || [
+    'docs',
+  ]
 
   /* -------------------------------- config -------------------------------- */
 
   const { data: config } = await useAsyncData('navigation_config', async () => {
     try {
       return (await queryCollection('navigation').first()) as NavigationConfig
-    }
-    catch {
+    } catch {
       return {}
     }
   })
