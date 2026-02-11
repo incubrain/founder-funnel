@@ -64,11 +64,9 @@ const accordionItems = computed(() =>
   <SectionWrapper
     id="faq"
     has-bottom
+    :title="title"
+    :description="description"
   >
-    <SectionHeader
-      :title="title"
-      :description="description"
-    />
 
     <UTabs
       v-model="activeTab"

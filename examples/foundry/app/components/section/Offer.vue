@@ -5,7 +5,7 @@ const props = defineProps<{
   title?: string
   description?: string
   price?: string
-  features?: Array<{ title: string, icon: string }>
+  features?: Array<{ title: string; icon: string }>
   cta?: {
     label?: string
     to?: string
@@ -16,7 +16,7 @@ const { getFounder } = useContentCache()
 const { data: founder } = await getFounder()
 
 const transformedFeatures = computed(() => {
-  return (props.features || []).map(feature => ({
+  return (props.features || []).map((feature) => ({
     label: feature.title,
     icon:
       STATUS_ICONS[feature.icon as keyof typeof STATUS_ICONS] || feature.icon,
@@ -32,6 +32,8 @@ const displayDescription = computed(() => props.description)
     id="offer"
     has-bottom
     class="relative"
+    :title="displayTitle"
+    :description="displayDescription"
   >
     <div
       class="absolute top-0 inset-0 bg-grid-white/[0.02] pointer-events-none z-0"
@@ -40,16 +42,6 @@ const displayDescription = computed(() => props.description)
       class="absolute inset-0 flex items-center justify-center pointer-events-none"
     >
       <div class="w-[80%] h-[80%] bg-primary-500/10 rounded-full blur-3xl" />
-    </div>
-
-    <div
-      v-if="displayTitle || displayDescription"
-      class="mb-12 text-center relative z-10"
-    >
-      <SectionHeader
-        :title="displayTitle"
-        :description="displayDescription"
-      />
     </div>
 
     <div
@@ -116,10 +108,7 @@ const displayDescription = computed(() => props.description)
         >
           <template #description>
             <!-- Hide default description slot to control layout manually if needed, or rely on prop -->
-            <p
-              v-if="displayDescription"
-              class="text-base text-toned"
-            >
+            <p v-if="displayDescription" class="text-base text-toned">
               {{ displayDescription }}
             </p>
           </template>
@@ -158,9 +147,7 @@ const displayDescription = computed(() => props.description)
         </UPricingPlan>
 
         <div class="mt-4 flex flex-col gap-4 justify-center items-center">
-          <UBadge variant="soft">
-            OR
-          </UBadge>
+          <UBadge variant="soft"> OR </UBadge>
           <ConvertExternal
             to="https://github.com/incubrain/foundry"
             label="One Click Deploy"

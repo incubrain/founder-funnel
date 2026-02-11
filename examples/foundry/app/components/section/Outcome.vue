@@ -36,11 +36,9 @@ const normalizedFeatures = computed(() => props.features || [])
   <SectionWrapper
     id="outcome"
     has-bottom
+    :title="title"
+    :description="description"
   >
-    <SectionHeader
-      :title="title"
-      :description="description"
-    />
     <div
       v-if="normalizedSteps.length"
       class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 mt-12 sm:mt-16"

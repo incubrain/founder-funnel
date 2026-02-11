@@ -24,12 +24,10 @@ defineProps<{
   <SectionWrapper
     id="benefits"
     has-bottom
+    :title="title"
+    :description="description"
+    :headline="headline"
   >
-    <SectionHeader
-      :title="title"
-      :description="description"
-      :headline="headline"
-    />
 
     <UPageGrid class="mt-12 sm:mt-16">
       <UPageCard

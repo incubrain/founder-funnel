@@ -25,11 +25,9 @@ const testimonials = computed(() => props.items || [])
   <SectionWrapper
     id="results"
     has-bottom
+    :title="title"
+    :description="description"
   >
-    <SectionHeader
-      :title="title"
-      :description="description"
-    />
 
     <UPageColumns class="mt-12 sm:mt-16">
       <UPageCard
