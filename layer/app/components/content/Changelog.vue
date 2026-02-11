@@ -64,7 +64,7 @@ const getAuthorForItem = (item: any) => {
   if (!member) return null
 
   return {
-    name: `${member.given_name} ${member.surname}`,
+    name: `${member.givenName} ${member.surname}`,
     avatar: member.avatar,
     to: member.links?.find((link: any) => link.label === 'GitHub')?.url,
     target: '_blank',

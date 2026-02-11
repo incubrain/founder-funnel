@@ -30,6 +30,8 @@ interface Props {
   location: string
 }
 
+const { collections, routing } = useContentConfig()
+
 const props = withDefaults(defineProps<Props>(), {
   variant: 'button',
   color: 'primary',
@@ -38,10 +40,17 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 🎯 Use composable
-const { getOffer } = useContentCache()
-const { data: offer } = props.offerSlug
-  ? await getOffer(props.offerSlug)
-  : { data: ref(null) }
+const { data: offer } = useAsyncData(
+  `offer-${props.offerSlug}`,
+  () =>
+    queryCollection(collections.pages)
+      .path(`${routing.offers}/${props.offerSlug}`)
+      .first(),
+  {
+    lazy: true,
+    server: false,
+  },
+)
 
 // Compute final values
 const cta = computed(() => ({
@@ -89,14 +98,8 @@ const handleClick = async () => {
       :spotlight-color="color"
       @click="handleClick"
     >
-      <template
-        v-if="cta.icon"
-        #trailing
-      >
-        <UIcon
-          :name="cta.icon"
-          class="size-5 text-secondary"
-        />
+      <template v-if="cta.icon" #trailing>
+        <UIcon :name="cta.icon" class="size-5 text-secondary" />
       </template>
     </UPageCard>
   </div>

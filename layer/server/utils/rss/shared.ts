@@ -78,14 +78,17 @@ export function buildRSSFeed(channel: RSSChannel, siteUrl: string): string {
 }
 
 export async function getAuthorName(event: H3Event): Promise<string> {
+  const founder = await queryCollection(event, 'team')
+    .where('isFounder', '=', true)
+    .first()
+
+  if (founder?.givenName) {
+    return `${founder.givenName} ${founder.surname}`
+  }
+
   const siteConfig = await queryCollection(event, 'config')
     .where('stem', '=', 'config/site')
     .first()
-
-  if (siteConfig?.founder?.given_name) {
-    return `${siteConfig.founder.given_name} ${siteConfig.founder.surname}`
-  }
-
   // Fallback to business name or generic
   return siteConfig?.business?.name || 'Team'
 }

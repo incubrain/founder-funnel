@@ -68,12 +68,7 @@ const { local } = useAppStorage();
 local.set('key', value); // Prefixed + SSR-safe
 ```
 
-**Content Queries:**
-```typescript
-// Never direct queryCollection
-const { getOffer } = useContentCache();
-const { data } = await getOffer('slug');
-```
+
 
 **Event Tracking:**
 ```typescript

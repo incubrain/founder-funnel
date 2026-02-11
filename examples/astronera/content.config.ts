@@ -9,7 +9,8 @@ const ICON_LIBRARIES = ['lucide', 'logos']
 
 export const baseTeamSchema = z.object({
   slug: z.string(),
-  given_name: z.string(),
+  givenName: z.string(),
+  isFounder: z.boolean().optional().default(false),
   surname: z.string(),
   email: z.string().email().optional(),
   role: z.string().optional(),

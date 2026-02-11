@@ -36,6 +36,7 @@ export const basePageSchema = z.object({
   image: property(z.string().optional()).editor({ input: 'media' }),
   navigation: z.boolean().optional(),
   layout: z.string().optional(),
+  hero: z.boolean().optional().default(true),
   links: z
     .array(
       z.object({
@@ -139,7 +140,8 @@ export const bannerSchema = z.object({
 
 export const baseTeamSchema = z.object({
   slug: z.string(),
-  given_name: z.string(),
+  isFounder: z.boolean().optional().default(false),
+  givenName: z.string(),
   surname: z.string(),
   email: z.string().email().optional(),
   role: z.string().optional(),

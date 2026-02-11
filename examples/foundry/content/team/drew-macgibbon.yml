@@ -1,5 +1,6 @@
 slug: drew-macgibbon
-given_name: Drew
+isFounder: true
+givenName: Drew
 surname: MacGibbon
 email: mac@incubrain.org
 role: IncuBrain Founder
@@ -7,8 +8,8 @@ avatar:
   src: /team/founder-avatar.png
   alt: Drew MacGibbon
 bio:
-  'My mission for the IncuBrain Foundry is to help 100 struggling founders achieve
-  financial freedom.'
+  'My mission for the IncuBrain Foundry is to help 100 struggling founders
+  achieve financial freedom.'
 links:
   - label: 'X'
     url: 'https://x.com/DrewMacGibbon'

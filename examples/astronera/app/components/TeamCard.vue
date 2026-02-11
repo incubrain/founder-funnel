@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface TeamMember {
   slug: string
-  given_name: string
+  givenName: string
   surname: string
   email?: string
   role?: string
@@ -41,7 +41,7 @@ defineProps<Props>()
       />
       <div>
         <h3 class="text-xl font-bold text-foreground">
-          {{ member.given_name }} {{ member.surname }}
+          {{ member.givenName }} {{ member.surname }}
         </h3>
         <p v-if="member.role" class="text-sm text-muted mt-1">
           {{ member.role }}
@@ -61,7 +61,7 @@ defineProps<Props>()
         :key="link.url"
         :to="link.url"
         :icon="link.icon"
-        :aria-label="`${member.given_name}'s ${link.label}`"
+        :aria-label="`${member.givenName}'s ${link.label}`"
         color="neutral"
         variant="ghost"
         size="sm"

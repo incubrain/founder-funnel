@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { ButtonProps } from '@nuxt/ui'
 
+const { collections } = useContentConfig()
+
 interface Props {
   location: string
   size?: ButtonProps['size']
@@ -20,8 +22,9 @@ const props = withDefaults(defineProps<Props>(), {
   showEmail: false, // Default: don't show email
 })
 
-const { getFounder } = useContentCache()
-const { data: founder } = await getFounder()
+const { data: founder } = await useAsyncData('app-founder', () =>
+  queryCollection(collections.team).where('isFounder', '=', true).first(),
+)
 const { trackEvent } = useEvents()
 
 const gapClasses = {
@@ -63,10 +66,7 @@ const allLinks = computed(() => {
 </script>
 
 <template>
-  <div
-    v-if="allLinks.length"
-    :class="['flex flex-wrap', gapClasses[gap]]"
-  >
+  <div v-if="allLinks.length" :class="['flex flex-wrap', gapClasses[gap]]">
     <UButton
       v-for="link in allLinks"
       :key="link.url"
@@ -81,7 +81,7 @@ const allLinks = computed(() => {
         rounded ? 'rounded-full text-default' : '',
         size === 'xl' && rounded ? 'p-3' : '',
       ]"
-      :aria-label="`${link.label === 'Email' ? 'Email' : 'Visit'} ${founder.given_name}${link.label === 'Email' ? '' : `'s ${link.label}`}`"
+      :aria-label="`${link.label === 'Email' ? 'Email' : 'Visit'} ${founder.givenName}${link.label === 'Email' ? '' : `'s ${link.label}`}`"
       @click="handleClick(link.label, link.url)"
     />
   </div>

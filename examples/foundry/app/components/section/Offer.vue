@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { STATUS_ICONS } from '#constants'
 
+const { collections } = useContentConfig()
+
 const props = defineProps<{
   title?: string
   description?: string
@@ -12,8 +14,9 @@ const props = defineProps<{
   }
 }>()
 
-const { getFounder } = useContentCache()
-const { data: founder } = await getFounder()
+const { data: founder } = await useAsyncData('app-founder', () =>
+  queryCollection(collections.team).where('isFounder', '=', true).first(),
+)
 
 const transformedFeatures = computed(() => {
   return (props.features || []).map((feature) => ({
@@ -65,7 +68,7 @@ const displayDescription = computed(() => props.description)
 
         <div class="text-center lg:text-left space-y-1">
           <h3 class="text-xl font-bold text-highlighted">
-            {{ founder?.given_name }} {{ founder?.surname }}
+            {{ founder?.givenName }} {{ founder?.surname }}
           </h3>
           <p class="text-xs uppercase tracking-wider text-muted">
             {{ founder?.role }}
