@@ -9,12 +9,10 @@ export default defineNuxtConfig({
     resolve('./modules/css'),
     resolve('./modules/events'),
     '@nuxt/ui',
+    '@nuxtjs/seo',
     '@nuxt/content',
     '@nuxt/image',
-    '@nuxtjs/robots',
     '@nuxtjs/mcp-toolkit',
-    'nuxt-og-image',
-    '@nuxtjs/seo',
     '@vueuse/nuxt',
     '@nuxt/scripts',
   ],
@@ -175,10 +173,10 @@ export default defineNuxtConfig({
 
   hooks: {
     'components:extend': (components) => {
-      const globals = components.filter(c =>
+      const globals = components.filter((c) =>
         ['UButton', 'UIcon', 'ProseDfn'].includes(c.pascalName),
       )
-      globals.forEach(c => (c.global = true))
+      globals.forEach((c) => (c.global = true))
     },
   },
 
@@ -199,7 +197,6 @@ export default defineNuxtConfig({
       collections: [...ICON_LIBRARIES],
     },
   },
-
   seo: {
     redirectToCanonicalSiteUrl: true,
   },
