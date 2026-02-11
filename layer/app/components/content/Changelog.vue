@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { PagesCollectionItem } from '@nuxt/content'
+import type { ChangelogCollectionItem } from '@nuxt/content'
+
+const { collection } = useContentPage()
 
 interface Props {
   // Query parameters
-  collectionPath: string // e.g., '/decisions/%', '/blog/%'
-  labelField?: keyof PagesCollectionItem // Field to filter by (default: 'label')
-  sortField?: keyof PagesCollectionItem // Field to sort by (default: 'date')
+  labelField?: keyof ChangelogCollectionItem // Field to filter by (default: 'label')
+  sortField?: keyof ChangelogCollectionItem // Field to sort by (default: 'date')
   sortOrder?: 'ASC' | 'DESC' // Sort order (default: 'DESC')
 
   // Display customization
@@ -33,33 +34,54 @@ const props = withDefaults(defineProps<Props>(), {
   emptyIcon: 'i-lucide-inbox',
 })
 
-// Author data (only if showAuthor)
-const { getFounder } = useContentCache()
-const { data: founderData } = props.showAuthor
-  ? await getFounder()
-  : { data: ref(null) }
+const appConfig = useAppConfig()
 
-const authors = computed(() =>
-  props.showAuthor && founderData.value
-    ? [
-        {
-          name: `${founderData.value.given_name} ${founderData.value.surname}`,
-          avatar: founderData.value.avatar,
-          to: founderData.value.links?.find(link => link.label === 'GitHub')
-            ?.url,
-          target: '_blank',
-        },
-      ]
-    : [],
+// Get default author slug from config
+const defaultAuthorSlug = computed(
+  () => appConfig.content?.defaultAuthor as string | undefined,
 )
+
+// Query all team members (only if showAuthor is enabled)
+const { data: teamMembers } = props.showAuthor
+  ? await useAsyncData('team-members', () => queryCollection('team').all())
+  : { data: ref([]) }
+
+// Create a map of team members by slug for easy lookup
+const teamMemberMap = computed(() => {
+  const map = new Map()
+  teamMembers.value?.forEach((member: any) => {
+    map.set(member.slug, member)
+  })
+  return map
+})
+
+// Helper function to get author data for a changelog item
+const getAuthorForItem = (item: any) => {
+  const authorSlug = item.author || defaultAuthorSlug.value
+  if (!authorSlug) return null
+
+  const member = teamMemberMap.value.get(authorSlug)
+  if (!member) return null
+
+  return {
+    name: `${member.given_name} ${member.surname}`,
+    avatar: member.avatar,
+    to: member.links?.find((link: any) => link.label === 'GitHub')?.url,
+    target: '_blank',
+  }
+}
 
 // Query items
 const { data: items, pending } = useAsyncData(
-  `changelog-${props.collectionPath}`,
+  () => `changelog-${collection.value}`,
   () => {
-    let query = queryCollection('pages')
-      .select('path', props.labelField, props.sortField, 'title', 'description')
-      .where('path', 'LIKE', props.collectionPath)
+    let query = queryCollection(collection.value as any).select(
+      'path',
+      props.labelField,
+      props.sortField,
+      'title',
+      'description',
+    )
 
     // Add image to select if needed
     if (props.showImage) {
@@ -82,6 +104,9 @@ const { data: items, pending } = useAsyncData(
     query = query.order(props.sortField, props.sortOrder)
 
     return query.all()
+  },
+  {
+    watch: [collection],
   },
 )
 
@@ -107,22 +132,12 @@ const scrollToTop = () => {
   <UPageBody>
     <UContainer>
       <!-- Loading state -->
-      <div
-        v-if="pending"
-        class="space-y-12"
-      >
-        <div
-          v-for="i in 3"
-          :key="i"
-          class="space-y-4"
-        >
+      <div v-if="pending" class="space-y-12">
+        <div v-for="i in 3" :key="i" class="space-y-4">
           <USkeleton class="h-8 w-1/3" />
           <USkeleton class="h-4 w-full" />
           <USkeleton class="h-4 w-5/6" />
-          <USkeleton
-            v-if="showImage"
-            class="h-64 w-full rounded-lg"
-          />
+          <USkeleton v-if="showImage" class="h-64 w-full rounded-lg" />
         </div>
       </div>
 
@@ -135,16 +150,13 @@ const scrollToTop = () => {
       />
 
       <!-- Changelog list -->
-      <UChangelogVersions
-        v-else
-        :indicator="false"
-      >
+      <UChangelogVersions v-else :indicator="false">
         <UChangelogVersion
           v-for="item in items"
           :key="String(item[labelField])"
           :title="item.title"
           :description="item.description"
-          :authors="authors"
+          :authors="getAuthorForItem(item) ? [getAuthorForItem(item)] : []"
           :image="showImage ? item.image : undefined"
           :date="String(item[sortField])"
           :to="item.path"
@@ -160,10 +172,7 @@ const scrollToTop = () => {
             <div class="flex flex-col items-end gap-3 text-right">
               <!-- Date -->
               <div class="flex items-center gap-2">
-                <UIcon
-                  name="i-lucide-calendar"
-                  class="size-3.5 text-muted"
-                />
+                <UIcon name="i-lucide-calendar" class="size-3.5 text-muted" />
                 <NuxtTime
                   class="text-xs text-muted font-medium tracking-wide"
                   locale="en-US"
@@ -175,10 +184,7 @@ const scrollToTop = () => {
               </div>
 
               <!-- Badge (label) -->
-              <UBadge
-                v-if="item[labelField]"
-                variant="subtle"
-              >
+              <UBadge v-if="item[labelField]" variant="subtle">
                 {{ item[labelField] }}
               </UBadge>
             </div>
