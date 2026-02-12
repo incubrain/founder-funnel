@@ -149,10 +149,17 @@ export const useContentConfig = () => {
   const getCollectionForRoute = (path: string): keyof Collections => {
     const patterns = getRoutePatterns()
 
+    // Normalize path to remove trailing slash for matching purposes
+    const normalizedPath =
+      path > '/' && path.endsWith('/') ? path.slice(0, -1) : path
+
     // Match against configured prefixes
     for (const { pattern, collection } of patterns) {
       // Pattern match: exact prefix or prefix followed by /
-      if (path === pattern || path.startsWith(`${pattern}/`)) {
+      if (
+        normalizedPath === pattern ||
+        normalizedPath.startsWith(`${pattern}/`)
+      ) {
         return collection
       }
     }
@@ -295,7 +302,7 @@ export const useContentConfig = () => {
   const routing = {
     docsPrefix: getCollectionPrefix('docs', ''),
     pagesPrefix: getCollectionPrefix('pages', '/articles'),
-    pagesBackLabel: getCollectionBackLabel('pages', 'Back to Articles'),
+    pagesBackLabel: getCollectionBackLabel('pages', 'Back'),
     glossaryPrefix: getCollectionPrefix('glossary', '/glossary'),
     offers: getRoutingPath('offers', '/offers'),
     success: getRoutingPath('success', '/success'),

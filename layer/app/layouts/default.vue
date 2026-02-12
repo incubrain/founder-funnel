@@ -41,7 +41,14 @@ watchEffect(() => {
 <template>
   <UMain>
     <UPage>
-      <slot />
+      <UPageHero
+        v-if="page?.title || page?.description"
+        :title="page?.title"
+        :description="page?.description"
+      />
+      <UContainer>
+        <slot />
+      </UContainer>
     </UPage>
   </UMain>
 </template>

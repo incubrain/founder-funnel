@@ -11,7 +11,7 @@ export default defineAppConfig({
         name: 'pages',
         type: 'page',
         prefix: '/',
-        backLabel: 'Back to Articles',
+        backLabel: 'Back',
       },
       // Data collections (not routable - type: 'data' or string shorthand)
       references: { name: 'references', type: 'data' },

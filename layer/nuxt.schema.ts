@@ -68,7 +68,7 @@ export default defineNuxtSchema({
                   type: 'string',
                   title: 'Back Label',
                   description: 'Label for back navigation button.',
-                  default: 'Back to Articles',
+                  default: 'Back',
                 }),
               },
             }),

@@ -8,7 +8,7 @@ const currentYear = new Date().getFullYear()
 
 const foundingYear = computed(() => site.value?.business?.foundingYear)
 const legalName = computed(() => site.value?.business?.legalName)
-const credits = computed(() => site.value?.credits)
+const credits = computed(() => site.value?.credits || '')
 
 const bottomLinks = computed(() => footerData?.value?.bottom ?? [])
 
@@ -24,7 +24,9 @@ const copyrightYear = computed(() => {
 
 // Foundry branding
 const appConfig = useAppConfig()
-const foundry = computed(() => appConfig.foundry as { version: string, url: string } | undefined)
+const foundry = computed(
+  () => appConfig.foundry as { version: string; url: string } | undefined,
+)
 
 const { trackEvent } = useEvents()
 const handleFoundryClick = () => {
@@ -42,24 +44,15 @@ const handleFoundryClick = () => {
   <UContainer
     class="flex flex-col gap-4 md:flex-row justify-between w-full items-center"
   >
-    <p
-      v-if="credits"
-      class="text-sm text-muted whitespace-nowrap"
-    >
+    <p v-if="credits" class="text-sm text-muted whitespace-nowrap">
       {{ credits }}
     </p>
 
-    <p
-      v-else
-      class="text-sm text-muted whitespace-nowrap"
-    >
+    <p v-else class="text-sm text-muted whitespace-nowrap">
       © {{ copyrightYear }} {{ legalName }}
     </p>
 
-    <div
-      v-if="bottomLinks.length"
-      class="flex items-center gap-3"
-    >
+    <div v-if="bottomLinks.length" class="flex items-center gap-3">
       <UButton
         v-for="link in bottomLinks"
         :key="link.to"
@@ -80,7 +73,9 @@ const handleFoundryClick = () => {
       class="text-xs text-muted hover:text-default transition-colors"
       @click="handleFoundryClick"
     >
-      Built with @incubrain/foundry{{ foundry.version ? ` v${foundry.version}` : '' }}
+      Built with @incubrain/foundry{{
+        foundry.version ? ` v${foundry.version}` : ''
+      }}
     </NuxtLink>
   </UContainer>
 </template>

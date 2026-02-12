@@ -47,75 +47,68 @@ watchEffect(() => {
 <template>
   <UMain>
     <UPage>
-      <UPageHeader>
-        <template #headline>
-          <UButton
-            :to="routing.pagesPrefix"
-            icon="i-lucide-arrow-left"
-            color="neutral"
-            variant="ghost"
-            size="sm"
-            :label="routing.pagesBackLabel"
-          />
-        </template>
+      <UContainer>
+        <UPageHeader>
+          <template #headline>
+            <UButton
+              :to="routing.pagesPrefix"
+              icon="i-lucide-arrow-left"
+              color="neutral"
+              variant="ghost"
+              size="sm"
+              :label="routing.pagesBackLabel"
+            />
+          </template>
 
-        <template #title>
-          {{ article?.title }}
-        </template>
+          <template #title>
+            {{ article?.title }}
+          </template>
 
-        <template #description>
-          <div class="flex flex-wrap items-center gap-4 mb-4">
-            <div
-              v-if="article?.label"
-              class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary/10 border border-primary/20"
-            >
-              <UIcon
-                name="i-lucide-tag"
-                class="size-4 text-primary"
-              />
-              <span class="font-mono font-semibold text-primary text-sm">
-                {{ article.label }}
-              </span>
+          <template #description>
+            <div class="flex flex-wrap items-center gap-4 mb-4">
+              <div
+                v-if="article?.label"
+                class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary/10 border border-primary/20"
+              >
+                <UIcon name="i-lucide-tag" class="size-4 text-primary" />
+                <span class="font-mono font-semibold text-primary text-sm">
+                  {{ article.label }}
+                </span>
+              </div>
+
+              <div
+                v-if="article?.date"
+                class="flex items-center gap-2 text-muted"
+              >
+                <UIcon name="i-lucide-calendar" class="size-4" />
+                <NuxtTime
+                  :datetime="article.date"
+                  year="numeric"
+                  month="long"
+                  day="numeric"
+                  class="text-sm font-medium"
+                />
+              </div>
             </div>
 
-            <div
-              v-if="article?.publishedAt"
-              class="flex items-center gap-2 text-muted"
+            <p
+              v-if="article?.description"
+              class="text-lg text-muted leading-relaxed"
             >
-              <UIcon
-                name="i-lucide-calendar"
-                class="size-4"
-              />
-              <NuxtTime
-                :datetime="article.publishedAt"
-                year="numeric"
-                month="long"
-                day="numeric"
-                class="text-sm font-medium"
-              />
-            </div>
-          </div>
+              {{ article.description }}
+            </p>
+          </template>
 
-          <p
-            v-if="article?.description"
-            class="text-lg text-muted leading-relaxed"
-          >
-            {{ article.description }}
-          </p>
-        </template>
-
-        <template
-          v-if="article?.image"
-          #default
-        >
-          <NuxtImg
-            :src="article.image"
-            :alt="article.title"
-            class="w-full rounded-lg border border-default shadow-lg mt-8"
-            loading="lazy"
-          />
-        </template>
-      </UPageHeader>
+          <template v-if="article?.image" #default>
+            <NuxtImg
+              :src="article.image"
+              :alt="article.title"
+              class="w-full rounded-lg border border-default shadow-lg mt-8"
+              loading="lazy"
+            />
+          </template>
+        </UPageHeader>
+      </UContainer>
 
       <UPageBody class="max-w-3xl mx-auto">
         <article class="prose prose-lg max-w-none">

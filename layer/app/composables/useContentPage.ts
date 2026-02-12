@@ -41,7 +41,10 @@ export const useContentPage = () => {
   const { getCollectionForRoute } = useContentConfig()
 
   // Shared state (for components that need access without re-fetching)
-  const context = useState<ContentPageContext | null>('content-page', () => null)
+  const context = useState<ContentPageContext | null>(
+    'content-page',
+    () => null,
+  )
 
   // Dynamically determine collection based on route
   const collection = computed(
@@ -61,11 +64,15 @@ export const useContentPage = () => {
    * Wraps useAsyncData with automatic collection resolution.
    */
   const getPage = () => {
+    // strip trailing slash
+    const path = computed(() =>
+      route.path.endsWith('/') ? route.path.slice(0, -1) : route.path,
+    )
     return useAsyncData(
-      () => `page-${collection.value}-${route.path}`,
+      () => `page-${collection.value}-${path.value}`,
       () => {
-        console.log('[useContentPage] Querying:', collection.value, route.path)
-        return queryCollection(collection.value).path(route.path).first()
+        console.log('[useContentPage] Querying:', collection.value, path.value)
+        return queryCollection(collection.value).path(path.value).first()
       },
       {
         watch: [() => route.path, collection],
