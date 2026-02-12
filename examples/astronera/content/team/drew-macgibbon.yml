@@ -1,13 +1,21 @@
 slug: drew-macgibbon
 givenName: Drew
 surname: MacGibbon
+role: Technical/Business Advisor
 bio:
-  Drew MacGibbon is a space enthusiast with a passion for business and software
-  development.
+  I am a business advisor with over 15 years experience, a passion for space and
+  the sciences, and over seven years of full stack development experience and
+  CTO experience. As well as CEO.
 avatar:
-  src: /team/drew-macgibbon.jpg
+  src: /images/team/drew-macgibbon.jpg
   alt: Drew MacGibbon
 links:
   - label: LinkedIn
     url: https://linkedin.com/in/drew-macgibbon
     icon: i-lucide-linkedin
+  - label: Website
+    url: https://incubrain.org
+    icon: i-lucide-globe
+  - label: X
+    url: https://x.com/drew_macgibbon
+    icon: i-lucide-twitter

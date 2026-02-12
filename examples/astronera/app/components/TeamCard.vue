@@ -26,6 +26,7 @@ defineProps<Props>()
 
 <template>
   <UCard
+    variant="subtle"
     :ui="{
       root: 'overflow-hidden transition-all duration-300 hover:shadow-xl',
       body: 'p-6 space-y-4',
@@ -54,19 +55,20 @@ defineProps<Props>()
       {{ member.bio }}
     </p>
 
-    <!-- Social Links -->
-    <div v-if="member.links?.length" class="flex justify-center gap-2">
-      <UButton
-        v-for="link in member.links"
-        :key="link.url"
-        :to="link.url"
-        :icon="link.icon"
-        :aria-label="`${member.givenName}'s ${link.label}`"
-        color="neutral"
-        variant="ghost"
-        size="sm"
-        target="_blank"
-      />
-    </div>
+    <template #footer>
+      <div v-if="member.links?.length" class="flex justify-center gap-2">
+        <UButton
+          v-for="link in member.links"
+          :key="link.url"
+          :to="link.url"
+          :icon="link.icon"
+          :aria-label="`${member.givenName}'s ${link.label}`"
+          color="neutral"
+          variant="ghost"
+          size="sm"
+          target="_blank"
+        />
+      </div>
+    </template>
   </UCard>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { data: team } = await useAsyncData('team-grid', () =>
+const { data: team } = useAsyncData('team-grid', () =>
   queryCollection('team').all(),
 )
 

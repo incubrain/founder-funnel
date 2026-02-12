@@ -4,7 +4,17 @@ description: Meet the dedicated AstronEra team working to protect Maharashtra's 
 navigation: false
 ---
 
-::team-grid
-::
+::section-wrapper
+---
+headline: Meet the Team
+id: team
+orientation: vertical
+---
+#title
+Protecting Maharashtra's Night Skies
 
-testing
+#description
+AstronEra is powered by a dedicated team of researchers, engineers, and conservationists committed to preserving natural darkness through evidence-based policy and community action.
+
+:team-grid
+::
