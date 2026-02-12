@@ -55,7 +55,7 @@ client:
   name: Shweta Kulkarni
   role: Founder & CEO
   company: Astronera
-  avatar: /team/shweta-avatar.jpg
+  avatar: /images/team/shweta-avatar.jpg
   website: https://astronera.org
 
 quote: "Mac helped us kill the 'do everything' approach. We went from <$10K/year to $5M in contracts. Hardest part was saying no to everything else. But that's what made room for this to work."
@@ -63,11 +63,11 @@ quote: "Mac helped us kill the 'do everything' approach. We went from <$10K/year
 partner:
   label: Working with
   logos:
-    - src: /logos/dark-sky-international.svg
+    - src: /images/logos/dark-sky-international.svg
       alt: Dark Sky International
-    - src: /logos/maharashtra-govt.svg
+    - src: /images/logos/maharashtra-govt.svg
       alt: Government of Maharashtra
-    - src: /logos/astronera.svg
+    - src: /images/logos/astronera.svg
       alt: Astronera
 ---
 ::
@@ -235,7 +235,7 @@ description: "Book your free consultation. If we're a good fit, you'll be charge
 ---
 name: Mac
 intro: "I'm Mac, a technical founder who spent 13 years failing before building profitable businesses. I write code, ship products, and help founders avoid the mistakes that cost me a decade."
-avatar: /team/mac-avatar.jpg
+avatar: /images/team/mac-avatar.jpg
 ---
 ::
 

@@ -325,7 +325,7 @@ These pilots align with **DarkSky International** certification frameworks.
     ---
     class: mx-auto h-full w-full flex flex-col items-center p-4
     ---
-    ![Hi, I'm TARA, the Dark Sky Maharashtra Mascot](tara/01.tara-glow.png){.w-64.aspect-auto.rounded-full :zoom='false'}
+    ![Hi, I'm TARA, the Dark Sky Maharashtra Mascot](/images/tara/01.tara-glow.png){.w-64.aspect-auto.rounded-full :zoom='false'}
     **Hi, I'm TARA The Firefly**{.text-xl.mt-4.mb-1}
     *Dark Sky Maharashtra Mascot*{.text-sm}
     ::::

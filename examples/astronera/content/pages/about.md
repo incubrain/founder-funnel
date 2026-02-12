@@ -14,42 +14,42 @@ From astronomy education startup to Technical Secretariat for Maharashtra's Dark
 ### 2018: Foundation
 **AstronEra begins** as astronomy education platform, delivering stargazing experiences and courses across India.
 
-![AstronEra Foundation](/about/01.tara-comic-timeline-1.jpg)
+![AstronEra Foundation](/images/about/01.tara-comic-timeline-1.jpg)
 
 ### 2019-2021: Building Credibility
 Developed **AstroTribe** program training tribal communities as certified AstroGuides. Recognized by IAU Office of Astronomy for Development.
 
-![AstroTribe Program](/about/02.tara-comic-timeline-2.jpg)
+![AstroTribe Program](/images/about/02.tara-comic-timeline-2.jpg)
 
 ### 2022: Policy Shift
 **Pivot moment**: Recognized that light pollution regulation required government action, not just education. Began policy research.
 
-![Policy Research](/about/03.tara-comic-timeline-3.jpg)
+![Policy Research](/images/about/03.tara-comic-timeline-3.jpg)
 
 ### 2023: International Recognition
 Hosted **IDSPAC 2023** (Manali) - India's first international dark sky conference. Established relationship with DarkSky International.
 
-![IDSPAC Conference](/about/04.tara-comic-timeline-4.jpg)
+![IDSPAC Conference](/images/about/04.tara-comic-timeline-4.jpg)
 
 ### 2024: Dark Sky Defender
 Founder Shweta Kulkarni named **Dark Sky Defender Asia 2024** by DarkSky International. Formalized role as Technical Secretariat.
 
-![Dark Sky Defender](/about/05.tara-comic-timeline-5.jpg)
+![Dark Sky Defender](/images/about/05.tara-comic-timeline-5.jpg)
 
 ### 2025: Policy Framework Launch
 Released **Dark Sky Policy Roadmap for Maharashtra** - comprehensive ALAN regulation framework through TARA mechanism.
 
-![Policy Launch](/about/06.tara-comic-timeline-6.jpg)
+![Policy Launch](/images/about/06.tara-comic-timeline-6.jpg)
 
 ### 2025-2026: Implementation Phase
 Supporting 6 priority sites for DarkSky International certification. Coordinating trans-departmental regulatory framework.
 
-![Implementation](/about/07.tara-comic-timeline-7.jpg)
+![Implementation](/images/about/07.tara-comic-timeline-7.jpg)
 
 ### Vision 2030
 Maharashtra becomes **model for Asia-Pacific** dark sky regulation, demonstrating economic and ecological benefits of responsible lighting.
 
-![Future Vision](/about/08.tara-comic-timeline-8.jpg)
+![Future Vision](/images/about/08.tara-comic-timeline-8.jpg)
 
 
 ## Leadership

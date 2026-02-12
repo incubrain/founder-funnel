@@ -24,7 +24,7 @@ cta:
     to: https://github.com/incubrain/foundry
     icon: i-simple-icons-github
 media:
-  src: /product/gated-dashboard.png
+  src: https://placehold.co/600x400
   alt: App Dashboard
 metric:
   icon: i-lucide-trending-up
