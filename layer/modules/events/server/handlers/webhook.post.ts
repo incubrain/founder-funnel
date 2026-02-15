@@ -1,11 +1,8 @@
 import { z } from 'zod'
+import { useLogger, createError as createEvlogError } from 'evlog'
 import { formatDiscordMessage } from '../formatters/discord'
 import { formatSlackMessage } from '../formatters/slack'
 import { formatTelegramMessage } from '../formatters/telegram'
-
-// Assumes these are available from server/utils via auto-import or alias
-// We use a relative import for types, but for runtime logic we rely on Nitro's auto-import
-// OR we import strictly if we can.
 import { RateLimiter, validateAntiSpam } from '../utils/anti-spam'
 
 const captureSchema = z.object({
@@ -17,6 +14,12 @@ const captureSchema = z.object({
 const rateLimiter = new RateLimiter()
 
 type WebhookPlatform = 'telegram' | 'slack' | 'discord' | 'unknown'
+
+interface WebhookResult {
+  platform: string
+  url: string
+  success: boolean
+}
 
 function detectPlatform(url: string): WebhookPlatform {
   const lowerUrl = url.toLowerCase()
@@ -33,34 +36,23 @@ function detectPlatform(url: string): WebhookPlatform {
 }
 
 export default defineEventHandler(async (event) => {
+  const log = useLogger(event)
   const body = await readBody(event)
   const { formData, antiSpam } = body
 
   // Get IP for rate limiting
   const ip = getRequestIP(event, { xForwardedFor: true }) || 'unknown'
 
+  log.set({ lead: { email: formData?.email }, ip: ip.substring(0, 10) + '...' })
+
   // === ANTI-SPAM VALIDATION ===
 
-  // Validate anti-spam data
   const flags = validateAntiSpam(antiSpam || {})
-
-  // Log suspicious activity
-  if (flags.score > 0) {
-    console.warn('[Anti-Spam] Suspicious submission:', {
-      email: formData?.email,
-      ip: ip.substring(0, 10) + '...',
-      flags,
-    })
-  }
+  log.set({ antiSpam: { score: flags.score, honeypot: flags.honeypot, fast: flags.fast, noJs: flags.noJs } })
 
   // HARD REJECT: Honeypot triggered
   if (flags.honeypot) {
-    console.warn(
-      '[Anti-Spam] Honeypot triggered - silent reject:',
-      formData?.email,
-    )
-
-    // Return success to user (don't reveal detection)
+    log.set({ rejected: 'honeypot' })
     return {
       success: true,
       message: 'Thanks! Check your email.',
@@ -69,12 +61,12 @@ export default defineEventHandler(async (event) => {
 
   // HARD REJECT: Rate limit exceeded
   if (rateLimiter.check(ip)) {
-    console.warn('[Anti-Spam] Rate limit exceeded:', ip, formData?.email)
-
-    throw createError({
-      statusCode: 429,
-      statusMessage: 'Too Many Requests',
+    log.set({ rejected: 'rate-limit' })
+    throw createEvlogError({
+      status: 429,
       message: 'Too many submissions. Please try again in a few minutes.',
+      why: `IP ${ip.substring(0, 10)}... exceeded rate limit`,
+      fix: 'Wait 15 minutes before submitting again',
     })
   }
 
@@ -83,11 +75,12 @@ export default defineEventHandler(async (event) => {
   const parsed = captureSchema.safeParse({ formData })
 
   if (!parsed.success) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Invalid Data',
+    log.error(new Error('Validation failed'), { step: 'schema-validation' })
+    throw createEvlogError({
+      status: 400,
       message: 'Email capture validation failed',
-      data: parsed.error.errors,
+      why: parsed.error.errors.map(e => e.message).join(', '),
+      fix: 'Check the submitted form data matches the expected schema',
     })
   }
 
@@ -95,11 +88,11 @@ export default defineEventHandler(async (event) => {
   const webhookUrl = config.webhookUrl
 
   if (!webhookUrl) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Webhook Not Configured',
-      message:
-        'Webhook URL is missing. Supports Telegram, Slack, or Discord. Add NUXT_WEBHOOK_URL to your .env file.',
+    throw createEvlogError({
+      status: 500,
+      message: 'Webhook URL is missing',
+      why: 'NUXT_WEBHOOK_URL environment variable is not set',
+      fix: 'Add NUXT_WEBHOOK_URL to your .env file. Supports Telegram, Slack, or Discord webhook URLs.',
     })
   }
 
@@ -110,14 +103,17 @@ export default defineEventHandler(async (event) => {
     .filter(Boolean)
 
   if (webhookUrls.length === 0) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Webhook Not Configured',
+    throw createEvlogError({
+      status: 500,
       message: 'No valid webhook URLs found',
+      why: 'NUXT_WEBHOOK_URL is set but contains no valid URLs after parsing',
+      fix: 'Check NUXT_WEBHOOK_URL format — use comma-separated URLs for multiple destinations',
     })
   }
 
   const telegramChatId = config.telegramChatId
+
+  log.set({ webhooks: { count: webhookUrls.length } })
 
   // Send to all webhooks in parallel
   const results = await Promise.allSettled(
@@ -145,16 +141,13 @@ export default defineEventHandler(async (event) => {
           )
         }
         else {
-          // Fallback
           message = {
             text: `New Lead: ${parsed.data.formData?.email} - ${JSON.stringify(parsed.data.formData)}`,
           }
         }
       }
       catch (error) {
-        console.error(`[${platform}] Failed to format message:`, {
-          error: error instanceof Error ? error.message : 'Unknown error',
-        })
+        log.error(error instanceof Error ? error : new Error(String(error)), { step: `format-${platform}` })
         throw error
       }
 
@@ -177,11 +170,9 @@ export default defineEventHandler(async (event) => {
           }
 
           if (!telegramResponse.ok) {
-            console.error('[telegram] API returned error:', {
-              ok: telegramResponse.ok,
-              error_code: telegramResponse.error_code,
-              description: telegramResponse.description,
-              sentPayload: message,
+            log.error(new Error(telegramResponse.description || 'Telegram API returned ok: false'), {
+              step: `delivery-${platform}`,
+              errorCode: telegramResponse.error_code,
             })
 
             throw new Error(
@@ -190,17 +181,12 @@ export default defineEventHandler(async (event) => {
           }
         }
 
-        console.log(
-          `[${platform}] Lead delivered:`,
-          parsed.data.formData?.email,
-        )
-
         return { platform, url: url.substring(0, 30) + '...', success: true }
       }
-      catch (error: any) {
-        console.error(`[${platform}] Delivery failed:`, {
+      catch (error: unknown) {
+        log.error(error instanceof Error ? error : new Error(String(error)), {
+          step: `delivery-${platform}`,
           url: url.substring(0, 10) + '...',
-          error: error instanceof Error ? error.message : 'Unknown error',
         })
 
         throw error
@@ -212,10 +198,13 @@ export default defineEventHandler(async (event) => {
   const successful = results.filter(r => r.status === 'fulfilled')
   const failed = results.filter(r => r.status === 'rejected')
 
-  console.info('Webhook delivery summary:', {
-    total: webhookUrls.length,
-    successful: successful.length,
-    failed: failed.length,
+  log.set({
+    delivery: {
+      total: webhookUrls.length,
+      successful: successful.length,
+      failed: failed.length,
+      platforms: successful.map(r => (r as PromiseFulfilledResult<WebhookResult>).value.platform),
+    },
   })
 
   // Return success if at least one webhook succeeded
@@ -225,22 +214,16 @@ export default defineEventHandler(async (event) => {
       delivered: successful.length,
       failed: failed.length,
       platforms: successful.map(
-        r => (r as PromiseFulfilledResult<any>).value,
+        r => (r as PromiseFulfilledResult<WebhookResult>).value,
       ),
     }
   }
 
   // All failed - throw error
-  throw createError({
-    statusCode: 500,
-    statusMessage: 'All Webhooks Failed',
+  throw createEvlogError({
+    status: 500,
     message: `Failed to deliver to all ${webhookUrls.length} configured webhook(s)`,
-    data: {
-      attempted: webhookUrls.length,
-      failures: failed.map((r, i) => ({
-        url: webhookUrls[i].substring(0, 30) + '...',
-        error: (r as PromiseRejectedResult).reason?.message || 'Unknown error',
-      })),
-    },
+    why: failed.map((r, i) => `${webhookUrls[i]?.substring(0, 30)}...: ${(r as PromiseRejectedResult).reason?.message || 'Unknown error'}`).join('; '),
+    fix: 'Check webhook URLs are valid and the destination services are reachable',
   })
 })

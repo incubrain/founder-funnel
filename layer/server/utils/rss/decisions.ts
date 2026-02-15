@@ -9,7 +9,6 @@ import {
 // Export as named function (not default export)
 export async function generateDecisionsFeed(event: H3Event): Promise<string> {
   const siteConfig = getSiteConfig(event)
-  console.log('siteConfig', siteConfig)
 
   const authorName = await getAuthorName(event)
   const businessName = await getBusinessName(event)

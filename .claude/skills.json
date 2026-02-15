@@ -47,6 +47,11 @@
       "agent": "claude-code"
     },
     {
+      "name": "evlog",
+      "source": "https://github.com/HugoRCD/evlog",
+      "agent": "claude-code"
+    },
+    {
       "name": "agent-browser",
       "source": "https://github.com/vercel-labs/agent-browser",
       "agent": "claude-code"

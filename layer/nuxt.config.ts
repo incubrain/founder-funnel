@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     resolve('./modules/config'),
     resolve('./modules/css'),
     resolve('./modules/events'),
+    'evlog/nuxt',
     '@nuxt/ui',
     '@nuxtjs/seo',
     '@nuxt/content',
@@ -38,6 +39,16 @@ export default defineNuxtConfig({
     sourcemap: false,
     experimental: {
       payloadExtraction: false,
+    },
+
+    evlog: {
+      sampling: {
+        rates: { info: 10, warn: 50, debug: 0 },
+        keep: [
+          { status: 400 },
+          { duration: 1000 },
+        ],
+      },
     },
 
     nitro: {
@@ -185,6 +196,14 @@ export default defineNuxtConfig({
       )
       globals.forEach((c) => (c.global = true))
     },
+  },
+
+  // Structured logging (evlog) - one wide event per request
+  evlog: {
+    env: {
+      service: 'foundry',
+    },
+    include: ['/api/**'],
   },
 
   // Events module for conversion tracking
