@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ChangelogCollectionItem } from '@nuxt/content'
 
-const { collection } = useContentPage()
+const { collections } = useContentConfig()
 
 interface Props {
   // Query parameters
@@ -43,7 +43,9 @@ const defaultAuthorSlug = computed(
 
 // Query all team members (only if showAuthor is enabled)
 const { data: teamMembers } = props.showAuthor
-  ? await useAsyncData('team-members', () => queryCollection('team').all())
+  ? await useAsyncData('team-members', () =>
+      queryCollection(collections.team).all(),
+    )
   : { data: ref([]) }
 
 // Create a map of team members by slug for easy lookup
@@ -73,9 +75,9 @@ const getAuthorForItem = (item: any) => {
 
 // Query items
 const { data: items, pending } = useAsyncData(
-  () => `changelog-${collection.value}`,
+  () => `changelog-${collections.changelog}`,
   () => {
-    let query = queryCollection(collection.value as any).select(
+    let query = queryCollection(collections.changelog as any).select(
       'path',
       props.labelField,
       props.sortField,
@@ -104,9 +106,6 @@ const { data: items, pending } = useAsyncData(
     query = query.order(props.sortField, props.sortOrder)
 
     return query.all()
-  },
-  {
-    watch: [collection],
   },
 )
 
