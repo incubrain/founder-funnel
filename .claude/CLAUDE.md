@@ -68,6 +68,13 @@ deploy/                        → Dockerfiles and deployment configs
 
 If all answers are "No" → don't build it.
 
+## Skills
+
+External agent skills are gitignored and installed on demand. Run `bash scripts/install-skills.sh` to install, or see [`.claude/skills.json`](.claude/skills.json) for the full manifest.
+
+Custom skills (tracked in git):
+- **docs-writer**: Dark Sky Conservation documentation writing
+
 ## Rules
 
 Detailed rules are in the `.claude/rules/` directory:

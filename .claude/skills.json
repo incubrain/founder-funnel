@@ -1,0 +1,60 @@
+{
+  "description": "External skills manifest. Run scripts/install-skills.sh to install.",
+  "skills": [
+    {
+      "name": "manage-mcp",
+      "source": "https://github.com/nuxt-modules/mcp-toolkit",
+      "agent": "claude-code"
+    },
+    {
+      "name": "vitest",
+      "source": "https://github.com/antfu/skills",
+      "agent": "claude-code"
+    },
+    {
+      "name": "nuxt-ui",
+      "source": "https://github.com/nuxt/ui",
+      "agent": "claude-code"
+    },
+    {
+      "name": "nuxt",
+      "source": "https://github.com/antfu/skills",
+      "agent": "claude-code"
+    },
+    {
+      "name": "vueuse-functions",
+      "source": "https://github.com/vueuse/skills",
+      "agent": "claude-code"
+    },
+    {
+      "name": "vue-best-practices",
+      "source": "https://github.com/antfu/skills",
+      "agent": "claude-code"
+    },
+    {
+      "name": "pinia",
+      "source": "https://github.com/antfu/skills",
+      "agent": "claude-code"
+    },
+    {
+      "name": "vue-testing-best-practices",
+      "source": "https://github.com/vuejs-ai/skills",
+      "agent": "claude-code"
+    },
+    {
+      "name": "nuxt-content",
+      "source": "https://github.com/nuxt-content/nuxt-studio",
+      "agent": "claude-code"
+    },
+    {
+      "name": "agent-browser",
+      "source": "https://github.com/vercel-labs/agent-browser",
+      "agent": "claude-code"
+    },
+    {
+      "name": "web-design-guidelines",
+      "source": "https://github.com/vercel-labs/agent-skills",
+      "agent": "claude-code"
+    }
+  ]
+}

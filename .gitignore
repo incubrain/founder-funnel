@@ -31,6 +31,20 @@ repomix-changed.*
 CLAUDE.local.md
 .claude/settings.local.json
 
+# Agent skills (installed via scripts/install-skills.sh, manifest in .claude/skills.json)
+.agents/skills/
+.claude/skills/manage-mcp
+.claude/skills/vitest
+.claude/skills/nuxt-ui
+.claude/skills/nuxt
+.claude/skills/vueuse-functions
+.claude/skills/vue-best-practices
+.claude/skills/pinia
+.claude/skills/vue-testing-best-practices
+.claude/skills/nuxt-content
+.claude/skills/agent-browser
+.claude/skills/web-design-guidelines
+
 # Misc
 strategy
 ideas
