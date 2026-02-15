@@ -1,4 +1,9 @@
-import { defineContentConfig, z, defineCollection, property } from '@nuxt/content'
+import {
+  defineContentConfig,
+  z,
+  defineCollection,
+  property,
+} from '@nuxt/content'
 
 const ICON_LIBRARIES = ['lucide', 'logos']
 // Extend base schema for pages
@@ -31,6 +36,7 @@ export const baseFaqSchema = z.object({
 
 export const basePageSchema = z.object({
   label: z.string().optional(),
+  hero: z.boolean().optional().default(true),
   title: z.string(),
   description: z.string().optional(),
   excerpt: z.string().optional(),

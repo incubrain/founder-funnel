@@ -24,10 +24,10 @@ export default defineAppConfig({
         name: 'pages',
         type: 'page',
         prefix: '/',
-        backLabel: 'Back to Articles',
+        backLabel: 'Back',
       },
       // Data collections (not routable - type: 'data' or string shorthand)
-      changelog: { name: 'decisions', type: 'page', prefix: '/decisions' },
+      changelog: { name: 'decisions', type: 'page', prefix: '/decisions/' },
       references: { name: 'references', type: 'data' },
       glossary: { name: 'glossary', type: 'data' },
       faq: { name: 'faq', type: 'data' },
@@ -39,7 +39,6 @@ export default defineAppConfig({
     defaultAuthor: 'drew-macgibbon',
     // Additional routing paths (not tied to a specific collection)
     routing: {
-      sources: '/sources',
       offers: '/offers',
       success: '/success',
     },

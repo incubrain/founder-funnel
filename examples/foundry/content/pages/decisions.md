@@ -1,15 +1,18 @@
 ---
 title: Decisions
 description: Strategic decisions and validation learnings from building IncuBrain Foundry
+hero: false
 hasRss: true
 ---
 
 ::u-page-hero
 ---
-description: Strategic decisions and validation learnings from building IncuBrain Foundry
-orientation: vertical
 title: Decisions
+description: Strategic decisions and validation learnings from building IncuBrain Foundry
+headline: Evidence-based decision making
+orientation: vertical
 ---
+
 #body
   :::faq-accordion
   ---
@@ -21,24 +24,30 @@ title: Decisions
 #links
   :::convert-social
   ---
-  rounded: false
-  color: neutral
-  gap: normal
   location: decisions-hero
   size: lg
   variant: ghost
+  color: neutral
+  rounded: false
+  gap: normal
   ---
   :::
 
   :::convert-rss
   ---
-  showLabel: true
-  color: secondary
   location: decisions-hero
   size: lg
   variant: soft
+  color: secondary
+  showLabel: true
   ---
   :::
+
 ::
 
-:changelog{label-field="label" sort-field="date"}
+::changelog
+---
+labelField: label
+sortField: date
+---
+::

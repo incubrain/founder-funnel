@@ -21,7 +21,7 @@ const { data: faqFiles } = await useAsyncData('faqs', () =>
 const tabItems = computed<TabsItem[]>(() => {
   if (!faqFiles.value) return []
 
-  return faqFiles.value.map(file => ({
+  return faqFiles.value.map((file) => ({
     label: file.label,
     icon: file.icon,
     value: file.type,
@@ -38,10 +38,10 @@ const tabItems = computed<TabsItem[]>(() => {
 const activeTab = ref(faqFiles.value?.[0]?.type || '')
 
 const activeFaqs = computed(() => {
-  const file = faqFiles.value?.find(f => f.type === activeTab.value)
+  const file = faqFiles.value?.find((f) => f.type === activeTab.value)
   if (!file) return []
 
-  return file.items.map(item => ({
+  return file.items.map((item) => ({
     label: item.label,
     content: item.content,
     icon: file.icon,
@@ -51,7 +51,7 @@ const activeFaqs = computed(() => {
 
 // Build accordion items for active tab
 const accordionItems = computed(() =>
-  activeFaqs.value.map(faq => ({
+  activeFaqs.value.map((faq) => ({
     label: faq.label,
     content: faq.content,
     icon: faq.icon,
@@ -61,19 +61,13 @@ const accordionItems = computed(() =>
 </script>
 
 <template>
-  <SectionWrapper
-    id="faq"
-    has-bottom
-    :title="title"
-    :description="description"
-  >
-
+  <SectionWrapper id="faq" has-bottom :title="title" :description="description">
     <UTabs
       v-model="activeTab"
       :items="tabItems"
       :content="false"
-      color="neutral"
-      variant="link"
+      color="primary"
+      variant="pill"
       size="md"
       class="w-full max-w-2xl mx-auto mb-8 mt-12"
       :ui="{
@@ -88,38 +82,15 @@ const accordionItems = computed(() =>
           /* Ensure no conflicting border styles */
           'border-b-0! mb-0!',
         ].join(' '),
-        trigger: [
-          'inline-flex items-center gap-1.5',
-          'rounded-full border px-4 py-2',
-          'whitespace-nowrap shrink-0',
-          'border-neutral-700/40 bg-neutral-900/30',
-          'data-[state=active]:border-primary data-[state=active]:bg-primary/10',
-          'hover:border-neutral-600 hover:bg-neutral-900/50',
-          'transition-all duration-200',
-          'text-sm font-medium',
-          'data-[state=inactive]:text-muted',
-          'data-[state=active]:text-highlighted',
-        ].join(' '),
-        /* Hide the indicator completely for this variant */
-        indicator: 'hidden',
       }"
     />
 
-    <div
-      v-if="accordionItems.length"
-      class="w-full mx-auto"
-    >
+    <div v-if="accordionItems.length" class="w-full mx-auto">
       <FaqAccordion :items="accordionItems" />
     </div>
 
-    <template
-      v-if="cta"
-      #cta
-    >
-      <NavCta
-        :title="cta.headline"
-        :description="cta.message"
-      >
+    <template v-if="cta" #cta>
+      <NavCta :title="cta.headline" :description="cta.message">
         <template #links>
           <UButton
             v-if="cta.label && cta.to"

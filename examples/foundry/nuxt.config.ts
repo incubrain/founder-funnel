@@ -20,11 +20,11 @@ export default defineNuxtConfig({
     // Landing pages
     '/': { appLayout: 'landing' },
     '/about': { appLayout: 'default' },
-    '/offers/**': { appLayout: 'landing' },
+    '/offers/**': { appLayout: 'article' },
     '/success': { appLayout: 'landing' },
     '/success/**': { appLayout: 'landing' },
 
-    // Documentation
+    // Founder Decision Log
     '/decisions': { appLayout: 'default' },
     '/decisions/**': { appLayout: 'article' },
 

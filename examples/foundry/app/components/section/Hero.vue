@@ -52,30 +52,25 @@ const props = defineProps<{
 
 <template>
   <section
-    class="relative overflow-hidden bg-neutral-950 text-white min-h-[85vh] flex items-center justify-center pt-12 pb-16"
+    class="relative overflow-hidden bg-default min-h-[85vh] flex items-center justify-center pt-12 pb-16"
   >
+    <div class="absolute inset-0 bg-radial-hero" />
+
     <div
-      class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_40%_-20%,rgba(0,156,24,0.2),rgba(255,255,255,0))]"
+      class="absolute top-0 inset-0 bg-grid-default pointer-events-none z-0"
     />
 
     <div
-      class="absolute top-0 inset-0 bg-grid-white/[0.02] pointer-events-none z-0"
-    />
-
-    <div
-      v-if="badge"
       class="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center"
     >
       <a
+        v-if="badge"
         :href="badge.to"
         target="_blank"
-        class="mb-6 inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-900/50 px-3 py-1 text-sm text-neutral-300 transition-colors hover:border-neutral-700 hover:bg-neutral-800"
+        class="mb-6 inline-flex items-center gap-2 rounded-full border border-default bg-muted/50 px-3 py-1 text-sm text-muted-foreground transition-colors hover:bg-muted"
       >
-        <UIcon
-          :name="badge.icon"
-          class="h-4 w-4"
-        />
-        <span class="font-medium text-white">{{ badge.label }}</span>
+        <UIcon :name="badge.icon" class="h-4 w-4" />
+        <span class="font-medium">{{ badge.label }}</span>
         <span>{{ badge.description }}</span>
       </a>
 
@@ -86,7 +81,7 @@ const props = defineProps<{
         <h1
           class="font-heading font-black text-5xl sm:text-7xl lg:text-7xl text-center tracking-tight mb-8 leading-[1.1]"
         >
-          <span class="block text-white">{{ intro.title }}</span>
+          <span class="block">{{ intro.title }}</span>
           <span
             class="block bg-linear-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent"
           >
@@ -157,31 +152,28 @@ const props = defineProps<{
         />
 
         <div
-          class="relative rounded-xl bg-neutral-900 border border-neutral-800 p-2 shadow-2xl ring-1 ring-white/10 transform transition-transform duration-700 hover:scale-[1.01] hover:rotate-x-1"
+          class="relative rounded-xl bg-default border border-default p-2 shadow-2xl ring-1 ring-inverted/10 transform transition-transform duration-700 hover:scale-[1.01] hover:rotate-x-1"
         >
           <NuxtImg
             :src="media.src"
             :alt="media.alt"
-            class="rounded-lg shadow-inner w-full h-auto object-cover border border-neutral-900/50"
+            class="rounded-lg shadow-inner w-full h-auto object-cover border border-default"
           />
 
           <div
             v-if="metric"
-            class="absolute -right-4 top-10 md:-right-12 md:top-20 bg-neutral-900 border border-neutral-800 p-4 rounded-lg shadow-xl items-center gap-3 animate-bounce-slow hidden sm:flex"
+            class="absolute -right-4 top-10 md:-right-12 md:top-20 bg-default border border-default p-4 rounded-lg shadow-xl items-center gap-3 animate-bounce-slow hidden sm:flex"
           >
             <div
               class="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500"
             >
-              <UIcon
-                :name="metric.icon"
-                class="w-6 h-6"
-              />
+              <UIcon :name="metric.icon" class="w-6 h-6" />
             </div>
             <div>
               <div class="text-xs text-neutral-400">
                 {{ metric.label }}
               </div>
-              <div class="text-sm font-bold text-white">
+              <div class="text-sm font-bold text-inverted">
                 {{ metric.value }}
                 <span class="text-green-500 text-xs">{{ metric.delta }}</span>
               </div>
@@ -192,7 +184,7 @@ const props = defineProps<{
 
       <div
         v-if="trusted"
-        class="mt-10 pt-1 border-t border-white/5 w-full max-w-5xl flex flex-col md:flex-row items-center justify-between gap-6 text-neutral-500 text-sm"
+        class="mt-10 pt-1 border-t border-inverted/5 w-full max-w-5xl flex flex-col md:flex-row items-center justify-between gap-6 text-neutral-500 text-sm"
       >
         <span>{{ trusted.text }}</span>
         <div
@@ -211,6 +203,14 @@ const props = defineProps<{
 </template>
 
 <style scoped>
+.bg-radial-hero {
+  background-image: radial-gradient(
+    ellipse 80% 80% at 40% -20%,
+    color-mix(in oklch, var(--ui-primary), transparent 80%),
+    transparent
+  );
+}
+
 .perspective-1000 {
   perspective: 1000px;
 }
@@ -218,11 +218,12 @@ const props = defineProps<{
   transform: rotateX(1deg);
 }
 
-.bg-grid-white\/\[0\.02\] {
+.bg-grid-default {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    linear-gradient(var(--ui-border-inverted) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ui-border-inverted) 1px, transparent 1px);
   background-size: 60px 60px;
+  opacity: 0.1;
 }
 
 @keyframes bounce-slow {

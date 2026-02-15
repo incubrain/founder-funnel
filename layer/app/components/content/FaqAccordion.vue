@@ -39,12 +39,12 @@ const displayItems = computed(() => {
 
   // Filter by types if requested
   const filteredFiles = props.types?.length
-    ? allFaqs.value.filter(faq => props.types!.includes(faq.type))
+    ? allFaqs.value.filter((faq) => props.types!.includes(faq.type))
     : allFaqs.value
 
   // Flatten all items from matched files into a single list
-  return filteredFiles.flatMap(file =>
-    file.items.map(item => ({
+  return filteredFiles.flatMap((file) =>
+    file.items.map((item) => ({
       label: item.label,
       content: item.content,
       icon: file.icon,
@@ -77,7 +77,7 @@ const uiItems = computed<AccordionItem[]>(() =>
           :items="uiItems"
           :unmount-on-hide="false"
           :ui="{
-            item: 'border-b border-neutral-800 first:border-t last:mb-0 overflow-hidden last:border-b',
+            item: 'border-b border-default first:border-t last:mb-0 overflow-hidden last:border-b',
             trigger:
               'group flex-1 flex items-center gap-3 font-medium text-sm p-4 hover:bg-muted/30 transition-colors',
             body: 'text-sm p-4 leading-relaxed',

@@ -40,9 +40,9 @@ watchEffect(() => {
 
 <template>
   <UMain>
-    <UPage>
+    <UPage class="pb-12 lg:pb-16">
       <UPageHero
-        v-if="page?.title || page?.description"
+        v-if="page?.hero && (page?.title || page?.description)"
         :title="page?.title"
         :description="page?.description"
       />
