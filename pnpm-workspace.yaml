@@ -4,6 +4,7 @@ packages:
   - './'
   - 'layer'
   - 'cli'
+  - 'playground'
 
   # Only include specific examples we're building
   - 'examples/foundry'

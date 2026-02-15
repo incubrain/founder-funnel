@@ -1,0 +1,12 @@
+category:
+  id: test-cat
+  label: Test Category
+  color: info
+terms:
+  - id: term-1
+    term: Test Term 1
+    definition: Definition for test term 1.
+  - id: term-2
+    term: Test Term 2
+    abbreviation: TT2
+    definition: Definition for test term 2.

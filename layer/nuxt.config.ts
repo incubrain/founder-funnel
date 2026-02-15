@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     '@nuxtjs/mcp-toolkit',
     '@vueuse/nuxt',
     '@nuxt/scripts',
+    '@nuxt/test-utils/module',
   ],
 
   $development: {
@@ -158,6 +159,12 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: '2026-01-20',
+
+  typescript: {
+    tsConfig: {
+      include: ['../test/**/*'],
+    },
+  },
 
   nitro: {
     prerender: {

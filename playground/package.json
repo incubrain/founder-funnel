@@ -1,0 +1,17 @@
+{
+  "name": "playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx nuxi dev",
+    "build": "npx nuxi build",
+    "prepare": "npx nuxi prepare",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@incubrain/foundry": "workspace:*"
+  },
+  "devDependencies": {
+    "nuxt": "4.3.0"
+  }
+}

@@ -1,6 +1,11 @@
 // server/utils/anti-spam.test.ts
 import { describe, it, expect, beforeEach } from 'vitest'
-import { isValidUUID, validateAntiSpam, RateLimiter, type AntiSpamData } from '../server/utils/anti-spam'
+import {
+  isValidUUID,
+  validateAntiSpam,
+  RateLimiter,
+  type AntiSpamData,
+} from '@incubrain/foundry/modules/events/server/utils/anti-spam'
 
 describe('isValidUUID', () => {
   it('should validate correct UUID v4', () => {
@@ -175,7 +180,7 @@ describe('RateLimiter', () => {
     expect(fastLimiter.check('192.168.1.1')).toBe(true) // Blocked
 
     // Wait for window to expire
-    await new Promise(resolve => setTimeout(resolve, 700))
+    await new Promise((resolve) => setTimeout(resolve, 700))
 
     expect(fastLimiter.check('192.168.1.1')).toBe(false) // Allowed again
   })

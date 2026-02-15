@@ -29,7 +29,10 @@
     "layer:publish": "cd layer && npm publish --access public",
     "cli:build": "pnpm --filter create-foundry build",
     "cli:publish": "cd cli && npm publish --access public",
-    "kanban": "npx vibe-kanban"
+    "kanban": "npx vibe-kanban",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage"
   },
   "dependencies": {
     "@nuxt/eslint": "^1.12.1",
@@ -42,5 +45,13 @@
     "typescript": "^5.9.3",
     "vue-tsc": "^3.2.2"
   },
-  "packageManager": "pnpm@10.28.2"
+  "packageManager": "pnpm@10.28.2",
+  "devDependencies": {
+    "@nuxt/test-utils": "^4.0.0",
+    "@vitest/coverage-v8": "^4.0.18",
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^20.6.1",
+    "playwright-core": "^1.58.2",
+    "vitest": "^4.0.18"
+  }
 }

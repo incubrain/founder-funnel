@@ -1,0 +1,15 @@
+category:
+  id: test-category
+  label: Test Category
+sources:
+  - id: ref-1
+    title: Test Reference 1
+    author: Author One
+    date: 2024-01-01
+    url: https://example.com/1
+  - id: ref-2
+    title: Test Reference 2
+    author: Author Two
+    date: 2024-02-01
+    pdf: /pdfs/test-2.pdf
+    credibilityScore: 9
