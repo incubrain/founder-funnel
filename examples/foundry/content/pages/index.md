@@ -18,7 +18,7 @@ intro:
 cta:
   primary:
     label: Get Started
-    offerSlug: booking
+    offerSlug: mentorship
   secondary:
     label: View on GitHub
     to: https://github.com/incubrain/foundry

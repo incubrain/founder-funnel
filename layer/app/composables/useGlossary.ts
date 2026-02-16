@@ -1,7 +1,7 @@
 import type { GlossaryCollectionItem } from '@nuxt/content'
 
 export const useGlossary = () => {
-  const { collections, getCollectionPrefix } = useContentConfig()
+  const { collections } = useContentConfig()
 
   // Fetch glossary ONCE and cache globally
   const { data: glossaryData } = useAsyncData('glossary-all', () =>
@@ -53,13 +53,9 @@ export const useGlossary = () => {
    * - termId with/without prefix → normalizes correctly
    */
   const resolveGlossaryPath = (termId: string): string => {
-    const prefix = getCollectionPrefix('glossary', '/glossary')
-    const normalizedTermId = termId.toLowerCase()
-
-    // Ensure prefix has leading slash
-    const normalizedPrefix = prefix.startsWith('/') ? prefix : `/${prefix}`
-
-    return `${normalizedPrefix}?search=${normalizedTermId}`
+    const { getRoutingPath } = useContentConfig()
+    const glossaryPage = getRoutingPath('glossary', '/glossary')
+    return `${glossaryPage}?search=${termId.toLowerCase()}`
   }
 
   return {

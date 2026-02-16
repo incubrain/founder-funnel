@@ -32,6 +32,7 @@ export default defineAppConfig({
     defaultAuthor: 'shweta-kulkarni',
     routing: {
       sources: '/resources/references',
+      glossary: '/resources/glossary',
     },
   },
 })

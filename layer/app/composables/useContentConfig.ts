@@ -234,8 +234,8 @@ export const useContentConfig = () => {
     // Get the prefix for the specified collection
     const prefix = getCollectionPrefix(collection, '')
 
-    // If no prefix configured, just return the normalized path
-    if (!prefix) return `${normalizedPath}${hash}`
+    // If no prefix configured or prefix is just '/', return the normalized path as-is
+    if (!prefix || prefix === '/') return `${normalizedPath}${hash}`
 
     return `${prefix}${normalizedPath}${hash}`
   }

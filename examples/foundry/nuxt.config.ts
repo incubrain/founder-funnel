@@ -37,6 +37,10 @@ export default defineNuxtConfig({
     // },
   },
 
+  linkChecker: {
+    excludeLinks: ['/decisions/**'],
+  },
+
   // vite: {
   //   server: {
   //     fs: {

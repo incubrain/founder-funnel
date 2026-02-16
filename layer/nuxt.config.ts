@@ -3,6 +3,7 @@ import { ICON_LIBRARIES } from './shared/constants'
 
 const { resolve } = createResolver(import.meta.url)
 
+const isCI = process.env.CI === 'true'
 const ciPrerender = process.env.CI_PRERENDER === 'true'
 
 export default defineNuxtConfig({
@@ -176,7 +177,7 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       crawlLinks: true,
-      failOnError: false, // TODO: enable once pre-existing broken links are fixed (~21 foundry, ~121 astronera)
+      failOnError: isCI,
       autoSubfolderIndex: false,
     },
     compatibilityDate: {
@@ -229,7 +230,8 @@ export default defineNuxtConfig({
     },
   },
   linkChecker: {
-    failOnError: false, // TODO: enable once pre-existing broken links are fixed
+    failOnError: isCI,
+    excludeLinks: ['/pdfs/**'],
   },
   seo: {
     redirectToCanonicalSiteUrl: true,
