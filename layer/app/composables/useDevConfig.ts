@@ -35,9 +35,6 @@ export const useDevConfig = () => {
     local.clear()
     session.clear()
 
-    const after = getStorageSnapshot()
-    console.info('Storage cleared:', { before, after })
-
     const totalCleared
       = Object.keys(before.localStorage_items).length
         + Object.keys(before.sessionStorage_items).length

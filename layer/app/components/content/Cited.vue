@@ -35,7 +35,7 @@ if (isDev) {
   watchEffect(() => {
     validationResults.value.forEach((result) => {
       if (!result.valid && !result.loading) {
-        console.warn(`[Cited] ${result.message}`)
+        log.warn('cited', result.message || 'Invalid citation')
       }
     })
   })

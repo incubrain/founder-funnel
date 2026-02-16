@@ -16,18 +16,7 @@ const props = defineProps<{
   }>
 }>()
 
-const normalizedSteps = computed(() => {
-  const items = props.steps || []
-
-  if (items.length > 3) {
-    console.error(
-      `[Outcome Section] Maximum 3 process steps allowed. Found ${items.length}.\n` +
-        `Edit content/pages/index.md to reduce steps.`,
-    )
-  }
-
-  return items.slice(0, 3)
-})
+const normalizedSteps = computed(() => (props.steps || []).slice(0, 3))
 
 const normalizedFeatures = computed(() => props.features || [])
 </script>

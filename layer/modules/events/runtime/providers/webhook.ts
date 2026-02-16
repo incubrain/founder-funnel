@@ -21,7 +21,7 @@ export default defineNuxtPlugin({
         payload.response = response
       }
       catch (error) {
-        console.error('[Webhook Provider] Failed:', error)
+        log.error('webhook', `Provider failed: ${error instanceof Error ? error.message : String(error)}`)
         payload.error = error
         throw error
       }
