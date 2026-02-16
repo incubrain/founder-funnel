@@ -36,7 +36,8 @@ describe('useDevConfig', () => {
     // If it's disabled, it returns {}.
     if (snapshot.localStorage_items) {
       expect(snapshot.localStorage_items).toEqual({ test: 'val' })
-    } else {
+    }
+    else {
       expect(snapshot).toEqual({})
     }
   })

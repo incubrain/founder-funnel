@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineSlots<{
-  default: () => {}
+  default: () => void
 }>()
 </script>
 

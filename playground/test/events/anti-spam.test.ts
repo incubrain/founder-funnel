@@ -20,9 +20,9 @@ describe('isValidUUID', () => {
   })
 
   it('should handle edge cases', () => {
-    expect(isValidUUID(null as any)).toBe(false)
-    expect(isValidUUID(undefined as any)).toBe(false)
-    expect(isValidUUID(123 as any)).toBe(false)
+    expect(isValidUUID(null as unknown as string)).toBe(false)
+    expect(isValidUUID(undefined as unknown as string)).toBe(false)
+    expect(isValidUUID(123 as unknown as string)).toBe(false)
   })
 })
 
@@ -180,7 +180,7 @@ describe('RateLimiter', () => {
     expect(fastLimiter.check('192.168.1.1')).toBe(true) // Blocked
 
     // Wait for window to expire
-    await new Promise((resolve) => setTimeout(resolve, 700))
+    await new Promise(resolve => setTimeout(resolve, 700))
 
     expect(fastLimiter.check('192.168.1.1')).toBe(false) // Allowed again
   })

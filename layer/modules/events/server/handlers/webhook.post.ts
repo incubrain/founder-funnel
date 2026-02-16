@@ -78,7 +78,7 @@ export default defineEventHandler(async (event) => {
     throw createEvlogError({
       status: 400,
       message: 'Email capture validation failed',
-      why: parsed.error.errors.map(e => e.message).join(', '),
+      why: parsed.error.issues.map((e: { message: string }) => e.message).join(', '),
       fix: 'Check the submitted form data matches the expected schema',
     })
   }

@@ -37,8 +37,9 @@ const { playing, waiting, muted } = useMediaControls(videoRef, {
 if (props.loading === 'lazy') {
   useIntersectionObserver(
     containerRef,
-    ([{ isIntersecting }]) => {
-      if (isIntersecting && !shouldLoad.value) {
+    (entries) => {
+      const entry = entries[0]
+      if (entry?.isIntersecting && !shouldLoad.value) {
         shouldLoad.value = true
       }
     },

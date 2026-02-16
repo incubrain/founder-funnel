@@ -2,7 +2,7 @@ import type { SpamFlags } from '../../server/utils/anti-spam'
 
 export function formatTelegramMessage(
   data: {
-    formData?: Record<string, any>
+    formData?: Record<string, unknown>
     flags: SpamFlags
   },
   chatId?: string,

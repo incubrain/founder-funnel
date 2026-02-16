@@ -57,12 +57,22 @@ const scrollToTop = () => {
   <UPageBody>
     <UContainer>
       <!-- Loading state -->
-      <div v-if="pending" class="space-y-12">
-        <div v-for="i in 3" :key="i" class="space-y-4">
+      <div
+        v-if="pending"
+        class="space-y-12"
+      >
+        <div
+          v-for="i in 3"
+          :key="i"
+          class="space-y-4"
+        >
           <USkeleton class="h-8 w-1/3" />
           <USkeleton class="h-4 w-full" />
           <USkeleton class="h-4 w-5/6" />
-          <USkeleton v-if="showImage" class="h-64 w-full rounded-lg" />
+          <USkeleton
+            v-if="showImage"
+            class="h-64 w-full rounded-lg"
+          />
         </div>
       </div>
 
@@ -75,13 +85,16 @@ const scrollToTop = () => {
       />
 
       <!-- Changelog list -->
-      <UChangelogVersions v-else :indicator="false">
+      <UChangelogVersions
+        v-else
+        :indicator="false"
+      >
         <UChangelogVersion
           v-for="item in items"
           :key="String(item[labelField])"
           :title="item.title"
           :description="item.description"
-          :authors="getAuthorForItem(item) ? [getAuthorForItem(item)] : []"
+          :authors="(getAuthorForItem(item as unknown as Record<string, unknown>) ? [{ ...getAuthorForItem(item as unknown as Record<string, unknown>)!, avatar: getAuthorForItem(item as unknown as Record<string, unknown>)?.avatar ? { src: getAuthorForItem(item as unknown as Record<string, unknown>)!.avatar! } : undefined }] : []) as any"
           :image="showImage ? item.image : undefined"
           :date="String(item[sortField])"
           :to="item.path"
@@ -96,7 +109,10 @@ const scrollToTop = () => {
           <template #indicator>
             <div class="flex flex-col items-end gap-3 text-right">
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-calendar" class="size-3.5 text-muted" />
+                <UIcon
+                  name="i-lucide-calendar"
+                  class="size-3.5 text-muted"
+                />
                 <NuxtTime
                   class="text-xs text-muted font-medium tracking-wide"
                   locale="en-US"
@@ -107,7 +123,10 @@ const scrollToTop = () => {
                 />
               </div>
 
-              <UBadge v-if="item[labelField]" variant="subtle">
+              <UBadge
+                v-if="item[labelField]"
+                variant="subtle"
+              >
                 {{ item[labelField] }}
               </UBadge>
             </div>

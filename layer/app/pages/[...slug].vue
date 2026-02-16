@@ -7,7 +7,7 @@ const { context } = useContentPage()
   <div>
     <ContentRenderer
       v-if="context?.page"
-      :key="context.page.path"
+      :key="(context.page as any).path"
       :value="context.page"
     />
   </div>

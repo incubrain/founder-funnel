@@ -6,7 +6,7 @@ const headerData = inject<Ref<HeaderConfig>>('navigation_header')
 const showSearch = computed(() => headerData?.value?.showSearch ?? true)
 const showColorMode = computed(() => headerData?.value?.showColorMode ?? true)
 
-const socials = computed(() => headerData?.value?.socials ?? {})
+const socials = computed(() => (headerData?.value?.socials ?? {}) as Record<string, string>)
 const socialLinks = useSocialLinks(socials)
 </script>
 

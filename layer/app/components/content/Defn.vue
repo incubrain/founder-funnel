@@ -16,7 +16,7 @@ const glossaryHref = computed(() => {
 })
 
 defineSlots<{
-  default: () => {}
+  default: () => void
 }>()
 </script>
 

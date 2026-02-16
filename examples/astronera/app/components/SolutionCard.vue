@@ -11,7 +11,7 @@ interface Props {
   color?: 'success' | 'error'
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const _props = withDefaults(defineProps<Props>(), {
   color: 'success',
 })
 </script>

@@ -55,7 +55,7 @@ footer:
           to: /darksky/pilots
     - label: Resources
       icon: i-lucide-book-key
-      to: /resources
+      to: /resources/glossary
       children:
         - label: Sources
           icon: i-lucide-file-pen-line
@@ -71,7 +71,7 @@ header:
   navigation:
     - label: Dark Sky
       icon: i-lucide-moon
-      to: /darksky
+      to: /darksky/research
       children:
         - label: Research
           icon: i-lucide-flask-conical
@@ -84,7 +84,7 @@ header:
           to: /darksky/pilots
     - label: Resources
       icon: i-lucide-book-key
-      to: /resources
+      to: /resources/glossary
       children:
         - label: Sources
           icon: i-lucide-file-pen-line

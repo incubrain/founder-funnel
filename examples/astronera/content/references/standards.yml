@@ -59,7 +59,7 @@ sources:
       'International Dark Sky Preservation & Astrotourism Conference (IDSPAC
       2023)'
     author: 'AstronEra'
-    pdf: '/pdfs/idspac-2023.pdf'
+    url: '/doi/idspac-2023'
     affiliation: ngo
     credibilityScore: 7
     date: '2023'

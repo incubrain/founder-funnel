@@ -5,7 +5,7 @@ import { useCitations } from '@incubrain/foundry/app/composables/useCitations'
 
 // Mock queryCollection using mockNuxtImport
 mockNuxtImport('queryCollection', () => {
-  return (collection: string) => ({
+  return (_collection: string) => ({
     all: () =>
       Promise.resolve([
         {
@@ -65,7 +65,7 @@ describe('useCitations', () => {
     await until(() => allRefs.value.length > 0).toBe(true)
 
     expect(allRefs.value.length).toBe(2)
-    const ref1 = allRefs.value.find((r) => r.id === 'ref-1')
+    const ref1 = allRefs.value.find(r => r.id === 'ref-1')
     expect(ref1).toBeDefined()
     expect(ref1?.title).toBe('Test Reference 1')
     expect(ref1?.category.id).toBe('test-category')
@@ -89,10 +89,10 @@ describe('useCitations', () => {
 // Helper for waiting in tests
 function until(condition: () => boolean) {
   return {
-    toBe: async (val: any) => {
+    toBe: async (val: boolean) => {
       const start = Date.now()
       while (condition() !== val && Date.now() - start < 2000) {
-        await new Promise((r) => setTimeout(r, 10))
+        await new Promise(r => setTimeout(r, 10))
       }
       expect(condition()).toBe(val)
     },

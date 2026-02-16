@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const site = inject<any>('site_config', ref(null))
+const site = inject<Ref<Record<string, unknown> | null>>('site_config', ref(null))
 
-const socials = computed(() => site.value?.socials ?? {})
+const socials = computed(() => (site.value?.socials ?? {}) as Record<string, string>)
 const links = useSocialLinks(socials)
 </script>
 

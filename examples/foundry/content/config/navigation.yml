@@ -56,8 +56,4 @@ footer:
         - label: Mentorship
           icon: i-lucide-users
           to: /offers/mentorship
-  bottom:
-    - label: Privacy
-      to: /privacy
-    - label: Terms
-      to: /terms
+  bottom: []

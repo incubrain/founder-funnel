@@ -5,7 +5,7 @@ import { useGlossary } from '@incubrain/foundry/app/composables/useGlossary'
 
 // Mock queryCollection
 mockNuxtImport('queryCollection', () => {
-  return (collection: string) => ({
+  return (_collection: string) => ({
     all: () =>
       Promise.resolve([
         {
@@ -50,10 +50,10 @@ describe('useGlossary', () => {
 // Helper for waiting in tests
 function until(condition: () => boolean) {
   return {
-    toBe: async (val: any) => {
+    toBe: async (val: boolean) => {
       const start = Date.now()
       while (condition() !== val && Date.now() - start < 2000) {
-        await new Promise((r) => setTimeout(r, 10))
+        await new Promise(r => setTimeout(r, 10))
       }
       expect(condition()).toBe(val)
     },

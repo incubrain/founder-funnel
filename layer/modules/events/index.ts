@@ -72,7 +72,6 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     if (options.webhook.enabled) {
-      // @ts-ignore
       addServerHandler({
         route: '/api/v1/webhook',
         method: 'post',

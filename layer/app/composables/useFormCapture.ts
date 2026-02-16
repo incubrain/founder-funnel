@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { OfferId } from '#shared/types/events'
+import type { OfferId } from '~~/modules/events/runtime/types/events'
 
 export interface FieldDef {
   name: string
@@ -38,17 +38,17 @@ export function useFormCapture(options: FormCaptureOptions) {
     const shape: Record<string, z.ZodTypeAny> = {}
 
     fields.forEach((field) => {
-      let validator = z.string()
+      let validator: z.ZodTypeAny = z.string()
 
       if (field.type === 'email') {
-        validator = validator.email('Please enter a valid email address')
+        validator = (validator as z.ZodString).email('Please enter a valid email address')
       }
 
       if (!field.required) {
-        validator = validator.optional().or(z.literal(''))
+        validator = (validator as z.ZodString).optional().or(z.literal(''))
       }
       else {
-        validator = validator.min(1, `${field.label || field.name} is required`)
+        validator = (validator as z.ZodString).min(1, `${field.label || field.name} is required`)
       }
 
       shape[field.name] = validator

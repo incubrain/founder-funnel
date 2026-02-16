@@ -7,12 +7,14 @@ describe('useContentConfig', () => {
     it('resolves collection name correctly', () => {
       const { getCollectionName } = useContentConfig()
       expect(getCollectionName('docs')).toBe('docs')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(getCollectionName('articles' as any)).toBe('pages')
     })
 
     it('resolves collection prefix correctly', () => {
       const { getCollectionPrefix } = useContentConfig()
       expect(getCollectionPrefix('docs')).toBe('/docs')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(getCollectionPrefix('articles' as any)).toBe('/articles')
     })
 
@@ -27,6 +29,7 @@ describe('useContentConfig', () => {
     it('maps routes to collections based on prefix', () => {
       const { getCollectionForRoute } = useContentConfig()
       expect(getCollectionForRoute('/docs/introduction')).toBe('docs')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(getCollectionForRoute('/articles/my-post')).toBe('pages' as any)
       expect(getCollectionForRoute('/')).toBe('pages') // Default fallback
     })
@@ -34,6 +37,7 @@ describe('useContentConfig', () => {
     it('handles exact prefix matches', () => {
       const { getCollectionForRoute } = useContentConfig()
       expect(getCollectionForRoute('/docs')).toBe('docs')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(getCollectionForRoute('/articles')).toBe('pages' as any)
     })
   })
@@ -48,6 +52,7 @@ describe('useContentConfig', () => {
     it('does not double-prefix if already prefixed', () => {
       const { resolveInternalPath } = useContentConfig()
       expect(resolveInternalPath('/docs/intro', 'docs')).toBe('/docs/intro')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(resolveInternalPath('/articles/post', 'articles' as any)).toBe(
         '/articles/post',
       )

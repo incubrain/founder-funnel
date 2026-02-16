@@ -1,7 +1,11 @@
 import { createResolver } from '@nuxt/kit'
+import { defineNuxtConfig } from 'nuxt/config'
 import { ICON_LIBRARIES } from './shared/constants'
 
 const { resolve } = createResolver(import.meta.url)
+
+const isCI = process.env.CI === 'true'
+const ciPrerender = process.env.CI_PRERENDER === 'true'
 
 export default defineNuxtConfig({
   modules: [
@@ -28,6 +32,8 @@ export default defineNuxtConfig({
       debug: true,
     },
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore — module-contributed config not typed in $development override
     scripts: {
       registry: {
         umamiAnalytics: 'mock',
@@ -41,6 +47,15 @@ export default defineNuxtConfig({
       payloadExtraction: false,
     },
 
+    nitro: {
+      prerender: {
+        routes: ciPrerender ? ['/'] : [],
+        crawlLinks: ciPrerender,
+      },
+    },
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore — module-contributed config not typed in $production override
     evlog: {
       sampling: {
         rates: { info: 10, warn: 50, debug: 0 },
@@ -48,13 +63,6 @@ export default defineNuxtConfig({
           { status: 400 },
           { duration: 1000 },
         ],
-      },
-    },
-
-    nitro: {
-      prerender: {
-        routes: [],
-        crawlLinks: false,
       },
     },
 
@@ -152,8 +160,8 @@ export default defineNuxtConfig({
 
   alias: {
     '#constants': resolve('./shared/constants.ts'),
-    '#navigation': resolve('./shared/navigation.ts'),
-    '#search': resolve('./shared/search.ts'),
+    '#navigation': resolve('./app/composables/useNavigation.ts'),
+    '#search': resolve('./app/composables/useSearch.ts'),
     '#config-resolver': resolve('./shared/config-resolver.ts'),
   },
 
@@ -171,17 +179,12 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2026-01-20',
 
-  typescript: {
-    tsConfig: {
-      include: ['../test/**/*'],
-    },
-  },
-
   nitro: {
     prerender: {
       crawlLinks: true,
-      failOnError: false,
+      failOnError: isCI,
       autoSubfolderIndex: false,
+      ignore: ['/__og-image__', '/_ipx'],
     },
     compatibilityDate: {
       // Don't generate observability routes for now
@@ -189,23 +192,18 @@ export default defineNuxtConfig({
     },
   },
 
-  hooks: {
-    'components:extend': (components) => {
-      const globals = components.filter((c) =>
-        ['UButton', 'UIcon', 'ProseDfn'].includes(c.pascalName),
-      )
-      globals.forEach((c) => (c.global = true))
+  typescript: {
+    tsConfig: {
+      include: ['../test/**/*'],
     },
   },
 
-  // Structured logging (evlog) - one wide event per request
-  evlog: {
-    env: {
-      service: 'foundry',
-    },
-    include: ['/api/**', '/rss/**'],
-    transport: {
-      enabled: true,
+  hooks: {
+    'components:extend': (components: { pascalName: string, global?: boolean | 'sync' }[]) => {
+      const globals = components.filter((c: { pascalName: string }) =>
+        ['UButton', 'UIcon', 'ProseDfn'].includes(c.pascalName),
+      )
+      globals.forEach((c: { global?: boolean | 'sync' }) => (c.global = true))
     },
   },
 
@@ -219,12 +217,27 @@ export default defineNuxtConfig({
     debug: true,
   },
 
+  // Structured logging (evlog) - one wide event per request
+  evlog: {
+    env: {
+      service: 'foundry',
+    },
+    include: ['/api/**', '/rss/**'],
+    transport: {
+      enabled: true,
+    },
+  },
+
   icon: {
     serverBundle: {
       // {DX}: Using full @iconify/json no need to install collection packages
       // collections array enables tree-shake
       collections: [...ICON_LIBRARIES],
     },
+  },
+  linkChecker: {
+    failOnError: isCI,
+    excludeLinks: ['/pdfs/**'],
   },
   seo: {
     redirectToCanonicalSiteUrl: true,

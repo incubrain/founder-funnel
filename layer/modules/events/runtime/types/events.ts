@@ -1,5 +1,5 @@
 // Offer IDs from content
-export type OfferId = 'payment' | 'booking' | 'service' | 'social'
+export type OfferId = 'payment' | 'booking' | 'service' | 'social' | 'apply'
 export type OfferExternal = `${OfferId}_external`
 export type OfferInternal = `${OfferId}_internal`
 export type OfferTarget = OfferExternal | OfferInternal
@@ -28,8 +28,8 @@ export interface BaseEventPayload {
  * Fields added during event processing
  */
 export interface ProcessedEventFields {
-  response?: any
-  error?: any
+  response?: unknown
+  error?: unknown
   _devToolsTriggered?: boolean
 }
 
@@ -38,8 +38,8 @@ export interface FormSubmittedPayload
   type: 'form_submitted'
   target: string
   data: {
-    formData: Record<string, any>
-    antiSpam?: any
+    formData: Record<string, unknown>
+    antiSpam?: unknown
   }
 }
 
@@ -47,14 +47,14 @@ export interface FormErrorPayload
   extends BaseEventPayload, ProcessedEventFields {
   type: 'form_error'
   target: string
-  error: any
-  data?: Record<string, any>
+  error: unknown
+  data?: Record<string, unknown>
 }
 
 export interface GenericEventPayload
   extends BaseEventPayload, ProcessedEventFields {
   type: TrackedEvents
-  data?: Record<string, any>
+  data?: Record<string, unknown>
 }
 
 export type EventPayload
@@ -86,6 +86,7 @@ export interface EventsHooks {
   ) => void
 }
 
-declare module '#app' {
+declare module 'nuxt/app' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface RuntimeNuxtHooks extends EventsHooks {}
 }

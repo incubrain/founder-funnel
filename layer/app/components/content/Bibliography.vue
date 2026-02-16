@@ -9,8 +9,8 @@ const sortedRefs = computed(() => {
   }
 
   return citations.value
-    .map(id => allRefs.value.find((r: any) => r.id === id))
-    .filter(Boolean)
+    .map(id => allRefs.value.find(r => r.id === id))
+    .filter((ref): ref is NonNullable<typeof ref> => !!ref)
 })
 </script>
 

@@ -1,8 +1,10 @@
 <!-- components/DevEvents.vue -->
 <script setup lang="ts">
 import type { SelectMenuItem } from '@nuxt/ui'
-import type { EventInput, TrackedEvents } from '../types/events'
+import type { EventPayload, TrackedEvents } from '../types/events'
 import { EVENT_METADATA } from '../utils/locations'
+
+type EventInput = Partial<EventPayload>
 
 if (!import.meta.dev) {
   throw new Error('DevEvents should only be used in development')
@@ -12,14 +14,14 @@ type EventExecution = {
   id: string
   type: TrackedEvents
   timestamp: number
-  data?: Record<string, any>
-  error?: any
+  data?: Record<string, unknown>
+  error?: unknown
   status: 'pending' | 'success' | 'error'
 }
 
 const isOpen = ref(false)
 const { trackEvent } = useEvents()
-const route = useRoute()
+const _route = useRoute()
 const nuxtApp = useNuxtApp()
 
 const eventChainTracking = ref<EventExecution[]>([])
@@ -59,7 +61,8 @@ const groupedItems = computed<SelectMenuItem[][]>(() => {
   }
 
   Object.entries(EVENT_METADATA).forEach(([eventType, meta]) => {
-    byCategory[meta.category].push({
+    if (!meta) return
+    byCategory[meta.category]?.push({
       label: meta.label,
       value: eventType as TrackedEvents,
       icon: meta.icon,
@@ -207,8 +210,8 @@ defineExpose({
             >
               <template #leading="{ modelValue }">
                 <UIcon
-                  v-if="modelValue"
-                  :name="modelValue.icon"
+                  v-if="modelValue && typeof modelValue === 'object' && 'icon' in modelValue"
+                  :name="(modelValue as Record<string, unknown>).icon as string"
                   class="size-5"
                 />
                 <UIcon
@@ -220,20 +223,20 @@ defineExpose({
 
               <template #item-leading="{ item }">
                 <UIcon
-                  v-if="item.icon"
-                  :name="item.icon"
+                  v-if="item && typeof item === 'object' && 'icon' in item"
+                  :name="(item as Record<string, unknown>).icon as string"
                   class="size-5"
                 />
               </template>
 
               <template #item-label="{ item }">
                 <div class="flex flex-col gap-0.5">
-                  <span class="font-medium">{{ item.label }}</span>
+                  <span class="font-medium">{{ item && typeof item === 'object' ? (item as Record<string, unknown>).label : item }}</span>
                   <span
-                    v-if="item.description"
+                    v-if="item && typeof item === 'object' && 'description' in item && (item as Record<string, unknown>).description"
                     class="text-xs text-muted"
                   >
-                    {{ item.description }}
+                    {{ (item as Record<string, unknown>).description }}
                   </span>
                 </div>
               </template>
@@ -329,7 +332,7 @@ defineExpose({
                       <div
                         class="font-mono bg-error/10 p-2 rounded text-[10px] break-all"
                       >
-                        {{ event.error.message || String(event.error) }}
+                        {{ (event.error as Error)?.message || String(event.error) }}
                       </div>
                     </div>
 

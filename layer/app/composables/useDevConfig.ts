@@ -23,7 +23,7 @@ export const useDevConfig = () => {
 
       return { localStorage_items, sessionStorage_items }
     }
-    catch (e) {
+    catch {
       return { localStorage_items: {}, sessionStorage_items: {} }
     }
   }

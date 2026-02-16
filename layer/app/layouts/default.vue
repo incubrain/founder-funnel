@@ -18,12 +18,12 @@ if (!page.value) {
 // Publish context for components
 watchEffect(() => {
   if (!page.value || page.value.path !== route.path) return
-  setContext(page.value)
+  setContext(page.value as unknown as Record<string, unknown>)
 })
 
 // RSS feed link
 watchEffect(() => {
-  if (page.value?.hasRss) {
+  if (page.value && (page.value as unknown as Record<string, unknown>).hasRss) {
     useHead({
       link: [
         {
@@ -42,7 +42,7 @@ watchEffect(() => {
   <UMain>
     <UPage class="pb-12 lg:pb-16">
       <UPageHero
-        v-if="page?.hero && (page?.title || page?.description)"
+        v-if="(page as any)?.hero && (page?.title || page?.description)"
         :title="page?.title"
         :description="page?.description"
       />

@@ -37,7 +37,7 @@ WORKFLOW: This tool returns the complete page content including title, descripti
         'docs' as keyof Collections,
       )
         .where('path', '=', path)
-        .select('title', 'path', 'description')
+        .select('title' as 'id', 'path' as 'id', 'description' as 'id')
         .first()
 
       if (!page) {
@@ -45,16 +45,18 @@ WORKFLOW: This tool returns the complete page content including title, descripti
         return errorResult('Page not found')
       }
 
+      const pageData = page as unknown as Record<string, string>
+
       const content = await $fetch<string>(`/raw${path}.md`, {
         baseURL: siteUrl,
       })
 
       return jsonResult({
-        title: page.title,
-        path: page.path,
-        description: page.description,
+        title: pageData.title,
+        path: pageData.path,
+        description: pageData.description,
         content,
-        url: `${siteUrl}${page.path}`,
+        url: `${siteUrl}${pageData.path}`,
       })
     }
     catch (error: unknown) {

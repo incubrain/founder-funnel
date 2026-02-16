@@ -6,7 +6,7 @@ interface Props {
   avatar?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   avatar: undefined,
 })
 </script>

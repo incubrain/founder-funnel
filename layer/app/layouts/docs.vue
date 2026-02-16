@@ -49,7 +49,7 @@ const { data: surround } = await useAsyncData(
 // Publish context for components
 watchEffect(() => {
   if (!page.value || page.value.path !== route.path) return
-  setContext(page.value, {
+  setContext(page.value as unknown as Record<string, unknown>, {
     navigation: docsNavigation.value,
     surround: surround.value,
     meta: { editPath: route.path },
@@ -127,7 +127,7 @@ watch(
         >
           <template #links>
             <UButton
-              v-for="(link, index) in page.links"
+              v-for="(link, index) in (page as any).links"
               :key="index"
               size="sm"
               v-bind="link"

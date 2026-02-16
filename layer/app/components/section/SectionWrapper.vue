@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
 import type { PageSectionProps, PageSectionSlots } from '@nuxt/ui'
 
-const props = defineProps<PageSectionProps>()
+defineProps<PageSectionProps>()
 const sectionRef = ref<HTMLElement | null>(null)
 
 const { trackEvent } = useEvents()

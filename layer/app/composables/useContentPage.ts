@@ -5,13 +5,13 @@ export interface ContentPageContext {
   collection: string
 
   /** The actual page document (Nuxt Content item) */
-  page: any | null
+  page: unknown | null
 
   /** Optional navigation tree (docs sidebar, etc.) */
-  navigation?: any
+  navigation?: unknown
 
   /** Optional prev/next surround data */
-  surround?: any
+  surround?: unknown
 
   /** Optional SEO overrides */
   seo?: {
@@ -20,7 +20,7 @@ export interface ContentPageContext {
   }
 
   /** Arbitrary extra metadata (edit links, flags, etc.) */
-  meta?: Record<string, any>
+  meta?: Record<string, unknown>
 }
 
 /**
@@ -84,7 +84,7 @@ export const useContentPage = () => {
    * Automatically extracts SEO fields from page.
    */
   const setContext = (
-    page: any,
+    page: Record<string, unknown> | null,
     extras?: Partial<Omit<ContentPageContext, 'collection' | 'page' | 'seo'>>,
   ) => {
     if (!page) {
@@ -92,12 +92,13 @@ export const useContentPage = () => {
       return
     }
 
+    const seo = page.seo as Record<string, string> | undefined
     context.value = {
       collection: collection.value,
       page,
       seo: {
-        title: page.seo?.title || page.title,
-        description: page.seo?.description || page.description,
+        title: seo?.title || (page.title as string),
+        description: seo?.description || (page.description as string),
       },
       ...extras,
     }

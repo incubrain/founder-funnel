@@ -12,9 +12,10 @@ const mapNavigation = (
 ): ContentNavigationItem[] => {
   return items?.map(item => ({
     ...item,
-    title: (item as any).label ?? (item as any).title,
+    title: (item as Record<string, unknown>).label as string ?? item.title,
     children: item.children?.length ? mapNavigation(item.children) : undefined,
-  }))
+    path: item.path ?? '',
+  })) as ContentNavigationItem[]
 }
 
 const nav = computed(() => (navigation.value?.length ? mapNavigation(navigation.value[0]?.children || []) : []))

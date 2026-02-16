@@ -34,7 +34,7 @@ Shaping light pollution policy landscape through research-led strategy, systems 
   What is Light Pollution?
 
   #description
-  Light pollution, caused by excessive or misdirected Artificial Light at Night (ALAN) that spills upward or outward beyond what is needed for safety and functional use, disturbs the balance of the natural night environment. Left unchecked, it affects [human health](internal\:research/health), [biodiversity](internal\:research/ecology), [energy systems](internal\:research/climate), and [climate](internal\:research/climate). It manifests in six distinct forms:
+  Light pollution, caused by excessive or misdirected Artificial Light at Night (ALAN) that spills upward or outward beyond what is needed for safety and functional use, disturbs the balance of the natural night environment. Left unchecked, it affects [human health](/darksky/research/health), [biodiversity](/darksky/research/ecology), [energy systems](/darksky/research/climate), and [climate](/darksky/research/climate). It manifests in six distinct forms:
 
   #bottom
     ::::carousel
@@ -219,7 +219,7 @@ title: A Governable Problem
     title: Proven Regulatory Tools
     ---
     #subtitle
-    [Global precedent includes](internal\:policy/global-precedents):
+    [Global precedent includes](/darksky/policy/global-precedents):
 
     #footer
       :::::u-alert

@@ -33,6 +33,6 @@ export default defineNuxtModule({
       },
     })
 
-    nuxt.options.css.unshift(cssTemplate.dst)
+    ;(nuxt.options.css as string[]).unshift(cssTemplate.dst)
   },
 })

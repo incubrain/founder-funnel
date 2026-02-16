@@ -44,19 +44,28 @@ defineProps<Props>()
         <h3 class="text-xl font-bold text-foreground">
           {{ member.givenName }} {{ member.surname }}
         </h3>
-        <p v-if="member.role" class="text-sm text-muted mt-1">
+        <p
+          v-if="member.role"
+          class="text-sm text-muted mt-1"
+        >
           {{ member.role }}
         </p>
       </div>
     </div>
 
     <!-- Bio -->
-    <p v-if="member.bio" class="text-sm text-muted-foreground leading-relaxed">
+    <p
+      v-if="member.bio"
+      class="text-sm text-muted-foreground leading-relaxed"
+    >
       {{ member.bio }}
     </p>
 
     <template #footer>
-      <div v-if="member.links?.length" class="flex justify-center gap-2">
+      <div
+        v-if="member.links?.length"
+        class="flex justify-center gap-2"
+      >
         <UButton
           v-for="link in member.links"
           :key="link.url"

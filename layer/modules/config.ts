@@ -23,9 +23,12 @@ export default defineNuxtModule({
     catch {
       // Ignore if package.json not found
     }
-    const siteName = nuxt.options?.site?.name || meta.name || ''
 
-    nuxt.options.llms = defu(nuxt.options.llms, {
+    const opts = nuxt.options as unknown as Record<string, unknown>
+    const siteOpts = (opts.site ?? {}) as Record<string, unknown>
+    const siteName = (siteOpts.name as string) || meta.name || ''
+
+    opts.llms = defu(opts.llms as Record<string, unknown>, {
       domain: url,
       title: siteName,
       description: meta.description || '',

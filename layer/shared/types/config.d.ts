@@ -34,6 +34,7 @@ declare module 'nuxt/schema' {
         navigation: CollectionConfig
         searchable: string[]
       }
+      defaultAuthor?: string
       routing: {
         sources: string
         offers: string
@@ -75,6 +76,50 @@ declare module 'nuxt/schema' {
         rootDir?: string
       }
       | false
+  }
+
+  interface AppConfigInput {
+    content?: {
+      collections?: Record<string, unknown> & {
+        site?: {
+          foundingYear?: number
+          legalName?: string
+          socials?: Record<string, string>
+        }
+        searchable?: string[]
+      }
+      defaultAuthor?: string
+      routing?: Record<string, string>
+    }
+    ui?: {
+      docs?: {
+        affiliation?: {
+          colors?: Record<string, string>
+        }
+      }
+      [key: string]: unknown
+    }
+    foundry?: {
+      version?: string
+      url?: string
+    }
+    title?: string
+    seo?: {
+      titleTemplate?: string
+      title?: string
+      description?: string
+    }
+    header?: {
+      title?: string
+    }
+    github?: {
+      url?: string
+      branch?: string
+      rootDir?: string
+    }
+    toc?: {
+      title?: string
+    }
   }
 }
 

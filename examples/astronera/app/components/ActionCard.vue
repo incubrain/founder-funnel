@@ -12,8 +12,8 @@ defineProps<{
 }>()
 
 defineSlots<{
-  title(props?: {}): any
-  default(props?: {}): any
+  title(props?: Record<string, unknown>): unknown
+  default(props?: Record<string, unknown>): unknown
 }>()
 </script>
 
