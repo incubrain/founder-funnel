@@ -4,6 +4,10 @@
   "version": "0.5.1",
   "type": "module",
   "main": "./nuxt.config.ts",
+  "exports": {
+    ".": "./nuxt.config.ts",
+    "./content.collections": "./content.collections.ts"
+  },
   "license": "MIT",
   "author": "IncuBrain",
   "repository": {
