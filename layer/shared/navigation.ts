@@ -57,7 +57,9 @@ export const useNavigation = async () => {
   const { data: config } = await useAsyncData('navigation_config', async () => {
     try {
       return (await queryCollection('navigation').first()) as NavigationConfig
-    } catch {
+    }
+    catch (error) {
+      log.warn('navigation', `Failed to load config: ${error instanceof Error ? error.message : String(error)}`)
       return {}
     }
   })

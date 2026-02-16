@@ -1,21 +1,14 @@
 <script setup lang="ts">
 import type { ChangelogCollectionItem } from '@nuxt/content'
 
-const { collections } = useContentConfig()
-
 interface Props {
-  // Query parameters
-  labelField?: keyof ChangelogCollectionItem // Field to filter by (default: 'label')
-  sortField?: keyof ChangelogCollectionItem // Field to sort by (default: 'date')
-  sortOrder?: 'ASC' | 'DESC' // Sort order (default: 'DESC')
-
-  // Display customization
-  showAuthor?: boolean // Show author attribution
-  showImage?: boolean // Show featured images
-  showScrollTop?: boolean // Show scroll-to-top button
-  scrollTopThreshold?: number // Scroll threshold for button (default: 500)
-
-  // Empty state
+  labelField?: keyof ChangelogCollectionItem
+  sortField?: keyof ChangelogCollectionItem
+  sortOrder?: 'ASC' | 'DESC'
+  showAuthor?: boolean
+  showImage?: boolean
+  showScrollTop?: boolean
+  scrollTopThreshold?: number
   emptyTitle?: string
   emptyDescription?: string
   emptyIcon?: string
@@ -34,88 +27,21 @@ const props = withDefaults(defineProps<Props>(), {
   emptyIcon: 'i-lucide-inbox',
 })
 
-const appConfig = useAppConfig()
-
-// Get default author slug from config
-const defaultAuthorSlug = computed(
-  () => appConfig.content?.defaultAuthor as string | undefined,
-)
-
-// Query all team members (only if showAuthor is enabled)
-const { data: teamMembers } = props.showAuthor
-  ? await useAsyncData('team-members', () =>
-      queryCollection(collections.team).all(),
-    )
-  : { data: ref([]) }
-
-// Create a map of team members by slug for easy lookup
-const teamMemberMap = computed(() => {
-  const map = new Map()
-  teamMembers.value?.forEach((member: any) => {
-    map.set(member.slug, member)
-  })
-  return map
+const { items, pending, getAuthorForItem } = useChangelog({
+  labelField: props.labelField,
+  sortField: props.sortField,
+  sortOrder: props.sortOrder,
+  showAuthor: props.showAuthor,
+  showImage: props.showImage,
 })
 
-// Helper function to get author data for a changelog item
-const getAuthorForItem = (item: any) => {
-  const authorSlug = item.author || defaultAuthorSlug.value
-  if (!authorSlug) return null
-
-  const member = teamMemberMap.value.get(authorSlug)
-  if (!member) return null
-
-  return {
-    name: `${member.givenName} ${member.surname}`,
-    avatar: member.avatar,
-    to: member.links?.find((link: any) => link.label === 'GitHub')?.url,
-    target: '_blank',
-  }
-}
-
-// Query items
-const { data: items, pending } = useAsyncData(
-  () => `changelog-${collections.changelog}`,
-  () => {
-    let query = queryCollection(collections.changelog as any).select(
-      'path',
-      props.labelField,
-      props.sortField,
-      'title',
-      'description',
-    )
-
-    // Add image to select if needed
-    if (props.showImage) {
-      query = query.select(
-        'path',
-        props.labelField,
-        props.sortField,
-        'title',
-        'description',
-        'image',
-      )
-    }
-
-    // Filter by label field if it exists
-    if (props.labelField) {
-      query = query.where(props.labelField, 'IS NOT NULL')
-    }
-
-    // Sort
-    query = query.order(props.sortField, props.sortOrder)
-
-    return query.all()
-  },
-)
-
-// Scroll-to-top functionality
-const showScrollTop = ref(false)
+// Scroll-to-top
+const showScrollButton = ref(false)
 
 onMounted(() => {
   if (props.showScrollTop) {
     const handleScroll = () => {
-      showScrollTop.value = window?.scrollY > props.scrollTopThreshold
+      showScrollButton.value = window?.scrollY > props.scrollTopThreshold
     }
     window?.addEventListener('scroll', handleScroll)
     onUnmounted(() => window?.removeEventListener('scroll', handleScroll))
@@ -169,7 +95,6 @@ const scrollToTop = () => {
         >
           <template #indicator>
             <div class="flex flex-col items-end gap-3 text-right">
-              <!-- Date -->
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-calendar" class="size-3.5 text-muted" />
                 <NuxtTime
@@ -182,7 +107,6 @@ const scrollToTop = () => {
                 />
               </div>
 
-              <!-- Badge (label) -->
               <UBadge v-if="item[labelField]" variant="subtle">
                 {{ item[labelField] }}
               </UBadge>
@@ -194,7 +118,7 @@ const scrollToTop = () => {
 
     <!-- Scroll to top button -->
     <UButton
-      v-if="showScrollTop && showScrollTop"
+      v-if="showScrollTop && showScrollButton"
       icon="i-lucide-arrow-up"
       size="xl"
       variant="outline"

@@ -47,6 +47,7 @@
     "@vueuse/nuxt": "^14.1.0",
     "canvas-confetti": "^1.9.4",
     "defu": "^6.1.4",
+    "evlog": "^1.9.0",
     "exsolve": "^1.0.8",
     "fuse.js": "^7.1.0",
     "katex": "^0.16.27",

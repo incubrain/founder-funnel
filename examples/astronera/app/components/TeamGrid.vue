@@ -2,8 +2,6 @@
 const { data: team } = useAsyncData('team-grid', () =>
   queryCollection('team').all(),
 )
-
-console.log('TeamGrid', team.value)
 </script>
 
 <template>

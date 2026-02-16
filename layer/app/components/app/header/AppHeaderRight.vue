@@ -6,16 +6,8 @@ const headerData = inject<Ref<HeaderConfig>>('navigation_header')
 const showSearch = computed(() => headerData?.value?.showSearch ?? true)
 const showColorMode = computed(() => headerData?.value?.showColorMode ?? true)
 
-const socialLinks = computed(() => {
-  if (!headerData?.value?.socials) return []
-
-  return Object.entries(headerData.value.socials).map(([key, url]) => ({
-    'icon': key === 'email' ? 'i-lucide-mail' : `i-simple-icons-${key}`,
-    'to': url,
-    'target': '_blank',
-    'aria-label': key,
-  }))
-})
+const socials = computed(() => headerData?.value?.socials ?? {})
+const socialLinks = useSocialLinks(socials)
 </script>
 
 <template>

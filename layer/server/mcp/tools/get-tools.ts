@@ -26,7 +26,10 @@ WORKFLOW: This tool returns the complete page content including title, descripti
   cache: '1h',
   handler: async ({ path }) => {
     const event = useEvent()
+    const log = useLogger(event)
     const siteUrl = import.meta.dev ? 'http://localhost:3000' : inferSiteURL()
+
+    log.set({ mcp: { tool: 'get-page', path } })
 
     try {
       const page = await queryCollection(
@@ -38,6 +41,7 @@ WORKFLOW: This tool returns the complete page content including title, descripti
         .first()
 
       if (!page) {
+        log.set({ mcp: { tool: 'get-page', path, result: 'not-found' } })
         return errorResult('Page not found')
       }
 
@@ -53,7 +57,11 @@ WORKFLOW: This tool returns the complete page content including title, descripti
         url: `${siteUrl}${page.path}`,
       })
     }
-    catch {
+    catch (error: unknown) {
+      log.error(error instanceof Error ? error : new Error(String(error)), {
+        step: 'mcp-get-page',
+        path,
+      })
       return errorResult('Failed to get page')
     }
   },

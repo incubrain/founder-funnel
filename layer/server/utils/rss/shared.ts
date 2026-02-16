@@ -78,18 +78,26 @@ export function buildRSSFeed(channel: RSSChannel, siteUrl: string): string {
 }
 
 export async function getAuthorName(event: H3Event): Promise<string> {
-  const founder = await queryCollection(event, 'team')
-    .where('isFounder', '=', true)
-    .first()
+  const log = useLogger(event)
 
-  if (founder?.givenName) {
-    return `${founder.givenName} ${founder.surname}`
+  try {
+    const founder = await queryCollection(event, 'team')
+      .where('isFounder', '=', true)
+      .first()
+
+    if (founder?.givenName) {
+      return `${founder.givenName} ${founder.surname}`
+    }
+  }
+  catch (error: unknown) {
+    log.error(error instanceof Error ? error : new Error(String(error)), {
+      step: 'rss-author-lookup',
+    })
   }
 
   const siteConfig = await queryCollection(event, 'config')
     .where('stem', '=', 'config/site')
     .first()
-  // Fallback to business name or generic
   return siteConfig?.business?.name || 'Team'
 }
 
