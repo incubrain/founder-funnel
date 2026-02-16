@@ -37,6 +37,12 @@ export default defineNuxtConfig({
     // },
   },
 
+  nitro: {
+    prerender: {
+      ignore: [/^\/decisions\/.+/],
+    },
+  },
+
   linkChecker: {
     excludeLinks: ['/decisions/**'],
   },

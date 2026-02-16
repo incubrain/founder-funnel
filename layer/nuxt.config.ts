@@ -179,6 +179,7 @@ export default defineNuxtConfig({
       crawlLinks: true,
       failOnError: isCI,
       autoSubfolderIndex: false,
+      ignore: ['/__og-image__', '/_ipx'],
     },
     compatibilityDate: {
       // Don't generate observability routes for now
