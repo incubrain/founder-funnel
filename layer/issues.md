@@ -20,7 +20,9 @@
 
 - [ ] flickering of layout in between layout navigation, use transitions, but this is likely a bandaid to a larger issue with how we are using layouts and a catchall page
 - [ ] editing inline components with a span passed inside [here] is not possible inside of nuxt studio as far as I can tell
-- [ ] internal linking is using double slash as prefix in some instances, for example `Internal link to: //research/ecology`
+- [x] internal linking is using double slash as prefix in some instances, for example `Internal link to: //research/ecology`
+  - [ ] internal linking is sometimes not showing the popover as expected or link formatting; I think this is when we are using internal links like this: [climate](/darksky/research/climate) instead of adding "internal:" prefix - we should check for non http(s): links and assume internal I think... we could probably support both or even just drop the "internal:" prefix if that is not needed...
+- [ ] citations error message is cutoff in popover/tooltip and should be copyable AND added to evlog as an error so our AI agents can see what is happening... 
 
 # General
 
