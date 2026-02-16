@@ -204,6 +204,9 @@ export default defineNuxtConfig({
       service: 'foundry',
     },
     include: ['/api/**', '/rss/**'],
+    transport: {
+      enabled: true,
+    },
   },
 
   // Events module for conversion tracking

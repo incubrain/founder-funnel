@@ -58,6 +58,34 @@ Max nesting: 3 levels
 - Use `import.meta.client` guards
 - See: `layers/core/app/composables/useAppStorage.ts`
 
+## Structured Logging (evlog)
+
+**Wide Events:**
+- One log per request with all accumulated context
+- `useLogger(event)` in server handlers → `log.set()` to accumulate → auto-emitted
+- `createEvlogError()` with `why`/`fix` fields for AI-readable errors
+- See: `layer/modules/events/server/handlers/webhook.post.ts`
+
+**Layer Plugins (automatic):**
+- `evlog-enrich.ts` — Adds user agent + geo context to every request
+- `evlog-sampling.ts` — Always keeps signal capture events (leads, webhook deliveries)
+
+**App-Level Drain (your responsibility):**
+- Create `server/plugins/evlog-drain.ts` in your app to send logs externally
+- Supports: Sentry, Axiom, PostHog, Better Stack, OTLP, or custom
+- Use `createDrainPipeline()` for batching + retry in production
+- See: `examples/astronera/server/plugins/evlog-drain.ts`
+
+**Browser Transport:**
+- Client-side `log.info()`/`log.error()` auto-sent to server via `/api/_evlog/ingest`
+- Enabled by default in layer config
+- Flows through same drain pipeline as server logs
+
+**Key env vars:**
+- `NUXT_SENTRY_DSN` — Sentry log drain
+- `NUXT_AXIOM_TOKEN` + `NUXT_AXIOM_DATASET` — Axiom drain
+- `NUXT_POSTHOG_API_KEY` — PostHog drain
+
 ## Integration Points
 
 **Analytics:**
