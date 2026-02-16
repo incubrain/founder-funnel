@@ -26,7 +26,7 @@ export function useChangelog(options: ChangelogOptions) {
   const appConfig = useAppConfig()
 
   const defaultAuthorSlug = computed(
-    () => (appConfig.content as Record<string, unknown> | undefined)?.defaultAuthor as string | undefined,
+    () => appConfig.content?.defaultAuthor,
   )
 
   // Query all team members (only if showAuthor is enabled)
