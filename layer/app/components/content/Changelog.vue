@@ -94,7 +94,7 @@ const scrollToTop = () => {
           :key="String(item[labelField])"
           :title="item.title"
           :description="item.description"
-          :authors="(getAuthorForItem(item as unknown as Record<string, unknown>) ? [getAuthorForItem(item as unknown as Record<string, unknown>)!] : []) as { name: string; avatar?: string; to?: string; target: string }[]"
+          :authors="(getAuthorForItem(item as unknown as Record<string, unknown>) ? [{ ...getAuthorForItem(item as unknown as Record<string, unknown>)!, avatar: getAuthorForItem(item as unknown as Record<string, unknown>)?.avatar ? { src: getAuthorForItem(item as unknown as Record<string, unknown>)!.avatar! } : undefined }] : []) as any"
           :image="showImage ? item.image : undefined"
           :date="String(item[sortField])"
           :to="item.path"

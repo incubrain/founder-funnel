@@ -32,6 +32,8 @@ export default defineNuxtConfig({
       debug: true,
     },
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore — module-contributed config not typed in $development override
     scripts: {
       registry: {
         umamiAnalytics: 'mock',
@@ -52,6 +54,8 @@ export default defineNuxtConfig({
       },
     },
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore — module-contributed config not typed in $production override
     evlog: {
       sampling: {
         rates: { info: 10, warn: 50, debug: 0 },

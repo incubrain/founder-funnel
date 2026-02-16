@@ -80,7 +80,7 @@ export function useSourcesTable() {
 
     return allCategoryRefs.value.flatMap((categoryGroup) => {
       const cat = categoryGroup as unknown as { sources: Record<string, unknown>[], category: { id: string, label: string } }
-      return cat.sources.map((source) => ({
+      return cat.sources.map(source => ({
         ...source,
         categoryId: cat.category.id,
         categoryLabel: cat.category.label,
@@ -90,7 +90,7 @@ export function useSourcesTable() {
 
   // Grouping state
   const grouping = ref(['categoryLabel'])
-  const expanded = ref<boolean | Record<string, boolean>>(true)
+  const expanded = ref<true | Record<string, boolean>>(true)
 
   // Affiliation color mapping
   const affiliationColor = computed<Record<string, BadgeProps['color']>>(() => ({
@@ -100,7 +100,7 @@ export function useSourcesTable() {
     ngo: 'warning',
     educational: 'info',
     industry: 'error',
-    ...(appConfig.ui?.docs as { affiliation?: { colors?: Record<string, string> } } | undefined)?.affiliation?.colors,
+    ...((appConfig.ui as Record<string, unknown> | undefined)?.docs as { affiliation?: { colors?: Record<string, string> } } | undefined)?.affiliation?.colors,
   }))
 
   return {

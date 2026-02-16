@@ -24,7 +24,7 @@ export default defineNuxtModule({
       // Ignore if package.json not found
     }
 
-    const opts = nuxt.options as Record<string, unknown>
+    const opts = nuxt.options as unknown as Record<string, unknown>
     const siteOpts = (opts.site ?? {}) as Record<string, unknown>
     const siteName = (siteOpts.name as string) || meta.name || ''
 

@@ -32,7 +32,7 @@ export async function generateDecisionsFeed(event: H3Event): Promise<string> {
     .all()
 
   // Transform to RSS items
-  const items: RSSItem[] = (changelogs as unknown as Record<string, string>[]).map((d) => ({
+  const items: RSSItem[] = (changelogs as unknown as Record<string, string>[]).map(d => ({
     title: d.title || '',
     link: `${siteConfig.url}${d.path}`,
     guid: `${siteConfig.url}${d.path}`,

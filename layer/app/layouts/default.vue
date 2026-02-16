@@ -23,7 +23,7 @@ watchEffect(() => {
 
 // RSS feed link
 watchEffect(() => {
-  if ((page.value as Record<string, unknown> | null)?.hasRss) {
+  if (page.value && (page.value as unknown as Record<string, unknown>).hasRss) {
     useHead({
       link: [
         {

@@ -1,5 +1,5 @@
 // Offer IDs from content
-export type OfferId = 'payment' | 'booking' | 'service' | 'social'
+export type OfferId = 'payment' | 'booking' | 'service' | 'social' | 'apply'
 export type OfferExternal = `${OfferId}_external`
 export type OfferInternal = `${OfferId}_internal`
 export type OfferTarget = OfferExternal | OfferInternal
