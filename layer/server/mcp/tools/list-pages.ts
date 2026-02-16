@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { queryCollection } from '@nuxt/content/server'
 import type { Collections } from '@nuxt/content'
-import { useLogger } from 'evlog'
 
 export default defineMcpTool({
   description: `Lists all available documentation pages with their categories and basic information.

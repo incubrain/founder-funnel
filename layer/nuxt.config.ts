@@ -203,7 +203,7 @@ export default defineNuxtConfig({
     env: {
       service: 'foundry',
     },
-    include: ['/api/**'],
+    include: ['/api/**', '/rss/**'],
   },
 
   // Events module for conversion tracking

@@ -1,4 +1,3 @@
-import { createError as createEvlogError } from 'evlog'
 import type { SpamFlags } from '../../server/utils/anti-spam'
 
 export function formatTelegramMessage(

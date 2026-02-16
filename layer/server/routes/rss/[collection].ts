@@ -1,5 +1,3 @@
-import { useLogger, createError as createEvlogError } from 'evlog'
-
 export default defineEventHandler(async (event) => {
   const log = useLogger(event)
   const collection = getRouterParam(event, 'collection')

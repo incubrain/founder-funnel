@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { useLogger, createError as createEvlogError } from 'evlog'
 import { formatDiscordMessage } from '../formatters/discord'
 import { formatSlackMessage } from '../formatters/slack'
 import { formatTelegramMessage } from '../formatters/telegram'

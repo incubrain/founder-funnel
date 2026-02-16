@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { queryCollection } from '@nuxt/content/server'
 import type { Collections } from '@nuxt/content'
-import { useLogger } from 'evlog'
 import { inferSiteURL } from '../../../shared/utils/meta'
 
 export default defineMcpTool({

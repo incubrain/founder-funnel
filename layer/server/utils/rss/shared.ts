@@ -1,5 +1,4 @@
 import type { H3Event } from 'h3'
-import { useLogger } from 'evlog'
 
 export interface RSSItem {
   title: string

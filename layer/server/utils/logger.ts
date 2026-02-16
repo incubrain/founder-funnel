@@ -13,5 +13,5 @@ export function createServerLogger(tag: string) {
 // Pre-configured loggers for common server operations
 export const logger = createServerLogger('api')
 
-// Re-export evlog utilities for convenient access in server handlers
-export { useLogger, createError as createEvlogError, parseError } from 'evlog'
+// Note: useLogger, createEvlogError, and parseError are auto-imported
+// by the evlog/nuxt module — no re-export needed here.
