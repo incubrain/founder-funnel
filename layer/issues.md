@@ -1,4 +1,5 @@
 # Fixed or Pending Review
+- [x] replace all `NUXT_SITE_URL` usage with `NUXT_PUBLIC_SITE_URL`
 - [x] fix prettier issue, not working in some page
 - [x] HMR not working locally, probably because we are using layers and pnpm workspace
 - [x] tailwindcss HMR and intellisense not working
@@ -33,4 +34,3 @@
 - [ ] do we need the video components anymore since nuxt/ui has video support and it works with <iframe>
   - https://ui.nuxt.com/docs/typography/images-and-embeds#iframes & https://github.com/nuxt-content/nuxt-studio/releases/tag/v1.2.0 & https://docus.dev/en/essentials/images-embeds#videos
   - it is possible we could keep it and overrite the `<video>` tag with our own custom prose component
-- [ ] replace all `NUXT_SITE_URL` usage with `NUXT_PUBLIC_SITE_URL`

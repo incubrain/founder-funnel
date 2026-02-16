@@ -7,20 +7,20 @@ describe('inferSiteURL', () => {
     vi.unstubAllEnvs()
   })
 
-  it('prefers NUXT_SITE_URL', () => {
-    vi.stubEnv('NUXT_SITE_URL', 'https://example.com')
+  it('prefers NUXT_PUBLIC_SITE_URL', () => {
+    vi.stubEnv('NUXT_PUBLIC_SITE_URL', 'https://example.com')
     expect(inferSiteURL()).toBe('https://example.com')
   })
 
   it('falls back to Vercel URL', () => {
-    // Explicitly clear NUXT_SITE_URL to test fallback
-    vi.stubEnv('NUXT_SITE_URL', '')
+    // Explicitly clear NUXT_PUBLIC_SITE_URL to test fallback
+    vi.stubEnv('NUXT_PUBLIC_SITE_URL', '')
     vi.stubEnv('NEXT_PUBLIC_VERCEL_URL', 'example.vercel.app')
     expect(inferSiteURL()).toBe('https://example.vercel.app')
   })
 
   it('returns undefined if no env matches', () => {
-    vi.stubEnv('NUXT_SITE_URL', '')
+    vi.stubEnv('NUXT_PUBLIC_SITE_URL', '')
     vi.stubEnv('NEXT_PUBLIC_VERCEL_URL', '')
     expect(inferSiteURL()).toBeUndefined()
   })
