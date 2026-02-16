@@ -1,9 +1,14 @@
 {
   "name": "@incubrain/foundry",
   "description": "Nuxt layer for IncuBrain Foundry",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "type": "module",
   "main": "./nuxt.config.ts",
+  "exports": {
+    ".": "./nuxt.config.ts",
+    "./schemas": "./content.collections.ts",
+    "./*": "./*"
+  },
   "license": "MIT",
   "author": "IncuBrain",
   "repository": {

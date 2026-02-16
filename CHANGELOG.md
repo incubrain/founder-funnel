@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.2] - 2026-02-16
+
+### Added
+
+- **Package exports** — `@incubrain/foundry/schemas` export enables consumers to import content collection zod schemas directly instead of redefining them; wildcard `./*` export preserves deep imports
+- **evlog structured logging** — AI-friendly error context with `why`/`fix` fields, enrichment plugin (user agent + geo), tail sampling plugin, and browser transport
+- **evlog drain scaffolding** — `createDrainPipeline()` for batching + retry; example drain in `examples/astronera/server/plugins/evlog-drain.ts`
+- **CI pipeline** — Lint, typecheck, and build diagnostics for AI agent observability
+- **Team collection** — `baseTeamSchema` in layer content collections
+
+### Changed
+
+- **Content collection schemas deduplicated** — Examples now import schemas from layer via `@incubrain/foundry/schemas` instead of copy-pasting definitions
+- **Type declarations consolidated** — Moved type declarations into `shared/types/` for single source of truth
+- **Component logic extracted to composables** — `useChangelog`, `useFormCapture`, `useRssFeed`, `useSocialLinks`, `useSocialShare`, `useSourcesTable`
+- **Console replaced with evlog** — All `console.*` calls replaced with evlog browser transport for structured logging
+- Removed `useContentCache` composable in favour of direct content queries with camelCase yml items
+- Removed old starter example (lives inside `.starters/*` now)
+- Renamed project from "Founder Funnel" to "IncuBrain Foundry"
+
+### Fixed
+
+- **Zero typecheck errors** — Resolved all type errors across layer, shared files, and module declarations
+- **All lint errors resolved** — Enforced lint in CI
+- **All broken content links resolved** — Re-enabled `failOnError` in CI for link checker and prerender
+- Normalised URL path handling in `useContentPage` and `useContentConfig`
+- Changelog/decisions items loading with consistent `useContentConfig.collections` data fetching
+- Dark/light mode issues in FAQ accordion and default layout
+- Removed duplicate SEO modules already included with `@nuxtjs/seo`
+- OG image, IPX, and decisions routes excluded from prerender to avoid CI failures
+- evlog auto-imports and RSS `include` pattern extended to `/rss/**`
+
 ## [0.5.1] - 2026-02-03
 
 ### Fixed
@@ -16,10 +48,10 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Bump `nuxt` to `4.3.0`
-- Bump `nuxt-studio` to `1.2.0`
-- `nuxt-llms` added as optional `peerDependencies` as `defineNuxtConfig.llms` requires user driven config
-- Add "Built with @incubrain/foundry Vx.x.x" to footer, infers version from `package.json`
+- Replace heroicons with Lucide icons
+- Bump Nuxt to 4.3.0
+- Bump Nuxt Studio to 1.2.0
+- Add "Built with @incubrain/foundry" to footer
 
 ## [0.5.0] - 2026-01-31
 
