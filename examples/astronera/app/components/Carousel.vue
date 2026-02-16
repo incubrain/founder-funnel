@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { useSlots, cloneVNode } from 'vue' // For VNode handling
-import { computed } from 'vue'
+import { useSlots, cloneVNode, computed } from 'vue'
 
 const slots = useSlots()
 const rawItems = computed(() => slots.default?.() || []) // Array of VNodes from slots

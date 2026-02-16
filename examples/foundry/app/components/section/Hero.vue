@@ -1,7 +1,7 @@
 <!-- components/section/Hero2.vue -->
 <script setup lang="ts">
 // PRD: Flat props, explicit structure
-const props = defineProps<{
+defineProps<{
   badge?: {
     label: string
     to: string
@@ -69,7 +69,10 @@ const props = defineProps<{
         target="_blank"
         class="mb-6 inline-flex items-center gap-2 rounded-full border border-default bg-muted/50 px-3 py-1 text-sm text-muted-foreground transition-colors hover:bg-muted"
       >
-        <UIcon :name="badge.icon" class="h-4 w-4" />
+        <UIcon
+          :name="badge.icon"
+          class="h-4 w-4"
+        />
         <span class="font-medium">{{ badge.label }}</span>
         <span>{{ badge.description }}</span>
       </a>
@@ -167,7 +170,10 @@ const props = defineProps<{
             <div
               class="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500"
             >
-              <UIcon :name="metric.icon" class="w-6 h-6" />
+              <UIcon
+                :name="metric.icon"
+                class="w-6 h-6"
+              />
             </div>
             <div>
               <div class="text-xs text-neutral-400">

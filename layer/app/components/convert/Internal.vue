@@ -98,8 +98,14 @@ const handleClick = async () => {
       :spotlight-color="color"
       @click="handleClick"
     >
-      <template v-if="cta.icon" #trailing>
-        <UIcon :name="cta.icon" class="size-5 text-secondary" />
+      <template
+        v-if="cta.icon"
+        #trailing
+      >
+        <UIcon
+          :name="cta.icon"
+          class="size-5 text-secondary"
+        />
       </template>
     </UPageCard>
   </div>

@@ -39,12 +39,12 @@ const displayItems = computed(() => {
 
   // Filter by types if requested
   const filteredFiles = props.types?.length
-    ? allFaqs.value.filter((faq) => props.types!.includes(faq.type))
+    ? allFaqs.value.filter(faq => props.types!.includes(faq.type))
     : allFaqs.value
 
   // Flatten all items from matched files into a single list
-  return filteredFiles.flatMap((file) =>
-    file.items.map((item) => ({
+  return filteredFiles.flatMap(file =>
+    file.items.map(item => ({
       label: item.label,
       content: item.content,
       icon: file.icon,

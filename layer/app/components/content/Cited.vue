@@ -24,7 +24,7 @@ const validationResults = computed(() =>
   citationIds.value.map(id => validateCitation(id).value),
 )
 
-const hasInvalidCitations = computed(() =>
+const _hasInvalidCitations = computed(() =>
   validationResults.value.some(v => !v.valid && !v.loading),
 )
 
@@ -48,7 +48,7 @@ const extractRootDomain = (url: string | null) => {
 }
 
 defineSlots<{
-  default(props?: {}): any
+  default(props?: Record<string, never>): void
 }>()
 </script>
 

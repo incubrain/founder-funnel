@@ -2,7 +2,7 @@
      Override the layer's default Hero or create new sections.
      Use in content/pages/index.md as: ::section-hero -->
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   badge?: {
     label: string
     to: string

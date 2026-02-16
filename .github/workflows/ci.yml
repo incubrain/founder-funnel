@@ -34,10 +34,9 @@ jobs:
       - run: npx nuxt prepare layer
       - name: Lint
         run: pnpm run lint
-        continue-on-error: true # TODO: remove once pre-existing lint errors are fixed on main
       - name: Typecheck
         run: pnpm run typecheck
-        continue-on-error: true # TODO: remove once pre-existing type errors are fixed on main
+        continue-on-error: true # Pre-existing: ~48 files have type errors (missing auto-imports, content collection types). Fix separately.
 
   test:
     runs-on: ubuntu-latest

@@ -5,8 +5,8 @@ import { useContentPage } from '@incubrain/foundry/app/composables/useContentPag
 
 // Mock queryCollection
 mockNuxtImport('queryCollection', () => {
-  return (collection: string) => ({
-    path: (p: string) => ({
+  return (_collection: string) => ({
+    path: (_p: string) => ({
       first: () =>
         Promise.resolve({
           title: 'Mock Page',

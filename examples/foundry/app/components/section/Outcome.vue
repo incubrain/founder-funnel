@@ -43,7 +43,10 @@ const normalizedFeatures = computed(() => props.features || [])
           <span class="text-xl font-bold text-primary">{{ index + 1 }}</span>
         </div>
 
-        <UIcon :name="step.icon" class="size-8 text-secondary mb-4" />
+        <UIcon
+          :name="step.icon"
+          class="size-8 text-secondary mb-4"
+        />
 
         <h3 class="text-lg font-heading font-bold mb-2">
           {{ step.title }}
@@ -121,7 +124,10 @@ const normalizedFeatures = computed(() => props.features || [])
                     <div
                       class="flex items-center justify-center size-8 rounded-lg bg-primary/10 ring-1 ring-primary/20 shrink-0"
                     >
-                      <UIcon :name="item.icon" class="size-4 text-secondary" />
+                      <UIcon
+                        :name="item.icon"
+                        class="size-4 text-secondary"
+                      />
                     </div>
                   </div>
 

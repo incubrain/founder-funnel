@@ -1,7 +1,7 @@
 import type { SpamFlags } from '../../server/utils/anti-spam'
 
 export function formatSlackMessage(data: {
-  formData?: Record<string, any>
+  formData?: Record<string, unknown>
   flags: SpamFlags
 }) {
   const risk

@@ -12,14 +12,14 @@ type EventExecution = {
   id: string
   type: TrackedEvents
   timestamp: number
-  data?: Record<string, any>
-  error?: any
+  data?: Record<string, unknown>
+  error?: unknown
   status: 'pending' | 'success' | 'error'
 }
 
 const isOpen = ref(false)
 const { trackEvent } = useEvents()
-const route = useRoute()
+const _route = useRoute()
 const nuxtApp = useNuxtApp()
 
 const eventChainTracking = ref<EventExecution[]>([])

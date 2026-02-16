@@ -7,7 +7,7 @@ const props = defineProps<{
   title?: string
   description?: string
   price?: string
-  features?: Array<{ title: string; icon: string }>
+  features?: Array<{ title: string, icon: string }>
   cta?: {
     label?: string
     to?: string
@@ -19,7 +19,7 @@ const { data: founder } = await useAsyncData('app-founder', () =>
 )
 
 const transformedFeatures = computed(() => {
-  return (props.features || []).map((feature) => ({
+  return (props.features || []).map(feature => ({
     label: feature.title,
     icon:
       STATUS_ICONS[feature.icon as keyof typeof STATUS_ICONS] || feature.icon,
@@ -111,7 +111,10 @@ const displayDescription = computed(() => props.description)
         >
           <template #description>
             <!-- Hide default description slot to control layout manually if needed, or rely on prop -->
-            <p v-if="displayDescription" class="text-base text-toned">
+            <p
+              v-if="displayDescription"
+              class="text-base text-toned"
+            >
               {{ displayDescription }}
             </p>
           </template>
@@ -150,7 +153,9 @@ const displayDescription = computed(() => props.description)
         </UPricingPlan>
 
         <div class="mt-4 flex flex-col gap-4 justify-center items-center">
-          <UBadge variant="soft"> OR </UBadge>
+          <UBadge variant="soft">
+            OR
+          </UBadge>
           <ConvertExternal
             to="https://github.com/incubrain/foundry"
             label="One Click Deploy"

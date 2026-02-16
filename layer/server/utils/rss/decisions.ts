@@ -17,8 +17,8 @@ export async function generateDecisionsFeed(event: H3Event): Promise<string> {
   // Pages collection can be string or { name, prefix, backLabel }
   const appConfig = useAppConfig()
   const changelogConfig = appConfig.content?.collections?.changelog
-  const changelogBasePath =
-    typeof changelogConfig === 'object'
+  const changelogBasePath
+    = typeof changelogConfig === 'object'
       ? changelogConfig?.prefix || '/changelog'
       : '/changelog'
 
@@ -30,7 +30,7 @@ export async function generateDecisionsFeed(event: H3Event): Promise<string> {
     .all()
 
   // Transform to RSS items
-  const items: RSSItem[] = changelogs.map((d: any) => ({
+  const items: RSSItem[] = changelogs.map((d: Record<string, string>) => ({
     title: d.title,
     link: `${siteConfig.url}${d.path}`,
     guid: `${siteConfig.url}${d.path}`,

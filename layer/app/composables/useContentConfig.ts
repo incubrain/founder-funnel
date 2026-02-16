@@ -11,9 +11,9 @@ type CollectionType = 'page' | 'data'
 /**
  * Collection config can be a string (name only) or object with routing info
  */
-type CollectionConfig =
-  | keyof Collections
-  | {
+type CollectionConfig
+  = | keyof Collections
+    | {
       name: keyof Collections
       type?: CollectionType
       prefix?: string
@@ -128,8 +128,8 @@ export const useContentConfig = () => {
         if (collectionType === 'page' && prefix) {
           patterns.push({
             pattern: prefix,
-            collection: ((config as { name?: string }).name ||
-              key) as keyof Collections,
+            collection: ((config as { name?: string }).name
+              || key) as keyof Collections,
           })
         }
       }
@@ -150,15 +150,15 @@ export const useContentConfig = () => {
     const patterns = getRoutePatterns()
 
     // Normalize path to remove trailing slash for matching purposes
-    const normalizedPath =
-      path > '/' && path.endsWith('/') ? path.slice(0, -1) : path
+    const normalizedPath
+      = path > '/' && path.endsWith('/') ? path.slice(0, -1) : path
 
     // Match against configured prefixes
     for (const { pattern, collection } of patterns) {
       // Pattern match: exact prefix or prefix followed by /
       if (
-        normalizedPath === pattern ||
-        normalizedPath.startsWith(`${pattern}/`)
+        normalizedPath === pattern
+        || normalizedPath.startsWith(`${pattern}/`)
       ) {
         return collection
       }
@@ -186,7 +186,7 @@ export const useContentConfig = () => {
 
   const seperatePathAndHash = (
     path: string,
-  ): { path: string; hash: string } => {
+  ): { path: string, hash: string } => {
     const hashIndex = path.indexOf('#')
     return hashIndex !== -1
       ? { path: path.slice(0, hashIndex), hash: path.slice(hashIndex) }
@@ -223,8 +223,8 @@ export const useContentConfig = () => {
     const patterns = getRoutePatterns()
     for (const { pattern } of patterns) {
       if (
-        normalizedPath === pattern ||
-        normalizedPath.startsWith(`${pattern}/`)
+        normalizedPath === pattern
+        || normalizedPath.startsWith(`${pattern}/`)
       ) {
         // Path already has a collection prefix, return as-is
         return `${normalizedPath}${hash}`
@@ -250,7 +250,7 @@ export const useContentConfig = () => {
   const flattenNavigation = (
     items?: ContentNavigationItem[],
   ): ContentNavigationItem[] =>
-    items?.flatMap((item) =>
+    items?.flatMap(item =>
       item.children ? flattenNavigation(item.children) : [item],
     ) || []
 
@@ -271,12 +271,12 @@ export const useContentConfig = () => {
 
     // Try exact match
     const flatNav = flattenNavigation(navigationAll.value)
-    const match = flatNav.find((item) => item.path === normalizedPath)
+    const match = flatNav.find(item => item.path === normalizedPath)
     if (match) return match
 
     // Handle potential trailing slash differences
     return flatNav.find(
-      (item) =>
+      item =>
         item.path?.replace(/\/$/, '') === normalizedPath.replace(/\/$/, ''),
     )
   }

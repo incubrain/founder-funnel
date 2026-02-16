@@ -33,7 +33,7 @@ const gapClasses = {
   relaxed: 'gap-4',
 }
 
-const handleClick = (platform: string, url: string) => {
+const handleClick = (platform: string, _url: string) => {
   trackEvent({
     id: `offer_click_${props.location}_${platform.toLowerCase()}`,
     type: 'offer_click',
@@ -66,7 +66,10 @@ const allLinks = computed(() => {
 </script>
 
 <template>
-  <div v-if="allLinks.length" :class="['flex flex-wrap', gapClasses[gap]]">
+  <div
+    v-if="allLinks.length"
+    :class="['flex flex-wrap', gapClasses[gap]]"
+  >
     <UButton
       v-for="link in allLinks"
       :key="link.url"

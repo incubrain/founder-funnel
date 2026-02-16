@@ -12,7 +12,7 @@ const mapNavigation = (
 ): ContentNavigationItem[] => {
   return items?.map(item => ({
     ...item,
-    title: (item as any).label ?? (item as any).title,
+    title: (item as unknown as Record<string, string>).label ?? (item as unknown as Record<string, string>).title,
     children: item.children?.length ? mapNavigation(item.children) : undefined,
   }))
 }

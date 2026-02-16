@@ -28,7 +28,6 @@ defineProps<{
     :description="description"
     :headline="headline"
   >
-
     <UPageGrid class="mt-12 sm:mt-16">
       <UPageCard
         v-for="card in items"

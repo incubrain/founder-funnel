@@ -28,7 +28,6 @@ const testimonials = computed(() => props.items || [])
     :title="title"
     :description="description"
   >
-
     <UPageColumns class="mt-12 sm:mt-16">
       <UPageCard
         v-for="(testimonial, index) in testimonials"

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useIntersectionObserver, useScroll } from '@vueuse/core'
+import { ref } from 'vue'
+import { useIntersectionObserver } from '@vueuse/core'
 import type { PageHeroProps, PageHeroSlots } from '@nuxt/ui'
 
-const props = defineProps<PageHeroProps>()
+defineProps<PageHeroProps>()
 const heroRef = ref<HTMLElement | null>(null)
 
 const { trackEvent } = useEvents()
@@ -29,7 +29,7 @@ const { stop } = useIntersectionObserver(
 
 // Extend slots to include overlap slot
 interface ExtendedSlots extends PageHeroSlots {
-  overlap(): any
+  overlap(): unknown
 }
 
 defineSlots<ExtendedSlots>()

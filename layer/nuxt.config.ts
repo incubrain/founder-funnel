@@ -44,6 +44,13 @@ export default defineNuxtConfig({
       payloadExtraction: false,
     },
 
+    nitro: {
+      prerender: {
+        routes: ciPrerender ? ['/'] : [],
+        crawlLinks: ciPrerender,
+      },
+    },
+
     evlog: {
       sampling: {
         rates: { info: 10, warn: 50, debug: 0 },
@@ -51,13 +58,6 @@ export default defineNuxtConfig({
           { status: 400 },
           { duration: 1000 },
         ],
-      },
-    },
-
-    nitro: {
-      prerender: {
-        routes: ciPrerender ? ['/'] : [],
-        crawlLinks: ciPrerender,
       },
     },
 
@@ -174,12 +174,6 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2026-01-20',
 
-  typescript: {
-    tsConfig: {
-      include: ['../test/**/*'],
-    },
-  },
-
   nitro: {
     prerender: {
       crawlLinks: true,
@@ -192,23 +186,18 @@ export default defineNuxtConfig({
     },
   },
 
-  hooks: {
-    'components:extend': (components) => {
-      const globals = components.filter((c) =>
-        ['UButton', 'UIcon', 'ProseDfn'].includes(c.pascalName),
-      )
-      globals.forEach((c) => (c.global = true))
+  typescript: {
+    tsConfig: {
+      include: ['../test/**/*'],
     },
   },
 
-  // Structured logging (evlog) - one wide event per request
-  evlog: {
-    env: {
-      service: 'foundry',
-    },
-    include: ['/api/**', '/rss/**'],
-    transport: {
-      enabled: true,
+  hooks: {
+    'components:extend': (components) => {
+      const globals = components.filter(c =>
+        ['UButton', 'UIcon', 'ProseDfn'].includes(c.pascalName),
+      )
+      globals.forEach(c => (c.global = true))
     },
   },
 
@@ -220,6 +209,17 @@ export default defineNuxtConfig({
       platforms: ['discord'],
     },
     debug: true,
+  },
+
+  // Structured logging (evlog) - one wide event per request
+  evlog: {
+    env: {
+      service: 'foundry',
+    },
+    include: ['/api/**', '/rss/**'],
+    transport: {
+      enabled: true,
+    },
   },
 
   icon: {

@@ -7,9 +7,9 @@ interface Props {
   avatar?: string
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 
-const site = inject<any>('site_config', ref(null))
+const site = inject<Ref<Record<string, unknown> | null>>('site_config', ref(null))
 
 const socials = computed(() => site.value?.socials ?? {})
 
@@ -23,7 +23,7 @@ const socialLinks = computed(() =>
 )
 
 defineSlots<{
-  default(props?: {}): any
+  default(props?: Record<string, unknown>): unknown
 }>()
 </script>
 
