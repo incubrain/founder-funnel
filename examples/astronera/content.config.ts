@@ -8,7 +8,7 @@ import {
   baseReferencesSchema,
   baseGlossarySchema,
   baseNavigationSchema,
-} from '@incubrain/foundry/content.collections'
+} from '@incubrain/foundry/schemas'
 
 export default defineContentConfig({
   collections: {

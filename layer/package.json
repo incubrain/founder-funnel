@@ -6,7 +6,8 @@
   "main": "./nuxt.config.ts",
   "exports": {
     ".": "./nuxt.config.ts",
-    "./content.collections": "./content.collections.ts"
+    "./schemas": "./content.collections.ts",
+    "./*": "./*"
   },
   "license": "MIT",
   "author": "IncuBrain",

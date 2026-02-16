@@ -4,11 +4,9 @@ import {
   baseConfigSchema,
   baseFaqSchema,
   basePageSchema,
-  baseReferencesSchema,
-  baseGlossarySchema,
   baseChangelogSchema,
   baseNavigationSchema,
-} from '@incubrain/foundry/content.collections'
+} from '@incubrain/foundry/schemas'
 
 export default defineContentConfig({
   collections: {
