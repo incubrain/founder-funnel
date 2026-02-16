@@ -3,6 +3,9 @@ import { ICON_LIBRARIES } from './shared/constants'
 
 const { resolve } = createResolver(import.meta.url)
 
+const isCI = process.env.CI === 'true'
+const ciPrerender = process.env.CI_PRERENDER === 'true'
+
 export default defineNuxtConfig({
   modules: [
     resolve('./modules/config'),
@@ -53,8 +56,8 @@ export default defineNuxtConfig({
 
     nitro: {
       prerender: {
-        routes: [],
-        crawlLinks: false,
+        routes: ciPrerender ? ['/'] : [],
+        crawlLinks: ciPrerender,
       },
     },
 
@@ -180,7 +183,7 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       crawlLinks: true,
-      failOnError: false,
+      failOnError: isCI,
       autoSubfolderIndex: false,
     },
     compatibilityDate: {
@@ -225,6 +228,9 @@ export default defineNuxtConfig({
       // collections array enables tree-shake
       collections: [...ICON_LIBRARIES],
     },
+  },
+  linkChecker: {
+    failOnError: isCI,
   },
   seo: {
     redirectToCanonicalSiteUrl: true,
