@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { queryCollection } from '@nuxt/content/server'
 import type { Collections } from '@nuxt/content'
+import { useLogger } from 'evlog'
 
 export default defineMcpTool({
   description: `Lists all available documentation pages with their categories and basic information.
@@ -27,11 +28,14 @@ OUTPUT: Returns a structured list with:
   cache: '1h',
   handler: async () => {
     const event = useEvent()
+    const log = useLogger(event)
 
     const siteUrl = import.meta.dev
       ? 'http://localhost:3000'
       : getRequestURL(event).origin
     const collections = ['docs']
+
+    log.set({ mcp: { tool: 'list-pages', collections } })
 
     try {
       const allPages = await Promise.all(
@@ -55,7 +59,11 @@ OUTPUT: Returns a structured list with:
 
       return jsonResult(allPages.flat())
     }
-    catch {
+    catch (error: unknown) {
+      log.error(error instanceof Error ? error : new Error(String(error)), {
+        step: 'mcp-list-pages',
+        collections,
+      })
       return errorResult('Failed to list pages')
     }
   },

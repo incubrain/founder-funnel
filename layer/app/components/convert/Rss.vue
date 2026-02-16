@@ -2,23 +2,18 @@
 import type { SelectMenuProps } from '@nuxt/ui'
 
 interface Props {
-  // Feed configuration
-  feedPath?: string // e.g., 'decisions', 'blog', 'updates'
-  feedUrl?: string // Full URL override (if not using feedPath)
-
-  // Tracking
+  feedPath?: string
+  feedUrl?: string
   location: string
-
-  // UI customization
   size?: SelectMenuProps['size']
   variant?: SelectMenuProps['variant']
   color?: SelectMenuProps['color']
   showLabel?: boolean
-  label?: string // Custom label (default: 'RSS')
+  label?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  feedPath: 'decisions', // Default to decisions feed
+  feedPath: 'decisions',
   size: 'lg',
   variant: 'ghost',
   color: 'neutral',
@@ -26,113 +21,15 @@ const props = withDefaults(defineProps<Props>(), {
   label: 'RSS',
 })
 
-const config = useRuntimeConfig()
-const { trackEvent } = useEvents()
-const { copy } = useClipboard()
-const toast = useToast()
-
-// Compute final feed URL
-const feedUrl = computed(() => {
-  if (props.feedUrl) return props.feedUrl
-  return `${config.public.siteUrl}/rss/${props.feedPath}`
+const { actions, handleSelect } = useRssFeed({
+  feedPath: props.feedPath,
+  feedUrl: props.feedUrl,
+  location: props.location,
 })
-
-type RSSType
-  = | 'feedly'
-    | 'inoreader'
-    | 'newsblur'
-    | 'oldreader'
-    | 'xml'
-    | 'copy'
-
-const handleRSSClick = (target?: 'internal' | 'external', type?: RSSType) => {
-  trackEvent({
-    id: `offer_click_rss_${props.location}_${props.feedPath}_${type}`,
-    type: 'offer_click',
-    target: `rss_${target}`,
-  })
-}
-
-const copyFeedUrl = async () => {
-  await copy(feedUrl.value)
-  handleRSSClick('internal', 'copy')
-
-  toast.add({
-    title: 'Feed URL Copied',
-    description: 'Paste into your RSS reader',
-    icon: 'i-lucide-check',
-    color: 'success',
-  })
-}
-
-const handleReaderClick = (url: string, type?: RSSType) => {
-  handleRSSClick('external', type)
-  window.open(url, '_blank')
-}
-
-const actions = computed(() => [
-  {
-    label: 'Copy Feed URL',
-    icon: 'i-lucide-copy',
-    click: copyFeedUrl,
-  },
-  {
-    label: 'Open Feed',
-    icon: 'i-lucide-external-link',
-    click: () => {
-      handleRSSClick('internal', 'xml')
-      window.open(feedUrl.value, '_blank')
-    },
-  },
-  {
-    label: 'Feedly',
-    icon: 'i-simple-icons-feedly',
-    click: () =>
-      handleReaderClick(
-        `https://feedly.com/i/subscription/feed/${encodeURIComponent(feedUrl.value)}`,
-        'feedly',
-      ),
-  },
-  {
-    label: 'Inoreader',
-    icon: 'i-simple-icons-inoreader',
-    click: () =>
-      handleReaderClick(
-        `https://www.inoreader.com/?add_feed=${encodeURIComponent(feedUrl.value)}`,
-        'inoreader',
-      ),
-  },
-  {
-    label: 'NewsBlur',
-    icon: 'i-lucide-newspaper',
-    click: () =>
-      handleReaderClick(
-        `https://www.newsblur.com/?url=${encodeURIComponent(feedUrl.value)}`,
-        'newsblur',
-      ),
-  },
-  {
-    label: 'The Old Reader',
-    icon: 'i-lucide-book-open',
-    click: () =>
-      handleReaderClick(
-        `https://theoldreader.com/feeds/subscribe?url=${encodeURIComponent(feedUrl.value)}`,
-        'oldreader',
-      ),
-  },
-])
-
-// Handle selection from USelectMenu
-const handleSelect = (option: any) => {
-  if (option?.click) {
-    option.click()
-  }
-}
 </script>
 
 <template>
   <div class="flex flex-col gap-2">
-    <!-- RSS Button with Select Menu -->
     <USelectMenu
       :items="actions"
       :search-input="false"

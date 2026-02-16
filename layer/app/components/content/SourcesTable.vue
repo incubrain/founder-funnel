@@ -1,99 +1,14 @@
 <script setup lang="ts">
-import type { TableColumn, BadgeProps } from '@nuxt/ui'
+import type { TableColumn } from '@nuxt/ui'
 import { getGroupedRowModel } from '@tanstack/vue-table'
 
-const route = useRoute()
-const { allCategoryRefs } = useCitations()
-const appConfig = useAppConfig()
+const { globalFilter, tableData, grouping, expanded, affiliationColor, getLinkInfo } = useSourcesTable()
 
-// ✅ Global search with URL sync
-const globalFilter = ref('' as string)
-
-watch(
-  () => route.query,
-  (newQuery) => {
-    if (newQuery) {
-      nextTick(() => {
-        globalFilter.value = String(newQuery.search ?? '')
-      })
-    }
-  },
-  { immediate: true },
-)
-
-// ✅ Transform data: Flatten categories into a single sources array with category metadata
-const tableData = computed(() => {
-  if (!allCategoryRefs.value) return []
-
-  return allCategoryRefs.value.flatMap(categoryGroup =>
-    categoryGroup.sources.map((source: any) => ({
-      ...source,
-      categoryId: categoryGroup.category.id,
-      categoryLabel: categoryGroup.category.label,
-    })),
-  )
-})
-
-// ✅ Grouping Configuration
-const grouping = ref(['categoryLabel'])
-const expanded = ref(true) // Expand all by default
-
-// ✅ Affiliation colors
-const affiliationColor = computed<Record<string, BadgeProps['color']>>(() => ({
-  government: 'primary',
-  academic: 'secondary',
-  media: 'neutral',
-  ngo: 'warning',
-  educational: 'info',
-  industry: 'error',
-  ...appConfig.ui?.docs?.affiliation?.colors,
-}))
-
-// ✅ Helper to determine link type and icon
-const getLinkInfo = (source: any) => {
-  const hasUrl = !!source.url && !source.url.toLowerCase().endsWith('.pdf')
-
-  // If explicit PDF field exists, use it. If not, but URL ends in PDF, use URL as PDF link.
-  const pdfLink
-    = source.pdf
-      || (source.url && source.url.toLowerCase().endsWith('.pdf')
-        ? source.url
-        : null)
-  const webLink = hasUrl ? source.url : null
-
-  if (pdfLink && webLink) {
-    return {
-      primary: pdfLink,
-      secondary: webLink,
-      primaryIcon: 'i-lucide-file-text',
-      secondaryIcon: 'i-lucide-external-link',
-      primaryLabel: 'PDF',
-      secondaryLabel: 'Website',
-    }
-  }
-  else if (pdfLink) {
-    return {
-      primary: pdfLink,
-      primaryIcon: 'i-lucide-file-text',
-      primaryLabel: 'View PDF',
-    }
-  }
-  else if (webLink) {
-    return {
-      primary: webLink,
-      primaryIcon: 'i-lucide-external-link',
-      primaryLabel: 'Visit Website',
-    }
-  }
-
-  return null
-}
-
-const columns: TableColumn<any>[] = [
+const columns: TableColumn<Record<string, unknown>>[] = [
   {
     accessorKey: 'categoryLabel',
     header: 'Category',
-    enableHiding: true, // will be hidden by grouping logic usually, but we want to use it for grouping key
+    enableHiding: true,
   },
   {
     accessorKey: 'title',
@@ -102,7 +17,7 @@ const columns: TableColumn<any>[] = [
     minSize: 300,
     meta: {
       class: {
-        td: 'max-w-[500px] align-top whitespace-normal', // Ensure wrapping
+        td: 'max-w-[500px] align-top whitespace-normal',
         th: 'max-w-[500px]',
       },
     },
@@ -137,7 +52,7 @@ const columns: TableColumn<any>[] = [
 
 <template>
   <div class="space-y-6 w-full">
-    <!-- ✅ Global Search -->
+    <!-- Global Search -->
     <div class="flex flex-col sm:flex-row gap-4">
       <UInput
         v-model="globalFilter"
@@ -147,7 +62,7 @@ const columns: TableColumn<any>[] = [
       />
     </div>
 
-    <!-- ✅ Single Unified Table with Grouping -->
+    <!-- Single Unified Table with Grouping -->
     <div class="overflow-x-auto">
       <UTable
         v-model:global-filter="globalFilter"
@@ -167,7 +82,7 @@ const columns: TableColumn<any>[] = [
       >
         <!-- Document Cell (Title + Author + Type + Links) -->
         <template #title-cell="{ row }">
-          <!-- If this is a Group Row -->
+          <!-- Group Row -->
           <div
             v-if="row.getIsGrouped()"
             class="flex items-center gap-2 py-1 cursor-pointer select-none"
@@ -192,17 +107,15 @@ const columns: TableColumn<any>[] = [
             <span class="text-xs text-muted font-normal ml-2">({{ row.subRows.length }})</span>
           </div>
 
-          <!-- If this is a Normal Source Row -->
+          <!-- Normal Source Row -->
           <div
             v-else
             class="space-y-3 whitespace-normal"
           >
-            <!-- Title -->
             <div class="font-semibold text-base text-highlighted text-pretty">
               {{ row.original.title }}
             </div>
 
-            <!-- Author & Type Line -->
             <div class="flex flex-wrap items-center gap-2 text-sm">
               <span
                 v-if="row.original.author"
@@ -213,21 +126,20 @@ const columns: TableColumn<any>[] = [
 
               <UBadge
                 v-if="row.original.affiliation"
-                :label="row.original.affiliation"
-                :color="affiliationColor[row.original.affiliation] ?? 'neutral'"
+                :label="String(row.original.affiliation)"
+                :color="affiliationColor[String(row.original.affiliation)] ?? 'neutral'"
                 variant="soft"
                 size="xs"
                 class="capitalize"
               />
             </div>
 
-            <!-- Link Buttons -->
             <div class="flex items-center gap-2 pt-1">
               <template v-if="getLinkInfo(row.original)">
                 <UButton
-                  :to="getLinkInfo(row.original).primary"
-                  :icon="getLinkInfo(row.original).primaryIcon"
-                  :label="getLinkInfo(row.original).primaryLabel"
+                  :to="getLinkInfo(row.original)!.primary"
+                  :icon="getLinkInfo(row.original)!.primaryIcon"
+                  :label="getLinkInfo(row.original)!.primaryLabel"
                   size="xs"
                   variant="soft"
                   color="primary"
@@ -235,10 +147,10 @@ const columns: TableColumn<any>[] = [
                 />
 
                 <UButton
-                  v-if="getLinkInfo(row.original).secondary"
-                  :to="getLinkInfo(row.original).secondary"
-                  :icon="getLinkInfo(row.original).secondaryIcon"
-                  :label="getLinkInfo(row.original).secondaryLabel"
+                  v-if="getLinkInfo(row.original)!.secondary"
+                  :to="getLinkInfo(row.original)!.secondary"
+                  :icon="getLinkInfo(row.original)!.secondaryIcon"
+                  :label="getLinkInfo(row.original)!.secondaryLabel"
                   size="xs"
                   variant="ghost"
                   color="neutral"

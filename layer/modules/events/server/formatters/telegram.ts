@@ -1,3 +1,4 @@
+import { createError as createEvlogError } from 'evlog'
 import type { SpamFlags } from '../../server/utils/anti-spam'
 
 export function formatTelegramMessage(
@@ -8,7 +9,12 @@ export function formatTelegramMessage(
   chatId?: string,
 ) {
   if (!chatId) {
-    throw new Error('NUXT_TELEGRAM_CHAT_ID is required for Telegram webhooks')
+    throw createEvlogError({
+      status: 500,
+      message: 'Telegram chat ID is required',
+      why: 'NUXT_TELEGRAM_CHAT_ID environment variable is not set',
+      fix: 'Add NUXT_TELEGRAM_CHAT_ID to your .env file with your Telegram chat/group ID',
+    })
   }
 
   const risk

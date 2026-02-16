@@ -71,7 +71,6 @@ export const useContentPage = () => {
     return useAsyncData(
       () => `page-${collection.value}-${path.value}`,
       () => {
-        console.log('[useContentPage] Querying:', collection.value, path.value)
         return queryCollection(collection.value).path(path.value).first()
       },
       {
