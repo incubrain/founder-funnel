@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- **Package exports** — `@incubrain/foundry/content.collections` export enables consumers to import content collection zod schemas directly instead of redefining them
+- **Package exports** — `@incubrain/foundry/schemas` export enables consumers to import content collection zod schemas directly instead of redefining them; wildcard `./*` export preserves deep imports
 - **evlog structured logging** — AI-friendly error context with `why`/`fix` fields, enrichment plugin (user agent + geo), tail sampling plugin, and browser transport
 - **evlog drain scaffolding** — `createDrainPipeline()` for batching + retry; example drain in `examples/astronera/server/plugins/evlog-drain.ts`
 - **CI pipeline** — Lint, typecheck, and build diagnostics for AI agent observability
@@ -14,7 +14,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- **Content collection schemas deduplicated** — Examples now import schemas from layer via `@incubrain/foundry/content.collections` instead of copy-pasting definitions
+- **Content collection schemas deduplicated** — Examples now import schemas from layer via `@incubrain/foundry/schemas` instead of copy-pasting definitions
 - **Type declarations consolidated** — Moved type declarations into `shared/types/` for single source of truth
 - **Component logic extracted to composables** — `useChangelog`, `useFormCapture`, `useRssFeed`, `useSocialLinks`, `useSocialShare`, `useSourcesTable`
 - **Console replaced with evlog** — All `console.*` calls replaced with evlog browser transport for structured logging
