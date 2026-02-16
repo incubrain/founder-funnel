@@ -1,14 +1,24 @@
 <script setup lang="ts">
 import type { FooterConfig } from '#navigation'
 
-const site = inject<Ref<Record<string, unknown>>>('site_config')
+interface SiteConfig {
+  business?: {
+    foundingYear?: number
+    legalName?: string
+    [key: string]: unknown
+  }
+  credits?: string
+  [key: string]: unknown
+}
+
+const site = inject<Ref<SiteConfig | null>>('site_config', ref(null))
 const footerData = inject<Ref<FooterConfig>>('navigation_footer')
 
 const currentYear = new Date().getFullYear()
 
-const foundingYear = computed(() => site.value?.business?.foundingYear)
-const legalName = computed(() => site.value?.business?.legalName)
-const credits = computed(() => site.value?.credits || '')
+const foundingYear = computed(() => site?.value?.business?.foundingYear)
+const legalName = computed(() => site?.value?.business?.legalName)
+const credits = computed(() => site?.value?.credits || '')
 
 const bottomLinks = computed(() => footerData?.value?.bottom ?? [])
 

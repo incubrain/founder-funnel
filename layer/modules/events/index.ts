@@ -72,7 +72,6 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     if (options.webhook.enabled) {
-      // @ts-expect-error addServerHandler type mismatch with module resolver
       addServerHandler({
         route: '/api/v1/webhook',
         method: 'post',

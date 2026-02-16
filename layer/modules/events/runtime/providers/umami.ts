@@ -5,11 +5,12 @@ export default defineNuxtPlugin({
   dependsOn: ['events-core'],
   setup(nuxtApp) {
     nuxtApp.hook('events:track', async (payload: EventPayload) => {
-      const { $scripts } = nuxtApp
+      const $scripts = (nuxtApp as unknown as Record<string, unknown>).$scripts as Record<string, unknown> | undefined
+      const umamiAnalytics = $scripts?.umamiAnalytics as { proxy?: { track: (type: string, data: Record<string, unknown>) => Promise<void> } } | undefined
 
-      if ($scripts?.umamiAnalytics?.proxy) {
+      if (umamiAnalytics?.proxy) {
         try {
-          await $scripts.umamiAnalytics.proxy.track(payload.type, {
+          await umamiAnalytics.proxy.track(payload.type, {
             event_id: payload.id,
             location: payload.location,
             action: payload.action,
@@ -19,7 +20,7 @@ export default defineNuxtPlugin({
           })
         }
         catch (error) {
-          log.error('umami', `Track failed: ${error instanceof Error ? error.message : String(error)}`)
+          console.error('umami', `Track failed: ${error instanceof Error ? error.message : String(error)}`)
         }
       }
     })

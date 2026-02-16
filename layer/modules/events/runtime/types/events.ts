@@ -86,7 +86,7 @@ export interface EventsHooks {
   ) => void
 }
 
-declare module '#app' {
+declare module 'nuxt/app' {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface RuntimeNuxtHooks extends EventsHooks {}
 }

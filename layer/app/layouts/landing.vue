@@ -26,7 +26,7 @@ if (!page.value) {
 // Publish context for components
 watchEffect(() => {
   if (!page.value || page.value.path !== route.path) return
-  setContext(page.value)
+  setContext(page.value as unknown as Record<string, unknown>)
 })
 
 // SEO
@@ -50,7 +50,7 @@ watch(
         props: {
           title: newPage.title,
           description: newPage.description,
-          image: siteConfig.value?.business?.logo,
+          image: ((siteConfig.value as Record<string, unknown> | null)?.business as Record<string, unknown> | undefined)?.logo,
         },
       })
     }

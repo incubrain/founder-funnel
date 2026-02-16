@@ -14,8 +14,8 @@ export const useSearch = async () => {
     'search_files',
     async () => {
       const sections = await Promise.all(
-        searchableCollections.map((collection: keyof PageCollections) =>
-          queryCollectionSearchSections(collection)
+        searchableCollections.map((collection: string) =>
+          queryCollectionSearchSections(collection as keyof PageCollections)
             .where('path', '<>', '/')
             .catch(() => []),
         ),

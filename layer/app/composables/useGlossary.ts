@@ -5,7 +5,7 @@ export const useGlossary = () => {
 
   // Fetch glossary ONCE and cache globally
   const { data: glossaryData } = useAsyncData('glossary-all', () =>
-    queryCollection(collections.glossary).all(),
+    queryCollection(collections.glossary).all() as Promise<GlossaryCollectionItem[]>,
   )
 
   // Flatten all terms for easy lookup
@@ -17,7 +17,7 @@ export const useGlossary = () => {
   // Terms with category metadata (for table display)
   const allTermsWithCategory = computed(() => {
     if (!glossaryData.value) return []
-    return glossaryData.value.flatMap((file: GlossaryCollectionItem) =>
+    return glossaryData.value.flatMap(file =>
       (file.terms || []).map(term => ({
         ...term,
         category: file.category.id,
@@ -31,18 +31,18 @@ export const useGlossary = () => {
   const categoryColors = computed<Record<string, string>>(() => {
     if (!glossaryData.value) return {}
     const colorMap: Record<string, string> = {}
-    glossaryData.value.forEach((file: GlossaryCollectionItem) => {
+    glossaryData.value.forEach((file) => {
       colorMap[file.category.id] = file.category.color || 'neutral'
     })
     return colorMap
   })
 
   /**
-   * Get term data by ID
+   * Get term data by ID (includes category metadata)
    */
   const getTerm = (termId: string) => {
     return computed(() =>
-      allTerms.value.find(t => t.id === termId.toLowerCase()),
+      allTermsWithCategory.value.find(t => t.id === termId.toLowerCase()),
     )
   }
 

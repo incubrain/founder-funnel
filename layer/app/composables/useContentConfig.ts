@@ -89,7 +89,8 @@ export const useContentConfig = () => {
    * Get routing path from content.routing config
    */
   const getRoutingPath = (key: string, fallback: string): string => {
-    return appConfig.content?.routing?.[key] || fallback
+    const routing = appConfig.content?.routing as Record<string, string> | undefined
+    return routing?.[key] || fallback
   }
 
   /**

@@ -37,9 +37,9 @@ const defaultLinks = computed(() => {
         label: props.cta.button.label,
         to: props.cta.button.to,
         trailingIcon: props.cta.button.icon,
-        color: 'secondary',
-        variant: 'subtle',
-        size: 'lg',
+        color: 'secondary' as const,
+        variant: 'subtle' as const,
+        size: 'lg' as const,
       },
     ]
   }

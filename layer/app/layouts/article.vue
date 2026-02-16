@@ -31,7 +31,7 @@ const { data: surround } = await useAsyncData(
 // Publish context for components
 watchEffect(() => {
   if (!article.value || article.value.path !== route.path) return
-  setContext(article.value, { surround: surround.value })
+  setContext(article.value as unknown as Record<string, unknown>, { surround: surround.value })
 })
 
 // SEO
@@ -80,7 +80,7 @@ watchEffect(() => {
               </div>
 
               <div
-                v-if="article?.date"
+                v-if="(article as any)?.date"
                 class="flex items-center gap-2 text-muted"
               >
                 <UIcon
@@ -88,7 +88,7 @@ watchEffect(() => {
                   class="size-4"
                 />
                 <NuxtTime
-                  :datetime="article.date"
+                  :datetime="(article as any).date"
                   year="numeric"
                   month="long"
                   day="numeric"

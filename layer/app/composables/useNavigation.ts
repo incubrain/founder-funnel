@@ -59,7 +59,7 @@ export const useNavigation = async () => {
       return (await queryCollection('navigation').first()) as NavigationConfig
     }
     catch (error) {
-      log.warn('navigation', `Failed to load config: ${error instanceof Error ? error.message : String(error)}`)
+      console.warn('navigation', `Failed to load config: ${error instanceof Error ? error.message : String(error)}`)
       return {}
     }
   })
@@ -73,8 +73,8 @@ export const useNavigation = async () => {
       if (!searchableCollections?.length) return []
 
       const collections = await Promise.all(
-        searchableCollections.map((collection: keyof PageCollections) =>
-          queryCollectionNavigation(collection, [
+        searchableCollections.map((collection: string) =>
+          queryCollectionNavigation(collection as keyof PageCollections, [
             'path',
             'title',
             'description',

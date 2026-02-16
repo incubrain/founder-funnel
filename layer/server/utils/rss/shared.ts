@@ -1,4 +1,6 @@
 import type { H3Event } from 'h3'
+import { queryCollection } from '@nuxt/content/server'
+import type { Collections } from '@nuxt/content'
 
 export interface RSSItem {
   title: string
@@ -53,15 +55,15 @@ export function buildRSSFeed(channel: RSSChannel, siteUrl: string): string {
     .join('')
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" 
-     xmlns:dc="http://purl.org/dc/elements/1.1/" 
+<rss version="2.0"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
      xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>${escapeXml(channel.title)}</title>
     <link>${channel.link}</link>
     <description>${escapeXml(channel.description)}</description>
     <language>en-us</language>
-    <copyright>© ${new Date().getFullYear()} ${escapeXml(channel.title)}</copyright>
+    <copyright>${new Date().getFullYear()} ${escapeXml(channel.title)}</copyright>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <ttl>60</ttl>
     <image>
@@ -81,12 +83,13 @@ export async function getAuthorName(event: H3Event): Promise<string> {
   const log = useLogger(event)
 
   try {
-    const founder = await queryCollection(event, 'team')
-      .where('isFounder', '=', true)
+    const founder = await queryCollection(event, 'team' as keyof Collections)
+      .where('isFounder' as 'id', '=' as never, true as never)
       .first()
 
-    if (founder?.givenName) {
-      return `${founder.givenName} ${founder.surname}`
+    const founderData = founder as Record<string, unknown> | null
+    if (founderData?.givenName) {
+      return `${founderData.givenName} ${founderData.surname}`
     }
   }
   catch (error: unknown) {
@@ -95,16 +98,18 @@ export async function getAuthorName(event: H3Event): Promise<string> {
     })
   }
 
-  const siteConfig = await queryCollection(event, 'config')
+  const siteConfig = await queryCollection(event, 'config' as keyof Collections)
     .where('stem', '=', 'config/site')
     .first()
-  return siteConfig?.business?.name || 'Team'
+  const siteData = siteConfig as Record<string, unknown> | null
+  return ((siteData?.business as Record<string, unknown> | undefined)?.name as string) || 'Team'
 }
 
 export async function getBusinessName(event: H3Event): Promise<string> {
-  const siteConfig = await queryCollection(event, 'config')
+  const siteConfig = await queryCollection(event, 'config' as keyof Collections)
     .where('stem', '=', 'config/site')
     .first()
 
-  return siteConfig?.business?.name || 'Site'
+  const siteData = siteConfig as Record<string, unknown> | null
+  return ((siteData?.business as Record<string, unknown> | undefined)?.name as string) || 'Site'
 }

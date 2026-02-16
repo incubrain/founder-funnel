@@ -1,7 +1,7 @@
 <!-- app/components/convert/Internal.vue -->
 <script setup lang="ts">
 import type { ButtonProps, PageCardProps } from '@nuxt/ui'
-import type { OfferId } from '#shared/types/events'
+import type { OfferId } from '~~/modules/events/runtime/types/events'
 
 interface Props {
   // Option 1: Query by slug
@@ -53,12 +53,13 @@ const { data: offer } = useAsyncData(
 )
 
 // Compute final values
+const offerPage = computed(() => offer.value as Record<string, unknown> | null)
 const cta = computed(() => ({
   to: props.to || (props.offerSlug ? `/offers/${props.offerSlug}` : '#'),
   label:
-    props.label || offer.value?.ctaLabel || offer.value?.title || 'Learn More',
-  icon: props.icon || offer.value?.icon || 'i-lucide-arrow-right',
-  description: props.description || offer.value?.description,
+    props.label || (offerPage.value?.ctaLabel as string) || (offerPage.value?.title as string) || 'Learn More',
+  icon: props.icon || (offerPage.value?.icon as string) || 'i-lucide-arrow-right',
+  description: props.description || (offerPage.value?.description as string),
 }))
 
 const { trackEvent } = useEvents()

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ButtonProps } from '@nuxt/ui'
+import type { TeamCollectionItem } from '@nuxt/content'
 
 const { collections } = useContentConfig()
 
@@ -23,7 +24,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const { data: founder } = await useAsyncData('app-founder', () =>
-  queryCollection(collections.team).where('isFounder', '=', true).first(),
+  queryCollection(collections.team).where('isFounder', '=', true).first() as Promise<TeamCollectionItem | null>,
 )
 const { trackEvent } = useEvents()
 
@@ -84,7 +85,7 @@ const allLinks = computed(() => {
         rounded ? 'rounded-full text-default' : '',
         size === 'xl' && rounded ? 'p-3' : '',
       ]"
-      :aria-label="`${link.label === 'Email' ? 'Email' : 'Visit'} ${founder.givenName}${link.label === 'Email' ? '' : `'s ${link.label}`}`"
+      :aria-label="`${link.label === 'Email' ? 'Email' : 'Visit'} ${founder?.givenName ?? ''}${link.label === 'Email' ? '' : `'s ${link.label}`}`"
       @click="handleClick(link.label, link.url)"
     />
   </div>

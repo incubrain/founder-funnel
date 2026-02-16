@@ -1,4 +1,6 @@
 import type { H3Event } from 'h3'
+import { queryCollection } from '@nuxt/content/server'
+import type { Collections } from '@nuxt/content'
 import {
   buildRSSFeed,
   getAuthorName,
@@ -16,25 +18,25 @@ export async function generateDecisionsFeed(event: H3Event): Promise<string> {
   // Get articles config from appConfig (with fallback)
   // Pages collection can be string or { name, prefix, backLabel }
   const appConfig = useAppConfig()
-  const changelogConfig = appConfig.content?.collections?.changelog
+  const changelogConfig = appConfig.content?.collections?.changelog as Record<string, unknown> | string | undefined
   const changelogBasePath
     = typeof changelogConfig === 'object'
-      ? changelogConfig?.prefix || '/changelog'
+      ? (changelogConfig?.prefix as string) || '/changelog'
       : '/changelog'
 
   // Fetch articles
-  const changelogs = await queryCollection(event, changelogConfig.name)
-    .select('path', 'title', 'description', 'date', 'label')
-    .order('date', 'DESC')
+  const changelogs = await queryCollection(event, 'changelog' as keyof Collections)
+    .select('path' as 'id', 'title' as 'id', 'description' as 'id', 'date' as 'id', 'label' as 'id')
+    .order('date' as 'id', 'DESC')
     .limit(50)
     .all()
 
   // Transform to RSS items
-  const items: RSSItem[] = changelogs.map((d: Record<string, string>) => ({
-    title: d.title,
+  const items: RSSItem[] = (changelogs as unknown as Record<string, string>[]).map((d) => ({
+    title: d.title || '',
     link: `${siteConfig.url}${d.path}`,
     guid: `${siteConfig.url}${d.path}`,
-    pubDate: new Date(d.date).toUTCString(),
+    pubDate: d.date ? new Date(d.date).toUTCString() : new Date().toUTCString(),
     description: d.description || '',
     category: d.label || undefined,
     author: authorName,

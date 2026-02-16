@@ -1,4 +1,5 @@
 import { createResolver } from '@nuxt/kit'
+import { defineNuxtConfig } from 'nuxt/config'
 import { ICON_LIBRARIES } from './shared/constants'
 
 const { resolve } = createResolver(import.meta.url)
@@ -155,8 +156,8 @@ export default defineNuxtConfig({
 
   alias: {
     '#constants': resolve('./shared/constants.ts'),
-    '#navigation': resolve('./shared/navigation.ts'),
-    '#search': resolve('./shared/search.ts'),
+    '#navigation': resolve('./app/composables/useNavigation.ts'),
+    '#search': resolve('./app/composables/useSearch.ts'),
     '#config-resolver': resolve('./shared/config-resolver.ts'),
   },
 
@@ -194,11 +195,11 @@ export default defineNuxtConfig({
   },
 
   hooks: {
-    'components:extend': (components) => {
-      const globals = components.filter(c =>
+    'components:extend': (components: { pascalName: string, global?: boolean | 'sync' }[]) => {
+      const globals = components.filter((c: { pascalName: string }) =>
         ['UButton', 'UIcon', 'ProseDfn'].includes(c.pascalName),
       )
-      globals.forEach(c => (c.global = true))
+      globals.forEach((c: { global?: boolean | 'sync' }) => (c.global = true))
     },
   },
 

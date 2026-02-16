@@ -78,18 +78,19 @@ export function useSourcesTable() {
   const tableData = computed(() => {
     if (!allCategoryRefs.value) return []
 
-    return allCategoryRefs.value.flatMap(categoryGroup =>
-      categoryGroup.sources.map((source: Record<string, unknown>) => ({
+    return allCategoryRefs.value.flatMap((categoryGroup) => {
+      const cat = categoryGroup as unknown as { sources: Record<string, unknown>[], category: { id: string, label: string } }
+      return cat.sources.map((source) => ({
         ...source,
-        categoryId: categoryGroup.category.id,
-        categoryLabel: categoryGroup.category.label,
-      })),
-    )
+        categoryId: cat.category.id,
+        categoryLabel: cat.category.label,
+      }))
+    })
   })
 
   // Grouping state
   const grouping = ref(['categoryLabel'])
-  const expanded = ref(true)
+  const expanded = ref<boolean | Record<string, boolean>>(true)
 
   // Affiliation color mapping
   const affiliationColor = computed<Record<string, BadgeProps['color']>>(() => ({
@@ -99,7 +100,7 @@ export function useSourcesTable() {
     ngo: 'warning',
     educational: 'info',
     industry: 'error',
-    ...appConfig.ui?.docs?.affiliation?.colors,
+    ...(appConfig.ui?.docs as { affiliation?: { colors?: Record<string, string> } } | undefined)?.affiliation?.colors,
   }))
 
   return {

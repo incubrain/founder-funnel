@@ -28,10 +28,10 @@ useHead({
 })
 
 useSeoMeta({
-  titleTemplate: seo.titleTemplate,
-  title: seo.title,
-  description: seo.description,
-  ogSiteName: title,
+  titleTemplate: seo.titleTemplate as string | undefined,
+  title: seo.title as string | undefined,
+  description: seo.description as string | undefined,
+  ogSiteName: title as string | undefined,
   twitterCard: 'summary_large_image',
 })
 

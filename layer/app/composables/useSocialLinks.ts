@@ -1,6 +1,6 @@
 interface SocialLink {
   'icon': string
-  'to': unknown
+  'to': string
   'target': string
   'aria-label': string
 }

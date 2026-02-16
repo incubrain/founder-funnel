@@ -1,7 +1,7 @@
 <!-- app/components/convert/Form.vue -->
 <script setup lang="ts">
 import type { FieldDef } from '~/composables/useFormCapture'
-import type { OfferId } from '#shared/types/events'
+import type { OfferId } from '~~/modules/events/runtime/types/events'
 
 interface Props {
   fields?: FieldDef[]

@@ -10,7 +10,7 @@ const sortedRefs = computed(() => {
 
   return citations.value
     .map(id => allRefs.value.find((r: Record<string, unknown>) => r.id === id))
-    .filter(Boolean)
+    .filter((ref): ref is Record<string, unknown> => !!ref)
 })
 </script>
 

@@ -43,10 +43,10 @@ OUTPUT: Returns a structured list with:
             event,
             collectionName as keyof Collections,
           )
-            .select('title', 'path', 'description')
+            .select('title' as 'id', 'path' as 'id', 'description' as 'id')
             .all()
 
-          return pages.map(page => ({
+          return (pages as unknown as Record<string, string>[]).map(page => ({
             title: page.title,
             path: page.path,
             description: page.description,

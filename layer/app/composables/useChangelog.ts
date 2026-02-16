@@ -1,4 +1,4 @@
-import type { ChangelogCollectionItem } from '@nuxt/content'
+import type { ChangelogCollectionItem, TeamCollectionItem } from '@nuxt/content'
 
 interface ChangelogOptions {
   labelField: keyof ChangelogCollectionItem
@@ -26,21 +26,21 @@ export function useChangelog(options: ChangelogOptions) {
   const appConfig = useAppConfig()
 
   const defaultAuthorSlug = computed(
-    () => appConfig.content?.defaultAuthor as string | undefined,
+    () => (appConfig.content as Record<string, unknown> | undefined)?.defaultAuthor as string | undefined,
   )
 
   // Query all team members (only if showAuthor is enabled)
   const { data: teamMembers } = options.showAuthor
     ? useAsyncData('team-members', () =>
-        queryCollection(collections.team).all(),
+        queryCollection(collections.team).all() as Promise<TeamCollectionItem[]>,
       )
-    : { data: ref([]) }
+    : { data: ref([] as TeamCollectionItem[]) }
 
   // Map team members by slug for fast lookup
   const teamMemberMap = computed(() => {
-    const map = new Map<string, Record<string, unknown>>()
-    teamMembers.value?.forEach((member: Record<string, unknown>) => {
-      map.set(member.slug as string, member)
+    const map = new Map<string, TeamCollectionItem>()
+    teamMembers.value?.forEach((member) => {
+      map.set(member.slug, member)
     })
     return map
   })
@@ -52,11 +52,10 @@ export function useChangelog(options: ChangelogOptions) {
     const member = teamMemberMap.value.get(authorSlug)
     if (!member) return null
 
-    const links = member.links as Array<{ label: string, url: string }> | undefined
     return {
       name: `${member.givenName} ${member.surname}`,
-      avatar: member.avatar as string | undefined,
-      to: links?.find(link => link.label === 'GitHub')?.url,
+      avatar: member.avatar as unknown as string | undefined,
+      to: member.links?.find(link => link.label === 'GitHub')?.url,
       target: '_blank',
     }
   }
@@ -77,16 +76,22 @@ export function useChangelog(options: ChangelogOptions) {
         selectFields.push('image')
       }
 
-      let query = queryCollection(collections.changelog as string)
-        .select(...selectFields)
-
-      if (options.labelField) {
-        query = query.where(options.labelField, 'IS NOT NULL')
+      const q = queryCollection(collections.changelog) as unknown as {
+        select: (...fields: string[]) => unknown
+        where: (field: string, op: string) => unknown
+        order: (field: string, dir: string) => unknown
+        all: () => Promise<ChangelogCollectionItem[]>
       }
 
-      query = query.order(options.sortField, options.sortOrder)
+      let query = q.select(...selectFields)
 
-      return query.all()
+      if (options.labelField) {
+        query = (query as typeof q).where(options.labelField, 'IS NOT NULL')
+      }
+
+      query = (query as typeof q).order(options.sortField, options.sortOrder)
+
+      return (query as typeof q).all()
     },
   )
 
