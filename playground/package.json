@@ -12,6 +12,6 @@
     "@incubrain/foundry": "workspace:*"
   },
   "devDependencies": {
-    "nuxt": "4.3.0"
+    "nuxt": "4.3.1"
   }
 }
