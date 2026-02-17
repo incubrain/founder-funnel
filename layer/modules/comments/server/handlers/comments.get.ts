@@ -1,4 +1,4 @@
-import { readFile, access } from 'node:fs/promises'
+import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 
 interface CommentsConfig {
@@ -14,14 +14,14 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event) as unknown as CommentsConfig
   const logFile = resolve(process.cwd(), config._comments.logFile)
 
+  let content: string
   try {
-    await access(logFile)
+    content = await readFile(logFile, 'utf-8')
   }
   catch {
     return { comments: [] }
   }
 
-  const content = await readFile(logFile, 'utf-8')
   const comments = content
     .split('\n')
     .filter(Boolean)
