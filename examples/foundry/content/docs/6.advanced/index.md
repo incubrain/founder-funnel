@@ -1,6 +1,6 @@
 ---
 title: Advanced
-description: Structured logging, citations, search, RSS, MCP tools, and multi-config.
+description: Structured logging, citations, search, RSS, MCP tools, doc review, and multi-config.
 ---
 
 ::card-group
@@ -26,5 +26,9 @@ description: Structured logging, citations, search, RSS, MCP tools, and multi-co
 
   ::card{title="MCP Tools" icon="i-lucide-bot" to="/docs/advanced/mcp-tools"}
   AI agent integration via Model Context Protocol.
+  ::
+
+  ::card{title="Doc Review" icon="i-lucide-message-square" to="/docs/advanced/doc-review"}
+  Highlight text and leave comments during documentation review.
   ::
 ::
