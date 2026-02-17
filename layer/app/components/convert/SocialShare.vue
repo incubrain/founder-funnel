@@ -32,7 +32,7 @@ const buttonIcon = computed(() => copied.value ? 'i-lucide-check' : props.traili
 </script>
 
 <template>
-  <UPopover>
+  <UPopover data-testid="convert-social-share">
     <UButton
       :label="buttonLabel"
       :size="size"

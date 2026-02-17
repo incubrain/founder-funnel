@@ -22,7 +22,7 @@ defineProps<{
 
 <template>
   <SectionWrapper
-    id="benefits"
+    section-id="benefits"
     has-bottom
     :title="title"
     :description="description"

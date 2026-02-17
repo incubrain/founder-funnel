@@ -23,7 +23,7 @@ const testimonials = computed(() => props.items || [])
 
 <template>
   <SectionWrapper
-    id="results"
+    section-id="results"
     has-bottom
     :title="title"
     :description="description"

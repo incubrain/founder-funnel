@@ -23,7 +23,7 @@ const normalizedFeatures = computed(() => props.features || [])
 
 <template>
   <SectionWrapper
-    id="outcome"
+    section-id="outcome"
     has-bottom
     :title="title"
     :description="description"

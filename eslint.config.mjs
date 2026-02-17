@@ -1,21 +1,13 @@
-import { createConfigForNuxt } from '@nuxt/eslint-config/flat'
+import withNuxt from './playground/.nuxt/eslint.config.mjs'
+import pluginVueA11y from 'eslint-plugin-vuejs-accessibility'
 
-export default createConfigForNuxt({
-  dirs: {
-    src: [
-      './layer',
-      './examples',
+export default withNuxt(
+  {
+    files: [
+      'cli/**/*.ts',
     ],
   },
-  features: {
-    tooling: true,
-    stylistic: true,
-  },
-}, {
-  files: [
-    'cli/**/*.ts',
-  ],
-}).append(
+  ...pluginVueA11y.configs['flat/recommended'],
   {
     rules: {
       'vue/multi-word-component-names': 'off',

@@ -45,6 +45,9 @@ importers:
       '@vue/test-utils':
         specifier: ^2.4.6
         version: 2.4.6
+      eslint-plugin-vuejs-accessibility:
+        specifier: ^2.5.0
+        version: 2.5.0(eslint@10.0.0(jiti@2.6.1))(globals@17.3.0)
       happy-dom:
         specifier: ^20.6.1
         version: 20.6.1
@@ -3939,6 +3942,10 @@ packages:
     resolution: {integrity: sha512-ik3ZgC9dY/lYVVM++OISsaYDeg1tb0VtP5uL3ouh1koGOaUMDPpbFIei4JkFimWUFPn90sbMNMXQAIVOlnYKJA==}
     engines: {node: '>=10'}
 
+  aria-query@5.3.2:
+    resolution: {integrity: sha512-COROpnaoap1E2F000S62r6A60uHZnmlvomhfyT2DlTcrY1OrBKn2UhH7qn5wTC9zMvD0AY7csdPSNwKP+7WiQw==}
+    engines: {node: '>= 0.4'}
+
   array-ify@1.0.0:
     resolution: {integrity: sha512-c5AMf34bKdvPhQ7tBGhqkgKNUzMr4WUs+WDtC2ZUGOUncbxKMTvqxYctiseW3+L4bA8ec+GcZ6/A/FW4m8ukng==}
 
@@ -4891,6 +4898,13 @@ packages:
         optional: true
       '@typescript-eslint/parser':
         optional: true
+
+  eslint-plugin-vuejs-accessibility@2.5.0:
+    resolution: {integrity: sha512-oZ2fL4tS91Cm/ezH3BueNP+FtpbbeS627OSqqgp9/lsN//glmoPcLBT6D53xwGocLtyBybaT99tX4ThBh8+ytA==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      eslint: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0
+      globals: '>= 13.12.1'
 
   eslint-processor-vue-blocks@2.0.0:
     resolution: {integrity: sha512-u4W0CJwGoWY3bjXAuFpc/b6eK3NQEI8MoeW7ritKj3G3z/WtHrKjkqf+wk8mPEy5rlMGS+k6AZYOw2XBoN/02Q==}
@@ -12864,6 +12878,8 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  aria-query@5.3.2: {}
+
   array-ify@1.0.0: {}
 
   assertion-error@2.0.1: {}
@@ -13891,6 +13907,15 @@ snapshots:
     optionalDependencies:
       '@stylistic/eslint-plugin': 5.8.0(eslint@10.0.0(jiti@2.6.1))
       '@typescript-eslint/parser': 8.56.0(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3)
+
+  eslint-plugin-vuejs-accessibility@2.5.0(eslint@10.0.0(jiti@2.6.1))(globals@17.3.0):
+    dependencies:
+      aria-query: 5.3.2
+      eslint: 10.0.0(jiti@2.6.1)
+      globals: 17.3.0
+      vue-eslint-parser: 10.2.0(eslint@10.0.0(jiti@2.6.1))
+    transitivePeerDependencies:
+      - supports-color
 
   eslint-processor-vue-blocks@2.0.0(@vue/compiler-sfc@3.5.27)(eslint@10.0.0(jiti@2.6.1)):
     dependencies:

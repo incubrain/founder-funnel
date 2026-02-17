@@ -70,6 +70,7 @@ const allLinks = computed(() => {
   <div
     v-if="allLinks.length"
     :class="['flex flex-wrap', gapClasses[gap]]"
+    data-testid="convert-social"
   >
     <UButton
       v-for="link in allLinks"
