@@ -14,5 +14,11 @@
     "nuxt-llms": "^0.2.0",
     "better-sqlite3": "^12.5.0",
     "nuxt": "^4.3.0"
+  },
+  "devDependencies": {
+    "@compodium/nuxt": "^0.1.0-beta.12",
+    "@nuxt/eslint": "^1.13.0",
+    "@nuxt/hints": "^1.0.0-alpha.6",
+    "@nuxt/test-utils": "^4.0.0"
   }
 }

@@ -3,7 +3,8 @@ const SITE_URL = process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 export default defineNuxtConfig({
   extends: ['@incubrain/foundry'],
 
-  modules: ['nuxt-studio', 'nuxt-llms'],
+  // Add 'nuxt-studio' here after configuring studio.repository below
+  modules: ['nuxt-llms'],
 
   site: {
     name: 'Your Product',
@@ -35,5 +36,12 @@ export default defineNuxtConfig({
 
   studio: {
     route: '/_studio',
+    // Uncomment and configure when connecting to Nuxt Studio:
+    // repository: {
+    //   provider: 'github',
+    //   owner: 'your-username',
+    //   repo: 'your-repo',
+    //   branch: 'main',
+    // },
   },
 })
