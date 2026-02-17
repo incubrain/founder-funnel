@@ -4,6 +4,7 @@ import {
   baseFaqSchema,
   baseNavigationSchema,
   basePageSchema,
+  baseTeamSchema,
 } from '@incubrain/foundry/content.collections'
 
 export default defineContentConfig({
@@ -36,6 +37,13 @@ export default defineContentConfig({
         include: 'config/navigation.yml',
       },
       schema: baseNavigationSchema,
+    }),
+    team: defineCollection({
+      type: 'data',
+      source: {
+        include: 'team/*.yml',
+      },
+      schema: baseTeamSchema,
     }),
   },
 })

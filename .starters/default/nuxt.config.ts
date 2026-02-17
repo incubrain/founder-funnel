@@ -1,3 +1,5 @@
+const SITE_URL = process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
 export default defineNuxtConfig({
   extends: ['@incubrain/foundry'],
 
@@ -5,13 +7,22 @@ export default defineNuxtConfig({
 
   site: {
     name: 'Your Product',
-    url: 'https://your-domain.com',
+    url: SITE_URL,
+    description: 'One-sentence value proposition for your product',
+  },
+
+  routeRules: {
+    '/': { appLayout: 'landing' },
+    '/about': { appLayout: 'default' },
+    '/offers/**': { appLayout: 'article' },
+    '/success': { appLayout: 'landing' },
+    '/success/**': { appLayout: 'landing' },
   },
 
   llms: {
-    domain: 'https://your-domain.com',
+    domain: SITE_URL,
     title: 'Your Product',
-    description: 'Your Product',
+    description: 'One-sentence value proposition for your product',
     notes: [
       'The documentation only includes Your Product docs.',
       'The content is automatically generated from the same source as the official documentation.',
@@ -20,5 +31,9 @@ export default defineNuxtConfig({
       title: 'Complete Documentation',
       description: 'The complete documentation including all content',
     },
+  },
+
+  studio: {
+    route: '/_studio',
   },
 })
