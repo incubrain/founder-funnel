@@ -56,8 +56,8 @@ If more → Use config object prop
 If passing >2 levels → Use composable or provide/inject
 
 **Examples:**
-See: `layers/base/app/components/convert/Email.vue` (good)
-See: `layers/base/app/components/section/SectionWrapper.vue` (composables not props)
+See: `layer/app/components/convert/Form.vue` (good)
+See: `layer/app/components/section/SectionWrapper.vue` (composables not props)
 
 ## data-testid Convention
 

@@ -49,8 +49,8 @@ export function createVrtConfig(options: VrtConfigOptions = {}) {
            * When `discoverPrefix` is provided, discovers matching testIds first.
            * Returns { testIds: string[], screenshots: Record<testId, filePath> }
            */
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Playwright context is provider-specific
           async screenshotPage(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Playwright context is provider-specific
             ctx: any,
             url: string,
             screenshotDir: string,
@@ -117,8 +117,8 @@ export function createVrtConfig(options: VrtConfigOptions = {}) {
            * If `update` is true, copies current as new baselines (no comparison).
            * Returns { passed: boolean, results: Record<testId, { match, diffRatio, diffPath? }> }
            */
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           async compareScreenshots(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Vitest command context
             _ctx: any,
             currentDir: string,
             baselineDir: string,
