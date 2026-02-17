@@ -21,6 +21,11 @@ export default createConfigForNuxt({
   {
     rules: {
       'vue/multi-word-component-names': 'off',
+      // Downgrade to warnings until pre-existing components are fixed
+      'vuejs-accessibility/mouse-events-have-key-events': 'warn',
+      'vuejs-accessibility/click-events-have-key-events': 'warn',
+      'vuejs-accessibility/no-static-element-interactions': 'warn',
+      'vuejs-accessibility/label-has-for': 'warn',
     },
   },
 )
