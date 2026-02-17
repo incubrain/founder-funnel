@@ -1,4 +1,4 @@
-import { exec, type ChildProcess } from 'node:child_process'
+import { exec, execFile, type ChildProcess } from 'node:child_process'
 import { setTimeout as sleep } from 'node:timers/promises'
 
 async function waitForServer(url: string, timeout = 60_000): Promise<void> {
@@ -39,9 +39,15 @@ export function createGlobalSetup(options: {
         // Not running, start it
       }
 
-      const cmd = command || `npx nuxt dev --port ${port}`
-      console.log(`[VRT] Starting dev server: ${cmd}`)
-      server = exec(cmd, { cwd: rootDir })
+      if (command) {
+        console.log(`[VRT] Starting dev server: ${command}`)
+        server = exec(command, { cwd: rootDir })
+      }
+      else {
+        const args = ['nuxt', 'dev', '--port', String(port)]
+        console.log(`[VRT] Starting dev server: npx ${args.join(' ')}`)
+        server = execFile('npx', args, { cwd: rootDir })
+      }
 
       server.stdout?.on('data', (data: string) => {
         if (process.env.VRT_DEBUG) console.log(`[VRT Server] ${data}`)
