@@ -20,14 +20,18 @@ const resolveSchema = z.object({
   id: z.string(),
 })
 
+interface CommentsConfig {
+  _comments: { logFile: string }
+}
+
 export default defineEventHandler(async (event) => {
   if (!import.meta.dev) {
     throw createError({ statusCode: 404, message: 'Not found' })
   }
 
   const body = await readBody(event)
-  const config = useRuntimeConfig(event)
-  const logFile = resolve(process.cwd(), (config as any)._comments.logFile)
+  const config = useRuntimeConfig(event) as unknown as CommentsConfig
+  const logFile = resolve(process.cwd(), config._comments.logFile)
 
   // Resolve an existing comment
   if (body.action === 'resolve') {

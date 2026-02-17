@@ -62,7 +62,6 @@ onKeyStroke('Escape', dismiss)
           v-model="commentText"
           placeholder="Leave a comment..."
           :rows="2"
-          autofocus
           @keydown.meta.enter="submit"
           @keydown.ctrl.enter="submit"
         />

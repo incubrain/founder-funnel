@@ -25,11 +25,10 @@ function highlightComment(comment: DocComment, contentArea: Element) {
   // Find the block at blockIndex after the heading
   const searchRoot = startNode?.parentElement || contentArea
   const blocks = Array.from(searchRoot.children).filter(el =>
-    /^(P|DIV|LI|UL|OL|PRE|BLOCKQUOTE|TABLE|DL|FIGURE|SECTION|ARTICLE)$/.test(el.tagName),
+    /^(?:P|DIV|LI|UL|OL|PRE|BLOCKQUOTE|TABLE|DL|FIGURE|SECTION|ARTICLE)$/.test(el.tagName),
   )
 
   // If we found the heading, start counting from after it
-  let startIdx = 0
   if (startNode) {
     const headingIdx = Array.from(searchRoot.children).indexOf(startNode)
     const blocksAfterHeading = blocks.filter((_, i) => {

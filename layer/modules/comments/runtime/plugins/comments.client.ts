@@ -87,7 +87,7 @@ function computeAnchor(range: Range, contentArea: Element): CommentAnchor {
 }
 
 function isBlockElement(el: HTMLElement): boolean {
-  return /^(P|DIV|LI|UL|OL|PRE|BLOCKQUOTE|TABLE|DL|DD|DT|FIGURE|SECTION|ARTICLE)$/
+  return /^(?:P|DIV|LI|UL|OL|PRE|BLOCKQUOTE|TABLE|DL|DD|DT|FIGURE|SECTION|ARTICLE)$/
     .test(el.tagName)
 }
 
