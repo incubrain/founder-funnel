@@ -20,6 +20,16 @@ export default defineContentConfig({
       schema: basePageSchema,
     }),
 
+    // Documentation
+    docs: defineCollection({
+      type: 'page',
+      source: {
+        include: 'docs/**/*.md',
+        prefix: '/docs',
+      },
+      schema: basePageSchema,
+    }),
+
     decisions: defineCollection({
       type: 'page',
       source: {
