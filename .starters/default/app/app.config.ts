@@ -12,9 +12,16 @@ export default defineAppConfig({
 
   content: {
     collections: {
+      // Page collections (routable)
+      pages: { name: 'pages', type: 'page', prefix: '/', backLabel: 'Back' },
+
       // Data collections (not routable)
+      faq: { name: 'faq', type: 'data' },
       navigation: { name: 'navigation', type: 'data' },
       config: { name: 'config', type: 'data' },
+      team: { name: 'team', type: 'data' },
+
+      // Collections included in search
       searchable: ['pages'],
     },
     routing: {

@@ -16,6 +16,9 @@ on:
       - '.vscode/**'
       - 'deploy/**'
 
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -76,3 +79,24 @@ jobs:
           name: build-logs-${{ matrix.app }}
           path: logs/
           retention-days: 7
+
+  starter-build:
+    needs: [quality, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Scaffold starter template
+        run: |
+          cp -r .starters/default /tmp/starter-test
+          cp /tmp/starter-test/.env.example /tmp/starter-test/.env
+      - name: Install dependencies
+        working-directory: /tmp/starter-test
+        run: npm install
+      - name: Production build
+        working-directory: /tmp/starter-test
+        env:
+          NUXT_PUBLIC_SITE_URL: https://example.com
+        run: npx nuxt build
