@@ -3,14 +3,9 @@ const route = useRoute()
 
 // Use unified content page composable
 const { getPage, setContext } = useContentPage()
-const { collections } = useContentConfig()
 
-// Get business name from site config
-const { data: siteConfig } = await useAsyncData('app-config', () =>
-  queryCollection(collections.config)
-    .where('stem', '=', 'config/site')
-    .first(),
-)
+// Inject site config (provided by app.vue)
+const siteConfig = inject<Ref<Record<string, unknown> | null>>('site_config', ref(null))
 
 // Fetch page data
 const { data: page } = await getPage()

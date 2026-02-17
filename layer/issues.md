@@ -42,25 +42,19 @@
 
 ## Code Issues
 
-- [ ] **MCP tool naming:** `server/mcp/tools/get-tools.ts` is named "get-tools" but is functionally a "get page" tool. Rename to `get-page.ts` for clarity.
-  - **Docs:** `docs/advanced/6.mcp-tools.md`
+- [x] **MCP tool naming:** `server/mcp/tools/get-tools.ts` renamed to `get-page.ts`.
 
-- [ ] **Unused locale parameter:** `server/mcp/tools/list-pages.ts` declares a `locale` input in the Zod schema but never uses it in the handler. Either implement locale filtering or remove the parameter.
-  - **Docs:** `docs/advanced/6.mcp-tools.md`
+- [x] **Unused locale parameter:** Removed unused `locale` input and `z` import from `server/mcp/tools/list-pages.ts`.
 
-- [ ] **Unused `turnstileToken` field:** `AntiSpamData` in `server/utils/anti-spam.ts` declares `turnstileToken` but it is never validated in `validateAntiSpam()`. Either implement Cloudflare Turnstile validation or remove the field. If kept, document as "planned" in anti-spam docs.
-  - **Docs:** `docs/events/5.anti-spam.md`
+- [x] **Unused `turnstileToken` field:** Removed from `AntiSpamData` in `modules/events/server/utils/anti-spam.ts`.
 
-- [ ] **DocsAsideLeftBody hardcodes `'docs'` collection:** Line 4 declares `const DOCS_COLLECTION = 'docs'` instead of using `useContentConfig().collections.docs`. If a consuming app renames the docs collection, this component breaks.
-  - **Docs:** `docs/reference/1.components.md` (DocsAsideLeftBody entry)
+- [x] **DocsAsideLeftBody hardcoded `'docs'` collection:** Now uses `useContentConfig().collections.docs` for dynamic collection name resolution.
 
 - [ ] **RSS handler registry not extensible:** `server/utils/rss.handler.ts` has a hardcoded `RSS_HANDLERS` map. Consuming apps cannot register custom RSS feed handlers without modifying the layer. Consider a hook-based or config-driven registration approach.
   - **Docs:** `docs/advanced/5.rss.md`
 
-- [ ] **Double data fetching in `landing.vue`:** The landing layout fetches site config via `useAsyncData('app-config', ...)` but `app.vue` already fetches and provides the same data as `site_config`. The layout should inject from the provider instead.
-  - **Docs:** `docs/theming/3.layouts.md`
+- [x] **Double data fetching in `landing.vue`:** Now injects `site_config` from the provider set by `app.vue` instead of fetching separately.
 
 ## Stale Files
 
-- [ ] **`deploy/Dockerfile.starter`** references old directory structure (`layers/`, `modules/`, `shared/`, `templates/`) from a previous architecture. Either update to match current structure or remove if example-level Dockerfiles are sufficient.
-  - **Docs:** `docs/deployment/2.docker.md`
+- [x] **`deploy/Dockerfile.starter`** deleted — referenced old directory structure. Example-level Dockerfiles in `examples/foundry/Dockerfile` and `examples/astronera/Dockerfile` are sufficient.
