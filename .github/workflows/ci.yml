@@ -80,6 +80,57 @@ jobs:
           path: logs/
           retention-days: 7
 
+  vrt:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            visual:
+              - 'layer/app/components/**/*.vue'
+              - 'layer/app/assets/**'
+              - 'layer/modules/vrt/**'
+              - '**/test/vrt/**'
+              - 'examples/foundry/app/components/**'
+              - 'shared/config/**'
+
+      - uses: pnpm/action-setup@v4
+        if: steps.filter.outputs.visual == 'true'
+
+      - uses: actions/setup-node@v4
+        if: steps.filter.outputs.visual == 'true'
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+        if: steps.filter.outputs.visual == 'true'
+
+      - run: npx nuxt prepare layer
+        if: steps.filter.outputs.visual == 'true'
+
+      - name: Install Playwright browsers
+        if: steps.filter.outputs.visual == 'true'
+        run: npx playwright install chromium --with-deps
+
+      - name: Run VRT
+        if: steps.filter.outputs.visual == 'true'
+        run: pnpm run test:vrt
+
+      - name: Upload VRT diffs on failure
+        if: failure() && steps.filter.outputs.visual == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: vrt-diffs
+          path: |
+            **/test/vrt/__screenshots__/__diff__/
+            **/test/vrt/__screenshots__/__actual__/
+          retention-days: 7
+
   starter-build:
     needs: [quality, test]
     runs-on: ubuntu-latest

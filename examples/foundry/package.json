@@ -6,7 +6,9 @@
     "postinstall": "nuxt prepare",
     "build": "nuxt build",
     "dev": "nuxt dev",
-    "preview": "nuxt preview"
+    "preview": "nuxt preview",
+    "test:vrt": "vitest --config vitest.vrt.config.ts --run",
+    "test:vrt:update": "VRT_UPDATE=1 vitest --config vitest.vrt.config.ts --run"
   },
   "dependencies": {
     "@incubrain/foundry": "workspace:*",
