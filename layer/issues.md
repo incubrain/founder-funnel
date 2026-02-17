@@ -36,3 +36,25 @@
 - [ ] do we need the video components anymore since nuxt/ui has video support and it works with <iframe>
   - https://ui.nuxt.com/docs/typography/images-and-embeds#iframes & https://github.com/nuxt-content/nuxt-studio/releases/tag/v1.2.0 & https://docus.dev/en/essentials/images-embeds#videos
   - it is possible we could keep it and overrite the `<video>` tag with our own custom prose component
+  - **Docs:** resolution affects `docs/reference/1.components.md` (video component entries)
+
+# Documentation Audit (identified during docs/getting-started)
+
+## Code Issues
+
+- [x] **MCP tool naming:** `server/mcp/tools/get-tools.ts` renamed to `get-page.ts`.
+
+- [x] **Unused locale parameter:** Removed unused `locale` input and `z` import from `server/mcp/tools/list-pages.ts`.
+
+- [x] **Unused `turnstileToken` field:** Removed from `AntiSpamData` in `modules/events/server/utils/anti-spam.ts`.
+
+- [x] **DocsAsideLeftBody hardcoded `'docs'` collection:** Now uses `useContentConfig().collections.docs` for dynamic collection name resolution.
+
+- [ ] **RSS handler registry not extensible:** `server/utils/rss.handler.ts` has a hardcoded `RSS_HANDLERS` map. Consuming apps cannot register custom RSS feed handlers without modifying the layer. Consider a hook-based or config-driven registration approach.
+  - **Docs:** `docs/advanced/5.rss.md`
+
+- [x] **Double data fetching in `landing.vue`:** Now injects `site_config` from the provider set by `app.vue` instead of fetching separately.
+
+## Stale Files
+
+- [x] **`deploy/Dockerfile.starter`** deleted — referenced old directory structure. Example-level Dockerfiles in `examples/foundry/Dockerfile` and `examples/astronera/Dockerfile` are sufficient.

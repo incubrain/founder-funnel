@@ -1,4 +1,3 @@
-import { z } from 'zod'
 import { queryCollection } from '@nuxt/content/server'
 import type { Collections } from '@nuxt/content'
 
@@ -21,9 +20,7 @@ OUTPUT: Returns a structured list with:
 - path: Exact path for use with get-page
 - description: Brief summary of page content
 - url: Full URL for reference`,
-  inputSchema: {
-    locale: z.string().optional().describe('The locale to filter pages by'),
-  },
+  inputSchema: {},
   cache: '1h',
   handler: async () => {
     const event = useEvent()

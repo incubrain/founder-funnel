@@ -34,7 +34,7 @@ export default defineAppConfig({
       config: { name: 'config', type: 'data' },
       navigation: { name: 'navigation', type: 'data' },
       // Collections to include in search
-      searchable: ['pages', 'decisions'],
+      searchable: ['docs', 'pages', 'decisions'],
     },
     defaultAuthor: 'drew-macgibbon',
     // Additional routing paths (not tied to a specific collection)

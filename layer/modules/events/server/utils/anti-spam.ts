@@ -11,7 +11,6 @@ export interface AntiSpamData {
   honeypot?: string
   timeOnForm?: number
   jsToken?: string
-  turnstileToken?: string
 }
 
 export interface SpamFlags {
