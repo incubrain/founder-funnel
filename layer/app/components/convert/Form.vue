@@ -43,11 +43,15 @@ const formClasses = computed(() =>
 </script>
 
 <template>
-  <div class="w-full">
+  <div
+    class="w-full"
+    data-testid="convert-form"
+  >
     <UForm
       ref="formRef"
       :state="state"
       :schema="schema"
+      :aria-label="`Signal capture form - ${location}`"
       @submit="handleSubmit"
     >
       <!-- Honeypot field (invisible to humans, bots will fill it) -->

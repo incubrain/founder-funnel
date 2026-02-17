@@ -25,7 +25,11 @@ defineProps<Props>()
 </script>
 
 <template>
-  <section class="py-6 lg:py-12">
+  <section
+    class="py-6 lg:py-12"
+    data-testid="convert-pricing"
+    aria-label="Pricing options"
+  >
     <div class="max-w-5xl mx-auto">
       <UPricingPlans scale>
         <UPricingPlan

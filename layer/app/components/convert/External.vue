@@ -83,6 +83,7 @@ const cardClasses = computed(() => [
   <div
     v-if="variant === 'button'"
     class="w-full space-y-3"
+    data-testid="convert-external"
   >
     <UButton
       :to="to"
@@ -121,6 +122,7 @@ const cardClasses = computed(() => [
   <div
     v-else-if="variant === 'card'"
     class="relative pt-4 lg:pt-0 h-full"
+    data-testid="convert-external"
   >
     <!-- Badge -->
     <div

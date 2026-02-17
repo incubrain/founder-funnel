@@ -6,7 +6,9 @@
     "postinstall": "nuxt prepare",
     "dev": "nuxt dev",
     "build": "nuxt build",
-    "preview": "nuxt preview"
+    "preview": "nuxt preview",
+    "test:vrt": "vitest --config vitest.vrt.config.ts --run",
+    "test:vrt:update": "VRT_UPDATE=1 vitest --config vitest.vrt.config.ts --run"
   },
   "dependencies": {
     "@incubrain/foundry": "^0.5.2",
@@ -19,6 +21,9 @@
     "@compodium/nuxt": "^0.1.0-beta.12",
     "@nuxt/eslint": "^1.13.0",
     "@nuxt/hints": "^1.0.0-alpha.6",
-    "@nuxt/test-utils": "^4.0.0"
+    "@nuxt/test-utils": "^4.0.0",
+    "@vitest/browser-playwright": "^4.0.18",
+    "vitest": "^4.0.18",
+    "playwright-core": "^1.58.2"
   }
 }

@@ -32,7 +32,7 @@ const displayDescription = computed(() => props.description)
 
 <template>
   <SectionWrapper
-    id="offer"
+    section-id="offer"
     has-bottom
     class="relative"
     :title="displayTitle"

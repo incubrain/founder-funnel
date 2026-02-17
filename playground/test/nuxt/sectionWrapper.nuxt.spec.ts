@@ -1,0 +1,47 @@
+// @vitest-environment nuxt
+import { describe, it, expect } from 'vitest'
+import { mountSuspended } from '@nuxt/test-utils/runtime'
+import SectionWrapper from '@incubrain/foundry/app/components/section/SectionWrapper.vue'
+
+describe('SectionWrapper: Landmark Attributes', () => {
+  it('renders section with aria-labelledby and data-testid when sectionId provided', async () => {
+    const wrapper = await mountSuspended(SectionWrapper, {
+      props: {
+        sectionId: 'benefits',
+        title: 'Stop Building in the Dark',
+      },
+    })
+
+    const section = wrapper.find('section')
+    expect(section.exists()).toBe(true)
+    expect(section.attributes('id')).toBe('benefits')
+    expect(section.attributes('aria-labelledby')).toBe('heading-benefits')
+    expect(section.attributes('data-testid')).toBe('section-benefits')
+  })
+
+  it('renders heading with correct id for aria-labelledby', async () => {
+    const wrapper = await mountSuspended(SectionWrapper, {
+      props: {
+        sectionId: 'faq',
+        title: 'Common Questions',
+      },
+    })
+
+    const heading = wrapper.find('#heading-faq')
+    expect(heading.exists()).toBe(true)
+    expect(heading.text()).toContain('Common Questions')
+  })
+
+  it('does not add landmark attributes when sectionId is omitted', async () => {
+    const wrapper = await mountSuspended(SectionWrapper, {
+      props: {
+        title: 'No Section ID',
+      },
+    })
+
+    const section = wrapper.find('section')
+    expect(section.exists()).toBe(true)
+    expect(section.attributes('aria-labelledby')).toBeUndefined()
+    expect(section.attributes('data-testid')).toBeUndefined()
+  })
+})

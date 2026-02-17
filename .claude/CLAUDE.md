@@ -13,6 +13,8 @@ pnpm build:ae        # Production build (astronera)
 pnpm lint            # ESLint check
 pnpm lint:fix        # ESLint autofix
 pnpm test            # Run tests
+pnpm test:vrt        # Visual regression tests
+pnpm test:vrt:update # Update VRT baselines
 pnpm typecheck       # Nuxt typecheck (layer)
 pnpm verify          # dev:prepare + lint + typecheck
 ```
@@ -82,3 +84,4 @@ Detailed rules are in the `.claude/rules/` directory:
 - @.claude/rules/conventions.md — Naming, component rules, code patterns
 - @.claude/rules/decisions.md — Boundary decisions and decision framework
 - @.claude/rules/anti-patterns.md — What to never do, red flags, values filter
+- @.claude/rules/visual-testing.md — VRT workflow, agent navigability standards

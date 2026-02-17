@@ -74,7 +74,10 @@ const handleClick = async () => {
 </script>
 
 <template>
-  <div class="w-full">
+  <div
+    class="w-full"
+    data-testid="convert-internal"
+  >
     <!-- Button Variant -->
     <UButton
       v-if="variant === 'button'"

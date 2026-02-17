@@ -62,7 +62,7 @@ const accordionItems = computed(() =>
 
 <template>
   <SectionWrapper
-    id="faq"
+    section-id="faq"
     has-bottom
     :title="title"
     :description="description"

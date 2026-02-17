@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     resolve('./modules/config'),
     resolve('./modules/css'),
     resolve('./modules/events'),
+    resolve('./modules/vrt'),
     'evlog/nuxt',
     '@nuxt/ui',
     '@nuxtjs/seo',
