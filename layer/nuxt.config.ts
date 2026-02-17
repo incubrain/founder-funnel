@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     resolve('./modules/css'),
     resolve('./modules/events'),
     resolve('./modules/vrt'),
+    resolve('./modules/comments'),
     'evlog/nuxt',
     '@nuxt/ui',
     '@nuxtjs/seo',

@@ -116,6 +116,9 @@ features:
   - title: "Webhook Ready"
     description: "Stream your leads directly to Slack, Discord, or your CRM. Own your data."
     icon: i-lucide-webhook
+  - title: "Doc Review"
+    description: "Highlight text and leave comments on docs pages. AI agents read the log and fix issues."
+    icon: i-lucide-message-square
   - title: "Open Source"
     description: "Built for developers by developers. Extend it, change it, own it."
     icon: i-lucide-github

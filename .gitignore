@@ -45,6 +45,9 @@ CLAUDE.local.md
 .claude/skills/agent-browser
 .claude/skills/web-design-guidelines
 
+# Documentation review comments (dev-only)
+.comments/
+
 # VRT artifacts (baselines ARE committed, current/diff/actual are NOT)
 **/test/vrt/__screenshots__/__current__/
 **/test/vrt/__screenshots__/__diff__/
