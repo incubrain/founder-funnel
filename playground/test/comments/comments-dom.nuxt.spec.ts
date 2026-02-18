@@ -2,19 +2,16 @@
 /**
  * DOM-level tests for the comment module's anchor computation and highlight application.
  *
- * These tests construct DOM structures that mirror what Nuxt Content produces,
- * then exercise the exact same algorithms used by the plugin and overlay.
- * This lets us test the full lifecycle (select → anchor → store → re-highlight)
- * without needing a running browser.
- *
- * NOTE: happy-dom's `surroundContents()` does NOT throw on cross-element boundaries
- * unlike real browsers. Tests that document cross-element bugs verify the resulting
- * DOM content instead of relying on thrown errors.
+ * These tests import the REAL functions from the module utils (not duplicates),
+ * construct DOM structures that mirror what Nuxt Content produces, and verify
+ * the full lifecycle: select → anchor → store → re-highlight.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import type { CommentAnchor, DocComment } from '@incubrain/foundry/modules/comments/runtime/types'
+import type { DocComment } from '@incubrain/foundry/modules/comments/runtime/types'
+import { computeAnchor } from '@incubrain/foundry/modules/comments/runtime/utils/anchor'
+import { highlightComment, clearHighlights } from '@incubrain/foundry/modules/comments/runtime/utils/highlight'
 
-// ── DOM helpers (construct Nuxt Content-like structures) ──
+// ── DOM helpers (test fixtures — construct Nuxt Content-like structures) ──
 
 let contentArea: HTMLDivElement
 
@@ -76,12 +73,6 @@ function bold(text: string): HTMLElement {
   return strong
 }
 
-function italic(text: string): HTMLElement {
-  const em = document.createElement('em')
-  em.textContent = text
-  return em
-}
-
 function code(text: string): HTMLElement {
   const el = document.createElement('code')
   el.textContent = text
@@ -93,160 +84,6 @@ function link(text: string): HTMLElement {
   a.textContent = text
   a.href = 'https://example.com'
   return a
-}
-
-// ── Extracted algorithms (identical to plugin/overlay source) ──
-
-function isBlockElement(el: HTMLElement): boolean {
-  return /^(?:P|DIV|LI|UL|OL|PRE|BLOCKQUOTE|TABLE|DL|DD|DT|FIGURE|SECTION|ARTICLE)$/
-    .test(el.tagName)
-}
-
-function getTextOffset(node: Node, offset: number, container: Node): number {
-  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT)
-  let charCount = 0
-  let current = walker.nextNode()
-  while (current) {
-    if (current === node) {
-      return charCount + offset
-    }
-    charCount += current.textContent?.length || 0
-    current = walker.nextNode()
-  }
-  return offset
-}
-
-function computeAnchor(range: Range, area: Element): CommentAnchor {
-  let block = range.startContainer as Node
-  while (block && block !== area) {
-    if (block instanceof HTMLElement && isBlockElement(block)) break
-    block = block.parentNode!
-  }
-
-  let headingId: string | null = null
-  let blockIndex = 0
-  let sibling = block?.previousSibling
-
-  if (block instanceof HTMLElement && /^H[1-6]$/.test(block.tagName)) {
-    headingId = block.id || null
-  }
-
-  while (sibling) {
-    if (sibling instanceof HTMLElement) {
-      if (/^H[1-6]$/.test(sibling.tagName) && !headingId) {
-        headingId = sibling.id || null
-      }
-      if (headingId && isBlockElement(sibling)) {
-        blockIndex++
-      }
-    }
-    sibling = sibling.previousSibling
-  }
-
-  const textOffset = getTextOffset(range.startContainer, range.startOffset, block)
-
-  return {
-    headingId,
-    blockIndex,
-    textOffset,
-    textLength: range.toString().length,
-  }
-}
-
-// Highlight application (mirrors CommentOverlay.vue)
-function highlightComment(comment: DocComment, area: Element): boolean {
-  let startNode: Element | null = null
-  if (comment.anchor.headingId) {
-    startNode = area.querySelector(`#${CSS.escape(comment.anchor.headingId)}`)
-  }
-
-  const searchRoot = startNode?.parentElement || area
-  const blocks = Array.from(searchRoot.children).filter(el =>
-    el instanceof HTMLElement && /^(?:P|DIV|LI|UL|OL|PRE|BLOCKQUOTE|TABLE|DL|FIGURE|SECTION|ARTICLE)$/.test(el.tagName),
-  )
-
-  if (startNode) {
-    const headingIdx = Array.from(searchRoot.children).indexOf(startNode)
-    const blocksAfterHeading = blocks.filter((_, i) => {
-      const origIdx = Array.from(searchRoot.children).indexOf(blocks[i]!)
-      return origIdx > headingIdx
-    })
-    const targetBlock = blocksAfterHeading[comment.anchor.blockIndex]
-    if (targetBlock) {
-      return wrapText(targetBlock, comment)
-    }
-  }
-
-  // Fallback: text search
-  const walker = document.createTreeWalker(area, NodeFilter.SHOW_TEXT)
-  let node = walker.nextNode()
-  while (node) {
-    if (node.textContent?.includes(comment.selectedText)) {
-      const idx = node.textContent.indexOf(comment.selectedText)
-      const range = document.createRange()
-      range.setStart(node, idx)
-      range.setEnd(node, idx + comment.selectedText.length)
-      return wrapRange(range, comment.id)
-    }
-    node = walker.nextNode()
-  }
-  return false
-}
-
-function wrapText(block: Element, comment: DocComment): boolean {
-  const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT)
-  let charCount = 0
-  let node = walker.nextNode()
-
-  while (node) {
-    const len = node.textContent?.length || 0
-    if (charCount + len > comment.anchor.textOffset) {
-      const localOffset = comment.anchor.textOffset - charCount
-      const range = document.createRange()
-      range.setStart(node, Math.min(localOffset, len))
-      range.setEnd(node, Math.min(localOffset + comment.anchor.textLength, len))
-      return wrapRange(range, comment.id)
-    }
-    charCount += len
-    node = walker.nextNode()
-  }
-
-  // Fallback: text search within block
-  const textWalker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT)
-  let searchNode = textWalker.nextNode()
-  while (searchNode) {
-    if (searchNode.textContent?.includes(comment.selectedText)) {
-      const idx = searchNode.textContent.indexOf(comment.selectedText)
-      const range = document.createRange()
-      range.setStart(searchNode, idx)
-      range.setEnd(searchNode, idx + comment.selectedText.length)
-      return wrapRange(range, comment.id)
-    }
-    searchNode = textWalker.nextNode()
-  }
-  return false
-}
-
-function wrapRange(range: Range, commentId: string): boolean {
-  const mark = document.createElement('mark')
-  mark.className = 'doc-comment-highlight'
-  mark.dataset.commentId = commentId
-  try {
-    range.surroundContents(mark)
-    return true
-  }
-  catch {
-    return false
-  }
-}
-
-function clearHighlights() {
-  document.querySelectorAll('mark.doc-comment-highlight').forEach((mark) => {
-    const parent = mark.parentNode
-    if (!parent) return
-    while (mark.firstChild) parent.insertBefore(mark.firstChild, mark)
-    parent.removeChild(mark)
-  })
 }
 
 function makeComment(overrides: Partial<DocComment> = {}): DocComment {
@@ -295,11 +132,7 @@ describe('Anchor Computation', () => {
     expect(anchor.textLength).toBe(6)
   })
 
-  it('blockIndex is always 0 — algorithm finds heading AFTER block siblings (known bug)', () => {
-    // BUG: computeAnchor walks backwards from the current block. It encounters
-    // sibling blocks BEFORE finding the heading, so they're never counted
-    // (headingId is still null when isBlockElement check runs).
-    // This means blockIndex is always 0, regardless of actual position.
+  it('computes correct blockIndex for second paragraph after heading', () => {
     addHeading(contentArea, 2, 'section-a', 'Section A')
     addParagraph(contentArea, 'First paragraph.')
     const p2 = addParagraph(contentArea, 'Second paragraph.')
@@ -311,14 +144,12 @@ describe('Anchor Computation', () => {
 
     const anchor = computeAnchor(range, contentArea)
     expect(anchor.headingId).toBe('section-a')
-    // This is 0 (not 1) because blocks before the heading in the backward walk
-    // don't get counted — the heading hasn't been found yet when they're visited
-    expect(anchor.blockIndex).toBe(0)
+    expect(anchor.blockIndex).toBe(1)
     expect(anchor.textOffset).toBe(0)
     expect(anchor.textLength).toBe(6)
   })
 
-  it('finds the nearest heading when it is the immediate predecessor', () => {
+  it('finds the nearest heading, not a distant one', () => {
     addHeading(contentArea, 2, 'section-a', 'Section A')
     addParagraph(contentArea, 'Under section A.')
     addHeading(contentArea, 2, 'section-b', 'Section B')
@@ -331,10 +162,26 @@ describe('Anchor Computation', () => {
 
     const anchor = computeAnchor(range, contentArea)
     expect(anchor.headingId).toBe('section-b')
-    // blockIndex is 1 because the backward walk finds H2#section-b first (sets headingId),
-    // then encounters the P from section-a which IS a block element with headingId set,
-    // so it increments blockIndex. This is a bug — the P belongs to a different section.
-    expect(anchor.blockIndex).toBe(1)
+    // blockIndex is 0 — no blocks between section-b heading and this paragraph
+    expect(anchor.blockIndex).toBe(0)
+  })
+
+  it('does not count blocks from a previous section', () => {
+    addHeading(contentArea, 2, 'section-a', 'Section A')
+    addParagraph(contentArea, 'Para 1 under A.')
+    addParagraph(contentArea, 'Para 2 under A.')
+    addHeading(contentArea, 2, 'section-b', 'Section B')
+    const p = addParagraph(contentArea, 'First para under B.')
+
+    const textNode = p.firstChild!
+    const range = document.createRange()
+    range.setStart(textNode, 0)
+    range.setEnd(textNode, 5)
+
+    const anchor = computeAnchor(range, contentArea)
+    expect(anchor.headingId).toBe('section-b')
+    // Should be 0, not 2 — the two paragraphs under section-a don't count
+    expect(anchor.blockIndex).toBe(0)
   })
 
   it('returns null headingId when no heading precedes the content', () => {
@@ -351,11 +198,8 @@ describe('Anchor Computation', () => {
 
   it('computes textOffset across multiple text nodes (bold text)', () => {
     addHeading(contentArea, 2, 'fmt', 'Formatted')
-    // "This contains bold text in the middle."
-    // Text nodes: "This contains " | "bold text" (inside <strong>) | " in the middle."
     const p = addParagraph(contentArea, 'This contains ', bold('bold text'), ' in the middle.')
 
-    // Select "bold text" — the text node INSIDE the <strong>
     const strongEl = p.querySelector('strong')!
     const boldTextNode = strongEl.firstChild!
     const range = document.createRange()
@@ -365,8 +209,7 @@ describe('Anchor Computation', () => {
     const anchor = computeAnchor(range, contentArea)
     expect(anchor.headingId).toBe('fmt')
     expect(anchor.blockIndex).toBe(0)
-    // "This contains " is 14 chars, then "bold text" starts at offset 14
-    expect(anchor.textOffset).toBe(14)
+    expect(anchor.textOffset).toBe(14) // "This contains " = 14 chars
     expect(anchor.textLength).toBe(9)
   })
 
@@ -374,23 +217,21 @@ describe('Anchor Computation', () => {
     addHeading(contentArea, 2, 'fmt', 'Formatted')
     const p = addParagraph(contentArea, 'Before ', bold('middle'), ' after this.')
 
-    // Select "after" — in the third text node
     const afterNode = p.childNodes[2]! // " after this."
     const range = document.createRange()
     range.setStart(afterNode, 1) // skip leading space → "after"
     range.setEnd(afterNode, 6)
 
     const anchor = computeAnchor(range, contentArea)
-    // "Before " = 7 chars + "middle" = 6 chars + " " = 1 char → offset 14
+    // "Before " = 7 + "middle" = 6 + " " = 1 → offset 14
     expect(anchor.textOffset).toBe(14)
     expect(anchor.textLength).toBe(5)
   })
 
-  it('computes anchor for text inside a list item (block is LI, not UL)', () => {
+  it('finds heading for text inside a list item via UL parent', () => {
     addHeading(contentArea, 2, 'list-sec', 'List Section')
     const ul = addList(contentArea, ['First item', 'Second item', 'Third item'])
 
-    // Select "Second" in the second <li>
     const secondLi = ul.querySelectorAll('li')[1]!
     const textNode = secondLi.firstChild!
     const range = document.createRange()
@@ -398,12 +239,8 @@ describe('Anchor Computation', () => {
     range.setEnd(textNode, 6) // "Second"
 
     const anchor = computeAnchor(range, contentArea)
-    // The walk-up finds LI as the block (LI is in isBlockElement list).
-    // LI's previousSibling is the first LI, which is a block but headingId
-    // is still null at that point. LI.parentNode is UL, UL.previousSibling
-    // is the H2 — but that walk happens inside LI's sibling chain, not UL's.
-    // So headingId is null because the heading is not a sibling of the LI.
-    expect(anchor.headingId).toBeNull()
+    // LI escalates to UL, and UL finds the heading as its sibling
+    expect(anchor.headingId).toBe('list-sec')
     expect(anchor.textOffset).toBe(0)
     expect(anchor.textLength).toBe(6)
   })
@@ -459,39 +296,32 @@ describe('Highlight Application — Plain Text', () => {
 
     clearHighlights()
     expect(contentArea.querySelector('mark')).toBeNull()
-    // Text content should be preserved
     expect(contentArea.querySelector('p')!.textContent).toBe('Text to highlight.')
   })
 })
 
 describe('Highlight Application — Cross-Element', () => {
-  // NOTE: happy-dom's surroundContents() does NOT throw on cross-element ranges
-  // unlike real browsers. These tests verify the actual DOM result instead.
-
-  it('cross-element highlight wraps only first text node in happy-dom (browser would throw)', () => {
+  it('highlights text spanning a <strong> boundary with multiple marks', () => {
     addHeading(contentArea, 2, 'fmt', 'Formatted')
-    // "This contains bold text in the middle."
     addParagraph(contentArea, 'This contains ', bold('bold text'), ' in the middle.')
 
-    // Try to highlight "contains bold text in" — crosses the <strong> boundary
+    // "contains bold text in" crosses the <strong> boundary
     const comment = makeComment({
       selectedText: 'contains bold text in',
       anchor: { headingId: 'fmt', blockIndex: 0, textOffset: 5, textLength: 21 },
     })
 
-    // In happy-dom, surroundContents succeeds but only wraps within the first text node.
-    // The range end is clamped to Math.min(localOffset + textLength, len) = Math.min(26, 14) = 14
-    // So it wraps "contains " (offset 5 to 14 in the first text node).
-    // In a real browser, surroundContents would throw InvalidStateError.
     const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true) // happy-dom doesn't throw
+    expect(success).toBe(true)
 
-    const mark = contentArea.querySelector('mark')!
-    // Only the portion within the first text node gets wrapped
-    expect(mark.textContent).toBe('contains ')
+    const marks = contentArea.querySelectorAll('mark.doc-comment-highlight')
+    expect(marks.length).toBeGreaterThanOrEqual(2)
+
+    const totalText = Array.from(marks).map(m => m.textContent).join('')
+    expect(totalText).toBe('contains bold text in')
   })
 
-  it('cross-element list highlight wraps partial text in happy-dom (browser would throw)', () => {
+  it('highlights across multiple list items with multiple marks', () => {
     addHeading(contentArea, 2, 'list', 'Lists')
     addList(contentArea, ['First item', 'Second item'])
 
@@ -501,20 +331,20 @@ describe('Highlight Application — Cross-Element', () => {
       anchor: { headingId: 'list', blockIndex: 0, textOffset: 0, textLength: 21 },
     })
 
-    // happy-dom wraps what it can (clamped to single text node length)
     const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true) // happy-dom doesn't throw
+    expect(success).toBe(true)
 
-    const mark = contentArea.querySelector('mark')!
-    // Only "First item" (10 chars, clamped from 21) gets wrapped
-    expect(mark.textContent).toBe('First item')
+    const marks = contentArea.querySelectorAll('mark.doc-comment-highlight')
+    expect(marks.length).toBeGreaterThanOrEqual(2)
+
+    const totalText = Array.from(marks).map(m => m.textContent).join('')
+    expect(totalText).toBe('First itemSecond item')
   })
 
-  it('CAN highlight text entirely within <strong> (no boundary crossing)', () => {
+  it('CAN highlight text entirely within <strong>', () => {
     addHeading(contentArea, 2, 'fmt', 'Formatted')
     addParagraph(contentArea, 'Text with ', bold('bold part'), ' here.')
 
-    // Highlight just "bold" inside the <strong> — no boundary crossing
     const comment = makeComment({
       selectedText: 'bold',
       anchor: { headingId: 'fmt', blockIndex: 0, textOffset: 10, textLength: 4 },
@@ -545,8 +375,7 @@ describe('Highlight Application — Cross-Element', () => {
 
     const comment = makeComment({
       selectedText: 'here',
-      // "Text with " = 10, "bold part" = 9, " here." starts at offset 19
-      // "here" is at offset 20 (after the leading space)
+      // "Text with " = 10, "bold part" = 9, " here." → "here" at offset 20
       anchor: { headingId: 'fmt', blockIndex: 0, textOffset: 20, textLength: 4 },
     })
 
@@ -557,7 +386,7 @@ describe('Highlight Application — Cross-Element', () => {
 })
 
 describe('Highlight Application — Duplicate Text', () => {
-  it('highlights first occurrence via fallback text search', () => {
+  it('anchor-based lookup targets correct paragraph via blockIndex', () => {
     addHeading(contentArea, 2, 'dup', 'Duplicates')
     addParagraph(contentArea, 'The word Foundry appears here.')
     addParagraph(contentArea, 'The word Foundry also appears here.')
@@ -572,7 +401,6 @@ describe('Highlight Application — Duplicate Text', () => {
     expect(success).toBe(true)
 
     const mark = contentArea.querySelector('mark.doc-comment-highlight')!
-    // With correct anchor resolution, this should be in the SECOND paragraph
     const parentP = mark.parentElement!
     expect(parentP.textContent).toContain('also appears')
   })
@@ -582,7 +410,6 @@ describe('Highlight Application — Duplicate Text', () => {
     addParagraph(contentArea, 'Word appears here.')
     addParagraph(contentArea, 'Word appears here too.')
 
-    // Comment on second paragraph (blockIndex=1), word "Word" at offset 0
     const comment = makeComment({
       selectedText: 'Word',
       anchor: { headingId: 'dup', blockIndex: 1, textOffset: 0, textLength: 4 },
@@ -593,7 +420,6 @@ describe('Highlight Application — Duplicate Text', () => {
 
     const mark = contentArea.querySelector('mark')!
     const parentP = mark.parentElement!
-    // Should be in the second paragraph, not the first
     expect(parentP.textContent).toContain('here too')
   })
 })
@@ -603,7 +429,6 @@ describe('Highlight Application — Fallback Strategies', () => {
     addHeading(contentArea, 2, 'real-id', 'Real Heading')
     addParagraph(contentArea, 'Unique text content here.')
 
-    // Comment with a non-existent heading ID
     const comment = makeComment({
       selectedText: 'Unique text',
       anchor: { headingId: 'non-existent-id', blockIndex: 0, textOffset: 0, textLength: 11 },
@@ -618,7 +443,6 @@ describe('Highlight Application — Fallback Strategies', () => {
     addHeading(contentArea, 2, 'sec', 'Section')
     addParagraph(contentArea, 'Only one paragraph.')
 
-    // blockIndex=5 doesn't exist — only 1 paragraph
     const comment = makeComment({
       selectedText: 'Only one',
       anchor: { headingId: 'sec', blockIndex: 5, textOffset: 0, textLength: 8 },
@@ -630,9 +454,7 @@ describe('Highlight Application — Fallback Strategies', () => {
   })
 
   it('returns false when text is not found anywhere', () => {
-    // Use NO heading so that the anchor-based path gets no startNode,
-    // AND use text that won't match any fallback text search
-    const p = addParagraph(contentArea, 'Some content.')
+    addParagraph(contentArea, 'Some content.')
 
     const comment = makeComment({
       selectedText: 'xyzzy_nonexistent_string_12345',
@@ -649,7 +471,6 @@ describe('Round-trip: Anchor → Store → Re-highlight', () => {
     addHeading(contentArea, 2, 'sec', 'Section')
     const p = addParagraph(contentArea, 'Select this exact phrase in the paragraph.')
 
-    // Step 1: Simulate selection — compute anchor
     const textNode = p.firstChild!
     const range = document.createRange()
     range.setStart(textNode, 12) // "exact phrase"
@@ -659,13 +480,7 @@ describe('Round-trip: Anchor → Store → Re-highlight', () => {
     const selectedText = range.toString()
     expect(selectedText).toBe('exact phrase')
 
-    // Step 2: Simulate storing and recreating a DocComment
-    const comment = makeComment({
-      selectedText,
-      anchor,
-    })
-
-    // Step 3: Re-apply highlight from stored comment
+    const comment = makeComment({ selectedText, anchor })
     const success = highlightComment(comment, contentArea)
     expect(success).toBe(true)
 
@@ -677,7 +492,6 @@ describe('Round-trip: Anchor → Store → Re-highlight', () => {
     addHeading(contentArea, 2, 'fmt', 'Formatted')
     const p = addParagraph(contentArea, 'Before ', bold('the bold part'), ' after.')
 
-    // Select "bold" inside the <strong>
     const boldNode = p.querySelector('strong')!.firstChild!
     const range = document.createRange()
     range.setStart(boldNode, 4) // "bold"
@@ -687,31 +501,27 @@ describe('Round-trip: Anchor → Store → Re-highlight', () => {
     const selectedText = range.toString()
     expect(selectedText).toBe('bold')
 
-    // Round-trip
     const comment = makeComment({ selectedText, anchor })
-    clearHighlights()
-
     const success = highlightComment(comment, contentArea)
     expect(success).toBe(true)
     expect(contentArea.querySelector('mark')!.textContent).toBe('bold')
   })
 
-  it('text spanning bold boundary produces partial highlight (cross-element limitation)', () => {
+  it('text spanning bold boundary round-trips with multi-mark highlight', () => {
     addHeading(contentArea, 2, 'fmt', 'Formatted')
     addParagraph(contentArea, 'Before ', bold('bold'), ' after.')
 
-    // Simulate selecting "Before bold" which crosses the boundary
     const comment = makeComment({
       selectedText: 'Before bold',
       anchor: { headingId: 'fmt', blockIndex: 0, textOffset: 0, textLength: 11 },
     })
 
     const success = highlightComment(comment, contentArea)
-    // happy-dom: succeeds but only wraps "Before " (first text node, clamped to len=7)
-    // Real browser: surroundContents would throw, wrapRange returns false
     expect(success).toBe(true)
-    const mark = contentArea.querySelector('mark')!
-    expect(mark.textContent).toBe('Before ')
+
+    const marks = contentArea.querySelectorAll('mark.doc-comment-highlight')
+    const totalText = Array.from(marks).map(m => m.textContent).join('')
+    expect(totalText).toBe('Before bold')
   })
 })
 
@@ -754,8 +564,7 @@ describe('Multiple Comments on Same Page', () => {
       status: 'resolved',
     })
 
-    // The overlay skips resolved comments — this is checked before calling highlightComment
-    // We verify the pattern: only highlight open comments
+    // The overlay skips resolved comments before calling highlightComment
     if (comment.status !== 'resolved') {
       highlightComment(comment, contentArea)
     }
@@ -773,8 +582,6 @@ describe('Edge Cases', () => {
       anchor: { headingId: null, blockIndex: 0, textOffset: 10, textLength: 7 },
     })
 
-    // With null headingId, the search root is the contentArea itself
-    // The fallback text search should find it
     const success = highlightComment(comment, contentArea)
     expect(success).toBe(true)
   })
