@@ -29,6 +29,11 @@ const reference = computed(() => {
   }
 })
 
+const truncatedText = computed(() => {
+  const text = selection.value?.text ?? ''
+  return text.length > 120 ? `${text.slice(0, 120)}...` : text
+})
+
 const categoryItems = CATEGORIES.map(c => ({ label: c, value: c }))
 const priorityItems = PRIORITIES.map(p => ({ label: p, value: p }))
 
@@ -73,7 +78,7 @@ onKeyStroke('Escape', dismiss)
     <template #content>
       <div class="space-y-2">
         <p class="text-xs text-muted italic line-clamp-2">
-          "{{ selection?.text }}"
+          "{{ truncatedText }}"
         </p>
         <UTextarea
           v-model="commentText"

@@ -4,7 +4,7 @@ import { computeAnchor } from '../utils/anchor'
 export default defineNuxtPlugin(() => {
   if (!import.meta.dev) return
 
-  const { selection, loadComments, isEnabled } = useDocComments()
+  const { selection, loadComments, isEnabled, comments, activeCommentId, isPanelOpen } = useDocComments()
   const route = useRoute()
 
   const isDocsPage = computed(() =>
@@ -35,6 +35,19 @@ export default defineNuxtPlugin(() => {
       const range = sel.getRangeAt(0)
       const contentArea = document.querySelector('[data-doc-content]')
       if (!contentArea || !contentArea.contains(range.commonAncestorContainer)) return
+
+      // Check if selected text overlaps an existing open comment
+      const existing = comments.value.find(c =>
+        c.status === 'open'
+        && c.page === route.path
+        && (text.includes(c.selectedText) || c.selectedText.includes(text)),
+      )
+      if (existing) {
+        activeCommentId.value = existing.id
+        isPanelOpen.value = true
+        sel.removeAllRanges()
+        return
+      }
 
       const anchor = computeAnchor(range, contentArea)
       const rect = range.getBoundingClientRect()

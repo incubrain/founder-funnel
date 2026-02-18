@@ -86,6 +86,22 @@ function link(text: string): HTMLElement {
   return a
 }
 
+/** Build a Shiki-like syntax-highlighted code block: <pre class="shiki"><code>...<span> tokens</code></pre> */
+function addShikiCodeBlock(parent: Element, tokens: string[]) {
+  const pre = document.createElement('pre')
+  pre.className = 'shiki'
+  const codeEl = document.createElement('code')
+  for (const token of tokens) {
+    const span = document.createElement('span')
+    span.style.color = '#d4d4d4'
+    span.textContent = token
+    codeEl.appendChild(span)
+  }
+  pre.appendChild(codeEl)
+  parent.appendChild(pre)
+  return pre
+}
+
 function makeComment(overrides: Partial<DocComment> = {}): DocComment {
   return {
     id: 'c_test0001',
@@ -570,6 +586,111 @@ describe('Multiple Comments on Same Page', () => {
     }
 
     expect(contentArea.querySelector('mark')).toBeNull()
+  })
+})
+
+describe('Highlight Application — Syntax-Highlighted Code Blocks', () => {
+  it('highlights text across Shiki token spans with multi-mark', () => {
+    addHeading(contentArea, 2, 'code-sec', 'Code')
+    // Shiki renders: <pre class="shiki"><code><span>const</span><span> </span><span>x</span><span> = </span><span>1</span></code></pre>
+    addShikiCodeBlock(contentArea, ['const', ' ', 'x', ' = ', '1'])
+
+    // Select "const x" — spans 3 token spans
+    const comment = makeComment({
+      selectedText: 'const x',
+      anchor: { headingId: 'code-sec', blockIndex: 0, textOffset: 0, textLength: 7 },
+    })
+
+    const success = highlightComment(comment, contentArea)
+    expect(success).toBe(true)
+
+    const marks = contentArea.querySelectorAll('mark.doc-comment-highlight')
+    const totalText = Array.from(marks).map(m => m.textContent).join('')
+    expect(totalText).toBe('const x')
+  })
+
+  it('highlights partial token in Shiki code block', () => {
+    addHeading(contentArea, 2, 'code-sec', 'Code')
+    addShikiCodeBlock(contentArea, ['const', ' ', 'myVariable', ' = ', '"hello"'])
+
+    // Select just "Variable" inside the "myVariable" token
+    const comment = makeComment({
+      selectedText: 'Variable',
+      anchor: { headingId: 'code-sec', blockIndex: 0, textOffset: 8, textLength: 8 },
+    })
+
+    const success = highlightComment(comment, contentArea)
+    expect(success).toBe(true)
+    expect(contentArea.querySelector('mark')!.textContent).toBe('Variable')
+  })
+
+  it('round-trips anchor computation through Shiki tokens', () => {
+    addHeading(contentArea, 2, 'code-sec', 'Code')
+    const pre = addShikiCodeBlock(contentArea, ['import', ' ', 'foo', ' from ', '\'bar\''])
+
+    // Select "foo" — the 3rd token span's text node
+    const fooSpan = pre.querySelectorAll('span')[2]!
+    const textNode = fooSpan.firstChild!
+    const range = document.createRange()
+    range.setStart(textNode, 0)
+    range.setEnd(textNode, 3)
+
+    const anchor = computeAnchor(range, contentArea)
+    expect(anchor.headingId).toBe('code-sec')
+    // "import" = 6, " " = 1 → offset 7
+    expect(anchor.textOffset).toBe(7)
+    expect(anchor.textLength).toBe(3)
+
+    // Re-highlight from stored anchor
+    const comment = makeComment({
+      selectedText: 'foo',
+      anchor,
+    })
+    const success = highlightComment(comment, contentArea)
+    expect(success).toBe(true)
+    expect(contentArea.querySelector('mark')!.textContent).toBe('foo')
+  })
+})
+
+describe('Highlight Application — Cross-Block-Type Selection', () => {
+  it('highlights text spanning from heading into paragraph with multi-mark', () => {
+    addHeading(contentArea, 2, 'cross', 'Cross Block')
+    addParagraph(contentArea, 'First paragraph text.')
+
+    // Select "Cross BlockFirst paragraph" — starts in H2, ends in P
+    // This crosses block-level boundaries (H2 → P)
+    const comment = makeComment({
+      selectedText: 'Cross BlockFirst paragraph',
+      anchor: { headingId: 'cross', blockIndex: 0, textOffset: 0, textLength: 26 },
+    })
+
+    // The anchor points to blockIndex=0 (the P), but textOffset 0 + textLength 26
+    // exceeds the paragraph text. wrapText will try to find start at offset 0
+    // and end at offset 26 — only "First paragraph text." is 21 chars.
+    // It should fall back to text search if anchor-based fails.
+    const success = highlightComment(comment, contentArea)
+    // Fallback text search won't find "Cross BlockFirst paragraph" in a single text node
+    // since H2 and P are separate elements. This documents the limitation.
+    expect(success).toBe(false)
+  })
+
+  it('highlights text selected entirely within a heading', () => {
+    addHeading(contentArea, 2, 'single', 'Single Heading Text')
+    addParagraph(contentArea, 'Some paragraph.')
+
+    // Select "Heading" inside the H2 — no boundary crossing
+    const comment = makeComment({
+      selectedText: 'Heading',
+      // headingId is the block itself — computeAnchor checks if block IS a heading
+      anchor: { headingId: 'single', blockIndex: 0, textOffset: 7, textLength: 7 },
+    })
+
+    // highlightComment walks forward from heading to find blockIndex=0 (the P),
+    // then wrapText looks for offset 7 len 7 in the P ("paragraph.") — wrong block.
+    // Fallback text search should find "Heading" in the H2 text node.
+    const success = highlightComment(comment, contentArea)
+    expect(success).toBe(true)
+    expect(contentArea.querySelector('mark')!.textContent).toBe('Heading')
   })
 })
 

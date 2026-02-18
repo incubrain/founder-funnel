@@ -1,4 +1,4 @@
-import type { DocComment } from '../types'
+import type { CommentPriority, DocComment } from '../types'
 import { isBlockElement } from './anchor'
 
 export function highlightComment(comment: DocComment, contentArea: Element): boolean {
@@ -8,6 +8,17 @@ export function highlightComment(comment: DocComment, contentArea: Element): boo
   }
 
   if (startNode) {
+    // Check if the selected text is inside the heading itself (not a following block)
+    const headingText = startNode.textContent ?? ''
+    const endPos = comment.anchor.textOffset + comment.anchor.textLength
+    if (endPos <= headingText.length) {
+      const slice = headingText.slice(comment.anchor.textOffset, endPos)
+      if (slice === comment.selectedText) {
+        const headingResult = wrapText(startNode, comment)
+        if (headingResult) return true
+      }
+    }
+
     // Walk forward from heading, counting block elements, stopping at next heading
     let blockCount = 0
     let sibling = startNode.nextElementSibling
@@ -76,10 +87,10 @@ export function wrapText(block: Element, comment: DocComment): boolean {
   range.setStart(startNode, Math.min(startOffset, startNode.textContent?.length ?? 0))
   range.setEnd(endNode, Math.min(endOffset, endNode.textContent?.length ?? 0))
 
-  return wrapRange(range, comment.id)
+  return wrapRange(range, comment.id, comment.priority)
 }
 
-export function wrapRange(range: Range, commentId: string): boolean {
+export function wrapRange(range: Range, commentId: string, priority?: CommentPriority): boolean {
   // Collect all text nodes the range touches
   const textNodes: { node: Text, start: number, end: number }[] = []
   const ancestor = range.commonAncestorContainer
@@ -89,6 +100,7 @@ export function wrapRange(range: Range, commentId: string): boolean {
     const mark = document.createElement('mark')
     mark.className = 'doc-comment-highlight'
     mark.dataset.commentId = commentId
+    if (priority) mark.dataset.priority = priority
     try {
       range.surroundContents(mark)
       return true
@@ -132,6 +144,7 @@ export function wrapRange(range: Range, commentId: string): boolean {
     const mark = document.createElement('mark')
     mark.className = 'doc-comment-highlight'
     mark.dataset.commentId = commentId
+    if (priority) mark.dataset.priority = priority
     segmentRange.surroundContents(mark)
   }
 
@@ -156,7 +169,7 @@ function fallbackTextSearch(root: Element, comment: DocComment): boolean {
       const range = document.createRange()
       range.setStart(node, idx)
       range.setEnd(node, idx + comment.selectedText.length)
-      return wrapRange(range, comment.id)
+      return wrapRange(range, comment.id, comment.priority)
     }
     node = walker.nextNode()
   }

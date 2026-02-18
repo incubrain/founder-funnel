@@ -39,10 +39,25 @@ A link to [Example Site](https://example.com) within a paragraph.
 
 ## Code Block Section
 
-Here is a code example:
+Here is a plain code example:
 
-```javascript
-const x = 1
+```
+const plain = 'no highlighting'
+```
+
+Here is a syntax-highlighted code example:
+
+```ts [content.config.ts]
+import { defineContentConfig, defineCollection } from '@nuxt/content'
+
+export default defineContentConfig({
+  collections: {
+    pages: defineCollection({
+      type: 'page',
+      source: { include: 'pages/**/*.md', prefix: '/' },
+    }),
+  },
+})
 ```
 
 Text after the code block should still be highlightable.
