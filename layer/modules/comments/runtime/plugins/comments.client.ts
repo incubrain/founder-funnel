@@ -4,7 +4,7 @@ import type { CommentAnchor } from '../types'
 export default defineNuxtPlugin(() => {
   if (!import.meta.dev) return
 
-  const { selection, loadComments } = useDocComments()
+  const { selection, loadComments, isEnabled } = useDocComments()
   const route = useRoute()
 
   const isDocsPage = computed(() =>
@@ -22,7 +22,7 @@ export default defineNuxtPlugin(() => {
 
   // Listen for text selection via mouseup
   useEventListener(document, 'mouseup', () => {
-    if (!isDocsPage.value) return
+    if (!isDocsPage.value || !isEnabled.value) return
 
     // Small delay to let the selection finalize
     setTimeout(() => {

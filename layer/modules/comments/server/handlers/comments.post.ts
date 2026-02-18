@@ -2,6 +2,9 @@ import { readFile, appendFile, writeFile, mkdir } from 'node:fs/promises'
 import { resolve, dirname } from 'node:path'
 import { z } from 'zod'
 
+const categoryEnum = z.enum(['bug', 'ui', 'chore', 'feature', 'docs', 'perf'])
+const priorityEnum = z.enum(['low', 'med', 'critical'])
+
 const newCommentSchema = z.object({
   page: z.string(),
   selectedText: z.string().min(1),
@@ -13,11 +16,20 @@ const newCommentSchema = z.object({
   }),
   comment: z.string().min(1),
   author: z.string().min(1),
+  category: categoryEnum,
+  priority: priorityEnum,
 })
 
 const resolveSchema = z.object({
   action: z.literal('resolve'),
   id: z.string(),
+})
+
+const updateSchema = z.object({
+  action: z.literal('update'),
+  id: z.string(),
+  category: categoryEnum.optional(),
+  priority: priorityEnum.optional(),
 })
 
 interface CommentsConfig {
@@ -53,6 +65,39 @@ export default defineEventHandler(async (event) => {
         found = true
         parsed.status = 'resolved'
         parsed.resolvedAt = new Date().toISOString()
+        return JSON.stringify(parsed)
+      }
+      return line
+    })
+
+    if (!found) {
+      throw createError({ statusCode: 404, message: 'Comment not found' })
+    }
+
+    await writeFile(logFile, updated.join('\n') + '\n')
+    return { success: true }
+  }
+
+  // Update category/priority on an existing comment
+  if (body.action === 'update') {
+    const { id, category, priority } = updateSchema.parse(body)
+
+    let content: string
+    try {
+      content = await readFile(logFile, 'utf-8')
+    }
+    catch {
+      throw createError({ statusCode: 404, message: 'No comments file' })
+    }
+
+    const lines = content.split('\n').filter(Boolean)
+    let found = false
+    const updated = lines.map((line) => {
+      const parsed = JSON.parse(line)
+      if (parsed.id === id) {
+        found = true
+        if (category) parsed.category = category
+        if (priority) parsed.priority = priority
         return JSON.stringify(parsed)
       }
       return line

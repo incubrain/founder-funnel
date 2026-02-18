@@ -1,5 +1,5 @@
 import { useLocalStorage } from '@vueuse/core'
-import type { DocComment, SelectionState } from '../types'
+import type { CommentCategory, CommentPriority, DocComment, SelectionState } from '../types'
 
 const comments = ref<DocComment[]>([])
 const selection = ref<SelectionState | null>(null)
@@ -8,7 +8,10 @@ const isPanelOpen = ref(false)
 const activeCommentId = ref<string | null>(null)
 
 export const useDocComments = () => {
+  const isEnabled = useLocalStorage('comments_enabled', false)
   const author = useLocalStorage('comments_author', '')
+  const globalCategory = useLocalStorage<CommentCategory>('comments_category', 'docs')
+  const showUserPrompt = ref(false)
 
   const loadComments = async (page: string) => {
     isLoading.value = true
@@ -31,6 +34,8 @@ export const useDocComments = () => {
     selectedText: string
     anchor: SelectionState['anchor']
     comment: string
+    category: CommentCategory
+    priority: CommentPriority
   }) => {
     const created = await $fetch<DocComment>('/api/_comments', {
       method: 'POST',
@@ -39,6 +44,18 @@ export const useDocComments = () => {
     comments.value.push(created)
     selection.value = null
     return created
+  }
+
+  const updateComment = async (id: string, fields: { category?: CommentCategory, priority?: CommentPriority }) => {
+    await $fetch('/api/_comments', {
+      method: 'POST',
+      body: { action: 'update', id, ...fields },
+    })
+    const comment = comments.value.find(c => c.id === id)
+    if (comment) {
+      if (fields.category) comment.category = fields.category
+      if (fields.priority) comment.priority = fields.priority
+    }
   }
 
   const resolveComment = async (id: string) => {
@@ -53,6 +70,14 @@ export const useDocComments = () => {
     }
   }
 
+  const enableCommenting = () => {
+    if (!author.value.trim()) {
+      showUserPrompt.value = true
+      return
+    }
+    isEnabled.value = true
+  }
+
   const openComments = computed(() => comments.value.filter(c => c.status === 'open'))
   const resolvedComments = computed(() => comments.value.filter(c => c.status === 'resolved'))
 
@@ -62,11 +87,16 @@ export const useDocComments = () => {
     isLoading,
     isPanelOpen,
     activeCommentId,
+    isEnabled,
     author,
+    globalCategory,
+    showUserPrompt,
     openComments,
     resolvedComments,
     loadComments,
     addComment,
+    updateComment,
     resolveComment,
+    enableCommenting,
   }
 }

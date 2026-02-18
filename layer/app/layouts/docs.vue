@@ -134,6 +134,9 @@ watch(
               v-bind="link"
             />
             <DocsPageHeaderLinks />
+            <ClientOnly v-if="isDev">
+              <CommentSettings />
+            </ClientOnly>
           </template>
         </UPageHeader>
 

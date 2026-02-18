@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DocComment } from '../types'
 
-const { comments, isPanelOpen, activeCommentId } = useDocComments()
+const { comments, isPanelOpen, activeCommentId, isEnabled } = useDocComments()
 const route = useRoute()
 
 function applyHighlights() {
@@ -118,12 +118,18 @@ function clearHighlights() {
   })
 }
 
-// Re-apply highlights when comments change or route changes
-watch([comments, () => route.path], () => {
+// Re-apply highlights when comments change, route changes, or toggle changes
+watch([comments, () => route.path, isEnabled], () => {
+  if (!isEnabled.value) {
+    clearHighlights()
+    return
+  }
   nextTick(() => applyHighlights())
 }, { deep: true })
 
-onMounted(() => nextTick(() => applyHighlights()))
+onMounted(() => {
+  if (isEnabled.value) nextTick(() => applyHighlights())
+})
 onBeforeUnmount(() => clearHighlights())
 </script>
 

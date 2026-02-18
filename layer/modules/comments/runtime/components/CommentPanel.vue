@@ -1,35 +1,33 @@
 <script setup lang="ts">
-const { isPanelOpen, openComments, resolvedComments, resolveComment, activeCommentId } = useDocComments()
+import { CATEGORIES, PRIORITIES } from '../types'
+import type { CommentCategory, CommentPriority, DocComment } from '../types'
+
+const { isPanelOpen, openComments, resolvedComments, resolveComment, updateComment, activeCommentId } = useDocComments()
+
+const categoryItems = CATEGORIES.map(c => ({ label: c, value: c }))
+const priorityItems = PRIORITIES.map(p => ({ label: p, value: p }))
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+
+const priorityColor = (p: CommentPriority) => {
+  if (p === 'critical') return 'error' as const
+  if (p === 'med') return 'warning' as const
+  return 'neutral' as const
+}
+
+function onCategoryChange(comment: DocComment, value: CommentCategory) {
+  comment.category = value
+  updateComment(comment.id, { category: value })
+}
+
+function onPriorityChange(comment: DocComment, value: CommentPriority) {
+  comment.priority = value
+  updateComment(comment.id, { priority: value })
+}
 </script>
 
 <template>
-  <!-- Floating trigger -->
-  <div class="fixed bottom-6 right-6 z-50">
-    <UButton
-      icon="i-lucide-message-square"
-      size="lg"
-      :color="openComments.length ? 'primary' : 'neutral'"
-      variant="solid"
-      class="rounded-full shadow-lg"
-      @click="isPanelOpen = true"
-    >
-      <template
-        v-if="openComments.length"
-        #trailing
-      >
-        <UBadge
-          :label="String(openComments.length)"
-          size="xs"
-          color="error"
-          variant="solid"
-        />
-      </template>
-    </UButton>
-  </div>
-
   <!-- Review panel -->
   <USlideover
     v-model:open="isPanelOpen"
@@ -74,6 +72,27 @@ const formatDate = (iso: string) =>
           <p class="text-sm">
             {{ c.comment }}
           </p>
+
+          <!-- Category & Priority editors -->
+          <div class="flex flex-wrap items-center gap-2">
+            <URadioGroup
+              :model-value="c.category"
+              :items="categoryItems"
+              orientation="horizontal"
+              size="xs"
+              @update:model-value="(v: CommentCategory) => onCategoryChange(c, v)"
+            />
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <URadioGroup
+              :model-value="c.priority"
+              :items="priorityItems"
+              orientation="horizontal"
+              size="xs"
+              @update:model-value="(v: CommentPriority) => onPriorityChange(c, v)"
+            />
+          </div>
+
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5">
               <UBadge
@@ -81,6 +100,18 @@ const formatDate = (iso: string) =>
                 size="xs"
                 color="neutral"
                 variant="soft"
+              />
+              <UBadge
+                :label="c.category"
+                size="xs"
+                color="primary"
+                variant="subtle"
+              />
+              <UBadge
+                :label="c.priority"
+                size="xs"
+                :color="priorityColor(c.priority)"
+                variant="subtle"
               />
               <span class="text-xs text-muted">{{ formatDate(c.createdAt) }}</span>
             </div>
@@ -122,6 +153,18 @@ const formatDate = (iso: string) =>
                 size="xs"
                 color="neutral"
                 variant="soft"
+              />
+              <UBadge
+                :label="c.category"
+                size="xs"
+                color="primary"
+                variant="subtle"
+              />
+              <UBadge
+                :label="c.priority"
+                size="xs"
+                :color="priorityColor(c.priority)"
+                variant="subtle"
               />
               <span class="text-xs text-muted">{{ formatDate(c.createdAt) }}</span>
             </div>

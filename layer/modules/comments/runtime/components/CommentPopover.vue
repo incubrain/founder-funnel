@@ -1,12 +1,24 @@
 <script setup lang="ts">
 import { onKeyStroke } from '@vueuse/core'
+import { CATEGORIES, PRIORITIES } from '../types'
+import type { CommentCategory, CommentPriority } from '../types'
 
-const { selection, addComment, author } = useDocComments()
+const { selection, addComment, globalCategory } = useDocComments()
 const route = useRoute()
 const commentText = ref('')
 const isSubmitting = ref(false)
+const category = ref<CommentCategory>(globalCategory.value)
+const priority = ref<CommentPriority>('low')
 
 const isOpen = computed(() => !!selection.value)
+
+// Reset per-comment fields when a new selection opens
+watch(isOpen, (open) => {
+  if (open) {
+    category.value = globalCategory.value
+    priority.value = 'low'
+  }
+})
 
 // Virtual reference element anchored to the selection rect
 const reference = computed(() => {
@@ -17,8 +29,11 @@ const reference = computed(() => {
   }
 })
 
+const categoryItems = CATEGORIES.map(c => ({ label: c, value: c }))
+const priorityItems = PRIORITIES.map(p => ({ label: p, value: p }))
+
 const submit = async () => {
-  if (!selection.value || !commentText.value.trim() || !author.value.trim()) return
+  if (!selection.value || !commentText.value.trim()) return
   isSubmitting.value = true
   try {
     await addComment({
@@ -26,6 +41,8 @@ const submit = async () => {
       selectedText: selection.value.text,
       anchor: selection.value.anchor,
       comment: commentText.value.trim(),
+      category: category.value,
+      priority: priority.value,
     })
     commentText.value = ''
   }
@@ -65,18 +82,30 @@ onKeyStroke('Escape', dismiss)
           @keydown.meta.enter="submit"
           @keydown.ctrl.enter="submit"
         />
+
         <div class="flex items-center gap-2">
-          <UInput
-            v-model="author"
-            placeholder="Your name"
-            size="sm"
-            class="flex-1"
+          <URadioGroup
+            v-model="category"
+            :items="categoryItems"
+            orientation="horizontal"
+            size="xs"
           />
+        </div>
+        <div class="flex items-center gap-2">
+          <URadioGroup
+            v-model="priority"
+            :items="priorityItems"
+            orientation="horizontal"
+            size="xs"
+          />
+        </div>
+
+        <div class="flex items-center gap-2">
           <UButton
             label="Add"
             size="sm"
             :loading="isSubmitting"
-            :disabled="!commentText.trim() || !author.trim()"
+            :disabled="!commentText.trim()"
             @click="submit"
           />
           <UButton
