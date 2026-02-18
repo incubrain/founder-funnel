@@ -1,7 +1,7 @@
 // Tests for comment module type constants and anchor logic
 import { describe, it, expect } from 'vitest'
-import { CATEGORIES, PRIORITIES } from '@incubrain/foundry/modules/comments/runtime/types'
-import type { CommentAnchor, CommentCategory, CommentPriority, DocComment } from '@incubrain/foundry/modules/comments/runtime/types'
+import { CATEGORIES, PRIORITIES, isElementAnchor, isTextAnchor } from '@incubrain/foundry/modules/comments/runtime/types'
+import type { CommentAnchor, CommentCategory, CommentPriority, DocComment, ElementAnchor, TextAnchor, ReviewMode } from '@incubrain/foundry/modules/comments/runtime/types'
 
 describe('Comment Type Constants', () => {
   it('exports all 6 categories', () => {
@@ -95,5 +95,74 @@ describe('DocComment', () => {
 
     expect(comment.status).toBe('resolved')
     expect(comment.resolvedAt).toBeDefined()
+  })
+
+  it('accepts element anchor type', () => {
+    const comment: DocComment = {
+      id: 'c_elem0001',
+      page: '/',
+      selectedText: '<section>',
+      anchor: {
+        type: 'element',
+        selector: '[data-testid="hero"]',
+        testId: 'hero',
+        tagName: 'section',
+        rect: { top: 0, left: 0, width: 800, height: 400 },
+      },
+      comment: 'This section needs work',
+      author: 'drew',
+      category: 'ui',
+      priority: 'med',
+      status: 'open',
+      createdAt: '2026-02-18T00:00:00.000Z',
+      screenshot: 'data:image/png;base64,abc123',
+    }
+
+    expect(comment.anchor.type).toBe('element')
+    expect(comment.screenshot).toBeDefined()
+  })
+})
+
+describe('ReviewMode', () => {
+  it('accepts text and element values', () => {
+    const modes: ReviewMode[] = ['text', 'element']
+    expect(modes).toHaveLength(2)
+  })
+})
+
+describe('Anchor Type Guards', () => {
+  it('isElementAnchor identifies element anchors', () => {
+    const anchor: ElementAnchor = {
+      type: 'element',
+      selector: 'section',
+      testId: 'hero',
+      tagName: 'section',
+      rect: { top: 0, left: 0, width: 100, height: 50 },
+    }
+    expect(isElementAnchor(anchor)).toBe(true)
+    expect(isTextAnchor(anchor)).toBe(false)
+  })
+
+  it('isTextAnchor identifies text anchors with explicit type', () => {
+    const anchor: TextAnchor = {
+      type: 'text',
+      headingId: 'sec',
+      blockIndex: 0,
+      textOffset: 0,
+      textLength: 10,
+    }
+    expect(isTextAnchor(anchor)).toBe(true)
+    expect(isElementAnchor(anchor)).toBe(false)
+  })
+
+  it('isTextAnchor identifies legacy anchors without type field', () => {
+    const anchor: CommentAnchor = {
+      headingId: 'sec',
+      blockIndex: 0,
+      textOffset: 0,
+      textLength: 10,
+    }
+    expect(isTextAnchor(anchor)).toBe(true)
+    expect(isElementAnchor(anchor)).toBe(false)
   })
 })

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onKeyStroke } from '@vueuse/core'
-import { CATEGORIES, PRIORITIES } from '../types'
+import { CATEGORIES, PRIORITIES, isElementAnchor } from '../types'
 import type { CommentCategory, CommentPriority } from '../types'
 
 const { selection, addComment, globalCategory } = useDocComments()
@@ -11,6 +11,7 @@ const category = ref<CommentCategory>(globalCategory.value)
 const priority = ref<CommentPriority>('low')
 
 const isOpen = computed(() => !!selection.value)
+const isElementMode = computed(() => selection.value && isElementAnchor(selection.value.anchor))
 
 // Reset per-comment fields when a new selection opens
 watch(isOpen, (open) => {
@@ -48,6 +49,7 @@ const submit = async () => {
       comment: commentText.value.trim(),
       category: category.value,
       priority: priority.value,
+      screenshot: selection.value.screenshot,
     })
     commentText.value = ''
   }
@@ -77,9 +79,31 @@ onKeyStroke('Escape', dismiss)
 
     <template #content>
       <div class="space-y-2">
-        <p class="text-xs text-muted italic line-clamp-2">
+        <!-- Element mode: show screenshot + element info -->
+        <template v-if="isElementMode">
+          <div class="flex items-center gap-1.5 text-xs text-muted">
+            <UIcon
+              name="i-lucide-box-select"
+              class="size-3.5"
+            />
+            <span class="font-mono">{{ truncatedText }}</span>
+          </div>
+          <img
+            v-if="selection?.screenshot"
+            :src="selection.screenshot"
+            alt="Element screenshot"
+            class="w-full rounded border border-default max-h-32 object-contain object-top"
+          >
+        </template>
+
+        <!-- Text mode: show quoted text -->
+        <p
+          v-else
+          class="text-xs text-muted italic line-clamp-2"
+        >
           "{{ truncatedText }}"
         </p>
+
         <UTextarea
           v-model="commentText"
           placeholder="Leave a comment..."

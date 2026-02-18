@@ -2,6 +2,7 @@
 import type { HeaderConfig } from '#navigation'
 
 const headerData = inject<Ref<HeaderConfig>>('navigation_header')
+const isDev = import.meta.dev
 
 const showSearch = computed(() => headerData?.value?.showSearch ?? true)
 const showColorMode = computed(() => headerData?.value?.showColorMode ?? true)
@@ -16,6 +17,11 @@ const socialLinks = useSocialLinks(socials)
       v-if="showSearch"
       class="lg:hidden"
     />
+
+    <!-- Dev-only: review comments toggle -->
+    <ClientOnly v-if="isDev">
+      <CommentSettings />
+    </ClientOnly>
 
     <ClientOnly>
       <UColorModeButton v-if="showColorMode" />

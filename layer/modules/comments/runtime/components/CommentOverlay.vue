@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { DocComment } from '../types'
+import { isElementAnchor } from '../types'
+import { resolveContentArea } from '../utils/anchor'
 import {
   applyHighlights as doApplyHighlights,
   clearHighlights,
@@ -7,8 +9,9 @@ import {
   getCommentRect,
   setActiveHighlight,
 } from '../utils/highlight'
+import { findElementByAnchor } from '../utils/element-select'
 
-const { comments, isPanelOpen, activeCommentId, isEnabled } = useDocComments()
+const { comments, isPanelOpen, activeCommentId, isEnabled, reviewMode } = useDocComments()
 const route = useRoute()
 
 const hoveredComment = ref<DocComment | null>(null)
@@ -25,49 +28,115 @@ function findComment(id: string) {
 }
 
 function applyHighlights() {
-  const contentArea = document.querySelector('[data-doc-content]')
+  const contentArea = resolveContentArea()
   if (!contentArea) return
   doApplyHighlights(comments.value, contentArea)
+  applyElementOutlines()
+}
+
+// --- Element comment outlines ---
+const elementOutlineCleanups: (() => void)[] = []
+
+function clearElementOutlines() {
+  for (const cleanup of elementOutlineCleanups) cleanup()
+  elementOutlineCleanups.length = 0
+}
+
+function applyElementOutlines() {
+  clearElementOutlines()
+  const contentArea = resolveContentArea()
+  if (!contentArea) return
+
+  for (const comment of comments.value) {
+    if (comment.status !== 'open' || !isElementAnchor(comment.anchor)) continue
+    const el = findElementByAnchor(comment.anchor, contentArea)
+    if (!el || !(el instanceof HTMLElement)) continue
+
+    const priority = comment.priority
+    const cls = `comment-element-outline-${priority}`
+    el.classList.add('comment-element-outline', cls)
+    el.dataset.commentElementId = comment.id
+
+    elementOutlineCleanups.push(() => {
+      el.classList.remove('comment-element-outline', cls)
+      delete el.dataset.commentElementId
+    })
+  }
 }
 
 function handleContentClick(e: MouseEvent) {
-  const id = findCommentAtPoint(e.clientX, e.clientY)
-  if (id) {
-    activeCommentId.value = id
-    isPanelOpen.value = true
+  // Check element outlines first
+  const target = e.target as Element
+  const outlinedEl = target.closest?.('[data-comment-element-id]')
+  if (outlinedEl) {
+    const id = (outlinedEl as HTMLElement).dataset.commentElementId
+    if (id) {
+      activeCommentId.value = id
+      isPanelOpen.value = true
+      return
+    }
+  }
+
+  // Then check text highlights
+  if (reviewMode.value === 'text') {
+    const id = findCommentAtPoint(e.clientX, e.clientY)
+    if (id) {
+      activeCommentId.value = id
+      isPanelOpen.value = true
+    }
   }
 }
 
 function handleContentMouseMove(e: MouseEvent) {
-  const id = findCommentAtPoint(e.clientX, e.clientY)
-  if (id) {
-    const comment = findComment(id)
-    if (comment && comment !== hoveredComment.value) {
-      hoveredComment.value = comment
-      hoverRect.value = getCommentRect(id)
-      setActiveHighlight(id)
+  // Check element outlines
+  const target = e.target as Element
+  const outlinedEl = target.closest?.('[data-comment-element-id]')
+  if (outlinedEl) {
+    const id = (outlinedEl as HTMLElement).dataset.commentElementId
+    if (id) {
+      const comment = findComment(id)
+      if (comment && comment !== hoveredComment.value) {
+        hoveredComment.value = comment
+        hoverRect.value = outlinedEl.getBoundingClientRect()
+      }
+      return
     }
   }
-  else if (hoveredComment.value) {
+
+  // Check text highlights
+  if (reviewMode.value === 'text') {
+    const id = findCommentAtPoint(e.clientX, e.clientY)
+    if (id) {
+      const comment = findComment(id)
+      if (comment && comment !== hoveredComment.value) {
+        hoveredComment.value = comment
+        hoverRect.value = getCommentRect(id)
+        setActiveHighlight(id)
+      }
+    }
+    else if (hoveredComment.value) {
+      hoveredComment.value = null
+      hoverRect.value = null
+      setActiveHighlight(null)
+    }
+  }
+  else if (hoveredComment.value && !outlinedEl) {
     hoveredComment.value = null
     hoverRect.value = null
-    setActiveHighlight(null)
   }
 }
 
-// Attach click/hover listeners to the content area
+// Attach click/hover listeners
 let contentCleanup: (() => void) | null = null
 
 function attachContentListeners() {
   detachContentListeners()
-  const contentArea = document.querySelector('[data-doc-content]')
-  if (!contentArea) return
-
-  contentArea.addEventListener('click', handleContentClick)
-  contentArea.addEventListener('mousemove', handleContentMouseMove)
+  // Listen on document body for all pages
+  document.body.addEventListener('click', handleContentClick)
+  document.body.addEventListener('mousemove', handleContentMouseMove)
   contentCleanup = () => {
-    contentArea.removeEventListener('click', handleContentClick)
-    contentArea.removeEventListener('mousemove', handleContentMouseMove)
+    document.body.removeEventListener('click', handleContentClick)
+    document.body.removeEventListener('mousemove', handleContentMouseMove)
   }
 }
 
@@ -80,6 +149,7 @@ function detachContentListeners() {
 watch([comments, () => route.path, isEnabled], () => {
   if (!isEnabled.value) {
     clearHighlights()
+    clearElementOutlines()
     detachContentListeners()
     return
   }
@@ -92,14 +162,24 @@ watch([comments, () => route.path, isEnabled], () => {
 // Scroll to the active comment's highlight
 watch(activeCommentId, (id) => {
   if (!id) return
-  setActiveHighlight(id)
-  nextTick(() => {
-    const rect = getCommentRect(id)
-    if (!rect) return
-    // Scroll element at the midpoint of the range into view
-    const el = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+  const comment = findComment(id)
+  if (!comment) return
+
+  if (isElementAnchor(comment.anchor)) {
+    const contentArea = resolveContentArea()
+    if (!contentArea) return
+    const el = findElementByAnchor(comment.anchor, contentArea)
     el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  })
+  }
+  else {
+    setActiveHighlight(id)
+    nextTick(() => {
+      const rect = getCommentRect(id)
+      if (!rect) return
+      const el = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    })
+  }
 })
 
 onMounted(() => {
@@ -113,6 +193,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   clearHighlights()
+  clearElementOutlines()
   detachContentListeners()
 })
 </script>
@@ -195,5 +276,29 @@ onBeforeUnmount(() => {
   text-decoration-color: rgb(250, 204, 21);
   text-decoration-thickness: 2px;
   text-underline-offset: 2px;
+}
+
+/* Element mode — hover outline when selecting */
+.comment-element-hover {
+  outline: 2px dashed rgb(59, 130, 246) !important;
+  outline-offset: 2px;
+  cursor: crosshair;
+}
+
+/* Element comment outlines — persistent for existing comments */
+.comment-element-outline {
+  outline-style: solid !important;
+  outline-width: 2px !important;
+  outline-offset: 2px;
+  position: relative;
+}
+.comment-element-outline-low {
+  outline-color: rgb(250, 204, 21) !important;
+}
+.comment-element-outline-med {
+  outline-color: rgb(251, 146, 60) !important;
+}
+.comment-element-outline-critical {
+  outline-color: rgb(239, 68, 68) !important;
 }
 </style>

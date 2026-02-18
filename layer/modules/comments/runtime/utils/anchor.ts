@@ -1,7 +1,17 @@
-import type { CommentAnchor } from '../types'
+import type { TextAnchor } from '../types'
 
 const DEBUG = import.meta.dev
 const CONTEXT_CHARS = 32
+
+/**
+ * Resolve the content area for commenting.
+ * Falls back from [data-doc-content] → <main> → document.body.
+ */
+export function resolveContentArea(): Element | null {
+  return document.querySelector('[data-doc-content]')
+    ?? document.querySelector('main')
+    ?? document.body
+}
 
 export function isBlockElement(el: HTMLElement): boolean {
   return /^(?:P|DIV|LI|UL|OL|PRE|BLOCKQUOTE|TABLE|DL|DD|DT|FIGURE|SECTION|ARTICLE|H[1-6])$/
@@ -123,7 +133,7 @@ function extractContext(range: Range, contentArea: Element): { prefix: string, s
   return { prefix, suffix, exact }
 }
 
-export function computeAnchor(range: Range, contentArea: Element): CommentAnchor {
+export function computeAnchor(range: Range, contentArea: Element): TextAnchor {
   const contentRoot = findContentRoot(contentArea)
 
   // Walk up from startContainer to find the containing block element
@@ -208,7 +218,7 @@ export function computeAnchor(range: Range, contentArea: Element): CommentAnchor
   // `exact` comes from normalized text (with \n at block boundaries) to match textQuoteSearch
   const { prefix, suffix, exact } = extractContext(range, findContentRoot(contentArea))
 
-  const anchor: CommentAnchor = {
+  const anchor: TextAnchor = {
     headingId,
     blockIndex,
     textOffset,

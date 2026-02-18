@@ -3,6 +3,7 @@ import { useNavigation } from '#navigation'
 import { useSearch } from '#search'
 
 const { title, seo } = useAppConfig()
+const isDev = import.meta.dev
 
 const { data: site } = useAsyncData('app-config', () =>
   queryCollection('config').where('stem', '=', 'config/site').first(),
@@ -66,6 +67,13 @@ provide('site_config', site ?? ref(null))
         :files="searchFiles"
         :navigation="navigationAll"
       />
+    </ClientOnly>
+
+    <!-- Dev-only: review comments (global — works on all pages) -->
+    <ClientOnly v-if="isDev">
+      <CommentPopover />
+      <CommentOverlay />
+      <CommentPanel />
     </ClientOnly>
   </UApp>
 </template>

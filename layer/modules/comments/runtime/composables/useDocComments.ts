@@ -1,5 +1,5 @@
 import { useLocalStorage } from '@vueuse/core'
-import type { CommentCategory, CommentPriority, DocComment, SelectionState } from '../types'
+import type { CommentCategory, CommentPriority, DocComment, ReviewMode, SelectionState } from '../types'
 
 const comments = ref<DocComment[]>([])
 const selection = ref<SelectionState | null>(null)
@@ -11,6 +11,7 @@ export const useDocComments = () => {
   const isEnabled = useLocalStorage('comments_enabled', false)
   const author = useLocalStorage('comments_author', '')
   const globalCategory = useLocalStorage<CommentCategory>('comments_category', 'docs')
+  const reviewMode = useLocalStorage<ReviewMode>('comments_review_mode', 'text')
   const showUserPrompt = ref(false)
 
   const loadComments = async (page: string) => {
@@ -36,6 +37,7 @@ export const useDocComments = () => {
     comment: string
     category: CommentCategory
     priority: CommentPriority
+    screenshot?: string
   }) => {
     const created = await $fetch<DocComment>('/api/_comments', {
       method: 'POST',
@@ -90,6 +92,7 @@ export const useDocComments = () => {
     isEnabled,
     author,
     globalCategory,
+    reviewMode,
     showUserPrompt,
     openComments,
     resolvedComments,

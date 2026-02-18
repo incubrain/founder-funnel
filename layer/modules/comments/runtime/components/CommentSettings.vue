@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { CATEGORIES } from '../types'
-import type { CommentCategory } from '../types'
+import type { CommentCategory, ReviewMode } from '../types'
 
-const { isEnabled, author, globalCategory, showUserPrompt, isPanelOpen, openComments, enableCommenting } = useDocComments()
+const { isEnabled, author, globalCategory, reviewMode, showUserPrompt, isPanelOpen, openComments, enableCommenting } = useDocComments()
 
 const pendingAuthor = ref('')
 const pendingCategory = ref<CommentCategory>('docs')
 
 const categoryItems = CATEGORIES.map(c => ({ label: c, value: c }))
+
+const modeItems = [
+  { label: 'Text', value: 'text' as ReviewMode, icon: 'i-lucide-type' },
+  { label: 'Element', value: 'element' as ReviewMode, icon: 'i-lucide-box-select' },
+]
 
 function confirmUser() {
   if (!pendingAuthor.value.trim()) return
@@ -28,7 +33,7 @@ function handleToggle(value: boolean) {
 </script>
 
 <template>
-  <div class="flex items-center gap-2">
+  <div class="flex items-center gap-1.5">
     <USwitch
       :model-value="isEnabled"
       label="Review"
@@ -37,6 +42,19 @@ function handleToggle(value: boolean) {
     />
 
     <template v-if="isEnabled">
+      <!-- Mode toggle: Text vs Element -->
+      <UButtonGroup size="xs">
+        <UButton
+          v-for="mode in modeItems"
+          :key="mode.value"
+          :icon="mode.icon"
+          :color="reviewMode === mode.value ? 'primary' : 'neutral'"
+          :variant="reviewMode === mode.value ? 'solid' : 'ghost'"
+          :title="`${mode.label} selection mode`"
+          @click="reviewMode = mode.value"
+        />
+      </UButtonGroup>
+
       <UButton
         icon="i-lucide-message-square"
         size="xs"

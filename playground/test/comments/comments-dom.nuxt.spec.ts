@@ -10,9 +10,11 @@
  * so we test findCommentRange (Range creation) rather than applyHighlights (CSS registration).
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import type { DocComment } from '@incubrain/foundry/modules/comments/runtime/types'
-import { buildNormalizedText, computeAnchor, findContentRoot } from '@incubrain/foundry/modules/comments/runtime/utils/anchor'
+import type { DocComment, ElementAnchor } from '@incubrain/foundry/modules/comments/runtime/types'
+import { isElementAnchor, isTextAnchor } from '@incubrain/foundry/modules/comments/runtime/types'
+import { buildNormalizedText, computeAnchor, findContentRoot, resolveContentArea } from '@incubrain/foundry/modules/comments/runtime/utils/anchor'
 import { findCommentRange, clearHighlights } from '@incubrain/foundry/modules/comments/runtime/utils/highlight'
+import { computeCssSelector, computeElementAnchor, findElementByAnchor } from '@incubrain/foundry/modules/comments/runtime/utils/element-select'
 
 // ── DOM helpers (test fixtures — construct Nuxt Content-like structures) ──
 
@@ -820,5 +822,192 @@ describe('Realistic DOM — Wrapper Divs (Nuxt Content rendering)', () => {
     const foundRange = findCommentRange(comment, realisticContentArea)
     expect(foundRange).not.toBeNull()
     expect(foundRange!.toString()).toBe('some text')
+  })
+})
+
+// ── Element Selection Tests ──
+
+describe('resolveContentArea', () => {
+  it('returns [data-doc-content] when present', () => {
+    // contentArea is already in the DOM with data-doc-content
+    const resolved = resolveContentArea()
+    expect(resolved).toBe(contentArea)
+  })
+
+  it('falls back to <main> when no [data-doc-content]', () => {
+    contentArea.removeAttribute('data-doc-content')
+    const main = document.createElement('main')
+    document.body.appendChild(main)
+
+    const resolved = resolveContentArea()
+    expect(resolved).toBe(main)
+
+    main.remove()
+    contentArea.setAttribute('data-doc-content', '')
+  })
+
+  it('falls back to document.body as last resort', () => {
+    contentArea.removeAttribute('data-doc-content')
+    // No <main> in the DOM either
+    const resolved = resolveContentArea()
+    expect(resolved).toBe(document.body)
+
+    contentArea.setAttribute('data-doc-content', '')
+  })
+})
+
+describe('computeCssSelector', () => {
+  it('uses data-testid when available', () => {
+    const section = document.createElement('section')
+    section.setAttribute('data-testid', 'hero-section')
+    contentArea.appendChild(section)
+
+    const selector = computeCssSelector(section, contentArea)
+    expect(selector).toBe('[data-testid="hero-section"]')
+  })
+
+  it('builds tagName:nth-of-type path for elements without testid', () => {
+    const div1 = document.createElement('div')
+    const div2 = document.createElement('div')
+    const p = document.createElement('p')
+    div2.appendChild(p)
+    contentArea.appendChild(div1)
+    contentArea.appendChild(div2)
+
+    const selector = computeCssSelector(p, contentArea)
+    expect(selector).toContain('div')
+    expect(selector).toContain('p')
+  })
+
+  it('stops at ancestor with data-testid', () => {
+    const parent = document.createElement('div')
+    parent.setAttribute('data-testid', 'parent-section')
+    const child = document.createElement('p')
+    parent.appendChild(child)
+    contentArea.appendChild(parent)
+
+    const selector = computeCssSelector(child, contentArea)
+    expect(selector).toContain('[data-testid="parent-section"]')
+    expect(selector).toContain('p')
+  })
+})
+
+describe('computeElementAnchor', () => {
+  it('returns type=element with correct fields', () => {
+    const section = document.createElement('section')
+    section.setAttribute('data-testid', 'benefits')
+    contentArea.appendChild(section)
+
+    const anchor = computeElementAnchor(section, contentArea)
+    expect(anchor.type).toBe('element')
+    expect(anchor.testId).toBe('benefits')
+    expect(anchor.tagName).toBe('section')
+    expect(anchor.selector).toContain('[data-testid="benefits"]')
+    expect(anchor.rect).toBeDefined()
+  })
+
+  it('handles elements without testid', () => {
+    const div = document.createElement('div')
+    div.className = 'my-component'
+    contentArea.appendChild(div)
+
+    const anchor = computeElementAnchor(div, contentArea)
+    expect(anchor.type).toBe('element')
+    expect(anchor.testId).toBeNull()
+    expect(anchor.tagName).toBe('div')
+    expect(anchor.selector).toBeTruthy()
+  })
+})
+
+describe('findElementByAnchor', () => {
+  it('finds element by testId', () => {
+    const section = document.createElement('section')
+    section.setAttribute('data-testid', 'hero')
+    contentArea.appendChild(section)
+
+    const anchor: ElementAnchor = {
+      type: 'element',
+      selector: 'section',
+      testId: 'hero',
+      tagName: 'section',
+      rect: { top: 0, left: 0, width: 100, height: 50 },
+    }
+
+    const found = findElementByAnchor(anchor, contentArea)
+    expect(found).toBe(section)
+  })
+
+  it('falls back to CSS selector when testId not found', () => {
+    const div = document.createElement('div')
+    contentArea.appendChild(div)
+
+    const anchor: ElementAnchor = {
+      type: 'element',
+      selector: 'div',
+      testId: 'non-existent',
+      tagName: 'div',
+      rect: { top: 0, left: 0, width: 100, height: 50 },
+    }
+
+    const found = findElementByAnchor(anchor, contentArea)
+    expect(found).toBeTruthy()
+  })
+
+  it('returns null when element cannot be found', () => {
+    const anchor: ElementAnchor = {
+      type: 'element',
+      selector: '.non-existent-class',
+      testId: null,
+      tagName: 'div',
+      rect: { top: 0, left: 0, width: 100, height: 50 },
+    }
+
+    const found = findElementByAnchor(anchor, contentArea)
+    expect(found).toBeNull()
+  })
+})
+
+describe('Type guards', () => {
+  it('isElementAnchor returns true for element anchors', () => {
+    const anchor: ElementAnchor = {
+      type: 'element',
+      selector: 'section',
+      testId: 'hero',
+      tagName: 'section',
+      rect: { top: 0, left: 0, width: 100, height: 50 },
+    }
+    expect(isElementAnchor(anchor)).toBe(true)
+    expect(isTextAnchor(anchor)).toBe(false)
+  })
+
+  it('isTextAnchor returns true for text anchors (with type)', () => {
+    const anchor = { type: 'text' as const, headingId: 'h1', blockIndex: 0, textOffset: 0, textLength: 5 }
+    expect(isTextAnchor(anchor)).toBe(true)
+    expect(isElementAnchor(anchor)).toBe(false)
+  })
+
+  it('isTextAnchor returns true for legacy anchors (no type field)', () => {
+    const anchor = { headingId: 'h1', blockIndex: 0, textOffset: 0, textLength: 5 }
+    expect(isTextAnchor(anchor)).toBe(true)
+    expect(isElementAnchor(anchor)).toBe(false)
+  })
+
+  it('findCommentRange returns null for element-type comments', () => {
+    addHeading(contentArea, 2, 'sec', 'Section')
+    addParagraph(contentArea, 'Some text.')
+
+    const comment = makeComment({
+      selectedText: '<section>',
+      anchor: {
+        type: 'element',
+        selector: 'section',
+        testId: 'hero',
+        tagName: 'section',
+        rect: { top: 0, left: 0, width: 100, height: 50 },
+      } as ElementAnchor,
+    })
+
+    const range = findCommentRange(comment, contentArea)
+    expect(range).toBeNull()
   })
 })

@@ -1,4 +1,5 @@
 import type { DocComment } from '../types'
+import { isElementAnchor } from '../types'
 import { buildNormalizedText, findContentRoot, isBlockElement } from './anchor'
 
 const DEBUG = import.meta.dev
@@ -20,6 +21,7 @@ function hasHighlightAPI(): boolean {
  * 2. Text-quote search: normalized text search with prefix/suffix disambiguation
  */
 export function findCommentRange(comment: DocComment, contentArea: Element): Range | null {
+  if (isElementAnchor(comment.anchor)) return null
   const contentRoot = findContentRoot(contentArea)
   if (DEBUG) {
     console.groupCollapsed(`[comments:highlight] findCommentRange id=${comment.id.slice(0, 8)}`)
@@ -334,6 +336,8 @@ export function applyHighlights(comments: DocComment[], contentArea: Element): M
 
   for (const comment of comments) {
     if (comment.status === 'resolved') continue
+    // Element-type anchors are handled by CommentOverlay's outline logic
+    if (isElementAnchor(comment.anchor)) continue
 
     const range = findCommentRange(comment, contentArea)
     if (range) {

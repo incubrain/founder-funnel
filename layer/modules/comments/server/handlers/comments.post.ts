@@ -5,19 +5,41 @@ import { z } from 'zod'
 const categoryEnum = z.enum(['bug', 'ui', 'chore', 'feature', 'docs', 'perf'])
 const priorityEnum = z.enum(['low', 'med', 'critical'])
 
+const textAnchorSchema = z.object({
+  type: z.literal('text').optional(),
+  headingId: z.string().nullable(),
+  blockIndex: z.number(),
+  textOffset: z.number(),
+  textLength: z.number(),
+  exact: z.string().optional(),
+  prefix: z.string().optional(),
+  suffix: z.string().optional(),
+})
+
+const elementAnchorSchema = z.object({
+  type: z.literal('element'),
+  selector: z.string(),
+  testId: z.string().nullable(),
+  tagName: z.string(),
+  rect: z.object({
+    top: z.number(),
+    left: z.number(),
+    width: z.number(),
+    height: z.number(),
+  }),
+})
+
+const anchorSchema = z.union([textAnchorSchema, elementAnchorSchema])
+
 const newCommentSchema = z.object({
   page: z.string(),
   selectedText: z.string().min(1),
-  anchor: z.object({
-    headingId: z.string().nullable(),
-    blockIndex: z.number(),
-    textOffset: z.number(),
-    textLength: z.number(),
-  }),
+  anchor: anchorSchema,
   comment: z.string().min(1),
   author: z.string().min(1),
   category: categoryEnum,
   priority: priorityEnum,
+  screenshot: z.string().optional(),
 })
 
 const resolveSchema = z.object({
