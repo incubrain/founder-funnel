@@ -12,6 +12,7 @@ export const useDocComments = () => {
   const author = useLocalStorage('comments_author', '')
   const globalCategory = useLocalStorage<CommentCategory>('comments_category', 'docs')
   const reviewMode = useLocalStorage<ReviewMode>('comments_review_mode', 'text')
+  const toolbarPosition = useLocalStorage<{ x: number, y: number }>('comments_toolbar_pos', { x: 20, y: 80 })
   const showUserPrompt = ref(false)
 
   const loadComments = async (page: string) => {
@@ -93,6 +94,7 @@ export const useDocComments = () => {
     author,
     globalCategory,
     reviewMode,
+    toolbarPosition,
     showUserPrompt,
     openComments,
     resolvedComments,

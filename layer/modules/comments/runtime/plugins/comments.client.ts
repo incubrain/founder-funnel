@@ -66,6 +66,8 @@ export default defineNuxtPlugin(() => {
 
   function getSelectableElement(target: EventTarget | null): Element | null {
     if (!(target instanceof Element)) return null
+    // Never capture toolbar or popover elements
+    if (target.closest('[data-comment-toolbar]') || target.closest('[data-comment-popover]')) return null
     let el: Element | null = target
     const contentArea = resolveContentArea()
     if (!contentArea) return null
@@ -88,7 +90,7 @@ export default defineNuxtPlugin(() => {
   }
 
   useEventListener(document, 'mousemove', (e: MouseEvent) => {
-    if (!isEnabled.value || reviewMode.value !== 'element') {
+    if (!isEnabled.value || reviewMode.value !== 'element' || selection.value) {
       clearElementHover()
       return
     }
@@ -104,7 +106,7 @@ export default defineNuxtPlugin(() => {
   })
 
   useEventListener(document, 'click', async (e: MouseEvent) => {
-    if (!isEnabled.value || reviewMode.value !== 'element') return
+    if (!isEnabled.value || reviewMode.value !== 'element' || selection.value) return
 
     const el = getSelectableElement(e.target)
     if (!el) return

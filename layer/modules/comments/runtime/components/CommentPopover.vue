@@ -78,7 +78,10 @@ onKeyStroke('Escape', dismiss)
     <span class="hidden" />
 
     <template #content>
-      <div class="space-y-2">
+      <div
+        class="space-y-2"
+        data-comment-popover
+      >
         <!-- Element mode: show screenshot + element info -->
         <template v-if="isElementMode">
           <div class="flex items-center gap-1.5 text-xs text-muted">
