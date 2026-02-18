@@ -166,25 +166,88 @@ function createRangeInElement(element: Element, textOffset: number, textLength: 
  * Uses prefix/suffix for disambiguation when multiple matches exist.
  */
 function textQuoteSearch(comment: DocComment, contentRoot: Element): Range | null {
-  const searchText = comment.anchor.exact ?? comment.selectedText
   const { text: normalizedText, nodes } = buildNormalizedText(contentRoot)
 
-  if (DEBUG) console.log('text-quote search, normalizedText length:', normalizedText.length, 'searchText length:', searchText.length)
+  // Try search candidates in priority order:
+  // 1. anchor.exact (normalized text with \n at block boundaries — new format)
+  // 2. comment.selectedText (from sel.toString() — may have \n\n between blocks)
+  // 3. selectedText with collapsed whitespace (backwards compat for old comments
+  //    where exact was from range.toString() without newlines)
+  const candidates: string[] = []
+  if (comment.anchor.exact) candidates.push(comment.anchor.exact)
+  if (comment.selectedText && comment.selectedText !== comment.anchor.exact) {
+    candidates.push(comment.selectedText)
+  }
+  // Collapsed whitespace fallback: replace all whitespace runs with single space
+  const collapsed = (comment.anchor.exact ?? comment.selectedText).replace(/\s+/g, ' ')
+  if (!candidates.includes(collapsed)) candidates.push(collapsed)
 
-  // Find all occurrences of the search text
-  const matches: number[] = []
-  let searchFrom = 0
-  while (true) {
-    const idx = normalizedText.indexOf(searchText, searchFrom)
-    if (idx === -1) break
-    matches.push(idx)
-    searchFrom = idx + 1
+  let searchText = ''
+  let matches: number[] = []
+
+  for (const candidate of candidates) {
+    const found: number[] = []
+    let searchFrom = 0
+    while (true) {
+      const idx = normalizedText.indexOf(candidate, searchFrom)
+      if (idx === -1) break
+      found.push(idx)
+      searchFrom = idx + 1
+    }
+    if (found.length > 0) {
+      searchText = candidate
+      matches = found
+      if (DEBUG) console.log('text-quote search matched candidate:', JSON.stringify(candidate.slice(0, 60)), 'matches:', found.length)
+      break
+    }
   }
 
   if (matches.length === 0) {
-    if (DEBUG) console.log('no matches found in normalized text')
+    // Last resort: try whitespace-insensitive search on normalized text
+    const normalizedCollapsed = normalizedText.replace(/\s+/g, ' ')
+    const searchCollapsed = (comment.anchor.exact ?? comment.selectedText).replace(/\s+/g, ' ')
+    const idx = normalizedCollapsed.indexOf(searchCollapsed)
+    if (idx !== -1) {
+      // Map collapsed position back to original normalized text position
+      // by counting characters through the original text
+      let origIdx = 0
+      let collapsedIdx = 0
+      while (collapsedIdx < idx && origIdx < normalizedText.length) {
+        if (/\s/.test(normalizedText[origIdx]!)) {
+          // Skip whitespace run in original
+          while (origIdx < normalizedText.length && /\s/.test(normalizedText[origIdx]!)) origIdx++
+          collapsedIdx++ // One space in collapsed
+        }
+        else {
+          origIdx++
+          collapsedIdx++
+        }
+      }
+      const startInOrig = origIdx
+      // Find end position
+      const endCollapsed = idx + searchCollapsed.length
+      while (collapsedIdx < endCollapsed && origIdx < normalizedText.length) {
+        if (/\s/.test(normalizedText[origIdx]!)) {
+          while (origIdx < normalizedText.length && /\s/.test(normalizedText[origIdx]!)) origIdx++
+          collapsedIdx++
+        }
+        else {
+          origIdx++
+          collapsedIdx++
+        }
+      }
+      searchText = normalizedText.slice(startInOrig, origIdx)
+      matches = [startInOrig]
+      if (DEBUG) console.log('text-quote search: whitespace-insensitive fallback matched at', startInOrig)
+    }
+  }
+
+  if (matches.length === 0) {
+    if (DEBUG) console.log('no matches found in normalized text for any candidate')
     return null
   }
+
+  if (DEBUG) console.log('text-quote search, normalizedText length:', normalizedText.length, 'searchText length:', searchText.length)
 
   if (DEBUG) console.log('found', matches.length, 'match(es)')
 

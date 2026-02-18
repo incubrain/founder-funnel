@@ -86,9 +86,14 @@ export function buildNormalizedText(root: Element): { text: string, nodes: { nod
 }
 
 /**
- * Extract surrounding context text (prefix/suffix) from a Range's position in the content area.
+ * Extract surrounding context text (prefix/suffix) and normalized exact text
+ * from a Range's position in the content area.
+ *
+ * The `exact` field uses the normalized text (with \n at block boundaries),
+ * which matches what buildNormalizedText produces during search — ensuring
+ * indexOf will find the text even for cross-element selections.
  */
-function extractContext(range: Range, contentArea: Element): { prefix: string, suffix: string } {
+function extractContext(range: Range, contentArea: Element): { prefix: string, suffix: string, exact: string } {
   const { text, nodes } = buildNormalizedText(contentArea)
 
   // Find where the range's start node appears in our normalized text
@@ -108,13 +113,14 @@ function extractContext(range: Range, contentArea: Element): { prefix: string, s
   }
 
   if (rangeStart === -1 || rangeEnd === -1) {
-    return { prefix: '', suffix: '' }
+    return { prefix: '', suffix: '', exact: range.toString() }
   }
 
   const prefix = text.slice(Math.max(0, rangeStart - CONTEXT_CHARS), rangeStart)
   const suffix = text.slice(rangeEnd, rangeEnd + CONTEXT_CHARS)
+  const exact = text.slice(rangeStart, rangeEnd)
 
-  return { prefix, suffix }
+  return { prefix, suffix, exact }
 }
 
 export function computeAnchor(range: Range, contentArea: Element): CommentAnchor {
@@ -199,14 +205,15 @@ export function computeAnchor(range: Range, contentArea: Element): CommentAnchor
   const selectedText = range.toString()
 
   // Extract text-quote context for cross-element re-anchoring
-  const { prefix, suffix } = extractContext(range, findContentRoot(contentArea))
+  // `exact` comes from normalized text (with \n at block boundaries) to match textQuoteSearch
+  const { prefix, suffix, exact } = extractContext(range, findContentRoot(contentArea))
 
   const anchor: CommentAnchor = {
     headingId,
     blockIndex,
     textOffset,
     textLength: selectedText.length,
-    exact: selectedText,
+    exact,
     prefix,
     suffix,
   }
