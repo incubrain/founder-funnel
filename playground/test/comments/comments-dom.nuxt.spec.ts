@@ -1,15 +1,18 @@
 // @vitest-environment nuxt
 /**
- * DOM-level tests for the comment module's anchor computation and highlight application.
+ * DOM-level tests for the comment module's anchor computation and highlight range finding.
  *
- * These tests import the REAL functions from the module utils (not duplicates),
+ * These tests import the REAL functions from the module utils,
  * construct DOM structures that mirror what Nuxt Content produces, and verify
- * the full lifecycle: select → anchor → store → re-highlight.
+ * the full lifecycle: select → anchor → store → re-find range.
+ *
+ * NOTE: happy-dom doesn't support the CSS Custom Highlight API (CSS.highlights),
+ * so we test findCommentRange (Range creation) rather than applyHighlights (CSS registration).
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import type { DocComment } from '@incubrain/foundry/modules/comments/runtime/types'
-import { computeAnchor, findContentRoot } from '@incubrain/foundry/modules/comments/runtime/utils/anchor'
-import { highlightComment, clearHighlights } from '@incubrain/foundry/modules/comments/runtime/utils/highlight'
+import { buildNormalizedText, computeAnchor, findContentRoot } from '@incubrain/foundry/modules/comments/runtime/utils/anchor'
+import { findCommentRange, clearHighlights } from '@incubrain/foundry/modules/comments/runtime/utils/highlight'
 
 // ── DOM helpers (test fixtures — construct Nuxt Content-like structures) ──
 
@@ -222,7 +225,6 @@ describe('Anchor Computation', () => {
 
     const anchor = computeAnchor(range, contentArea)
     expect(anchor.headingId).toBe('section-b')
-    // blockIndex is 0 — no blocks between section-b heading and this paragraph
     expect(anchor.blockIndex).toBe(0)
   })
 
@@ -240,7 +242,6 @@ describe('Anchor Computation', () => {
 
     const anchor = computeAnchor(range, contentArea)
     expect(anchor.headingId).toBe('section-b')
-    // Should be 0, not 2 — the two paragraphs under section-a don't count
     expect(anchor.blockIndex).toBe(0)
   })
 
@@ -299,234 +300,341 @@ describe('Anchor Computation', () => {
     range.setEnd(textNode, 6) // "Second"
 
     const anchor = computeAnchor(range, contentArea)
-    // LI escalates to UL, and UL finds the heading as its sibling
     expect(anchor.headingId).toBe('list-sec')
     expect(anchor.textOffset).toBe(0)
     expect(anchor.textLength).toBe(6)
   })
+
+  it('captures exact, prefix, and suffix fields', () => {
+    addHeading(contentArea, 2, 'ctx', 'Context Section')
+    addParagraph(contentArea, 'The quick brown fox jumps over the lazy dog.')
+
+    const p = contentArea.querySelector('p')!
+    const textNode = p.firstChild!
+    const range = document.createRange()
+    range.setStart(textNode, 10) // "brown fox"
+    range.setEnd(textNode, 19)
+
+    const anchor = computeAnchor(range, contentArea)
+    expect(anchor.exact).toBe('brown fox')
+    expect(anchor.prefix).toContain('quick ')
+    expect(anchor.suffix).toContain('jumps')
+  })
 })
 
-describe('Highlight Application — Plain Text', () => {
-  it('highlights plain text in a paragraph', () => {
+describe('buildNormalizedText', () => {
+  it('inserts newline between sibling block elements', () => {
+    addHeading(contentArea, 2, 'h', 'Heading')
+    addParagraph(contentArea, 'Paragraph one.')
+
+    const { text } = buildNormalizedText(contentArea)
+    expect(text).toContain('Heading\nParagraph one.')
+  })
+
+  it('does NOT insert newline between inline elements within a paragraph', () => {
+    addParagraph(contentArea, 'Before ', bold('bold'), ' after.')
+
+    const { text } = buildNormalizedText(contentArea)
+    expect(text).toBe('Before bold after.')
+  })
+
+  it('tracks text node positions correctly', () => {
+    addParagraph(contentArea, 'Hello world.')
+
+    const { text, nodes } = buildNormalizedText(contentArea)
+    expect(text).toBe('Hello world.')
+    expect(nodes).toHaveLength(1)
+    expect(nodes[0]!.start).toBe(0)
+    expect(nodes[0]!.end).toBe(12)
+  })
+
+  it('handles code block wrapper divs with copy button text', () => {
+    addWrappedCodeBlock(contentArea, ['const', ' x'])
+
+    const { text } = buildNormalizedText(contentArea)
+    // The "Copy code to clipboard" button text is included (it's a text node)
+    expect(text).toContain('const x')
+  })
+})
+
+describe('findCommentRange — Single Block', () => {
+  it('finds range for plain text in a paragraph', () => {
     addHeading(contentArea, 2, 'sec', 'Section')
     addParagraph(contentArea, 'This is highlightable text here.')
 
     const comment = makeComment({
       selectedText: 'highlightable',
-      anchor: { headingId: 'sec', blockIndex: 0, textOffset: 8, textLength: 13 },
+      anchor: { headingId: 'sec', blockIndex: 0, textOffset: 8, textLength: 13, exact: 'highlightable' },
     })
 
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-
-    const mark = contentArea.querySelector('mark.doc-comment-highlight')
-    expect(mark).not.toBeNull()
-    expect(mark!.textContent).toBe('highlightable')
-    expect(mark!.dataset.commentId).toBe('c_test0001')
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    expect(range!.toString()).toBe('highlightable')
   })
 
-  it('highlights text in second paragraph (blockIndex=1)', () => {
+  it('finds range in second paragraph (blockIndex=1)', () => {
     addHeading(contentArea, 2, 'sec', 'Section')
     addParagraph(contentArea, 'First paragraph content.')
     addParagraph(contentArea, 'Second paragraph content.')
 
     const comment = makeComment({
       selectedText: 'Second',
-      anchor: { headingId: 'sec', blockIndex: 1, textOffset: 0, textLength: 6 },
+      anchor: { headingId: 'sec', blockIndex: 1, textOffset: 0, textLength: 6, exact: 'Second' },
     })
 
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-
-    const mark = contentArea.querySelector('mark.doc-comment-highlight')
-    expect(mark!.textContent).toBe('Second')
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    expect(range!.toString()).toBe('Second')
   })
 
-  it('clears highlights and restores DOM', () => {
+  it('finds range for text within heading itself', () => {
+    addHeading(contentArea, 2, 'single', 'Single Heading Text')
+    addParagraph(contentArea, 'Some paragraph.')
+
+    const comment = makeComment({
+      selectedText: 'Heading',
+      anchor: { headingId: 'single', blockIndex: 0, textOffset: 7, textLength: 7, exact: 'Heading' },
+    })
+
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    expect(range!.toString()).toBe('Heading')
+  })
+
+  it('returns null when text is not found anywhere', () => {
+    addParagraph(contentArea, 'Some content.')
+
+    const comment = makeComment({
+      selectedText: 'xyzzy_nonexistent_string_12345',
+      anchor: { headingId: 'no-such-heading', blockIndex: 0, textOffset: 0, textLength: 30, exact: 'xyzzy_nonexistent_string_12345' },
+    })
+
+    const range = findCommentRange(comment, contentArea)
+    expect(range).toBeNull()
+  })
+})
+
+describe('findCommentRange — Cross-Element (Text-Quote Search)', () => {
+  it('finds range spanning heading into paragraph', () => {
+    addHeading(contentArea, 2, 'cross', 'Cross Block')
+    addParagraph(contentArea, 'First paragraph text.')
+
+    // "Cross Block\nFirst paragraph" — spans H2 → P with newline
+    const comment = makeComment({
+      selectedText: 'Cross Block\nFirst paragraph',
+      anchor: {
+        headingId: 'cross',
+        blockIndex: 0,
+        textOffset: 0,
+        textLength: 27,
+        exact: 'Cross Block\nFirst paragraph',
+      },
+    })
+
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    expect(range!.toString()).toContain('Cross Block')
+    expect(range!.toString()).toContain('First paragraph')
+  })
+
+  it('finds range spanning paragraph into next paragraph', () => {
     addHeading(contentArea, 2, 'sec', 'Section')
-    addParagraph(contentArea, 'Text to highlight.')
+    addParagraph(contentArea, 'End of first.')
+    addParagraph(contentArea, 'Start of second.')
 
     const comment = makeComment({
-      selectedText: 'highlight',
-      anchor: { headingId: 'sec', blockIndex: 0, textOffset: 8, textLength: 9 },
+      selectedText: 'End of first.\nStart of second.',
+      anchor: {
+        headingId: 'sec',
+        blockIndex: 0,
+        textOffset: 0,
+        textLength: 30,
+        exact: 'End of first.\nStart of second.',
+      },
     })
 
-    highlightComment(comment, contentArea)
-    expect(contentArea.querySelector('mark')).not.toBeNull()
-
-    clearHighlights()
-    expect(contentArea.querySelector('mark')).toBeNull()
-    expect(contentArea.querySelector('p')!.textContent).toBe('Text to highlight.')
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    const rangeText = range!.toString()
+    expect(rangeText).toContain('End of first.')
+    expect(rangeText).toContain('Start of second.')
   })
-})
 
-describe('Highlight Application — Cross-Element', () => {
-  it('highlights text spanning a <strong> boundary with multiple marks', () => {
-    addHeading(contentArea, 2, 'fmt', 'Formatted')
-    addParagraph(contentArea, 'This contains ', bold('bold text'), ' in the middle.')
+  it('finds range spanning paragraph across list into another paragraph', () => {
+    addHeading(contentArea, 2, 'multi', 'Multi')
+    addParagraph(contentArea, 'Before list.')
+    addList(contentArea, ['Item one', 'Item two'])
+    addParagraph(contentArea, 'After list.')
 
-    // "contains bold text in" crosses the <strong> boundary
+    // The selected text contains content from P → UL → P
     const comment = makeComment({
-      selectedText: 'contains bold text in',
-      anchor: { headingId: 'fmt', blockIndex: 0, textOffset: 5, textLength: 21 },
+      selectedText: 'Before list.\nItem one\nItem two\nAfter list.',
+      anchor: {
+        headingId: 'multi',
+        blockIndex: 0,
+        textOffset: 0,
+        textLength: 42,
+        exact: 'Before list.\nItem one\nItem two\nAfter list.',
+      },
     })
 
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-
-    const marks = contentArea.querySelectorAll('mark.doc-comment-highlight')
-    expect(marks.length).toBeGreaterThanOrEqual(2)
-
-    const totalText = Array.from(marks).map(m => m.textContent).join('')
-    expect(totalText).toBe('contains bold text in')
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    const rangeText = range!.toString()
+    expect(rangeText).toContain('Before list.')
+    expect(rangeText).toContain('Item one')
+    expect(rangeText).toContain('After list.')
   })
 
-  it('highlights across multiple list items with multiple marks', () => {
-    addHeading(contentArea, 2, 'list', 'Lists')
-    addList(contentArea, ['First item', 'Second item'])
-
-    const comment = makeComment({
-      id: 'c_multilist',
-      selectedText: 'First itemSecond item',
-      anchor: { headingId: 'list', blockIndex: 0, textOffset: 0, textLength: 21 },
-    })
-
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-
-    const marks = contentArea.querySelectorAll('mark.doc-comment-highlight')
-    expect(marks.length).toBeGreaterThanOrEqual(2)
-
-    const totalText = Array.from(marks).map(m => m.textContent).join('')
-    expect(totalText).toBe('First itemSecond item')
-  })
-
-  it('CAN highlight text entirely within <strong>', () => {
-    addHeading(contentArea, 2, 'fmt', 'Formatted')
-    addParagraph(contentArea, 'Text with ', bold('bold part'), ' here.')
+  it('finds range spanning paragraph into code block', () => {
+    addHeading(contentArea, 2, 'code', 'Code Section')
+    addParagraph(contentArea, 'Install with:')
+    addShikiCodeBlock(contentArea, ['npm', ' install'])
 
     const comment = makeComment({
-      selectedText: 'bold',
-      anchor: { headingId: 'fmt', blockIndex: 0, textOffset: 10, textLength: 4 },
+      selectedText: 'Install with:\nnpm install',
+      anchor: {
+        headingId: 'code',
+        blockIndex: 0,
+        textOffset: 0,
+        textLength: 25,
+        exact: 'Install with:\nnpm install',
+      },
     })
 
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-    expect(contentArea.querySelector('mark')!.textContent).toBe('bold')
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    const rangeText = range!.toString()
+    expect(rangeText).toContain('Install with:')
+    expect(rangeText).toContain('npm install')
   })
 
-  it('CAN highlight text entirely before <strong>', () => {
-    addHeading(contentArea, 2, 'fmt', 'Formatted')
-    addParagraph(contentArea, 'Text with ', bold('bold part'), ' here.')
-
-    const comment = makeComment({
-      selectedText: 'Text',
-      anchor: { headingId: 'fmt', blockIndex: 0, textOffset: 0, textLength: 4 },
-    })
-
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-    expect(contentArea.querySelector('mark')!.textContent).toBe('Text')
-  })
-
-  it('CAN highlight text entirely after <strong>', () => {
-    addHeading(contentArea, 2, 'fmt', 'Formatted')
-    addParagraph(contentArea, 'Text with ', bold('bold part'), ' here.')
-
-    const comment = makeComment({
-      selectedText: 'here',
-      // "Text with " = 10, "bold part" = 9, " here." → "here" at offset 20
-      anchor: { headingId: 'fmt', blockIndex: 0, textOffset: 20, textLength: 4 },
-    })
-
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-    expect(contentArea.querySelector('mark')!.textContent).toBe('here')
-  })
-})
-
-describe('Highlight Application — Duplicate Text', () => {
-  it('anchor-based lookup targets correct paragraph via blockIndex', () => {
+  it('uses prefix/suffix to disambiguate duplicate text', () => {
     addHeading(contentArea, 2, 'dup', 'Duplicates')
     addParagraph(contentArea, 'The word Foundry appears here.')
     addParagraph(contentArea, 'The word Foundry also appears here.')
 
-    // Comment on SECOND occurrence — anchor says blockIndex=1
+    // Comment targets second occurrence with prefix/suffix context
     const comment = makeComment({
       selectedText: 'Foundry',
-      anchor: { headingId: 'dup', blockIndex: 1, textOffset: 9, textLength: 7 },
+      anchor: {
+        headingId: 'dup',
+        blockIndex: 1,
+        textOffset: 9,
+        textLength: 7,
+        exact: 'Foundry',
+        prefix: 'The word ',
+        suffix: ' also appears here.',
+      },
     })
 
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    expect(range!.toString()).toBe('Foundry')
 
-    const mark = contentArea.querySelector('mark.doc-comment-highlight')!
-    const parentP = mark.parentElement!
-    expect(parentP.textContent).toContain('also appears')
-  })
-
-  it('anchor-based lookup targets correct paragraph, not first occurrence', () => {
-    addHeading(contentArea, 2, 'dup', 'Duplicates')
-    addParagraph(contentArea, 'Word appears here.')
-    addParagraph(contentArea, 'Word appears here too.')
-
-    const comment = makeComment({
-      selectedText: 'Word',
-      anchor: { headingId: 'dup', blockIndex: 1, textOffset: 0, textLength: 4 },
-    })
-
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-
-    const mark = contentArea.querySelector('mark')!
-    const parentP = mark.parentElement!
-    expect(parentP.textContent).toContain('here too')
+    // Verify it's in the SECOND paragraph (suffix has "also")
+    const container = range!.startContainer.parentElement!
+    expect(container.textContent).toContain('also appears')
   })
 })
 
-describe('Highlight Application — Fallback Strategies', () => {
-  it('falls back to text search when heading ID is not found', () => {
+describe('findCommentRange — Syntax-Highlighted Code Blocks', () => {
+  it('finds range across Shiki token spans', () => {
+    addHeading(contentArea, 2, 'code-sec', 'Code')
+    addShikiCodeBlock(contentArea, ['const', ' ', 'x', ' = ', '1'])
+
+    const comment = makeComment({
+      selectedText: 'const x',
+      anchor: { headingId: 'code-sec', blockIndex: 0, textOffset: 0, textLength: 7, exact: 'const x' },
+    })
+
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    expect(range!.toString()).toBe('const x')
+  })
+
+  it('finds range for partial token', () => {
+    addHeading(contentArea, 2, 'code-sec', 'Code')
+    addShikiCodeBlock(contentArea, ['const', ' ', 'myVariable', ' = ', '"hello"'])
+
+    const comment = makeComment({
+      selectedText: 'Variable',
+      anchor: { headingId: 'code-sec', blockIndex: 0, textOffset: 8, textLength: 8, exact: 'Variable' },
+    })
+
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    expect(range!.toString()).toBe('Variable')
+  })
+
+  it('round-trips anchor through Shiki tokens', () => {
+    addHeading(contentArea, 2, 'code-sec', 'Code')
+    const pre = addShikiCodeBlock(contentArea, ['import', ' ', 'foo', ' from ', '\'bar\''])
+
+    const fooSpan = pre.querySelectorAll('span')[2]!
+    const textNode = fooSpan.firstChild!
+    const range = document.createRange()
+    range.setStart(textNode, 0)
+    range.setEnd(textNode, 3)
+
+    const anchor = computeAnchor(range, contentArea)
+    expect(anchor.headingId).toBe('code-sec')
+    expect(anchor.textOffset).toBe(7)
+    expect(anchor.textLength).toBe(3)
+    expect(anchor.exact).toBe('foo')
+
+    const comment = makeComment({ selectedText: 'foo', anchor })
+    const foundRange = findCommentRange(comment, contentArea)
+    expect(foundRange).not.toBeNull()
+    expect(foundRange!.toString()).toBe('foo')
+  })
+})
+
+describe('findCommentRange — Fallback Strategies', () => {
+  it('falls back to text-quote search when heading ID is not found', () => {
     addHeading(contentArea, 2, 'real-id', 'Real Heading')
     addParagraph(contentArea, 'Unique text content here.')
 
     const comment = makeComment({
       selectedText: 'Unique text',
-      anchor: { headingId: 'non-existent-id', blockIndex: 0, textOffset: 0, textLength: 11 },
+      anchor: { headingId: 'non-existent-id', blockIndex: 0, textOffset: 0, textLength: 11, exact: 'Unique text' },
     })
 
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-    expect(contentArea.querySelector('mark')!.textContent).toBe('Unique text')
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    expect(range!.toString()).toBe('Unique text')
   })
 
-  it('falls back to text search when blockIndex is out of range', () => {
+  it('falls back to text-quote search when blockIndex is out of range', () => {
     addHeading(contentArea, 2, 'sec', 'Section')
     addParagraph(contentArea, 'Only one paragraph.')
 
     const comment = makeComment({
       selectedText: 'Only one',
-      anchor: { headingId: 'sec', blockIndex: 5, textOffset: 0, textLength: 8 },
+      anchor: { headingId: 'sec', blockIndex: 5, textOffset: 0, textLength: 8, exact: 'Only one' },
     })
 
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-    expect(contentArea.querySelector('mark')!.textContent).toBe('Only one')
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    expect(range!.toString()).toBe('Only one')
   })
 
-  it('returns false when text is not found anywhere', () => {
-    addParagraph(contentArea, 'Some content.')
+  it('handles backwards-compat comments without exact field', () => {
+    addHeading(contentArea, 2, 'sec', 'Section')
+    addParagraph(contentArea, 'Legacy comment text here.')
 
     const comment = makeComment({
-      selectedText: 'xyzzy_nonexistent_string_12345',
-      anchor: { headingId: 'no-such-heading', blockIndex: 0, textOffset: 0, textLength: 30 },
+      selectedText: 'Legacy comment',
+      anchor: { headingId: 'sec', blockIndex: 0, textOffset: 0, textLength: 14 },
     })
 
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(false)
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    expect(range!.toString()).toBe('Legacy comment')
   })
 })
 
-describe('Round-trip: Anchor → Store → Re-highlight', () => {
+describe('Round-trip: Anchor → Store → Re-find Range', () => {
   it('plain text round-trips correctly', () => {
     addHeading(contentArea, 2, 'sec', 'Section')
     const p = addParagraph(contentArea, 'Select this exact phrase in the paragraph.')
@@ -541,11 +649,9 @@ describe('Round-trip: Anchor → Store → Re-highlight', () => {
     expect(selectedText).toBe('exact phrase')
 
     const comment = makeComment({ selectedText, anchor })
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-
-    const mark = contentArea.querySelector('mark')!
-    expect(mark.textContent).toBe('exact phrase')
+    const foundRange = findCommentRange(comment, contentArea)
+    expect(foundRange).not.toBeNull()
+    expect(foundRange!.toString()).toBe('exact phrase')
   })
 
   it('text within bold round-trips correctly', () => {
@@ -562,178 +668,23 @@ describe('Round-trip: Anchor → Store → Re-highlight', () => {
     expect(selectedText).toBe('bold')
 
     const comment = makeComment({ selectedText, anchor })
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-    expect(contentArea.querySelector('mark')!.textContent).toBe('bold')
+    const foundRange = findCommentRange(comment, contentArea)
+    expect(foundRange).not.toBeNull()
+    expect(foundRange!.toString()).toBe('bold')
   })
 
-  it('text spanning bold boundary round-trips with multi-mark highlight', () => {
+  it('text spanning bold boundary round-trips correctly', () => {
     addHeading(contentArea, 2, 'fmt', 'Formatted')
     addParagraph(contentArea, 'Before ', bold('bold'), ' after.')
 
     const comment = makeComment({
       selectedText: 'Before bold',
-      anchor: { headingId: 'fmt', blockIndex: 0, textOffset: 0, textLength: 11 },
+      anchor: { headingId: 'fmt', blockIndex: 0, textOffset: 0, textLength: 11, exact: 'Before bold' },
     })
 
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-
-    const marks = contentArea.querySelectorAll('mark.doc-comment-highlight')
-    const totalText = Array.from(marks).map(m => m.textContent).join('')
-    expect(totalText).toBe('Before bold')
-  })
-})
-
-describe('Multiple Comments on Same Page', () => {
-  it('applies multiple highlights without interference', () => {
-    addHeading(contentArea, 2, 'sec', 'Section')
-    addParagraph(contentArea, 'First paragraph with some text.')
-    addParagraph(contentArea, 'Second paragraph with other text.')
-
-    const c1 = makeComment({
-      id: 'c_first',
-      selectedText: 'First',
-      anchor: { headingId: 'sec', blockIndex: 0, textOffset: 0, textLength: 5 },
-    })
-    const c2 = makeComment({
-      id: 'c_second',
-      selectedText: 'Second',
-      anchor: { headingId: 'sec', blockIndex: 1, textOffset: 0, textLength: 6 },
-    })
-
-    const s1 = highlightComment(c1, contentArea)
-    const s2 = highlightComment(c2, contentArea)
-
-    expect(s1).toBe(true)
-    expect(s2).toBe(true)
-
-    const marks = contentArea.querySelectorAll('mark.doc-comment-highlight')
-    expect(marks).toHaveLength(2)
-    expect(marks[0]!.dataset.commentId).toBe('c_first')
-    expect(marks[1]!.dataset.commentId).toBe('c_second')
-  })
-
-  it('skips resolved comments', () => {
-    addHeading(contentArea, 2, 'sec', 'Section')
-    addParagraph(contentArea, 'Some text here.')
-
-    const comment = makeComment({
-      selectedText: 'text',
-      anchor: { headingId: 'sec', blockIndex: 0, textOffset: 5, textLength: 4 },
-      status: 'resolved',
-    })
-
-    // The overlay skips resolved comments before calling highlightComment
-    if (comment.status !== 'resolved') {
-      highlightComment(comment, contentArea)
-    }
-
-    expect(contentArea.querySelector('mark')).toBeNull()
-  })
-})
-
-describe('Highlight Application — Syntax-Highlighted Code Blocks', () => {
-  it('highlights text across Shiki token spans with multi-mark', () => {
-    addHeading(contentArea, 2, 'code-sec', 'Code')
-    // Shiki renders: <pre class="shiki"><code><span>const</span><span> </span><span>x</span><span> = </span><span>1</span></code></pre>
-    addShikiCodeBlock(contentArea, ['const', ' ', 'x', ' = ', '1'])
-
-    // Select "const x" — spans 3 token spans
-    const comment = makeComment({
-      selectedText: 'const x',
-      anchor: { headingId: 'code-sec', blockIndex: 0, textOffset: 0, textLength: 7 },
-    })
-
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-
-    const marks = contentArea.querySelectorAll('mark.doc-comment-highlight')
-    const totalText = Array.from(marks).map(m => m.textContent).join('')
-    expect(totalText).toBe('const x')
-  })
-
-  it('highlights partial token in Shiki code block', () => {
-    addHeading(contentArea, 2, 'code-sec', 'Code')
-    addShikiCodeBlock(contentArea, ['const', ' ', 'myVariable', ' = ', '"hello"'])
-
-    // Select just "Variable" inside the "myVariable" token
-    const comment = makeComment({
-      selectedText: 'Variable',
-      anchor: { headingId: 'code-sec', blockIndex: 0, textOffset: 8, textLength: 8 },
-    })
-
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-    expect(contentArea.querySelector('mark')!.textContent).toBe('Variable')
-  })
-
-  it('round-trips anchor computation through Shiki tokens', () => {
-    addHeading(contentArea, 2, 'code-sec', 'Code')
-    const pre = addShikiCodeBlock(contentArea, ['import', ' ', 'foo', ' from ', '\'bar\''])
-
-    // Select "foo" — the 3rd token span's text node
-    const fooSpan = pre.querySelectorAll('span')[2]!
-    const textNode = fooSpan.firstChild!
-    const range = document.createRange()
-    range.setStart(textNode, 0)
-    range.setEnd(textNode, 3)
-
-    const anchor = computeAnchor(range, contentArea)
-    expect(anchor.headingId).toBe('code-sec')
-    // "import" = 6, " " = 1 → offset 7
-    expect(anchor.textOffset).toBe(7)
-    expect(anchor.textLength).toBe(3)
-
-    // Re-highlight from stored anchor
-    const comment = makeComment({
-      selectedText: 'foo',
-      anchor,
-    })
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-    expect(contentArea.querySelector('mark')!.textContent).toBe('foo')
-  })
-})
-
-describe('Highlight Application — Cross-Block-Type Selection', () => {
-  it('highlights text spanning from heading into paragraph via concatenated fallback', () => {
-    addHeading(contentArea, 2, 'cross', 'Cross Block')
-    addParagraph(contentArea, 'First paragraph text.')
-
-    // Select "Cross BlockFirst paragraph" — starts in H2, ends in P
-    // This crosses block-level boundaries (H2 → P)
-    const comment = makeComment({
-      selectedText: 'Cross BlockFirst paragraph',
-      anchor: { headingId: 'cross', blockIndex: 0, textOffset: 0, textLength: 26 },
-    })
-
-    // wrapText fails (text offset exceeds block text length), but
-    // fallbackTextSearch now uses concatenated text search across all text nodes
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-    const marks = contentArea.querySelectorAll('mark.doc-comment-highlight')
-    const markedText = Array.from(marks).map(m => m.textContent).join('')
-    expect(markedText).toBe('Cross BlockFirst paragraph')
-  })
-
-  it('highlights text selected entirely within a heading', () => {
-    addHeading(contentArea, 2, 'single', 'Single Heading Text')
-    addParagraph(contentArea, 'Some paragraph.')
-
-    // Select "Heading" inside the H2 — no boundary crossing
-    const comment = makeComment({
-      selectedText: 'Heading',
-      // headingId is the block itself — computeAnchor checks if block IS a heading
-      anchor: { headingId: 'single', blockIndex: 0, textOffset: 7, textLength: 7 },
-    })
-
-    // highlightComment walks forward from heading to find blockIndex=0 (the P),
-    // then wrapText looks for offset 7 len 7 in the P ("paragraph.") — wrong block.
-    // Fallback text search should find "Heading" in the H2 text node.
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-    expect(contentArea.querySelector('mark')!.textContent).toBe('Heading')
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    expect(range!.toString()).toBe('Before bold')
   })
 })
 
@@ -743,21 +694,22 @@ describe('Edge Cases', () => {
 
     const comment = makeComment({
       selectedText: 'without',
-      anchor: { headingId: null, blockIndex: 0, textOffset: 10, textLength: 7 },
+      anchor: { headingId: null, blockIndex: 0, textOffset: 10, textLength: 7, exact: 'without' },
     })
 
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    expect(range!.toString()).toBe('without')
   })
 
   it('handles empty content area', () => {
     const comment = makeComment({
       selectedText: 'anything',
-      anchor: { headingId: null, blockIndex: 0, textOffset: 0, textLength: 8 },
+      anchor: { headingId: null, blockIndex: 0, textOffset: 0, textLength: 8, exact: 'anything' },
     })
 
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(false)
+    const range = findCommentRange(comment, contentArea)
+    expect(range).toBeNull()
   })
 
   it('handles inline code elements', () => {
@@ -766,12 +718,12 @@ describe('Edge Cases', () => {
 
     const comment = makeComment({
       selectedText: 'npm install',
-      anchor: { headingId: 'code-sec', blockIndex: 0, textOffset: 8, textLength: 11 },
+      anchor: { headingId: 'code-sec', blockIndex: 0, textOffset: 8, textLength: 11, exact: 'npm install' },
     })
 
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-    expect(contentArea.querySelector('mark')!.textContent).toBe('npm install')
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    expect(range!.toString()).toBe('npm install')
   })
 
   it('handles link elements', () => {
@@ -780,12 +732,12 @@ describe('Edge Cases', () => {
 
     const comment = makeComment({
       selectedText: 'Example Site',
-      anchor: { headingId: 'link-sec', blockIndex: 0, textOffset: 6, textLength: 12 },
+      anchor: { headingId: 'link-sec', blockIndex: 0, textOffset: 6, textLength: 12, exact: 'Example Site' },
     })
 
-    const success = highlightComment(comment, contentArea)
-    expect(success).toBe(true)
-    expect(contentArea.querySelector('mark')!.textContent).toBe('Example Site')
+    const range = findCommentRange(comment, contentArea)
+    expect(range).not.toBeNull()
+    expect(range!.toString()).toBe('Example Site')
   })
 })
 
@@ -794,7 +746,6 @@ describe('Realistic DOM — Wrapper Divs (Nuxt Content rendering)', () => {
   let contentRoot: HTMLDivElement
 
   beforeEach(() => {
-    // Remove the default flat contentArea
     contentArea.remove()
     const result = createRealisticContentArea()
     realisticContentArea = result.contentArea
@@ -802,7 +753,7 @@ describe('Realistic DOM — Wrapper Divs (Nuxt Content rendering)', () => {
   })
 
   afterEach(() => {
-    clearHighlights(realisticContentArea)
+    clearHighlights()
     realisticContentArea.remove()
   })
 
@@ -818,9 +769,8 @@ describe('Realistic DOM — Wrapper Divs (Nuxt Content rendering)', () => {
     addParagraph(contentRoot, 'Some intro text.')
     addWrappedCodeBlock(contentRoot, ['npx', ' create-foundry', ' my-funnel'])
 
-    // Select "npx" inside the code block (first token, simpler offsets)
     const pre = contentRoot.querySelector('pre')!
-    const tokenSpan = pre.querySelectorAll('span.sBMFI')[0] // "npx"
+    const tokenSpan = pre.querySelectorAll('span.sBMFI')[0]
     const textNode = tokenSpan.firstChild!
     const range = document.createRange()
     range.setStart(textNode, 0)
@@ -828,33 +778,27 @@ describe('Realistic DOM — Wrapper Divs (Nuxt Content rendering)', () => {
 
     const anchor = computeAnchor(range, realisticContentArea)
     expect(anchor.headingId).toBe('code-h')
-    expect(anchor.blockIndex).toBe(1) // P is block 0, wrapper DIV is block 1
+    expect(anchor.blockIndex).toBe(1)
   })
 
-  it('highlights code block text via anchor in wrapper div', () => {
+  it('finds range for code block text via anchor in wrapper div', () => {
     addHeading(contentRoot, 2, 'code-h', 'Code Section')
     addParagraph(contentRoot, 'Some intro text.')
     addWrappedCodeBlock(contentRoot, ['npx', ' create-foundry', ' my-funnel'])
 
-    // Select "npx" in the code block and compute anchor
     const pre = contentRoot.querySelector('pre')!
-    const tokenSpan = pre.querySelectorAll('span.sBMFI')[0] // "npx"
+    const tokenSpan = pre.querySelectorAll('span.sBMFI')[0]
     const textNode = tokenSpan.firstChild!
     const range = document.createRange()
     range.setStart(textNode, 0)
     range.setEnd(textNode, 3)
 
     const anchor = computeAnchor(range, realisticContentArea)
-    const comment = makeComment({
-      selectedText: 'npx',
-      anchor,
-    })
+    const comment = makeComment({ selectedText: 'npx', anchor })
 
-    const success = highlightComment(comment, realisticContentArea)
-    expect(success).toBe(true)
-    const marks = realisticContentArea.querySelectorAll('mark.doc-comment-highlight')
-    expect(marks.length).toBeGreaterThan(0)
-    expect(marks[0]!.textContent).toBe('npx')
+    const foundRange = findCommentRange(comment, realisticContentArea)
+    expect(foundRange).not.toBeNull()
+    expect(foundRange!.toString()).toBe('npx')
   })
 
   it('round-trips anchor for paragraph text in realistic DOM', () => {
@@ -862,8 +806,6 @@ describe('Realistic DOM — Wrapper Divs (Nuxt Content rendering)', () => {
     addParagraph(contentRoot, 'First paragraph with some text.')
     addParagraph(contentRoot, 'Second paragraph here.')
 
-    // Select "some text" in first paragraph
-    // "First paragraph with some text." — "some" starts at index 21
     const p = contentRoot.querySelectorAll('p')[0]!
     const textNode = p.firstChild!
     const range = document.createRange()
@@ -875,8 +817,8 @@ describe('Realistic DOM — Wrapper Divs (Nuxt Content rendering)', () => {
     expect(anchor.blockIndex).toBe(0)
 
     const comment = makeComment({ selectedText: 'some text', anchor })
-    const success = highlightComment(comment, realisticContentArea)
-    expect(success).toBe(true)
-    expect(realisticContentArea.querySelector('mark')!.textContent).toBe('some text')
+    const foundRange = findCommentRange(comment, realisticContentArea)
+    expect(foundRange).not.toBeNull()
+    expect(foundRange!.toString()).toBe('some text')
   })
 })

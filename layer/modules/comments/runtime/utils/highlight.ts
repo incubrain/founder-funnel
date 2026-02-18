@@ -1,126 +1,142 @@
-import type { CommentPriority, DocComment } from '../types'
-import { findContentRoot, isBlockElement } from './anchor'
+import type { DocComment } from '../types'
+import { buildNormalizedText, findContentRoot, isBlockElement } from './anchor'
 
 const DEBUG = import.meta.dev
 
-export function highlightComment(comment: DocComment, contentArea: Element): boolean {
-  const contentRoot = findContentRoot(contentArea)
-  if (DEBUG) {
-    console.groupCollapsed(`[comments:highlight] highlightComment id=${comment.id.slice(0, 8)}`)
-    console.log('anchor:', JSON.stringify(comment.anchor))
-    console.log('selectedText:', JSON.stringify(comment.selectedText))
-    console.log('contentRoot:', contentRoot.tagName, 'children:', contentRoot.children.length)
-  }
+/** Map from commentId → Range for click/hover detection */
+const commentRanges = new Map<string, Range>()
 
-  let startNode: Element | null = null
-  if (comment.anchor.headingId) {
-    startNode = contentRoot.querySelector(`#${CSS.escape(comment.anchor.headingId)}`)
-      || contentArea.querySelector(`#${CSS.escape(comment.anchor.headingId)}`)
-    if (DEBUG) console.log('heading found:', !!startNode, startNode?.tagName)
-  }
-
-  if (startNode) {
-    // Check if the selected text is inside the heading itself (not a following block)
-    const headingText = startNode.textContent ?? ''
-    const endPos = comment.anchor.textOffset + comment.anchor.textLength
-    if (endPos <= headingText.length) {
-      const slice = headingText.slice(comment.anchor.textOffset, endPos)
-      if (slice === comment.selectedText) {
-        if (DEBUG) console.log('text is inside heading itself, wrapping heading')
-        const headingResult = wrapText(startNode, comment)
-        if (headingResult) {
-          if (DEBUG) console.groupEnd()
-          return true
-        }
-      }
-    }
-
-    // Walk forward from heading, counting block elements, stopping at next heading
-    let blockCount = 0
-    let sibling = startNode.nextElementSibling
-    while (sibling) {
-      if (/^H[1-6]$/.test(sibling.tagName)) {
-        if (DEBUG) console.log('hit next heading, stopping walk')
-        break
-      }
-      if (sibling instanceof HTMLElement && isBlockElement(sibling)) {
-        if (DEBUG) console.log(`  block[${blockCount}]: <${sibling.tagName}>`, sibling.textContent?.slice(0, 50))
-        if (blockCount === comment.anchor.blockIndex) {
-          // If the sibling is a wrapper div containing a <pre>, use the <pre> directly
-          // This avoids text offset mismatch from non-content children (e.g. copy buttons)
-          let target: Element = sibling
-          if (sibling.tagName === 'DIV') {
-            const innerPre = sibling.querySelector('pre')
-            if (innerPre) target = innerPre
-          }
-          if (DEBUG) console.log('  → target:', `<${target.tagName}>`, 'calling wrapText')
-          const result = wrapText(target, comment)
-          if (result) {
-            if (DEBUG) {
-              console.log('  → wrapText succeeded')
-              console.groupEnd()
-            }
-            return true
-          }
-          // wrapText failed (e.g. text spans across block boundaries), fall through to global fallback
-          if (DEBUG) console.log('  → wrapText failed, will try global fallback')
-          break
-        }
-        blockCount++
-      }
-      else if (DEBUG) {
-        console.log(`  skip non-block: <${sibling.tagName}>`, sibling.className)
-      }
-      sibling = sibling.nextElementSibling
-    }
-    if (DEBUG) console.log('block walk exhausted, blockCount reached:', blockCount, 'needed:', comment.anchor.blockIndex)
-  }
-
-  // Fallback: text search across entire content area
-  if (DEBUG) console.log('falling back to text search')
-  const fallbackResult = fallbackTextSearch(contentArea, comment)
-  if (DEBUG) {
-    console.log('fallback result:', fallbackResult)
-    console.groupEnd()
-  }
-  return fallbackResult
+/**
+ * Check if the CSS Custom Highlight API is available.
+ */
+function hasHighlightAPI(): boolean {
+  return typeof CSS !== 'undefined' && 'highlights' in CSS
 }
 
-export function wrapText(block: Element, comment: DocComment): boolean {
+/**
+ * Find a Range in the DOM that matches the comment's anchor.
+ * Uses a two-pass strategy:
+ * 1. Fast path: heading → blockIndex → textOffset (existing single-block logic)
+ * 2. Text-quote search: normalized text search with prefix/suffix disambiguation
+ */
+export function findCommentRange(comment: DocComment, contentArea: Element): Range | null {
+  const contentRoot = findContentRoot(contentArea)
   if (DEBUG) {
-    console.log('[comments:highlight] wrapText block:', `<${block.tagName}>`, 'totalText:', JSON.stringify(block.textContent?.slice(0, 80)))
+    console.groupCollapsed(`[comments:highlight] findCommentRange id=${comment.id.slice(0, 8)}`)
+    console.log('anchor:', JSON.stringify(comment.anchor))
+    console.log('selectedText:', JSON.stringify(comment.selectedText.slice(0, 60)))
   }
 
-  const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT)
+  // Fast path: try single-block anchoring
+  const fastRange = tryFastPath(comment, contentRoot, contentArea)
+  if (fastRange) {
+    if (DEBUG) {
+      console.log('fast path succeeded')
+      console.groupEnd()
+    }
+    return fastRange
+  }
+
+  // Text-quote search: find text across any element boundaries
+  const quoteRange = textQuoteSearch(comment, contentRoot)
+  if (quoteRange) {
+    if (DEBUG) {
+      console.log('text-quote search succeeded')
+      console.groupEnd()
+    }
+    return quoteRange
+  }
+
+  if (DEBUG) {
+    console.warn('all strategies failed')
+    console.groupEnd()
+  }
+  return null
+}
+
+/**
+ * Fast path: heading → blockIndex → single-block text offset.
+ * Returns a Range if the text is found entirely within one block element.
+ */
+function tryFastPath(comment: DocComment, contentRoot: Element, contentArea: Element): Range | null {
+  const { anchor } = comment
+
+  let startNode: Element | null = null
+  if (anchor.headingId) {
+    startNode = contentRoot.querySelector(`#${CSS.escape(anchor.headingId)}`)
+      || contentArea.querySelector(`#${CSS.escape(anchor.headingId)}`)
+  }
+
+  if (!startNode) return null
+
+  // Check if text is inside the heading itself
+  const headingText = startNode.textContent ?? ''
+  const endPos = anchor.textOffset + anchor.textLength
+  if (endPos <= headingText.length) {
+    const slice = headingText.slice(anchor.textOffset, endPos)
+    if (slice === comment.selectedText) {
+      if (DEBUG) console.log('text is inside heading, creating range')
+      return createRangeInElement(startNode, anchor.textOffset, anchor.textLength)
+    }
+  }
+
+  // Walk forward from heading to find the target block
+  let blockCount = 0
+  let sibling = startNode.nextElementSibling
+  while (sibling) {
+    if (/^H[1-6]$/.test(sibling.tagName)) break
+    if (sibling instanceof HTMLElement && isBlockElement(sibling)) {
+      if (blockCount === anchor.blockIndex) {
+        // Drill into wrapper divs to find the actual content element
+        let target: Element = sibling
+        if (sibling.tagName === 'DIV') {
+          const innerPre = sibling.querySelector('pre')
+          if (innerPre) target = innerPre
+        }
+        const range = createRangeInElement(target, anchor.textOffset, anchor.textLength)
+        if (range) {
+          // Verify the range text matches what we expect
+          const rangeText = range.toString()
+          if (rangeText === comment.selectedText || rangeText === anchor.exact) {
+            return range
+          }
+          if (DEBUG) console.log('fast path range text mismatch:', JSON.stringify(rangeText.slice(0, 40)), 'vs', JSON.stringify(comment.selectedText.slice(0, 40)))
+        }
+        break
+      }
+      blockCount++
+    }
+    sibling = sibling.nextElementSibling
+  }
+
+  return null
+}
+
+/**
+ * Create a Range within a single element using character offset + length.
+ */
+function createRangeInElement(element: Element, textOffset: number, textLength: number): Range | null {
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT)
   let charCount = 0
   let node = walker.nextNode()
   let startNode: Node | null = null
   let startOffset = 0
-  let textNodeCount = 0
 
-  // Find the start text node based on character offset
   while (node) {
     const len = node.textContent?.length ?? 0
-    textNodeCount++
-    if (!startNode && charCount + len > comment.anchor.textOffset) {
+    if (!startNode && charCount + len > textOffset) {
       startNode = node
-      startOffset = comment.anchor.textOffset - charCount
-      if (DEBUG) console.log('  found start node at charCount:', charCount, 'nodeText:', JSON.stringify(node.textContent?.slice(0, 30)), 'startOffset:', startOffset)
+      startOffset = textOffset - charCount
     }
     charCount += len
     node = walker.nextNode()
   }
 
-  if (DEBUG) console.log('  totalChars:', charCount, 'textNodes:', textNodeCount, 'needed offset:', comment.anchor.textOffset, 'needed end:', comment.anchor.textOffset + comment.anchor.textLength)
+  if (!startNode) return null
 
-  if (!startNode) {
-    if (DEBUG) console.log('  startNode not found, falling back to text search')
-    return fallbackTextSearch(block, comment)
-  }
-
-  // Find the end text node
-  const endCharPos = comment.anchor.textOffset + comment.anchor.textLength
-  const walker2 = document.createTreeWalker(block, NodeFilter.SHOW_TEXT)
+  // Find end node
+  const endCharPos = textOffset + textLength
+  const walker2 = document.createTreeWalker(element, NodeFilter.SHOW_TEXT)
   let endNode: Node | null = null
   let endOffset = 0
   charCount = 0
@@ -131,174 +147,234 @@ export function wrapText(block: Element, comment: DocComment): boolean {
     if (charCount + len >= endCharPos) {
       endNode = node
       endOffset = endCharPos - charCount
-      if (DEBUG) console.log('  found end node at charCount:', charCount, 'nodeText:', JSON.stringify(node.textContent?.slice(0, 30)), 'endOffset:', endOffset)
       break
     }
     charCount += len
     node = walker2.nextNode()
   }
 
-  if (!endNode) {
-    if (DEBUG) console.log('  endNode not found, falling back to text search')
-    return fallbackTextSearch(block, comment)
+  if (!endNode) return null
+
+  const range = document.createRange()
+  range.setStart(startNode, Math.min(startOffset, startNode.textContent?.length ?? 0))
+  range.setEnd(endNode, Math.min(endOffset, endNode.textContent?.length ?? 0))
+  return range
+}
+
+/**
+ * Text-quote search: find the comment's text across any element boundaries.
+ * Uses prefix/suffix for disambiguation when multiple matches exist.
+ */
+function textQuoteSearch(comment: DocComment, contentRoot: Element): Range | null {
+  const searchText = comment.anchor.exact ?? comment.selectedText
+  const { text: normalizedText, nodes } = buildNormalizedText(contentRoot)
+
+  if (DEBUG) console.log('text-quote search, normalizedText length:', normalizedText.length, 'searchText length:', searchText.length)
+
+  // Find all occurrences of the search text
+  const matches: number[] = []
+  let searchFrom = 0
+  while (true) {
+    const idx = normalizedText.indexOf(searchText, searchFrom)
+    if (idx === -1) break
+    matches.push(idx)
+    searchFrom = idx + 1
   }
+
+  if (matches.length === 0) {
+    if (DEBUG) console.log('no matches found in normalized text')
+    return null
+  }
+
+  if (DEBUG) console.log('found', matches.length, 'match(es)')
+
+  // Use prefix/suffix to disambiguate
+  let bestMatch = matches[0]!
+  if (matches.length > 1 && (comment.anchor.prefix || comment.anchor.suffix)) {
+    let bestScore = -1
+    for (const matchIdx of matches) {
+      let score = 0
+      if (comment.anchor.prefix) {
+        const actual = normalizedText.slice(Math.max(0, matchIdx - comment.anchor.prefix.length), matchIdx)
+        score += commonSuffixLength(actual, comment.anchor.prefix)
+      }
+      if (comment.anchor.suffix) {
+        const endIdx = matchIdx + searchText.length
+        const actual = normalizedText.slice(endIdx, endIdx + comment.anchor.suffix.length)
+        score += commonPrefixLength(actual, comment.anchor.suffix)
+      }
+      if (score > bestScore) {
+        bestScore = score
+        bestMatch = matchIdx
+      }
+    }
+  }
+
+  // Map the match position back to DOM text nodes
+  const startIdx = bestMatch
+  const endIdx = bestMatch + searchText.length
+
+  let startNode: Text | null = null
+  let startOffset = 0
+  let endNode: Text | null = null
+  let endOffset = 0
+
+  for (const entry of nodes) {
+    if (!startNode && entry.end > startIdx) {
+      startNode = entry.node
+      startOffset = startIdx - entry.start
+    }
+    if (entry.end >= endIdx) {
+      endNode = entry.node
+      endOffset = endIdx - entry.start
+      break
+    }
+  }
+
+  if (!startNode || !endNode) return null
 
   const range = document.createRange()
   range.setStart(startNode, Math.min(startOffset, startNode.textContent?.length ?? 0))
   range.setEnd(endNode, Math.min(endOffset, endNode.textContent?.length ?? 0))
 
-  if (DEBUG) console.log('  range text:', JSON.stringify(range.toString()), 'expected:', JSON.stringify(comment.selectedText))
-
-  return wrapRange(range, comment.id, comment.priority)
+  if (DEBUG) console.log('created range:', JSON.stringify(range.toString().slice(0, 60)))
+  return range
 }
 
-export function wrapRange(range: Range, commentId: string, priority?: CommentPriority): boolean {
+function commonSuffixLength(a: string, b: string): number {
+  let i = 0
+  while (i < a.length && i < b.length && a[a.length - 1 - i] === b[b.length - 1 - i]) i++
+  return i
+}
+
+function commonPrefixLength(a: string, b: string): number {
+  let i = 0
+  while (i < a.length && i < b.length && a[i] === b[i]) i++
+  return i
+}
+
+/**
+ * Apply highlights for all comments using the CSS Custom Highlight API.
+ * Returns the commentRanges map for click/hover detection.
+ */
+export function applyHighlights(comments: DocComment[], contentArea: Element): Map<string, Range> {
+  clearHighlights()
+
+  if (!hasHighlightAPI()) {
+    if (DEBUG) console.warn('[comments:highlight] CSS Custom Highlight API not available')
+    return commentRanges
+  }
+
+  const priorityGroups = new Map<string, Range[]>()
+
+  if (DEBUG) console.groupCollapsed(`[comments:highlight] applyHighlights — ${comments.length} comments`)
+
+  for (const comment of comments) {
+    if (comment.status === 'resolved') continue
+
+    const range = findCommentRange(comment, contentArea)
+    if (range) {
+      commentRanges.set(comment.id, range)
+
+      const priority = comment.priority ?? 'low'
+      if (!priorityGroups.has(priority)) priorityGroups.set(priority, [])
+      priorityGroups.get(priority)!.push(range)
+
+      if (DEBUG) console.log(`  ✓ ${comment.id.slice(0, 8)} → range created (priority: ${priority})`)
+    }
+    else {
+      if (DEBUG) console.warn(`  ✗ FAILED ${comment.id.slice(0, 8)}: ${JSON.stringify(comment.selectedText.slice(0, 50))}`)
+    }
+  }
+
+  // Register highlights grouped by priority
+  for (const [priority, ranges] of priorityGroups) {
+    CSS.highlights.set(`comment-${priority}`, new Highlight(...ranges))
+  }
+
   if (DEBUG) {
-    console.log('[comments:highlight] wrapRange',
-      'sameContainer:', range.startContainer === range.endContainer,
-      'startType:', range.startContainer.nodeType,
-      'rangeText:', JSON.stringify(range.toString()))
+    console.log(`  ${commentRanges.size} ranges created, ${priorityGroups.size} highlight groups registered`)
+    console.groupEnd()
   }
 
-  // Collect all text nodes the range touches
-  const textNodes: { node: Text, start: number, end: number }[] = []
-  const ancestor = range.commonAncestorContainer
+  return commentRanges
+}
 
-  // If range is within a single text node, use simple path
-  if (range.startContainer === range.endContainer && range.startContainer.nodeType === Node.TEXT_NODE) {
-    const mark = document.createElement('mark')
-    mark.className = 'doc-comment-highlight'
-    mark.dataset.commentId = commentId
-    if (priority) mark.dataset.priority = priority
+/**
+ * Clear all comment highlights from the CSS Custom Highlight registry.
+ */
+export function clearHighlights(): void {
+  commentRanges.clear()
+  if (!hasHighlightAPI()) return
+  const toDelete: string[] = []
+  CSS.highlights.forEach((_highlight, name) => {
+    if (name.startsWith('comment-')) toDelete.push(name)
+  })
+  for (const name of toDelete) {
+    CSS.highlights.delete(name)
+  }
+}
+
+/**
+ * Set the "active" highlight for a specific comment (e.g., on click/hover).
+ * Moves the comment's range into a separate highlight group for distinct styling.
+ */
+export function setActiveHighlight(commentId: string | null): void {
+  if (!hasHighlightAPI()) return
+  if (!commentId) {
+    CSS.highlights.delete('comment-active')
+    return
+  }
+  const range = commentRanges.get(commentId)
+  if (range) {
+    CSS.highlights.set('comment-active', new Highlight(range))
+  }
+}
+
+/**
+ * Find which comment is at the given viewport coordinates.
+ * Uses caretPositionFromPoint/caretRangeFromPoint + Range.isPointInRange.
+ */
+export function findCommentAtPoint(x: number, y: number): string | null {
+  // Get the caret position at the click point
+  let offsetNode: Node | null = null
+  let offset = 0
+
+  if ('caretPositionFromPoint' in document) {
+    const pos = (document as unknown as { caretPositionFromPoint(x: number, y: number): { offsetNode: Node, offset: number } | null }).caretPositionFromPoint(x, y)
+    if (pos) {
+      offsetNode = pos.offsetNode
+      offset = pos.offset
+    }
+  }
+  else if ('caretRangeFromPoint' in document) {
+    const range = document.caretRangeFromPoint(x, y)
+    if (range) {
+      offsetNode = range.startContainer
+      offset = range.startOffset
+    }
+  }
+
+  if (!offsetNode) return null
+
+  for (const [commentId, range] of commentRanges) {
     try {
-      range.surroundContents(mark)
-      if (DEBUG) console.log('  single-node wrap succeeded')
-      return true
-    }
-    catch (e) {
-      if (DEBUG) console.log('  single-node wrap FAILED:', e)
-      return false
-    }
-  }
-
-  // Multi-node: walk text nodes under the common ancestor
-  const root = ancestor.nodeType === Node.TEXT_NODE ? ancestor.parentNode! : ancestor
-  if (DEBUG) console.log('  multi-node wrap, root:', root instanceof HTMLElement ? `<${root.tagName}>` : root.nodeName)
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
-  let current = walker.nextNode()
-
-  while (current) {
-    const compareStart = range.comparePoint(current, 0)
-    const compareEnd = range.comparePoint(current, current.textContent?.length ?? 0)
-
-    // Node is at least partially within the range
-    if (compareStart <= 0 && compareEnd >= 0) {
-      const start = current === range.startContainer ? range.startOffset : 0
-      const end = current === range.endContainer
-        ? range.endOffset
-        : (current.textContent?.length ?? 0)
-
-      if (end > start) {
-        textNodes.push({ node: current as Text, start, end })
+      if (range.isPointInRange(offsetNode, offset)) {
+        return commentId
       }
     }
-    current = walker.nextNode()
+    catch {
+      // isPointInRange can throw if nodes are in different documents
+    }
   }
 
-  if (DEBUG) console.log('  textNodes to wrap:', textNodes.length)
-
-  if (textNodes.length === 0) return false
-
-  // Wrap each text segment in its own <mark> (safe: each range is within one text node)
-  for (const { node, start, end } of textNodes) {
-    const segmentRange = document.createRange()
-    segmentRange.setStart(node, start)
-    segmentRange.setEnd(node, end)
-
-    const mark = document.createElement('mark')
-    mark.className = 'doc-comment-highlight'
-    mark.dataset.commentId = commentId
-    if (priority) mark.dataset.priority = priority
-    segmentRange.surroundContents(mark)
-  }
-
-  return true
+  return null
 }
 
-export function clearHighlights(root: ParentNode = document): void {
-  root.querySelectorAll('mark.doc-comment-highlight').forEach((mark) => {
-    const parent = mark.parentNode
-    if (!parent) return
-    while (mark.firstChild) parent.insertBefore(mark.firstChild, mark)
-    parent.removeChild(mark)
-  })
-}
-
-function fallbackTextSearch(root: Element, comment: DocComment): boolean {
-  if (DEBUG) console.log('[comments:highlight] fallbackTextSearch in:', `<${root.tagName}>`, 'looking for:', JSON.stringify(comment.selectedText.slice(0, 50)))
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
-  let node = walker.nextNode()
-  let nodeCount = 0
-
-  // First: check if any single text node contains the full string
-  while (node) {
-    nodeCount++
-    if (node.textContent?.includes(comment.selectedText)) {
-      if (DEBUG) console.log('  found in text node #' + nodeCount, 'parent:', (node.parentElement?.tagName ?? 'null'))
-      const idx = node.textContent.indexOf(comment.selectedText)
-      const range = document.createRange()
-      range.setStart(node, idx)
-      range.setEnd(node, idx + comment.selectedText.length)
-      return wrapRange(range, comment.id, comment.priority)
-    }
-    node = walker.nextNode()
-  }
-
-  // Second: try concatenated text search (for Shiki token spans etc.)
-  // Collect all text nodes, then find the selected text across them
-  const allNodes: Text[] = []
-  const walker2 = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
-  let n = walker2.nextNode()
-  while (n) {
-    allNodes.push(n as Text)
-    n = walker2.nextNode()
-  }
-
-  const fullText = allNodes.map(t => t.textContent ?? '').join('')
-  const searchIdx = fullText.indexOf(comment.selectedText)
-  if (searchIdx === -1) {
-    if (DEBUG) console.log('  not found in', nodeCount, 'text nodes (single or concatenated)')
-    return false
-  }
-
-  if (DEBUG) console.log('  found via concatenated search at idx:', searchIdx)
-
-  // Find start and end text nodes
-  let charCount = 0
-  let startNode: Text | null = null
-  let startOffset = 0
-  let endNode: Text | null = null
-  let endOffset = 0
-  const endIdx = searchIdx + comment.selectedText.length
-
-  for (const textNode of allNodes) {
-    const len = textNode.textContent?.length ?? 0
-    if (!startNode && charCount + len > searchIdx) {
-      startNode = textNode
-      startOffset = searchIdx - charCount
-    }
-    if (charCount + len >= endIdx) {
-      endNode = textNode
-      endOffset = endIdx - charCount
-      break
-    }
-    charCount += len
-  }
-
-  if (!startNode || !endNode) return false
-
-  const range = document.createRange()
-  range.setStart(startNode, startOffset)
-  range.setEnd(endNode, endOffset)
-  return wrapRange(range, comment.id, comment.priority)
+/**
+ * Get the bounding rect of a comment's highlight range.
+ */
+export function getCommentRect(commentId: string): DOMRect | null {
+  const range = commentRanges.get(commentId)
+  return range ? range.getBoundingClientRect() : null
 }

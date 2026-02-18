@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import type { DocComment } from '../types'
-import { highlightComment, clearHighlights } from '../utils/highlight'
+import {
+  applyHighlights as doApplyHighlights,
+  clearHighlights,
+  findCommentAtPoint,
+  getCommentRect,
+  setActiveHighlight,
+} from '../utils/highlight'
 
 const { comments, isPanelOpen, activeCommentId, isEnabled } = useDocComments()
 const route = useRoute()
@@ -19,65 +25,96 @@ function findComment(id: string) {
 }
 
 function applyHighlights() {
-  clearHighlights()
+  const contentArea = document.querySelector('[data-doc-content]')
+  if (!contentArea) return
+  doApplyHighlights(comments.value, contentArea)
+}
+
+function handleContentClick(e: MouseEvent) {
+  const id = findCommentAtPoint(e.clientX, e.clientY)
+  if (id) {
+    activeCommentId.value = id
+    isPanelOpen.value = true
+  }
+}
+
+function handleContentMouseMove(e: MouseEvent) {
+  const id = findCommentAtPoint(e.clientX, e.clientY)
+  if (id) {
+    const comment = findComment(id)
+    if (comment && comment !== hoveredComment.value) {
+      hoveredComment.value = comment
+      hoverRect.value = getCommentRect(id)
+      setActiveHighlight(id)
+    }
+  }
+  else if (hoveredComment.value) {
+    hoveredComment.value = null
+    hoverRect.value = null
+    setActiveHighlight(null)
+  }
+}
+
+// Attach click/hover listeners to the content area
+let contentCleanup: (() => void) | null = null
+
+function attachContentListeners() {
+  detachContentListeners()
   const contentArea = document.querySelector('[data-doc-content]')
   if (!contentArea) return
 
-  console.groupCollapsed(`[comments:overlay] applyHighlights — ${comments.value.length} comments`)
-  for (const comment of comments.value) {
-    if (comment.status === 'resolved') continue
-    const success = highlightComment(comment, contentArea)
-    if (!success) console.warn(`  FAILED to highlight comment ${comment.id.slice(0, 8)}:`, JSON.stringify(comment.selectedText.slice(0, 50)))
+  contentArea.addEventListener('click', handleContentClick)
+  contentArea.addEventListener('mousemove', handleContentMouseMove)
+  contentCleanup = () => {
+    contentArea.removeEventListener('click', handleContentClick)
+    contentArea.removeEventListener('mousemove', handleContentMouseMove)
   }
-  const markCount = contentArea.querySelectorAll('mark.doc-comment-highlight').length
-  console.log(`  ${markCount} marks created`)
-  console.groupEnd()
+}
 
-  // Attach event handlers to all highlight marks
-  contentArea.querySelectorAll<HTMLElement>('mark.doc-comment-highlight').forEach((mark) => {
-    const id = mark.dataset.commentId
-    if (!id) return
-
-    mark.addEventListener('click', () => {
-      activeCommentId.value = id
-      isPanelOpen.value = true
-    })
-    mark.addEventListener('mouseenter', () => {
-      hoveredComment.value = findComment(id)
-      hoverRect.value = mark.getBoundingClientRect()
-    })
-    mark.addEventListener('mouseleave', () => {
-      hoveredComment.value = null
-      hoverRect.value = null
-    })
-  })
+function detachContentListeners() {
+  contentCleanup?.()
+  contentCleanup = null
 }
 
 // Re-apply highlights when comments change, route changes, or toggle changes
 watch([comments, () => route.path, isEnabled], () => {
   if (!isEnabled.value) {
     clearHighlights()
+    detachContentListeners()
     return
   }
-  nextTick(() => applyHighlights())
+  nextTick(() => {
+    applyHighlights()
+    attachContentListeners()
+  })
 }, { deep: true })
 
-// Scroll to and flash the active comment's highlight mark
+// Scroll to the active comment's highlight
 watch(activeCommentId, (id) => {
   if (!id) return
+  setActiveHighlight(id)
   nextTick(() => {
-    const mark = document.querySelector<HTMLElement>(`mark.doc-comment-highlight[data-comment-id="${CSS.escape(id)}"]`)
-    if (!mark) return
-    mark.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    mark.classList.add('doc-comment-highlight--flash')
-    setTimeout(() => mark.classList.remove('doc-comment-highlight--flash'), 1500)
+    const rect = getCommentRect(id)
+    if (!rect) return
+    // Scroll element at the midpoint of the range into view
+    const el = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   })
 })
 
 onMounted(() => {
-  if (isEnabled.value) nextTick(() => applyHighlights())
+  if (isEnabled.value) {
+    nextTick(() => {
+      applyHighlights()
+      attachContentListeners()
+    })
+  }
 })
-onBeforeUnmount(() => clearHighlights())
+
+onBeforeUnmount(() => {
+  clearHighlights()
+  detachContentListeners()
+})
 </script>
 
 <template>
@@ -126,37 +163,37 @@ onBeforeUnmount(() => clearHighlights())
 </template>
 
 <style>
-/* Default (low priority) — yellow */
-.doc-comment-highlight {
+/* CSS Custom Highlight API — priority-based colors */
+/* Low priority — yellow */
+::highlight(comment-low) {
   background-color: rgba(250, 204, 21, 0.3);
-  border-bottom: 2px solid rgb(250, 204, 21);
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-.doc-comment-highlight:hover {
-  background-color: rgba(250, 204, 21, 0.5);
+  text-decoration: underline;
+  text-decoration-color: rgb(250, 204, 21);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
 }
 /* Medium priority — orange */
-.doc-comment-highlight[data-priority="med"] {
+::highlight(comment-med) {
   background-color: rgba(251, 146, 60, 0.3);
-  border-bottom-color: rgb(251, 146, 60);
-}
-.doc-comment-highlight[data-priority="med"]:hover {
-  background-color: rgba(251, 146, 60, 0.5);
+  text-decoration: underline;
+  text-decoration-color: rgb(251, 146, 60);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
 }
 /* Critical priority — red */
-.doc-comment-highlight[data-priority="critical"] {
+::highlight(comment-critical) {
   background-color: rgba(239, 68, 68, 0.3);
-  border-bottom-color: rgb(239, 68, 68);
+  text-decoration: underline;
+  text-decoration-color: rgb(239, 68, 68);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
 }
-.doc-comment-highlight[data-priority="critical"]:hover {
-  background-color: rgba(239, 68, 68, 0.5);
-}
-.doc-comment-highlight--flash {
-  animation: comment-flash 1.5s ease-out;
-}
-@keyframes comment-flash {
-  0%, 30% { background-color: rgba(250, 204, 21, 0.7); }
-  100% { background-color: rgba(250, 204, 21, 0.3); }
+/* Active/hovered comment — brighter */
+::highlight(comment-active) {
+  background-color: rgba(250, 204, 21, 0.6);
+  text-decoration: underline;
+  text-decoration-color: rgb(250, 204, 21);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
 }
 </style>

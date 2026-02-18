@@ -1,9 +1,10 @@
 import type { CommentAnchor } from '../types'
 
 const DEBUG = import.meta.dev
+const CONTEXT_CHARS = 32
 
 export function isBlockElement(el: HTMLElement): boolean {
-  return /^(?:P|DIV|LI|UL|OL|PRE|BLOCKQUOTE|TABLE|DL|DD|DT|FIGURE|SECTION|ARTICLE)$/
+  return /^(?:P|DIV|LI|UL|OL|PRE|BLOCKQUOTE|TABLE|DL|DD|DT|FIGURE|SECTION|ARTICLE|H[1-6])$/
     .test(el.tagName)
 }
 
@@ -48,6 +49,74 @@ export function getTextOffset(node: Node, offset: number, container: Node): numb
   return offset
 }
 
+/**
+ * Build a normalized text string from a DOM subtree, inserting '\n' at block boundaries.
+ * This matches what Range.toString() produces (which adds newlines between blocks).
+ */
+export function buildNormalizedText(root: Element): { text: string, nodes: { node: Text, start: number, end: number }[] } {
+  const nodes: { node: Text, start: number, end: number }[] = []
+  let text = ''
+  let lastBlockParent: Element | null = null
+
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+  let current = walker.nextNode()
+
+  while (current) {
+    // Find the nearest block ancestor of this text node
+    let blockParent: Element | null = current.parentElement
+    while (blockParent && blockParent !== root && !(blockParent instanceof HTMLElement && isBlockElement(blockParent))) {
+      blockParent = blockParent.parentElement
+    }
+
+    // Insert newline when crossing block boundaries
+    if (lastBlockParent && blockParent !== lastBlockParent && !lastBlockParent.contains(blockParent)) {
+      text += '\n'
+    }
+    lastBlockParent = blockParent
+
+    const content = current.textContent ?? ''
+    const start = text.length
+    text += content
+    nodes.push({ node: current as Text, start, end: text.length })
+
+    current = walker.nextNode()
+  }
+
+  return { text, nodes }
+}
+
+/**
+ * Extract surrounding context text (prefix/suffix) from a Range's position in the content area.
+ */
+function extractContext(range: Range, contentArea: Element): { prefix: string, suffix: string } {
+  const { text, nodes } = buildNormalizedText(contentArea)
+
+  // Find where the range's start node appears in our normalized text
+  const startNode = range.startContainer
+  const endNode = range.endContainer
+  let rangeStart = -1
+  let rangeEnd = -1
+
+  for (const entry of nodes) {
+    if (entry.node === startNode) {
+      rangeStart = entry.start + range.startOffset
+    }
+    if (entry.node === endNode) {
+      rangeEnd = entry.start + range.endOffset
+      break
+    }
+  }
+
+  if (rangeStart === -1 || rangeEnd === -1) {
+    return { prefix: '', suffix: '' }
+  }
+
+  const prefix = text.slice(Math.max(0, rangeStart - CONTEXT_CHARS), rangeStart)
+  const suffix = text.slice(rangeEnd, rangeEnd + CONTEXT_CHARS)
+
+  return { prefix, suffix }
+}
+
 export function computeAnchor(range: Range, contentArea: Element): CommentAnchor {
   const contentRoot = findContentRoot(contentArea)
 
@@ -70,7 +139,6 @@ export function computeAnchor(range: Range, contentArea: Element): CommentAnchor
   }
 
   // Find the sibling-level ancestor (direct child of contentRoot)
-  // This is what we use for heading/sibling walks
   const siblingLevel = findSiblingLevelAncestor(block, contentRoot)
 
   if (DEBUG) {
@@ -118,7 +186,6 @@ export function computeAnchor(range: Range, contentArea: Element): CommentAnchor
       while (sibling) {
         if (/^H[1-6]$/.test(sibling.tagName)) break
         if (sibling instanceof HTMLElement && isBlockElement(sibling)) {
-          // Match against both the exact block AND its sibling-level ancestor
           if (sibling === block || sibling === walkStart || sibling === siblingLevel || sibling.contains(block)) break
           if (DEBUG) console.log('  counting block:', `<${sibling.tagName}>`, 'index:', blockIndex)
           blockIndex++
@@ -129,12 +196,19 @@ export function computeAnchor(range: Range, contentArea: Element): CommentAnchor
   }
 
   const textOffset = getTextOffset(range.startContainer, range.startOffset, block)
+  const selectedText = range.toString()
 
-  const anchor = {
+  // Extract text-quote context for cross-element re-anchoring
+  const { prefix, suffix } = extractContext(range, findContentRoot(contentArea))
+
+  const anchor: CommentAnchor = {
     headingId,
     blockIndex,
     textOffset,
-    textLength: range.toString().length,
+    textLength: selectedText.length,
+    exact: selectedText,
+    prefix,
+    suffix,
   }
 
   if (DEBUG) {

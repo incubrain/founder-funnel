@@ -9,6 +9,13 @@ export interface CommentAnchor {
   blockIndex: number
   textOffset: number
   textLength: number
+  // Text-quote fields for robust cross-element re-anchoring
+  /** Selected text with normalized whitespace */
+  exact?: string
+  /** ~32 chars before selection for disambiguation */
+  prefix?: string
+  /** ~32 chars after selection for disambiguation */
+  suffix?: string
 }
 
 export interface DocComment {
