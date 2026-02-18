@@ -23,10 +23,15 @@ function applyHighlights() {
   const contentArea = document.querySelector('[data-doc-content]')
   if (!contentArea) return
 
+  console.groupCollapsed(`[comments:overlay] applyHighlights — ${comments.value.length} comments`)
   for (const comment of comments.value) {
     if (comment.status === 'resolved') continue
-    highlightComment(comment, contentArea)
+    const success = highlightComment(comment, contentArea)
+    if (!success) console.warn(`  FAILED to highlight comment ${comment.id.slice(0, 8)}:`, JSON.stringify(comment.selectedText.slice(0, 50)))
   }
+  const markCount = contentArea.querySelectorAll('mark.doc-comment-highlight').length
+  console.log(`  ${markCount} marks created`)
+  console.groupEnd()
 
   // Attach event handlers to all highlight marks
   contentArea.querySelectorAll<HTMLElement>('mark.doc-comment-highlight').forEach((mark) => {

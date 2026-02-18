@@ -53,6 +53,7 @@ function scrollToComment(id: string) {
     <template #body>
       <UTabs
         :items="tabItems"
+        default-value="comments"
         class="w-full"
       >
         <template #content="{ item }">

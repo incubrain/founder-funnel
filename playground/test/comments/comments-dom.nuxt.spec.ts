@@ -8,7 +8,7 @@
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import type { DocComment } from '@incubrain/foundry/modules/comments/runtime/types'
-import { computeAnchor } from '@incubrain/foundry/modules/comments/runtime/utils/anchor'
+import { computeAnchor, findContentRoot } from '@incubrain/foundry/modules/comments/runtime/utils/anchor'
 import { highlightComment, clearHighlights } from '@incubrain/foundry/modules/comments/runtime/utils/highlight'
 
 // ── DOM helpers (test fixtures — construct Nuxt Content-like structures) ──
@@ -100,6 +100,50 @@ function addShikiCodeBlock(parent: Element, tokens: string[]) {
   pre.appendChild(codeEl)
   parent.appendChild(pre)
   return pre
+}
+
+/**
+ * Build a realistic Shiki code block WITH wrapper div (as MDC/Nuxt Content renders):
+ * <div class="relative my-5 group"><button>Copy</button><pre class="shiki"><code><span class="line"><span>token</span>...</code></pre></div>
+ */
+function addWrappedCodeBlock(parent: Element, tokens: string[]) {
+  const wrapper = document.createElement('div')
+  wrapper.className = 'relative my-5 group'
+  const btn = document.createElement('button')
+  btn.textContent = 'Copy code to clipboard'
+  wrapper.appendChild(btn)
+
+  const pre = document.createElement('pre')
+  pre.className = 'shiki shiki-themes material-theme'
+  const codeEl = document.createElement('code')
+  const lineSpan = document.createElement('span')
+  lineSpan.className = 'line'
+  for (const token of tokens) {
+    const span = document.createElement('span')
+    span.className = 'sBMFI'
+    span.textContent = token
+    lineSpan.appendChild(span)
+  }
+  codeEl.appendChild(lineSpan)
+  pre.appendChild(codeEl)
+  wrapper.appendChild(pre)
+  parent.appendChild(wrapper)
+  return { wrapper, pre }
+}
+
+/**
+ * Create a content area with the real Nuxt Content wrapper chain:
+ * [data-doc-content] > div ([...slug].vue) > div (ContentRenderer) > actual content
+ */
+function createRealisticContentArea(): { contentArea: HTMLDivElement, contentRoot: HTMLDivElement } {
+  const contentArea = document.createElement('div')
+  contentArea.setAttribute('data-doc-content', '')
+  const slugDiv = document.createElement('div')
+  const rendererDiv = document.createElement('div')
+  slugDiv.appendChild(rendererDiv)
+  contentArea.appendChild(slugDiv)
+  document.body.appendChild(contentArea)
+  return { contentArea, contentRoot: rendererDiv }
 }
 
 function makeComment(overrides: Partial<DocComment> = {}): DocComment {
@@ -653,7 +697,7 @@ describe('Highlight Application — Syntax-Highlighted Code Blocks', () => {
 })
 
 describe('Highlight Application — Cross-Block-Type Selection', () => {
-  it('highlights text spanning from heading into paragraph with multi-mark', () => {
+  it('highlights text spanning from heading into paragraph via concatenated fallback', () => {
     addHeading(contentArea, 2, 'cross', 'Cross Block')
     addParagraph(contentArea, 'First paragraph text.')
 
@@ -664,14 +708,13 @@ describe('Highlight Application — Cross-Block-Type Selection', () => {
       anchor: { headingId: 'cross', blockIndex: 0, textOffset: 0, textLength: 26 },
     })
 
-    // The anchor points to blockIndex=0 (the P), but textOffset 0 + textLength 26
-    // exceeds the paragraph text. wrapText will try to find start at offset 0
-    // and end at offset 26 — only "First paragraph text." is 21 chars.
-    // It should fall back to text search if anchor-based fails.
+    // wrapText fails (text offset exceeds block text length), but
+    // fallbackTextSearch now uses concatenated text search across all text nodes
     const success = highlightComment(comment, contentArea)
-    // Fallback text search won't find "Cross BlockFirst paragraph" in a single text node
-    // since H2 and P are separate elements. This documents the limitation.
-    expect(success).toBe(false)
+    expect(success).toBe(true)
+    const marks = contentArea.querySelectorAll('mark.doc-comment-highlight')
+    const markedText = Array.from(marks).map(m => m.textContent).join('')
+    expect(markedText).toBe('Cross BlockFirst paragraph')
   })
 
   it('highlights text selected entirely within a heading', () => {
@@ -743,5 +786,97 @@ describe('Edge Cases', () => {
     const success = highlightComment(comment, contentArea)
     expect(success).toBe(true)
     expect(contentArea.querySelector('mark')!.textContent).toBe('Example Site')
+  })
+})
+
+describe('Realistic DOM — Wrapper Divs (Nuxt Content rendering)', () => {
+  let realisticContentArea: HTMLDivElement
+  let contentRoot: HTMLDivElement
+
+  beforeEach(() => {
+    // Remove the default flat contentArea
+    contentArea.remove()
+    const result = createRealisticContentArea()
+    realisticContentArea = result.contentArea
+    contentRoot = result.contentRoot
+  })
+
+  afterEach(() => {
+    clearHighlights(realisticContentArea)
+    realisticContentArea.remove()
+  })
+
+  it('findContentRoot drills down single-child div chains', () => {
+    addHeading(contentRoot, 2, 'test-h', 'Test')
+    const root = findContentRoot(realisticContentArea)
+    expect(root).toBe(contentRoot)
+    expect(root.querySelector('#test-h')).toBeTruthy()
+  })
+
+  it('anchors code block text inside wrapper div correctly', () => {
+    addHeading(contentRoot, 2, 'code-h', 'Code Section')
+    addParagraph(contentRoot, 'Some intro text.')
+    addWrappedCodeBlock(contentRoot, ['npx', ' create-foundry', ' my-funnel'])
+
+    // Select "npx" inside the code block (first token, simpler offsets)
+    const pre = contentRoot.querySelector('pre')!
+    const tokenSpan = pre.querySelectorAll('span.sBMFI')[0] // "npx"
+    const textNode = tokenSpan.firstChild!
+    const range = document.createRange()
+    range.setStart(textNode, 0)
+    range.setEnd(textNode, 3)
+
+    const anchor = computeAnchor(range, realisticContentArea)
+    expect(anchor.headingId).toBe('code-h')
+    expect(anchor.blockIndex).toBe(1) // P is block 0, wrapper DIV is block 1
+  })
+
+  it('highlights code block text via anchor in wrapper div', () => {
+    addHeading(contentRoot, 2, 'code-h', 'Code Section')
+    addParagraph(contentRoot, 'Some intro text.')
+    addWrappedCodeBlock(contentRoot, ['npx', ' create-foundry', ' my-funnel'])
+
+    // Select "npx" in the code block and compute anchor
+    const pre = contentRoot.querySelector('pre')!
+    const tokenSpan = pre.querySelectorAll('span.sBMFI')[0] // "npx"
+    const textNode = tokenSpan.firstChild!
+    const range = document.createRange()
+    range.setStart(textNode, 0)
+    range.setEnd(textNode, 3)
+
+    const anchor = computeAnchor(range, realisticContentArea)
+    const comment = makeComment({
+      selectedText: 'npx',
+      anchor,
+    })
+
+    const success = highlightComment(comment, realisticContentArea)
+    expect(success).toBe(true)
+    const marks = realisticContentArea.querySelectorAll('mark.doc-comment-highlight')
+    expect(marks.length).toBeGreaterThan(0)
+    expect(marks[0]!.textContent).toBe('npx')
+  })
+
+  it('round-trips anchor for paragraph text in realistic DOM', () => {
+    addHeading(contentRoot, 2, 'para-h', 'Paragraph Section')
+    addParagraph(contentRoot, 'First paragraph with some text.')
+    addParagraph(contentRoot, 'Second paragraph here.')
+
+    // Select "some text" in first paragraph
+    // "First paragraph with some text." — "some" starts at index 21
+    const p = contentRoot.querySelectorAll('p')[0]!
+    const textNode = p.firstChild!
+    const range = document.createRange()
+    range.setStart(textNode, 21)
+    range.setEnd(textNode, 30)
+
+    const anchor = computeAnchor(range, realisticContentArea)
+    expect(anchor.headingId).toBe('para-h')
+    expect(anchor.blockIndex).toBe(0)
+
+    const comment = makeComment({ selectedText: 'some text', anchor })
+    const success = highlightComment(comment, realisticContentArea)
+    expect(success).toBe(true)
+    expect(realisticContentArea.querySelector('mark')!.textContent).toBe('some text')
   })
 })
