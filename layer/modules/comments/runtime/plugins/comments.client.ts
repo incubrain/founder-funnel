@@ -106,12 +106,27 @@ export default defineNuxtPlugin(() => {
       : el.getAttribute('data-testid')
         || `<${el.tagName.toLowerCase()}>`
 
-    const screenshot = await captureElementScreenshot(el as HTMLElement)
-    if (screenshot) {
-      console.debug('[comments] Screenshot captured for', displayText, ':', screenshot.length, 'chars')
+    console.debug('[comments] Element selected:', displayText, {
+      tagName: el.tagName,
+      isHTMLElement: el instanceof HTMLElement,
+      componentName,
+      filepath,
+      rect: { w: rect.width, h: rect.height, t: rect.top, l: rect.left },
+    })
+
+    let screenshot: string | undefined
+    if (el instanceof HTMLElement) {
+      screenshot = await captureElementScreenshot(el)
     }
     else {
-      console.warn('[comments] No screenshot captured for:', displayText)
+      console.warn('[comments] Selected element is not HTMLElement, skipping screenshot:', el.constructor.name)
+    }
+
+    if (screenshot) {
+      console.debug('[comments] Screenshot ready for', displayText, ':', screenshot.length, 'chars')
+    }
+    else {
+      console.warn('[comments] No screenshot for:', displayText, '— see captureElementScreenshot logs above for details')
     }
 
     selection.value = {

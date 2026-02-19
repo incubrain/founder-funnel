@@ -180,18 +180,30 @@ export default defineEventHandler(async (event) => {
   const parsed = newCommentSchema.parse(body)
   const commentId = `c_${crypto.randomUUID().slice(0, 8)}`
 
+  console.info(`[comments] Creating comment ${commentId}:`, {
+    page: parsed.page,
+    anchorType: parsed.anchor.type ?? 'text',
+    hasScreenshot: !!parsed.screenshot,
+    screenshotLength: parsed.screenshot?.length ?? 0,
+    screenshotPrefix: parsed.screenshot?.slice(0, 50),
+  })
+
   // Save screenshot to file if provided (removes base64 from JSONL)
   let screenshotPath: string | undefined
   if (parsed.screenshot) {
     if (parsed.screenshot.startsWith('data:')) {
       try {
         const imagesDir = resolve(dirname(logFile), 'images')
+        console.debug(`[comments] Creating images dir: ${imagesDir}`)
         await mkdir(imagesDir, { recursive: true })
         const base64Data = parsed.screenshot.replace(/^data:image\/\w+;base64,/, '')
+        console.debug(`[comments] Base64 data extracted: ${base64Data.length} chars`)
         const imgFile = resolve(imagesDir, `${commentId}.png`)
-        await writeFile(imgFile, Buffer.from(base64Data, 'base64'))
+        const buffer = Buffer.from(base64Data, 'base64')
+        console.debug(`[comments] PNG buffer: ${buffer.length} bytes, magic: [${buffer[0]}, ${buffer[1]}, ${buffer[2]}, ${buffer[3]}]`)
+        await writeFile(imgFile, buffer)
         screenshotPath = `/api/_comments/image/${commentId}`
-        console.info(`[comments] Screenshot saved: ${imgFile} (${base64Data.length} base64 chars)`)
+        console.info(`[comments] Screenshot saved: ${imgFile} (${buffer.length} bytes)`)
       }
       catch (err) {
         console.error('[comments] Failed to save screenshot file:', err)
@@ -202,7 +214,7 @@ export default defineEventHandler(async (event) => {
     }
   }
   else {
-    console.debug('[comments] No screenshot in payload for comment:', commentId)
+    console.info('[comments] No screenshot in payload for comment:', commentId)
   }
 
   const comment = {

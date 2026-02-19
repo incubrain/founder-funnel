@@ -229,29 +229,45 @@ export function findElementByAnchor(anchor: ElementAnchor, contentArea: Element)
 }
 
 /**
- * Capture a screenshot of an HTML element using html2canvas.
- * Returns a base64 data URL. Lazily imports html2canvas to keep it out of
- * the main bundle (dev-only feature).
+ * Capture a screenshot of an HTML element using html-to-image.
+ * Returns a base64 PNG data URL. Lazily imports the library to keep it
+ * out of the main bundle (dev-only feature).
+ *
+ * Uses html-to-image instead of html2canvas because html2canvas cannot
+ * parse modern CSS color functions (oklab, oklch) used by Tailwind v4.
  */
 export async function captureElementScreenshot(el: HTMLElement): Promise<string | undefined> {
+  if (!(el instanceof HTMLElement)) {
+    console.warn('[comments] captureElementScreenshot: not an HTMLElement, got:', el?.constructor?.name)
+    return undefined
+  }
+
+  const rect = el.getBoundingClientRect()
+  if (rect.width === 0 || rect.height === 0) {
+    console.warn('[comments] captureElementScreenshot: element has zero dimensions')
+    return undefined
+  }
+
   try {
-    const { default: html2canvas } = await import('html2canvas')
-    const canvas = await html2canvas(el, {
-      scale: 1,
-      useCORS: true,
-      logging: false,
-      backgroundColor: null,
+    const { toPng } = await import('html-to-image')
+    const dataUrl = await toPng(el, {
+      cacheBust: true,
+      pixelRatio: 1,
+      width: Math.min(el.scrollWidth, 1920),
+      height: Math.min(el.scrollHeight, 1080),
     })
-    const dataUrl = canvas.toDataURL('image/png', 0.8)
-    if (!dataUrl || !dataUrl.startsWith('data:image/png')) {
-      console.warn('[comments] html2canvas produced invalid data URL:', dataUrl?.slice(0, 60))
+
+    if (!dataUrl || dataUrl === 'data:,' || !dataUrl.startsWith('data:image/png')) {
+      console.warn('[comments] captureElementScreenshot: invalid data URL:', dataUrl?.slice(0, 80))
       return undefined
     }
+
     console.debug('[comments] Screenshot captured:', dataUrl.length, 'chars')
     return dataUrl
   }
-  catch (err) {
-    console.error('[comments] Screenshot capture failed:', err)
+  catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('[comments] captureElementScreenshot failed:', msg)
     return undefined
   }
 }
