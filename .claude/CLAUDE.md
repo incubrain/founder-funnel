@@ -19,8 +19,6 @@ pnpm typecheck       # Nuxt typecheck (layer)
 pnpm verify          # dev:prepare + lint + typecheck
 ```
 
-Config source: set `NUXT_PUBLIC_CONFIG_SOURCE=root` or `foundry`.
-
 ## Critical Rules
 
 1. **Never add features that don't capture signal.** If it doesn't help founders validate faster, reject it.
@@ -37,7 +35,6 @@ Config source: set `NUXT_PUBLIC_CONFIG_SOURCE=root` or `foundry`.
 **Out of scope:** Email sequences, authentication, payment processing, databases. Use external tools for these.
 
 **Key patterns:**
-- Multi-config: `NUXT_PUBLIC_CONFIG_SOURCE` switches between configs. See `shared/utils/config-resolver.ts`.
 - Event-driven: action → `useEvents()` → handler → provider. Swap analytics without changing event code. See `modules/events/*`.
 - Webhook streaming: capture → encrypt → webhook → destination. No storage needed. See `modules/events/server/handlers/webhook.ts`.
 - SSR: Nuxt 4, use `import.meta.client` guards for client-only APIs or `.client.ts|.server.ts` file naming.

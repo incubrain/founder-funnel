@@ -88,11 +88,12 @@ const internalPageData = computed(() => {
     </template>
   </UPopover>
 
-  <!-- Regular link: render as normal -->
+  <!-- Regular link: render with link styling -->
   <NuxtLink
     v-else
     :href="props.href"
     :target="props.target"
+    class="font-medium text-primary underline underline-offset-[3px] hover:decoration-2 transition-all duration-200"
   >
     <slot />
   </NuxtLink>
