@@ -1,14 +1,8 @@
 <script setup lang="ts">
 import { useDraggable } from '@vueuse/core'
-import { CATEGORIES } from '../types'
-import type { CommentCategory, ReviewMode } from '../types'
+import type { ReviewMode } from '../types'
 
-const { isEnabled, author, globalCategory, reviewMode, showUserPrompt, isPanelOpen, openComments, enableCommenting, toolbarPosition } = useDocComments()
-
-const pendingAuthor = ref('')
-const pendingCategory = ref<CommentCategory>('docs')
-
-const categoryItems = CATEGORIES.map(c => ({ label: c, value: c }))
+const { isEnabled, reviewMode, isPanelOpen, openComments, isToolbarExpanded, toolbarPosition } = useDocComments()
 
 const modeItems = [
   { label: 'Text', value: 'text' as ReviewMode, icon: 'i-lucide-type' },
@@ -18,60 +12,67 @@ const modeItems = [
 const toolbarEl = ref<HTMLElement | null>(null)
 const handleEl = ref<HTMLElement | null>(null)
 
+// Use { x: -1, y: -1 } sentinel to mean "not yet positioned" → bottom-right
+const resolvedInitial = computed(() => {
+  if (toolbarPosition.value.x >= 0 && toolbarPosition.value.y >= 0) {
+    return toolbarPosition.value
+  }
+  return {
+    x: (typeof window !== 'undefined' ? window.innerWidth : 1200) - 60,
+    y: (typeof window !== 'undefined' ? window.innerHeight : 800) - 60,
+  }
+})
+
 const { style } = useDraggable(toolbarEl, {
-  initialValue: toolbarPosition.value,
+  initialValue: resolvedInitial.value,
   handle: handleEl,
   onEnd: (pos) => {
     toolbarPosition.value = { x: pos.x, y: pos.y }
   },
 })
-
-function confirmUser() {
-  if (!pendingAuthor.value.trim()) return
-  author.value = pendingAuthor.value.trim()
-  globalCategory.value = pendingCategory.value
-  showUserPrompt.value = false
-  isEnabled.value = true
-}
-
-function handleToggle(value: boolean) {
-  if (value) {
-    enableCommenting()
-  }
-  else {
-    isEnabled.value = false
-  }
-}
 </script>
 
 <template>
   <Teleport to="body">
     <div
+      v-if="isEnabled"
       ref="toolbarEl"
       data-comment-toolbar
-      class="fixed z-40 flex items-center gap-1.5 rounded-lg border border-default bg-default shadow-lg px-2 py-1.5 select-none"
+      class="fixed z-40 flex items-center gap-1.5 rounded-lg border border-default bg-default shadow-lg select-none"
+      :class="isToolbarExpanded ? 'px-2 py-1.5' : 'p-1.5'"
       :style="style"
     >
-      <div
-        ref="handleEl"
-        data-drag-handle
-        class="cursor-grab active:cursor-grabbing text-muted hover:text-default"
-        title="Drag to reposition"
-      >
-        <UIcon
-          name="i-lucide-grip-vertical"
-          class="size-4"
-        />
-      </div>
+      <!-- Collapsed: single icon button -->
+      <template v-if="!isToolbarExpanded">
+        <div
+          ref="handleEl"
+          class="cursor-grab active:cursor-grabbing"
+        >
+          <UButton
+            icon="i-lucide-message-square-more"
+            size="xs"
+            color="primary"
+            variant="soft"
+            title="Expand toolbar (drag to move)"
+            @click="isToolbarExpanded = true"
+          />
+        </div>
+      </template>
 
-      <USwitch
-        :model-value="isEnabled"
-        label="Review"
-        size="sm"
-        @update:model-value="handleToggle"
-      />
+      <!-- Expanded: full toolbar -->
+      <template v-else>
+        <div
+          ref="handleEl"
+          data-drag-handle
+          class="cursor-grab active:cursor-grabbing text-muted hover:text-default"
+          title="Drag to reposition"
+        >
+          <UIcon
+            name="i-lucide-grip-vertical"
+            class="size-4"
+          />
+        </div>
 
-      <template v-if="isEnabled">
         <UButtonGroup size="xs">
           <UButton
             v-for="mode in modeItems"
@@ -103,55 +104,16 @@ function handleToggle(value: boolean) {
             />
           </template>
         </UButton>
+
+        <UButton
+          icon="i-lucide-minimize-2"
+          size="xs"
+          color="neutral"
+          variant="ghost"
+          title="Collapse toolbar"
+          @click="isToolbarExpanded = false"
+        />
       </template>
-
-      <UModal
-        v-model:open="showUserPrompt"
-        title="Set up reviewer identity"
-        description="Your name is attached to every comment you leave."
-      >
-        <span class="hidden" />
-
-        <template #body>
-          <div class="space-y-4">
-            <UFormField
-              label="Your name"
-              required
-            >
-              <UInput
-                v-model="pendingAuthor"
-                placeholder="e.g. drew"
-                icon="i-lucide-user"
-                @keydown.enter="confirmUser"
-              />
-            </UFormField>
-
-            <UFormField label="Default category">
-              <URadioGroup
-                v-model="pendingCategory"
-                :items="categoryItems"
-                orientation="horizontal"
-              />
-            </UFormField>
-          </div>
-        </template>
-
-        <template #footer>
-          <div class="flex justify-end gap-2">
-            <UButton
-              label="Cancel"
-              color="neutral"
-              variant="ghost"
-              @click="showUserPrompt = false"
-            />
-            <UButton
-              label="Start reviewing"
-              :disabled="!pendingAuthor.trim()"
-              @click="confirmUser"
-            />
-          </div>
-        </template>
-      </UModal>
     </div>
   </Teleport>
 </template>

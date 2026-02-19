@@ -445,3 +445,10 @@ export function getCommentRect(commentId: string): DOMRect | null {
   const range = commentRanges.get(commentId)
   return range ? range.getBoundingClientRect() : null
 }
+
+/**
+ * Get the stored Range for a comment (for scrolling).
+ */
+export function getCommentRangeById(commentId: string): Range | null {
+  return commentRanges.get(commentId) ?? null
+}

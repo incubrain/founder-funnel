@@ -2,7 +2,7 @@
 import { CATEGORIES, PRIORITIES, isElementAnchor } from '../types'
 import type { CommentCategory, CommentPriority, DocComment } from '../types'
 
-const { isPanelOpen, openComments, resolvedComments, resolveComment, updateComment, activeCommentId, author, globalCategory, reviewMode } = useDocComments()
+const { isPanelOpen, openComments, resolvedComments, resolveComment, deleteComment, updateComment, activeCommentId, author, globalCategory, reviewMode } = useDocComments()
 
 const tabItems = [
   { label: 'Comments', value: 'comments', icon: 'i-lucide-message-square' },
@@ -22,12 +22,6 @@ const formatDate = (iso: string) =>
 
 const truncate = (text: string, max = 120) =>
   text.length > max ? `${text.slice(0, max)}...` : text
-
-const priorityColor = (p: CommentPriority) => {
-  if (p === 'critical') return 'error' as const
-  if (p === 'med') return 'warning' as const
-  return 'neutral' as const
-}
 
 function onCategoryChange(comment: DocComment, value: CommentCategory) {
   comment.category = value
@@ -132,21 +126,19 @@ function scrollToComment(id: string) {
                 </p>
 
                 <!-- Category & Priority editors -->
-                <div class="flex flex-wrap items-center gap-2">
-                  <URadioGroup
+                <div class="flex items-center gap-2">
+                  <USelect
                     :model-value="c.category"
                     :items="categoryItems"
-                    orientation="horizontal"
                     size="xs"
+                    class="flex-1"
                     @update:model-value="(v: CommentCategory) => onCategoryChange(c, v)"
                   />
-                </div>
-                <div class="flex flex-wrap items-center gap-2">
-                  <URadioGroup
+                  <USelect
                     :model-value="c.priority"
                     :items="priorityItems"
-                    orientation="horizontal"
                     size="xs"
+                    class="flex-1"
                     @update:model-value="(v: CommentPriority) => onPriorityChange(c, v)"
                   />
                 </div>
@@ -159,28 +151,26 @@ function scrollToComment(id: string) {
                       color="neutral"
                       variant="soft"
                     />
-                    <UBadge
-                      :label="c.category"
-                      size="xs"
-                      color="primary"
-                      variant="subtle"
-                    />
-                    <UBadge
-                      :label="c.priority"
-                      size="xs"
-                      :color="priorityColor(c.priority)"
-                      variant="subtle"
-                    />
                     <span class="text-xs text-muted">{{ formatDate(c.createdAt) }}</span>
                   </div>
-                  <UButton
-                    label="Resolve"
-                    size="xs"
-                    color="success"
-                    variant="soft"
-                    icon="i-lucide-check"
-                    @click="resolveComment(c.id)"
-                  />
+                  <div class="flex items-center gap-1">
+                    <UButton
+                      label="Resolve"
+                      size="xs"
+                      color="success"
+                      variant="soft"
+                      icon="i-lucide-check"
+                      @click="resolveComment(c.id)"
+                    />
+                    <UButton
+                      size="xs"
+                      color="error"
+                      variant="ghost"
+                      icon="i-lucide-trash-2"
+                      title="Delete comment"
+                      @click="deleteComment(c.id)"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -217,26 +207,24 @@ function scrollToComment(id: string) {
                   <p class="text-sm line-through">
                     {{ c.comment }}
                   </p>
-                  <div class="flex items-center gap-1.5">
-                    <UBadge
-                      :label="c.author"
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-1.5">
+                      <UBadge
+                        :label="c.author"
+                        size="xs"
+                        color="neutral"
+                        variant="soft"
+                      />
+                      <span class="text-xs text-muted">{{ formatDate(c.createdAt) }}</span>
+                    </div>
+                    <UButton
                       size="xs"
-                      color="neutral"
-                      variant="soft"
+                      color="error"
+                      variant="ghost"
+                      icon="i-lucide-trash-2"
+                      title="Delete comment"
+                      @click="deleteComment(c.id)"
                     />
-                    <UBadge
-                      :label="c.category"
-                      size="xs"
-                      color="primary"
-                      variant="subtle"
-                    />
-                    <UBadge
-                      :label="c.priority"
-                      size="xs"
-                      :color="priorityColor(c.priority)"
-                      variant="subtle"
-                    />
-                    <span class="text-xs text-muted">{{ formatDate(c.createdAt) }}</span>
                   </div>
                 </div>
               </div>
@@ -262,21 +250,20 @@ function scrollToComment(id: string) {
               <label class="text-xs font-semibold text-muted uppercase tracking-wider">
                 Default Category
               </label>
-              <URadioGroup
+              <USelect
                 v-model="globalCategory"
                 :items="categoryItems"
-                size="xs"
+                size="sm"
               />
             </div>
             <div class="space-y-2">
               <label class="text-xs font-semibold text-muted uppercase tracking-wider">
                 Review Mode
               </label>
-              <URadioGroup
+              <USelect
                 v-model="reviewMode"
                 :items="modeItems"
-                orientation="horizontal"
-                size="xs"
+                size="sm"
               />
             </div>
           </div>

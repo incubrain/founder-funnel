@@ -6,6 +6,7 @@ import {
   applyHighlights as doApplyHighlights,
   clearHighlights,
   findCommentAtPoint,
+  getCommentRangeById,
   getCommentRect,
   setActiveHighlight,
 } from '../utils/highlight'
@@ -172,13 +173,14 @@ watch(activeCommentId, (id) => {
     el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
   else {
-    setActiveHighlight(id)
-    nextTick(() => {
-      const rect = getCommentRect(id)
-      if (!rect) return
-      const el = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+    // Scroll to text highlight using the range's start container
+    const range = getCommentRangeById(id)
+    if (range) {
+      const startNode = range.startContainer
+      const el = startNode.nodeType === Node.TEXT_NODE ? startNode.parentElement : startNode as Element
       el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    })
+      nextTick(() => setActiveHighlight(id))
+    }
   }
 })
 

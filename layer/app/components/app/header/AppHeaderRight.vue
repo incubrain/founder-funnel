@@ -20,7 +20,7 @@ const socialLinks = useSocialLinks(socials)
 
     <!-- Dev-only: review comments toggle -->
     <ClientOnly v-if="isDev">
-      <CommentSettings />
+      <CommentToggle />
     </ClientOnly>
 
     <ClientOnly>

@@ -12,7 +12,8 @@ export const useDocComments = () => {
   const author = useLocalStorage('comments_author', '')
   const globalCategory = useLocalStorage<CommentCategory>('comments_category', 'docs')
   const reviewMode = useLocalStorage<ReviewMode>('comments_review_mode', 'text')
-  const toolbarPosition = useLocalStorage<{ x: number, y: number }>('comments_toolbar_pos', { x: 20, y: 80 })
+  const toolbarPosition = useLocalStorage<{ x: number, y: number }>('comments_toolbar_pos', { x: -1, y: -1 })
+  const isToolbarExpanded = ref(false)
   const showUserPrompt = ref(false)
 
   const loadComments = async (page: string) => {
@@ -73,6 +74,14 @@ export const useDocComments = () => {
     }
   }
 
+  const deleteComment = async (id: string) => {
+    await $fetch('/api/_comments', {
+      method: 'POST',
+      body: { action: 'delete', id },
+    })
+    comments.value = comments.value.filter(c => c.id !== id)
+  }
+
   const enableCommenting = () => {
     if (!author.value.trim()) {
       showUserPrompt.value = true
@@ -95,6 +104,7 @@ export const useDocComments = () => {
     globalCategory,
     reviewMode,
     toolbarPosition,
+    isToolbarExpanded,
     showUserPrompt,
     openComments,
     resolvedComments,
@@ -102,6 +112,7 @@ export const useDocComments = () => {
     addComment,
     updateComment,
     resolveComment,
+    deleteComment,
     enableCommenting,
   }
 }

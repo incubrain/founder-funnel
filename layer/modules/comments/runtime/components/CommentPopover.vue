@@ -110,25 +110,26 @@ onKeyStroke('Escape', dismiss)
         <UTextarea
           v-model="commentText"
           placeholder="Leave a comment..."
-          :rows="2"
+          :rows="4"
+          class="w-full"
           @keydown.meta.enter="submit"
           @keydown.ctrl.enter="submit"
         />
 
         <div class="flex items-center gap-2">
-          <URadioGroup
+          <USelect
             v-model="category"
             :items="categoryItems"
-            orientation="horizontal"
             size="xs"
+            class="flex-1"
+            placeholder="Category"
           />
-        </div>
-        <div class="flex items-center gap-2">
-          <URadioGroup
+          <USelect
             v-model="priority"
             :items="priorityItems"
-            orientation="horizontal"
             size="xs"
+            class="flex-1"
+            placeholder="Priority"
           />
         </div>
 

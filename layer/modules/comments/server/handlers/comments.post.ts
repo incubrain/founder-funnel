@@ -47,6 +47,11 @@ const resolveSchema = z.object({
   id: z.string(),
 })
 
+const deleteSchema = z.object({
+  action: z.literal('delete'),
+  id: z.string(),
+})
+
 const updateSchema = z.object({
   action: z.literal('update'),
   id: z.string(),
@@ -66,6 +71,32 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const config = useRuntimeConfig(event) as unknown as CommentsConfig
   const logFile = resolve(process.cwd(), config._comments.logFile)
+
+  // Delete a comment
+  if (body.action === 'delete') {
+    const { id } = deleteSchema.parse(body)
+
+    let content: string
+    try {
+      content = await readFile(logFile, 'utf-8')
+    }
+    catch {
+      throw createError({ statusCode: 404, message: 'No comments file' })
+    }
+
+    const lines = content.split('\n').filter(Boolean)
+    const filtered = lines.filter((line) => {
+      const parsed = JSON.parse(line)
+      return parsed.id !== id
+    })
+
+    if (filtered.length === lines.length) {
+      throw createError({ statusCode: 404, message: 'Comment not found' })
+    }
+
+    await writeFile(logFile, filtered.length ? filtered.join('\n') + '\n' : '')
+    return { success: true }
+  }
 
   // Resolve an existing comment
   if (body.action === 'resolve') {
