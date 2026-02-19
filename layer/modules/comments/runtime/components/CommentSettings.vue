@@ -2,11 +2,22 @@
 import { useDraggable } from '@vueuse/core'
 import type { ReviewMode } from '../types'
 
-const { isEnabled, reviewMode, isPanelOpen, openComments, isToolbarExpanded, toolbarPosition } = useDocComments()
+const {
+  isEnabled,
+  reviewMode,
+  isPanelOpen,
+  openComments,
+  isToolbarExpanded,
+  toolbarPosition,
+} = useDocComments()
 
 const modeItems = [
   { label: 'Text', value: 'text' as ReviewMode, icon: 'i-lucide-type' },
-  { label: 'Element', value: 'element' as ReviewMode, icon: 'i-lucide-box-select' },
+  {
+    label: 'Element',
+    value: 'element' as ReviewMode,
+    icon: 'i-lucide-box-select',
+  },
 ]
 
 const toolbarEl = ref<HTMLElement | null>(null)
@@ -35,16 +46,13 @@ const { style } = useDraggable(toolbarEl, {
       v-show="isEnabled"
       ref="toolbarEl"
       data-comment-toolbar
-      class="fixed z-40 flex items-center gap-1.5 rounded-lg border border-default bg-default shadow-lg select-none"
+      class="fixed z-40 flex items-center gap-1.5 rounded-lg border border-default bg-default shadow-lg select-none shrink-0 flex-nowrap"
       :class="isToolbarExpanded ? 'px-2 py-1.5' : 'p-1.5'"
       :style="style"
     >
       <!-- Collapsed: single icon button -->
       <template v-if="!isToolbarExpanded">
-        <div
-          ref="handleEl"
-          class="cursor-grab active:cursor-grabbing"
-        >
+        <div ref="handleEl" class="cursor-grab active:cursor-grabbing">
           <UButton
             icon="i-lucide-message-square-more"
             size="xs"
@@ -64,13 +72,10 @@ const { style } = useDraggable(toolbarEl, {
           class="cursor-grab active:cursor-grabbing text-muted hover:text-default"
           title="Drag to reposition"
         >
-          <UIcon
-            name="i-lucide-grip-vertical"
-            class="size-4"
-          />
+          <UIcon name="i-lucide-grip-vertical" class="size-4" />
         </div>
 
-        <UButtonGroup size="xs">
+        <UFieldGroup size="xs" class="flex flex-nowrap">
           <UButton
             v-for="mode in modeItems"
             :key="mode.value"
@@ -80,7 +85,7 @@ const { style } = useDraggable(toolbarEl, {
             :title="`${mode.label} selection mode`"
             @click="reviewMode = mode.value"
           />
-        </UButtonGroup>
+        </UFieldGroup>
 
         <UButton
           icon="i-lucide-message-square"
@@ -89,10 +94,7 @@ const { style } = useDraggable(toolbarEl, {
           variant="soft"
           @click="isPanelOpen = true"
         >
-          <template
-            v-if="openComments.length"
-            #trailing
-          >
+          <template v-if="openComments.length" #trailing>
             <UBadge
               :label="String(openComments.length)"
               size="xs"
