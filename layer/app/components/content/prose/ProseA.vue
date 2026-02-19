@@ -25,7 +25,14 @@ const route = useRoute()
 const { getPageMetadata, resolveInternalPath, getCollectionForRoute }
   = useContentConfig()
 
-const isInternalLink = computed(() => props.href?.startsWith('internal:'))
+// Auto-detect internal links: either with internal: prefix OR relative/absolute paths (not starting with http:// or https://)
+const isInternalLink = computed(() => {
+  if (!props.href) return false
+  // Explicit internal: prefix
+  if (props.href.startsWith('internal:')) return true
+  // Auto-detect: not external (http/https/mailto/tel) and starts with / or doesn't have ://
+  return !props.href.match(/^(https?|mailto|tel):/)
+})
 
 // Get the current page's collection to use as context for internal links
 const currentCollection = computed(() => getCollectionForRoute(route.path))
@@ -33,7 +40,10 @@ const currentCollection = computed(() => getCollectionForRoute(route.path))
 // Convert internal: prefix to full path with correct collection prefix
 const internalHref = computed(() => {
   if (!isInternalLink.value) return props.href
+  // Remove internal: prefix if present
   const path = props.href.replace('internal:', '')
+  // If path already starts with /, it's absolute - use as is, otherwise resolve with collection
+  if (path.startsWith('/')) return path
   return resolveInternalPath(path, currentCollection.value)
 })
 
