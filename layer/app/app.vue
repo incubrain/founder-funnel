@@ -3,6 +3,7 @@ import { useNavigation } from '#navigation'
 import { useSearch } from '#search'
 
 const { title, seo } = useAppConfig()
+const isDev = import.meta.dev
 
 const { data: site } = useAsyncData('app-config', () =>
   queryCollection('config').where('stem', '=', 'config/site').first(),
@@ -12,8 +13,8 @@ const { data: site } = useAsyncData('app-config', () =>
 /*                             LOAD COMPOSABLES                                */
 /* -------------------------------------------------------------------------- */
 
-const { navigationHeader, navigationFooter, navigationAll, banner }
-  = await useNavigation()
+const { navigationHeader, navigationFooter, navigationAll, banner } =
+  await useNavigation()
 
 const { searchFiles } = await useSearch()
 
@@ -62,10 +63,15 @@ provide('site_config', site ?? ref(null))
     <AppFooter v-if="$route.meta.footer !== false" />
 
     <ClientOnly>
-      <LazyUContentSearch
-        :files="searchFiles"
-        :navigation="navigationAll"
-      />
+      <LazyUContentSearch :files="searchFiles" :navigation="navigationAll" />
+    </ClientOnly>
+
+    <!-- Dev-only: review comments (global — works on all pages) -->
+    <ClientOnly v-if="isDev">
+      <CommentPopover />
+      <CommentOverlay />
+      <CommentPanel />
+      <CommentSettings />
     </ClientOnly>
   </UApp>
 </template>

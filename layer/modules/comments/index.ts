@@ -43,6 +43,13 @@ export default defineNuxtModule<CommentsModuleOptions>({
       watch: true,
     })
 
+    // html-to-image is dynamically imported in captureElementScreenshot —
+    // Vite needs it pre-bundled so the bare specifier resolves at runtime
+    nuxt.options.vite ??= {}
+    nuxt.options.vite.optimizeDeps ??= {}
+    nuxt.options.vite.optimizeDeps.include ??= []
+    nuxt.options.vite.optimizeDeps.include.push('html-to-image')
+
     addPlugin({
       src: resolver.resolve('./runtime/plugins/comments.client'),
       mode: 'client',
@@ -58,6 +65,12 @@ export default defineNuxtModule<CommentsModuleOptions>({
       route: '/api/_comments',
       method: 'post',
       handler: resolver.resolve('./server/handlers/comments.post'),
+    })
+
+    addServerHandler({
+      route: '/api/_comments/image/:id',
+      method: 'get',
+      handler: resolver.resolve('./server/handlers/comments.image.get'),
     })
   },
 })

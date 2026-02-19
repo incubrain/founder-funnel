@@ -3,6 +3,7 @@
     "nuxt.mdc",
     "vue.volar",
     "bradlc.vscode-tailwindcss",
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+    "bloop.vibe-kanban"
   ]
 }

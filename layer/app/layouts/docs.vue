@@ -3,8 +3,6 @@ import type { ContentNavigationItem } from '@nuxt/content'
 
 const appConfig = useAppConfig()
 const route = useRoute()
-const isDev = import.meta.dev
-
 // Use unified content page composable
 const { collection, getPage, setContext } = useContentPage()
 
@@ -195,13 +193,6 @@ watch(
           </UContentToc>
         </template>
       </UPage>
-
-      <!-- Dev-only: documentation review comments -->
-      <ClientOnly v-if="isDev">
-        <CommentPopover />
-        <CommentOverlay />
-        <CommentPanel />
-      </ClientOnly>
     </UContainer>
   </UMain>
 </template>
