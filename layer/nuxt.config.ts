@@ -164,7 +164,6 @@ export default defineNuxtConfig({
     '#constants': resolve('./shared/constants.ts'),
     '#navigation': resolve('./app/composables/useNavigation.ts'),
     '#search': resolve('./app/composables/useSearch.ts'),
-    '#config-resolver': resolve('./shared/config-resolver.ts'),
   },
 
   experimental: {
