@@ -123,12 +123,12 @@ export default defineNuxtPlugin(() => {
     const displayText = el.getAttribute('data-testid')
       || `<${el.tagName.toLowerCase()}>`
 
-    let screenshot: string | undefined
-    try {
-      screenshot = await captureElementScreenshot(el as HTMLElement)
+    const screenshot = await captureElementScreenshot(el as HTMLElement)
+    if (screenshot) {
+      console.debug('[comments] Screenshot attached to selection:', screenshot.length, 'chars')
     }
-    catch {
-      // Screenshot capture is best-effort
+    else {
+      console.warn('[comments] No screenshot captured for element:', el.tagName, el.getAttribute('data-testid'))
     }
 
     selection.value = {

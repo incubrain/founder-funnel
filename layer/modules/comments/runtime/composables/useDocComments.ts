@@ -41,10 +41,16 @@ export const useDocComments = () => {
     priority: CommentPriority
     screenshot?: string
   }) => {
+    if (payload.screenshot) {
+      console.debug('[comments] Sending screenshot with comment:', payload.screenshot.length, 'chars')
+    }
     const created = await $fetch<DocComment>('/api/_comments', {
       method: 'POST',
       body: { ...payload, author: author.value },
     })
+    if (created.screenshot) {
+      console.debug('[comments] Comment created with screenshot:', created.screenshot)
+    }
     comments.value.push(created)
     selection.value = null
     return created

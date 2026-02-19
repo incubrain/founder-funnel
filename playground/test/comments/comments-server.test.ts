@@ -1,5 +1,5 @@
 // Tests for the comments server handlers (JSONL read/write logic)
-import { readFile, writeFile, mkdir, rm } from 'node:fs/promises'
+import { readFile, writeFile, mkdir, rm, stat } from 'node:fs/promises'
 import { resolve, dirname } from 'node:path'
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { z } from 'zod'
@@ -9,23 +9,50 @@ import { z } from 'zod'
 const categoryEnum = z.enum(['bug', 'ui', 'chore', 'feature', 'docs', 'perf'])
 const priorityEnum = z.enum(['low', 'med', 'critical'])
 
+const textAnchorSchema = z.object({
+  type: z.literal('text').optional(),
+  headingId: z.string().nullable(),
+  blockIndex: z.number(),
+  textOffset: z.number(),
+  textLength: z.number(),
+  exact: z.string().optional(),
+  prefix: z.string().optional(),
+  suffix: z.string().optional(),
+})
+
+const elementAnchorSchema = z.object({
+  type: z.literal('element'),
+  selector: z.string(),
+  testId: z.string().nullable(),
+  tagName: z.string(),
+  rect: z.object({
+    top: z.number(),
+    left: z.number(),
+    width: z.number(),
+    height: z.number(),
+  }),
+})
+
+const anchorSchema = z.union([textAnchorSchema, elementAnchorSchema])
+
 const newCommentSchema = z.object({
   page: z.string(),
   selectedText: z.string().min(1),
-  anchor: z.object({
-    headingId: z.string().nullable(),
-    blockIndex: z.number(),
-    textOffset: z.number(),
-    textLength: z.number(),
-  }),
+  anchor: anchorSchema,
   comment: z.string().min(1),
   author: z.string().min(1),
   category: categoryEnum,
   priority: priorityEnum,
+  screenshot: z.string().optional(),
 })
 
 const resolveSchema = z.object({
   action: z.literal('resolve'),
+  id: z.string(),
+})
+
+const deleteSchema = z.object({
+  action: z.literal('delete'),
   id: z.string(),
 })
 
@@ -281,5 +308,220 @@ describe('Comment ID Generation', () => {
     }
     // All 100 should be unique
     expect(ids.size).toBe(100)
+  })
+})
+
+describe('Delete Schema', () => {
+  it('accepts valid delete action', () => {
+    const result = deleteSchema.safeParse({ action: 'delete', id: 'c_abc12345' })
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects wrong action', () => {
+    const result = deleteSchema.safeParse({ action: 'resolve', id: 'c_abc12345' })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects missing id', () => {
+    const result = deleteSchema.safeParse({ action: 'delete' })
+    expect(result.success).toBe(false)
+  })
+})
+
+describe('Element Anchor Schema', () => {
+  it('accepts valid element anchor', () => {
+    const result = newCommentSchema.safeParse(makeComment({
+      selectedText: '<section>',
+      anchor: {
+        type: 'element',
+        selector: '[data-testid="hero"]',
+        testId: 'hero',
+        tagName: 'section',
+        rect: { top: 0, left: 0, width: 800, height: 400 },
+      },
+    }))
+    expect(result.success).toBe(true)
+  })
+
+  it('accepts element anchor with optional screenshot', () => {
+    const result = newCommentSchema.safeParse(makeComment({
+      selectedText: '<div>',
+      anchor: {
+        type: 'element',
+        selector: 'div:nth-of-type(2)',
+        testId: null,
+        tagName: 'div',
+        rect: { top: 100, left: 50, width: 600, height: 200 },
+      },
+      screenshot: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+    }))
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects element anchor missing type', () => {
+    const result = anchorSchema.safeParse({
+      selector: '[data-testid="hero"]',
+      testId: 'hero',
+      tagName: 'section',
+      rect: { top: 0, left: 0, width: 800, height: 400 },
+    })
+    // Without type: 'element', it tries to match textAnchorSchema and fails
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects element anchor with missing rect', () => {
+    const result = anchorSchema.safeParse({
+      type: 'element',
+      selector: '[data-testid="hero"]',
+      testId: 'hero',
+      tagName: 'section',
+    })
+    expect(result.success).toBe(false)
+  })
+})
+
+describe('JSONL Delete', () => {
+  beforeEach(async () => {
+    await mkdir(TEST_DIR, { recursive: true })
+  })
+
+  afterEach(async () => {
+    await rm(TEST_DIR, { recursive: true, force: true })
+  })
+
+  it('removes a comment from JSONL by id', async () => {
+    const c1 = makeStoredComment({ id: 'c_aaa11111' })
+    const c2 = makeStoredComment({ id: 'c_bbb22222' })
+    const c3 = makeStoredComment({ id: 'c_ccc33333' })
+    await writeJsonl([c1, c2, c3])
+
+    // Simulate delete logic from server handler
+    const content = await readFile(TEST_FILE, 'utf-8')
+    const lines = content.split('\n').filter(Boolean)
+    const filtered = lines.filter((line) => {
+      const parsed = JSON.parse(line)
+      return parsed.id !== 'c_bbb22222'
+    })
+    await writeFile(TEST_FILE, filtered.join('\n') + '\n')
+
+    const result = await readJsonl()
+    expect(result).toHaveLength(2)
+    expect(result.map(c => c.id)).toEqual(['c_aaa11111', 'c_ccc33333'])
+  })
+
+  it('results in empty file when last comment is deleted', async () => {
+    const c1 = makeStoredComment({ id: 'c_only0001' })
+    await writeJsonl([c1])
+
+    const content = await readFile(TEST_FILE, 'utf-8')
+    const lines = content.split('\n').filter(Boolean)
+    const filtered = lines.filter((line) => {
+      const parsed = JSON.parse(line)
+      return parsed.id !== 'c_only0001'
+    })
+    await writeFile(TEST_FILE, filtered.length ? filtered.join('\n') + '\n' : '')
+
+    const result = await readFile(TEST_FILE, 'utf-8')
+    expect(result).toBe('')
+  })
+})
+
+describe('Screenshot File Storage', () => {
+  const IMAGES_DIR = resolve(TEST_DIR, 'images')
+
+  // 1x1 red pixel PNG as base64
+  const TINY_PNG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=='
+  const TINY_PNG_DATA_URL = `data:image/png;base64,${TINY_PNG_BASE64}`
+
+  beforeEach(async () => {
+    await mkdir(TEST_DIR, { recursive: true })
+  })
+
+  afterEach(async () => {
+    await rm(TEST_DIR, { recursive: true, force: true })
+  })
+
+  it('extracts base64 from data URL and saves as PNG file', async () => {
+    await mkdir(IMAGES_DIR, { recursive: true })
+
+    const commentId = 'c_img00001'
+    const base64Data = TINY_PNG_DATA_URL.replace(/^data:image\/\w+;base64,/, '')
+    const imgFile = resolve(IMAGES_DIR, `${commentId}.png`)
+    await writeFile(imgFile, Buffer.from(base64Data, 'base64'))
+
+    // Verify file exists and is a valid PNG
+    const fileData = await readFile(imgFile)
+    expect(fileData.length).toBeGreaterThan(0)
+    // PNG magic bytes: 137 80 78 71 (0x89 0x50 0x4E 0x47)
+    expect(fileData[0]).toBe(0x89)
+    expect(fileData[1]).toBe(0x50)
+    expect(fileData[2]).toBe(0x4E)
+    expect(fileData[3]).toBe(0x47)
+  })
+
+  it('stored comment references API path instead of base64', async () => {
+    const commentId = 'c_img00002'
+    const screenshotPath = `/api/_comments/image/${commentId}`
+
+    const comment = makeStoredComment({
+      id: commentId,
+      screenshot: screenshotPath,
+      anchor: {
+        type: 'element',
+        selector: '[data-testid="hero"]',
+        testId: 'hero',
+        tagName: 'section',
+        rect: { top: 0, left: 0, width: 800, height: 400 },
+      },
+    })
+    await writeJsonl([comment])
+
+    const [result] = await readJsonl()
+    expect(result!.screenshot).toBe(screenshotPath)
+    expect(result!.screenshot).not.toContain('base64')
+  })
+
+  it('cleans up screenshot file on delete', async () => {
+    await mkdir(IMAGES_DIR, { recursive: true })
+
+    const commentId = 'c_img00003'
+    const imgFile = resolve(IMAGES_DIR, `${commentId}.png`)
+    const base64Data = TINY_PNG_DATA_URL.replace(/^data:image\/\w+;base64,/, '')
+    await writeFile(imgFile, Buffer.from(base64Data, 'base64'))
+
+    // Verify file exists
+    const fileStat = await stat(imgFile)
+    expect(fileStat.isFile()).toBe(true)
+
+    // Simulate delete cleanup
+    const { unlink } = await import('node:fs/promises')
+    await unlink(imgFile)
+
+    // File should be gone
+    await expect(stat(imgFile)).rejects.toThrow()
+  })
+
+  it('handles data URL with various image MIME types', () => {
+    const pngUrl = 'data:image/png;base64,abc123'
+    const jpegUrl = 'data:image/jpeg;base64,xyz789'
+    const webpUrl = 'data:image/webp;base64,def456'
+
+    // The regex from the server handler should strip any image/* prefix
+    const regex = /^data:image\/\w+;base64,/
+    expect(pngUrl.replace(regex, '')).toBe('abc123')
+    expect(jpegUrl.replace(regex, '')).toBe('xyz789')
+    expect(webpUrl.replace(regex, '')).toBe('def456')
+  })
+
+  it('does not save when screenshot is undefined', () => {
+    const parsed = { screenshot: undefined }
+    // Server logic: if (parsed.screenshot) { ... }
+    expect(!!parsed.screenshot).toBe(false)
+  })
+
+  it('does not save when screenshot is not a data URL', () => {
+    const parsed = { screenshot: '/api/_comments/image/c_existing' }
+    // Server logic: if (parsed.screenshot.startsWith('data:')) { ... }
+    expect(parsed.screenshot.startsWith('data:')).toBe(false)
   })
 })

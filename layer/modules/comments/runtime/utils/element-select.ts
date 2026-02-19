@@ -88,13 +88,25 @@ export function findElementByAnchor(anchor: ElementAnchor, contentArea: Element)
  * Returns a base64 data URL. Lazily imports html2canvas to keep it out of
  * the main bundle (dev-only feature).
  */
-export async function captureElementScreenshot(el: HTMLElement): Promise<string> {
-  const { default: html2canvas } = await import('html2canvas')
-  const canvas = await html2canvas(el, {
-    scale: 1,
-    useCORS: true,
-    logging: false,
-    backgroundColor: null,
-  })
-  return canvas.toDataURL('image/png', 0.8)
+export async function captureElementScreenshot(el: HTMLElement): Promise<string | undefined> {
+  try {
+    const { default: html2canvas } = await import('html2canvas')
+    const canvas = await html2canvas(el, {
+      scale: 1,
+      useCORS: true,
+      logging: false,
+      backgroundColor: null,
+    })
+    const dataUrl = canvas.toDataURL('image/png', 0.8)
+    if (!dataUrl || !dataUrl.startsWith('data:image/png')) {
+      console.warn('[comments] html2canvas produced invalid data URL:', dataUrl?.slice(0, 60))
+      return undefined
+    }
+    console.debug('[comments] Screenshot captured:', dataUrl.length, 'chars')
+    return dataUrl
+  }
+  catch (err) {
+    console.error('[comments] Screenshot capture failed:', err)
+    return undefined
+  }
 }

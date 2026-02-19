@@ -180,13 +180,27 @@ export default defineEventHandler(async (event) => {
 
   // Save screenshot to file if provided (removes base64 from JSONL)
   let screenshotPath: string | undefined
-  if (parsed.screenshot && parsed.screenshot.startsWith('data:')) {
-    const imagesDir = resolve(dirname(logFile), 'images')
-    await mkdir(imagesDir, { recursive: true })
-    const base64Data = parsed.screenshot.replace(/^data:image\/\w+;base64,/, '')
-    const imgFile = resolve(imagesDir, `${commentId}.png`)
-    await writeFile(imgFile, Buffer.from(base64Data, 'base64'))
-    screenshotPath = `/api/_comments/image/${commentId}`
+  if (parsed.screenshot) {
+    if (parsed.screenshot.startsWith('data:')) {
+      try {
+        const imagesDir = resolve(dirname(logFile), 'images')
+        await mkdir(imagesDir, { recursive: true })
+        const base64Data = parsed.screenshot.replace(/^data:image\/\w+;base64,/, '')
+        const imgFile = resolve(imagesDir, `${commentId}.png`)
+        await writeFile(imgFile, Buffer.from(base64Data, 'base64'))
+        screenshotPath = `/api/_comments/image/${commentId}`
+        console.info(`[comments] Screenshot saved: ${imgFile} (${base64Data.length} base64 chars)`)
+      }
+      catch (err) {
+        console.error('[comments] Failed to save screenshot file:', err)
+      }
+    }
+    else {
+      console.warn('[comments] Screenshot provided but not a data URL:', parsed.screenshot.slice(0, 60))
+    }
+  }
+  else {
+    console.debug('[comments] No screenshot in payload for comment:', commentId)
   }
 
   const comment = {

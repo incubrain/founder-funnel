@@ -23,9 +23,11 @@ export default defineEventHandler(async (event) => {
     const data = await readFile(imgFile)
     setResponseHeader(event, 'content-type', 'image/png')
     setResponseHeader(event, 'cache-control', 'public, max-age=31536000, immutable')
+    console.debug(`[comments] Serving image: ${imgFile} (${data.length} bytes)`)
     return data
   }
-  catch {
+  catch (err) {
+    console.warn(`[comments] Image not found: ${imgFile}`, err)
     throw createError({ statusCode: 404, message: 'Image not found' })
   }
 })
