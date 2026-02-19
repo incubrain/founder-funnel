@@ -59,5 +59,11 @@ export default defineNuxtModule<CommentsModuleOptions>({
       method: 'post',
       handler: resolver.resolve('./server/handlers/comments.post'),
     })
+
+    addServerHandler({
+      route: '/api/_comments/image/:id',
+      method: 'get',
+      handler: resolver.resolve('./server/handlers/comments.image.get'),
+    })
   },
 })

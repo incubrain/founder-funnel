@@ -34,7 +34,11 @@ function onPriorityChange(comment: DocComment, value: CommentPriority) {
 }
 
 function scrollToComment(id: string) {
-  activeCommentId.value = id
+  // Reset first to ensure the watcher fires even if clicking the same comment
+  activeCommentId.value = null
+  nextTick(() => {
+    activeCommentId.value = id
+  })
 }
 </script>
 

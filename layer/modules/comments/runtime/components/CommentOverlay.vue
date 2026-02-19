@@ -171,16 +171,23 @@ watch(activeCommentId, (id) => {
     if (!contentArea) return
     const el = findElementByAnchor(comment.anchor, contentArea)
     el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    return
   }
-  else {
-    // Scroll to text highlight using the range's start container
-    const range = getCommentRangeById(id)
-    if (range) {
-      const startNode = range.startContainer
-      const el = startNode.nodeType === Node.TEXT_NODE ? startNode.parentElement : startNode as Element
-      el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      nextTick(() => setActiveHighlight(id))
-    }
+
+  // Try stored range first
+  const range = getCommentRangeById(id)
+  if (range) {
+    const startNode = range.startContainer
+    const el = startNode.nodeType === Node.TEXT_NODE ? startNode.parentElement : startNode as Element
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    nextTick(() => setActiveHighlight(id))
+    return
+  }
+
+  // Fallback: scroll to heading anchor if available
+  if (comment.anchor.headingId) {
+    const heading = document.getElementById(comment.anchor.headingId)
+    heading?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 })
 

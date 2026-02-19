@@ -1,4 +1,4 @@
-import { readFile, appendFile, writeFile, mkdir } from 'node:fs/promises'
+import { readFile, appendFile, writeFile, mkdir, unlink } from 'node:fs/promises'
 import { resolve, dirname } from 'node:path'
 import { z } from 'zod'
 
@@ -95,6 +95,16 @@ export default defineEventHandler(async (event) => {
     }
 
     await writeFile(logFile, filtered.length ? filtered.join('\n') + '\n' : '')
+
+    // Clean up screenshot file if it exists
+    const imgFile = resolve(dirname(logFile), 'images', `${id}.png`)
+    try {
+      await unlink(imgFile)
+    }
+    catch {
+      // no screenshot file — that's fine
+    }
+
     return { success: true }
   }
 
@@ -166,9 +176,23 @@ export default defineEventHandler(async (event) => {
 
   // Create a new comment
   const parsed = newCommentSchema.parse(body)
+  const commentId = `c_${crypto.randomUUID().slice(0, 8)}`
+
+  // Save screenshot to file if provided (removes base64 from JSONL)
+  let screenshotPath: string | undefined
+  if (parsed.screenshot && parsed.screenshot.startsWith('data:')) {
+    const imagesDir = resolve(dirname(logFile), 'images')
+    await mkdir(imagesDir, { recursive: true })
+    const base64Data = parsed.screenshot.replace(/^data:image\/\w+;base64,/, '')
+    const imgFile = resolve(imagesDir, `${commentId}.png`)
+    await writeFile(imgFile, Buffer.from(base64Data, 'base64'))
+    screenshotPath = `/api/_comments/image/${commentId}`
+  }
+
   const comment = {
-    id: `c_${crypto.randomUUID().slice(0, 8)}`,
+    id: commentId,
     ...parsed,
+    screenshot: screenshotPath ?? parsed.screenshot,
     status: 'open' as const,
     createdAt: new Date().toISOString(),
   }

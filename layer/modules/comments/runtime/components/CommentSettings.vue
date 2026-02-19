@@ -12,19 +12,16 @@ const modeItems = [
 const toolbarEl = ref<HTMLElement | null>(null)
 const handleEl = ref<HTMLElement | null>(null)
 
-// Use { x: -1, y: -1 } sentinel to mean "not yet positioned" → bottom-right
-const resolvedInitial = computed(() => {
-  if (toolbarPosition.value.x >= 0 && toolbarPosition.value.y >= 0) {
-    return toolbarPosition.value
-  }
-  return {
-    x: (typeof window !== 'undefined' ? window.innerWidth : 1200) - 60,
-    y: (typeof window !== 'undefined' ? window.innerHeight : 800) - 60,
-  }
-})
+// Compute initial position: use stored position, or default to bottom-right
+function getInitialPosition() {
+  const stored = toolbarPosition.value
+  if (stored.x >= 0 && stored.y >= 0) return stored
+  if (typeof window === 'undefined') return { x: 1140, y: 740 }
+  return { x: window.innerWidth - 60, y: window.innerHeight - 60 }
+}
 
 const { style } = useDraggable(toolbarEl, {
-  initialValue: resolvedInitial.value,
+  initialValue: getInitialPosition(),
   handle: handleEl,
   onEnd: (pos) => {
     toolbarPosition.value = { x: pos.x, y: pos.y }
@@ -35,7 +32,7 @@ const { style } = useDraggable(toolbarEl, {
 <template>
   <Teleport to="body">
     <div
-      v-if="isEnabled"
+      v-show="isEnabled"
       ref="toolbarEl"
       data-comment-toolbar
       class="fixed z-40 flex items-center gap-1.5 rounded-lg border border-default bg-default shadow-lg select-none"
