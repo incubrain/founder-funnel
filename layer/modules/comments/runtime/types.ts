@@ -31,6 +31,10 @@ export interface ElementAnchor {
   tagName: string
   /** Bounding rect at capture time */
   rect: { top: number, left: number, width: number, height: number }
+  /** Vue component name from SFC __name (e.g. "SectionHero") */
+  componentName?: string | null
+  /** SFC source file path (e.g. "layer/app/components/section/SectionHero.vue") */
+  filepath?: string | null
 }
 
 export type CommentAnchor = TextAnchor | ElementAnchor

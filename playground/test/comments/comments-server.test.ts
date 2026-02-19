@@ -31,6 +31,8 @@ const elementAnchorSchema = z.object({
     width: z.number(),
     height: z.number(),
   }),
+  componentName: z.string().nullable().optional(),
+  filepath: z.string().nullable().optional(),
 })
 
 const anchorSchema = z.union([textAnchorSchema, elementAnchorSchema])
@@ -285,6 +287,25 @@ describe('JSONL Storage', () => {
     expect(result!.priority).toBe('critical')
   })
 
+  it('preserves componentName and filepath through write/read cycle', async () => {
+    const comment = makeStoredComment({
+      anchor: {
+        type: 'element',
+        selector: '[data-testid="section-hero"]',
+        testId: 'section-hero',
+        tagName: 'section',
+        rect: { top: 0, left: 0, width: 800, height: 400 },
+        componentName: 'SectionHero',
+        filepath: 'layer/app/components/section/SectionHero.vue',
+      },
+    })
+    await writeJsonl([comment])
+    const [result] = await readJsonl()
+    const anchor = result!.anchor as Record<string, unknown>
+    expect(anchor.componentName).toBe('SectionHero')
+    expect(anchor.filepath).toBe('layer/app/components/section/SectionHero.vue')
+  })
+
   it('filters comments by page', async () => {
     const c1 = makeStoredComment({ id: 'c_aaa', page: '/docs/intro' })
     const c2 = makeStoredComment({ id: 'c_bbb', page: '/docs/quickstart' })
@@ -377,6 +398,52 @@ describe('Element Anchor Schema', () => {
       tagName: 'section',
     })
     expect(result.success).toBe(false)
+  })
+
+  it('accepts element anchor with componentName and filepath', () => {
+    const result = newCommentSchema.safeParse(makeComment({
+      selectedText: '<SectionHero>',
+      anchor: {
+        type: 'element',
+        selector: '[data-testid="section-hero"]',
+        testId: 'section-hero',
+        tagName: 'section',
+        rect: { top: 0, left: 0, width: 800, height: 400 },
+        componentName: 'SectionHero',
+        filepath: 'layer/app/components/section/SectionHero.vue',
+      },
+    }))
+    expect(result.success).toBe(true)
+  })
+
+  it('accepts element anchor with null componentName and filepath', () => {
+    const result = newCommentSchema.safeParse(makeComment({
+      selectedText: '<div>',
+      anchor: {
+        type: 'element',
+        selector: 'div.wrapper',
+        testId: null,
+        tagName: 'div',
+        rect: { top: 0, left: 0, width: 600, height: 300 },
+        componentName: null,
+        filepath: null,
+      },
+    }))
+    expect(result.success).toBe(true)
+  })
+
+  it('accepts element anchor without componentName/filepath (backward compat)', () => {
+    const result = newCommentSchema.safeParse(makeComment({
+      selectedText: '<section>',
+      anchor: {
+        type: 'element',
+        selector: '[data-testid="hero"]',
+        testId: 'hero',
+        tagName: 'section',
+        rect: { top: 0, left: 0, width: 800, height: 400 },
+      },
+    }))
+    expect(result.success).toBe(true)
   })
 })
 

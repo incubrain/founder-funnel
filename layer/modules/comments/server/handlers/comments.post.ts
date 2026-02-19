@@ -27,6 +27,8 @@ const elementAnchorSchema = z.object({
     width: z.number(),
     height: z.number(),
   }),
+  componentName: z.string().nullable().optional(),
+  filepath: z.string().nullable().optional(),
 })
 
 const anchorSchema = z.union([textAnchorSchema, elementAnchorSchema])

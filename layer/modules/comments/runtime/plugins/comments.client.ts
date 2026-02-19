@@ -1,6 +1,6 @@
 import { useEventListener } from '@vueuse/core'
 import { computeAnchor, resolveContentArea } from '../utils/anchor'
-import { computeElementAnchor, captureElementScreenshot } from '../utils/element-select'
+import { computeElementAnchor, captureElementScreenshot, findComponentElement, findHoverElement } from '../utils/element-select'
 
 const ELEMENT_HOVER_CLASS = 'comment-element-hover'
 
@@ -64,38 +64,17 @@ export default defineNuxtPlugin(() => {
     }
   }
 
-  function getSelectableElement(target: EventTarget | null): Element | null {
-    if (!(target instanceof Element)) return null
-    // Never capture toolbar or popover elements
-    if (target.closest('[data-comment-toolbar]') || target.closest('[data-comment-popover]')) return null
-    let el: Element | null = target
-    const contentArea = resolveContentArea()
-    if (!contentArea) return null
-
-    while (el && el !== contentArea && el !== document.body) {
-      if (
-        el.hasAttribute('data-testid')
-        || /^(?:SECTION|ARTICLE|HEADER|FOOTER|NAV|ASIDE)$/.test(el.tagName)
-        || (el.tagName === 'DIV' && el.children.length > 0 && el.parentElement !== document.body)
-      ) {
-        return el
-      }
-      el = el.parentElement
-    }
-    // Fall back to the target if it's a meaningful block element
-    if (target instanceof HTMLElement && /^(?:P|DIV|UL|OL|PRE|BLOCKQUOTE|TABLE|FIGURE|IMG|VIDEO|FORM)$/.test(target.tagName)) {
-      return target
-    }
-    return null
-  }
-
   useEventListener(document, 'mousemove', (e: MouseEvent) => {
     if (!isEnabled.value || reviewMode.value !== 'element' || selection.value) {
       clearElementHover()
       return
     }
 
-    const el = getSelectableElement(e.target)
+    if (!(e.target instanceof Element)) return
+    const contentArea = resolveContentArea()
+    if (!contentArea) return
+
+    const el = findHoverElement(e.target, contentArea)
     if (el !== lastHoveredEl) {
       clearElementHover()
       if (el) {
@@ -107,28 +86,32 @@ export default defineNuxtPlugin(() => {
 
   useEventListener(document, 'click', async (e: MouseEvent) => {
     if (!isEnabled.value || reviewMode.value !== 'element' || selection.value) return
+    if (!(e.target instanceof Element)) return
 
-    const el = getSelectableElement(e.target)
-    if (!el) return
+    const contentArea = resolveContentArea()
+    if (!contentArea) return
+
+    const match = await findComponentElement(e.target, contentArea)
+    if (!match) return
 
     e.preventDefault()
     e.stopPropagation()
     clearElementHover()
 
-    const contentArea = resolveContentArea()
-    if (!contentArea) return
-
-    const anchor = computeElementAnchor(el, contentArea)
+    const { el, componentName, filepath } = match
+    const anchor = computeElementAnchor(el, contentArea, { componentName, filepath })
     const rect = el.getBoundingClientRect()
-    const displayText = el.getAttribute('data-testid')
-      || `<${el.tagName.toLowerCase()}>`
+    const displayText = componentName
+      ? `<${componentName}>`
+      : el.getAttribute('data-testid')
+        || `<${el.tagName.toLowerCase()}>`
 
     const screenshot = await captureElementScreenshot(el as HTMLElement)
     if (screenshot) {
-      console.debug('[comments] Screenshot attached to selection:', screenshot.length, 'chars')
+      console.debug('[comments] Screenshot captured for', displayText, ':', screenshot.length, 'chars')
     }
     else {
-      console.warn('[comments] No screenshot captured for element:', el.tagName, el.getAttribute('data-testid'))
+      console.warn('[comments] No screenshot captured for:', displayText)
     }
 
     selection.value = {

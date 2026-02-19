@@ -121,6 +121,48 @@ describe('DocComment', () => {
     expect(comment.anchor.type).toBe('element')
     expect(comment.screenshot).toBeDefined()
   })
+
+  it('accepts element anchor with componentName and filepath', () => {
+    const comment: DocComment = {
+      id: 'c_comp0001',
+      page: '/',
+      selectedText: '<SectionHero>',
+      anchor: {
+        type: 'element',
+        selector: '[data-testid="section-hero"]',
+        testId: 'section-hero',
+        tagName: 'section',
+        rect: { top: 0, left: 0, width: 800, height: 400 },
+        componentName: 'SectionHero',
+        filepath: 'layer/app/components/section/SectionHero.vue',
+      },
+      comment: 'Hero section looks great',
+      author: 'drew',
+      category: 'ui',
+      priority: 'low',
+      status: 'open',
+      createdAt: '2026-02-18T00:00:00.000Z',
+    }
+
+    expect(isElementAnchor(comment.anchor)).toBe(true)
+    if (isElementAnchor(comment.anchor)) {
+      expect(comment.anchor.componentName).toBe('SectionHero')
+      expect(comment.anchor.filepath).toContain('SectionHero.vue')
+    }
+  })
+
+  it('element anchor componentName/filepath are optional', () => {
+    const anchor: ElementAnchor = {
+      type: 'element',
+      selector: 'div.wrapper',
+      testId: null,
+      tagName: 'div',
+      rect: { top: 0, left: 0, width: 100, height: 50 },
+    }
+    expect(isElementAnchor(anchor)).toBe(true)
+    expect(anchor.componentName).toBeUndefined()
+    expect(anchor.filepath).toBeUndefined()
+  })
 })
 
 describe('ReviewMode', () => {

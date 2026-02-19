@@ -91,6 +91,12 @@ onKeyStroke('Escape', dismiss)
             />
             <span class="font-mono">{{ truncatedText }}</span>
           </div>
+          <p
+            v-if="isElementAnchor(selection!.anchor) && selection!.anchor.filepath"
+            class="text-[10px] text-muted/60 font-mono truncate"
+          >
+            {{ selection!.anchor.filepath }}
+          </p>
           <img
             v-if="selection?.screenshot"
             :src="selection.screenshot"

@@ -103,8 +103,14 @@ function scrollToComment(id: string) {
                       name="i-lucide-box-select"
                       class="size-3.5"
                     />
-                    <span class="font-mono">{{ c.anchor.testId || c.anchor.selector }}</span>
+                    <span class="font-mono">{{ c.anchor.componentName ? `<${c.anchor.componentName}>` : c.anchor.testId || c.anchor.selector }}</span>
                   </button>
+                  <p
+                    v-if="c.anchor.filepath"
+                    class="text-[10px] text-muted/60 font-mono truncate pl-5"
+                  >
+                    {{ c.anchor.filepath }}
+                  </p>
                   <img
                     v-if="c.screenshot"
                     :src="c.screenshot"
@@ -199,7 +205,7 @@ function scrollToComment(id: string) {
                         name="i-lucide-box-select"
                         class="size-3.5"
                       />
-                      <span class="font-mono line-clamp-1">{{ c.anchor.testId || c.anchor.selector }}</span>
+                      <span class="font-mono line-clamp-1">{{ c.anchor.componentName ? `<${c.anchor.componentName}>` : c.anchor.testId || c.anchor.selector }}</span>
                     </div>
                   </template>
                   <p
