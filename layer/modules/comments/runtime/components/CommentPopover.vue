@@ -2,6 +2,7 @@
 import { onKeyStroke } from '@vueuse/core'
 import { CATEGORIES, PRIORITIES, isElementAnchor } from '../types'
 import type { CommentCategory, CommentPriority } from '../types'
+import { captureElementScreenshot } from '../utils/element-select'
 
 const { selection, addComment, globalCategory } = useDocComments()
 const route = useRoute()
@@ -42,6 +43,12 @@ const submit = async () => {
   if (!selection.value || !commentText.value.trim()) return
   isSubmitting.value = true
   try {
+    // Capture screenshot at submit time (not selection time)
+    let screenshot: string | undefined
+    if (selection.value.element) {
+      screenshot = await captureElementScreenshot(selection.value.element)
+    }
+
     await addComment({
       page: route.path,
       selectedText: selection.value.text,
@@ -49,7 +56,7 @@ const submit = async () => {
       comment: commentText.value.trim(),
       category: category.value,
       priority: priority.value,
-      screenshot: selection.value.screenshot,
+      screenshot,
     })
     commentText.value = ''
   }
@@ -97,12 +104,6 @@ onKeyStroke('Escape', dismiss)
           >
             {{ selection!.anchor.filepath }}
           </p>
-          <img
-            v-if="selection?.screenshot"
-            :src="selection.screenshot"
-            alt="Element screenshot"
-            class="w-full rounded border border-default max-h-32 object-contain object-top"
-          >
         </template>
 
         <!-- Text mode: show quoted text -->

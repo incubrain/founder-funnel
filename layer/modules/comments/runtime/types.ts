@@ -59,8 +59,8 @@ export interface SelectionState {
   text: string
   anchor: CommentAnchor
   rect: DOMRect
-  /** Base64 screenshot for element selections */
-  screenshot?: string
+  /** DOM element for deferred screenshot capture (element mode only) */
+  element?: HTMLElement
 }
 
 export function isElementAnchor(anchor: CommentAnchor): anchor is ElementAnchor {

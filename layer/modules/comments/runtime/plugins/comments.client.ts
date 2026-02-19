@@ -1,6 +1,6 @@
 import { useEventListener } from '@vueuse/core'
 import { computeAnchor, resolveContentArea } from '../utils/anchor'
-import { computeElementAnchor, captureElementScreenshot, findComponentElement, findHoverElement } from '../utils/element-select'
+import { computeElementAnchor, findComponentElement, findHoverElement } from '../utils/element-select'
 
 const ELEMENT_HOVER_CLASS = 'comment-element-hover'
 
@@ -108,32 +108,16 @@ export default defineNuxtPlugin(() => {
 
     console.debug('[comments] Element selected:', displayText, {
       tagName: el.tagName,
-      isHTMLElement: el instanceof HTMLElement,
       componentName,
       filepath,
       rect: { w: rect.width, h: rect.height, t: rect.top, l: rect.left },
     })
 
-    let screenshot: string | undefined
-    if (el instanceof HTMLElement) {
-      screenshot = await captureElementScreenshot(el)
-    }
-    else {
-      console.warn('[comments] Selected element is not HTMLElement, skipping screenshot:', el.constructor.name)
-    }
-
-    if (screenshot) {
-      console.debug('[comments] Screenshot ready for', displayText, ':', screenshot.length, 'chars')
-    }
-    else {
-      console.warn('[comments] No screenshot for:', displayText, '— see captureElementScreenshot logs above for details')
-    }
-
     selection.value = {
       text: displayText,
       anchor,
       rect,
-      screenshot,
+      element: el instanceof HTMLElement ? el : undefined,
     }
   }, { capture: true })
 
