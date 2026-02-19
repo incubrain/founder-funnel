@@ -5,7 +5,7 @@ A dev-only review commenting system for Nuxt applications. Allows reviewers to a
 ## Features
 
 - **Text highlighting** — Select text on any page to leave contextual comments. Uses the CSS Custom Highlight API for non-destructive, cross-element highlighting.
-- **Element selection** — Select UI components/sections to comment on layout and design. Captures a screenshot of the selected element.
+- **Element selection** — Select Vue components to comment on layout and design. Uses `vue-tracer` to detect component boundaries, displaying names like `<SectionHero>` instead of raw `<div>`. Captures a screenshot via `html-to-image`.
 - **Global scope** — Works on all pages (docs, landing, articles, etc.), not just documentation.
 - **Priority-based colors** — Comments are color-coded by priority (yellow/orange/red).
 - **JSONL storage** — Comments stored as one JSON object per line in `.comments/review.jsonl`. Easy to parse, diff, and integrate.
@@ -34,10 +34,11 @@ Select text on any page. A popover appears to add a comment with category and pr
 
 Click the box-select icon in the header to switch. Hover over elements to see a dashed outline. Click to select and comment.
 
-- Automatically captures a screenshot via `html2canvas`
-- Elements are identified by `data-testid` (preferred) or CSS selector path
+- Uses `vue-tracer` to detect Vue component boundaries — shows `<SectionHero>` not `<div>`
+- Falls back to `data-testid` or CSS selector path when tracer data is unavailable
+- Automatically captures a screenshot via `html-to-image` (SVG serialization, supports all CSS including `oklab()`/`oklch()`)
+- Screenshots saved as PNG files in `.comments/images/`, served via `/api/_comments/image/:id`
 - Selected elements get a solid outline matching their priority color
-- Screenshots are stored as base64 in the comment JSONL
 
 ## Configuration
 
@@ -89,7 +90,8 @@ const {
 ### Server Endpoints
 
 - `GET /api/_comments?page=/path` — Fetch comments for a page
-- `POST /api/_comments` — Create, update, or resolve comments
+- `POST /api/_comments` — Create, update, resolve, or delete comments
+- `GET /api/_comments/image/:id` — Serve screenshot PNG for element comments
 
 ### Storage Format
 
@@ -99,13 +101,14 @@ Each line in `.comments/review.jsonl` is a JSON object:
 {"id":"c_a1b2c3d4","page":"/docs/intro","selectedText":"example text","anchor":{"headingId":"intro","blockIndex":0,"textOffset":5,"textLength":12,"exact":"example text","prefix":"This is an ","suffix":" for testing."},"comment":"Needs clarification","author":"drew","category":"docs","priority":"low","status":"open","createdAt":"2026-02-18T00:00:00.000Z"}
 ```
 
-Element comments include `type: 'element'` in the anchor and optionally a `screenshot` field.
+Element comments include `type: 'element'` in the anchor, optional `componentName`/`filepath` fields, and a `screenshot` path (e.g. `/api/_comments/image/c_a1b2c3d4`).
 
 ## Components
 
 | Component | Purpose |
 |-----------|---------|
 | `CommentSettings` | Header toggle, mode switch, identity modal |
+| `CommentToggle` | Inline toggle button for enabling/disabling review |
 | `CommentPopover` | Selection popover for adding comments |
 | `CommentOverlay` | Highlight rendering + hover previews |
 | `CommentPanel` | Right slideover for reviewing all comments |
