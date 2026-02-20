@@ -5,30 +5,32 @@ set -euo pipefail
 
 # Define all skills as repo:skill pairs
 declare -a SKILLS=(
-  # Development & Testing
+  # Development
   "https://github.com/nuxt-modules/mcp-toolkit:manage-mcp"
-  "https://github.com/antfu/skills:vitest"
+  "https://github.com/obra/superpowers:brainstorming"
   "https://github.com/nuxt/ui:nuxt-ui"
   "https://github.com/antfu/skills:nuxt"
   "https://github.com/vueuse/skills:vueuse-functions"
   "https://github.com/antfu/skills:vue-best-practices"
   "https://github.com/antfu/skills:pinia"
-  "https://github.com/vuejs-ai/skills:vue-testing-best-practices"
   "https://github.com/nuxt-content/nuxt-studio:nuxt-content"
-  "https://github.com/vercel-labs/agent-browser:agent-browser"
-  "https://github.com/vercel-labs/agent-skills:web-design-guidelines"
+  
+
 
   # Design & UX
   "https://github.com/anthropics/skills:frontend-design"
   "https://github.com/anthropics/skills:theme-factory"
+  "https://github.com/vercel-labs/agent-skills:web-design-guidelines"
 
   # Marketing & Content
   "https://github.com/coreyhaines31/marketingskills:copywriting"
   "https://github.com/coreyhaines31/marketingskills:marketing-psychology"
 
-  # Strategy & Debugging
-  "https://github.com/obra/superpowers:brainstorming"
+  # Testing & Debugging
+  "https://github.com/vuejs-ai/skills:vue-testing-best-practices"
   "https://github.com/obra/superpowers:systematic-debugging"
+  "https://github.com/antfu/skills:vitest"
+  "https://github.com/vercel-labs/agent-browser:agent-browser"
 )
 
 echo "Checking installed skills..."
@@ -38,8 +40,9 @@ echo "Processing ${#SKILLS[@]} skills..."
 echo ""
 
 for skill_entry in "${SKILLS[@]}"; do
-  # Split repo:skill format
-  IFS=':' read -r repo skill_name <<< "$skill_entry"
+  # Split on last colon to separate repo URL from skill name
+  repo="${skill_entry%:*}"
+  skill_name="${skill_entry##*:}"
 
   # Check if skill is already installed
   if echo "$INSTALLED_SKILLS" | grep -q "$skill_name"; then
