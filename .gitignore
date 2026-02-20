@@ -42,6 +42,9 @@ CLAUDE.local.md
 .claude/skills/pinia
 .claude/skills/vue-testing-best-practices
 .claude/skills/nuxt-content
+.claude/skills/review-logging-patterns
+.claude/skills/create-evlog-adapter
+.claude/skills/create-evlog-enricher
 .claude/skills/agent-browser
 .claude/skills/web-design-guidelines
 .claude/skills/skill-creator

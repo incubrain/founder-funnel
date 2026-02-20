@@ -47,7 +47,17 @@
       "agent": "claude-code"
     },
     {
-      "name": "evlog",
+      "name": "review-logging-patterns",
+      "source": "https://github.com/HugoRCD/evlog",
+      "agent": "claude-code"
+    },
+    {
+      "name": "create-evlog-adapter",
+      "source": "https://github.com/HugoRCD/evlog",
+      "agent": "claude-code"
+    },
+    {
+      "name": "create-evlog-enricher",
       "source": "https://github.com/HugoRCD/evlog",
       "agent": "claude-code"
     },
