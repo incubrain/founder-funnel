@@ -1,149 +1,112 @@
 ---
 name: docs-writer
-description: Creates and edits Dark Sky Conservation policy documentation for Maharashtra government officials and academics. Handles audience-appropriate tone, section-specific content rules (Research/Policy/Pilots), and orchestrates technical validation passes. Use when working on docs/content/ markdown files.
+description: Creates and edits Nuxt Content MDC documentation for the Dark Sky Conservation project. Writes policy documentation targeting Maharashtra government officials and academic researchers. Handles section-specific rules (Research/Policy/Pilots), citation syntax, MDC component selection, and frontmatter conventions. Use when working on content/docs/ markdown files or .md documentation files.
 ---
+
+## Activation
+
+This skill applies when editing `.md` files under `examples/astronera/content/docs/`. Determine the section from the file path and apply its rules throughout.
+
+## Reference Files
+
+Detailed syntax and component specifications live in the `references/` directory. Consult on demand:
+
+- **`references/MDC-SYNTAX.md`** -- Complete MDC syntax: frontmatter, block/inline components, props, slots, nesting, code blocks
+- **`references/COMPONENTS.md`** -- Full catalog of available components with props tables and examples
+- **`references/NUXT-DOCS-PATTERNS.md`** -- Gold-standard page structure, writing conventions, cross-reference patterns
+
+## Page Structure
+
+Every page follows this flow:
+
+```md
+---
+title: 'Page Title'
+description: 'One-sentence summary for meta tags.'
+navigation:
+  title: Short Nav Title
+  icon: i-lucide-icon-name
+---
+
+Intro paragraph(s) explaining the concept. No heading before this.
+
+## Major Section
+
+Content with citations and callouts.
+
+### Subsection
+
+More specific details.
+```
+
+**Rules:**
+1. No `# h1` in body -- `title` frontmatter serves as h1
+2. 1-3 intro paragraphs immediately after frontmatter (before first heading)
+3. `## h2` for major sections, `### h3` for subsections
+4. Never skip heading levels (no h2 to h4)
+5. Landing/index pages use `navigation: false` and `surround: false`
 
 ## Target Audience
 
-Documentation serves two primary audiences:
+### Government Officials
+- State department heads (Environment, Tourism, Energy, Agriculture, Forest, Public Health)
+- Need evidence-based justification, clear recommendations, implementation guidance
+- Reading for decision-making on policy adoption and resource allocation
 
-### 1. Government Officials
-- **Level**: State department heads and senior bureaucrats
-- **Departments**: Environment, Tourism, Energy, Agriculture, Forest, Public Health
-- **Needs**: Evidence-based justification for policy action, clear recommendations, implementation guidance
-- **Reading context**: Decision-making on policy adoption and resource allocation
+### Academic Researchers
+- Policy analysts, technical advisors (IIT, IISER, TIFR, environmental organizations)
+- Need rigorous citations, methodological clarity, data transparency
+- Reading for evidence evaluation and technical consultation
 
-### 2. Academic Researchers
-- **Level**: Policy analysts, technical advisors, research institutions
-- **Institutions**: IIT, IISER, TIFR, environmental organizations
-- **Needs**: Rigorous citations, methodological clarity, data transparency
-- **Reading context**: Evidence evaluation, peer review, technical consultation
+## Writing Standards
 
-## Writing Principles
+**Voice:** Third-person objective, authoritative but accessible. Active voice 85%+, present tense 90%.
 
-### Tone and Voice
+**Sentence patterns:**
+- Subject-first declarative (60%): "Light pollution disrupts nocturnal ecosystems."
+- Imperative instructions (25%): "Review the ecological impact evidence in Section 2.1."
+- Contextual openers (15%): "When protecting migratory corridors, restrict lighting."
 
-**Authoritative but Accessible**
-- Third-person objective voice (API reference style)
-- Evidence-based assertions (every claim cited)
-- Technical terms explained on first use
-- Confident recommendations without overstatement
+**Paragraphs:** 2-4 sentences max. Topic sentence first, then supporting details.
 
-**Guiding, Not Assuming**
-- Explain reasoning behind recommendations
-- Acknowledge iteration and refinement process
-- Present options with trade-offs when applicable
-- Respect reader intelligence while providing context
+**Modal verbs (precision in recommendations):**
 
-### Writing Quality Standards
+| Verb | Meaning | Frequency | Example |
+|------|---------|-----------|---------|
+| `can` | Optional | 40% | "Municipalities can implement lighting curfews." |
+| `should` | Recommended | 30% | "Policies should prioritize ecological zones." |
+| `may` | Possibility | 20% | "This may reduce bird collisions." |
+| `must` | Required | 10% | "Protected areas must limit upward light." |
 
-**Grammar and Clarity**
-- Grammatically correct and properly punctuated
-- Complete sentences (not fragments)
-- Clear and unambiguous phrasing
-- Brevity valued, but never at cost of clarity
+Avoid: `might`, `could`, `would` (use sparingly for hypotheticals only).
 
-**Active Voice (85%+)**
-- Subject performs action: "The study documents..." (not "is documented by")
-- Direct and clear: "Maharashtra can implement..." (not "can be implemented")
-- Passive acceptable when: actor unknown, object more important, or describing system behavior
-
-**Present Tense (90%)**
-- Current state: "Research demonstrates..."
-- Recommendations: "Policy should require..."
-- Future only for consequences: "This will reduce emissions by..."
-
-### Modal Verbs (Precision in Recommendations)
-
-Use modal verbs to convey appropriate certainty and obligation:
-
-| Verb | Meaning | Usage | Example |
-|------|---------|-------|---------|
-| `can` | Optional (40%) | Capabilities, options | "Municipalities can implement lighting curfews." |
-| `should` | Recommended (30%) | Best practices | "Policies should prioritize ecological zones." |
-| `may` | Possibility (20%) | Conditional outcomes | "This may reduce bird collisions." |
-| `must` | Required (10%) | Mandatory actions | "Protected areas must limit upward light." |
-
-Avoid weak modals: `might`, `could`, `would` (use sparingly, only for hypotheticals)
-
-### Content Maturity Stages
-
-| Section | Current Stage | End Goal |
-|---------|--------------|----------|
-| **Research** | Evidence compilation | Scientific foundation for policy |
-| **Policy** | Recommendations → Refined proposals | Foundation for official policy |
-| **Pilots** | Guidelines → Standards | Adopted implementation protocols |
-
-**Language reflects stage**:
-- Research: "Studies document...", "Evidence indicates..."
-- Policy (early): "Recommendations include...", "Framework proposes..."
-- Policy (refined): "Notification shall require...", "Standards mandate..."
-- Pilots (early): "Guidelines suggest...", "Methodology encompasses..."
-- Pilots (refined): "Standards require...", "Protocols specify..."
-
-### Sentence Patterns
-
-**Subject-First Declarative (60%)**
-```
-Light pollution disrupts nocturnal ecosystems.
-The UNFCCC recognizes lighting efficiency as a climate strategy.
-Maharashtra's protected areas face light intrusion.
-```
-
-**Imperative Instructions (25%)**
-```
-Review the ecological impact evidence in Section 2.1.
-Consider the economic burden documented by RAND Europe.
-Implement shielding requirements for coastal lighting.
-```
-
-**Contextual Openers (15%)**
-```
-When protecting migratory corridors, restrict lighting to essential safety needs.
-During pilot implementation, monitor sky brightness monthly.
-For agricultural zones, prioritize pollinator-friendly spectrum.
-```
-
-### Paragraph Structure
-
-**Length**: 2-4 sentences maximum
-**Structure**: Topic sentence first, then supporting details
-
-```
-Route middleware runs before navigation.
-Use it to check authentication or redirect users.
-Define middleware in the middleware directory.
-```
-
-**Opening Sentences**
-- Define what it is, its purpose, key benefits
-- Avoid: "This section describes...", "In this document...", "Let's explore..."
-- Instead: State directly what the content covers
+**Banned words/patterns:**
+- "simply", "just", "obviously", "easily"
+- "This section describes...", "In this document...", "Note that"
+- "utilize" (use "use"), "leverage" (use "use"), "in order to" (use "to")
+- Em-dashes (--) -- use commas or parentheses
+- Starting with "It" or "This" without clear antecedent
 
 ## Section-Specific Rules
 
-### Research Section (`/docs/content/docs/1.research/`)
+### Research (`examples/astronera/content/docs/1.research/`)
 
-**Purpose**: Global scientific evidence documenting light pollution impacts
+**Purpose:** Global scientific evidence documenting light pollution impacts.
 
-**Include**:
-- Peer-reviewed studies with citations
+**Language:** "Studies document...", "Evidence indicates...", "Research demonstrates..."
+
+**Include:**
+- Peer-reviewed studies with `:cited[]{}` syntax
 - Global data and international examples
-- Universal phenomena (ecological, health, climate impacts)
-- Maharashtra context ONLY in `::callout{color="info"}` (1-2 sentences, factual)
+- Maharashtra context ONLY inside `::callout{color="info"}` (1-2 sentences, factual)
 
-**Exclude**:
+**Exclude:**
 - Policy recommendations (belongs in Policy section)
 - Implementation details (belongs in Pilots section)
-- "Why Maharashtra Must Act" sections
-- "Next Steps" sections
+- "Why Maharashtra Must Act" or "Next Steps" sections
 
-**Example structure**:
-```markdown
-## 2. Agricultural Impacts
-
-Overview text without citations explaining the category.
-
+**Example:**
+```md
 ### 2.1 Pollination
 
 :cited[Light pollution disrupts nocturnal pollinator activity.]{#study-id} Research documents :cited[62% reduction in pollinator visits under ALAN conditions]{#another-study}.
@@ -153,103 +116,142 @@ Maharashtra's agricultural economy depends heavily on pollinator-dependent crops
 ::
 ```
 
-### Policy Section (`/docs/content/docs/2.policy/`)
+### Policy (`examples/astronera/content/docs/2.policy/`)
 
-**Purpose**: Legal frameworks, Maharashtra obligations, action plans
+**Purpose:** Legal frameworks, Maharashtra obligations, action plans.
 
-**Include**:
+**Language progression:**
+- Early drafts: "Recommendations include...", "Framework proposes..."
+- Refined drafts: "Policy shall require...", "Standards mandate..."
+
+**Include:**
 - Constitutional obligations and legal precedents
 - International treaty commitments
 - State-specific regulatory frameworks
-- Recommended policy mechanisms
 - Justifications tied to Research evidence
 
-**Tone progression**:
-- Early drafts: "Recommendations", "Framework proposes"
-- Refined drafts: "Policy shall", "Standards require"
+### Pilots (`examples/astronera/content/docs/3.pilots/`)
 
-**Example structure**:
-```markdown
-## 2. Dark Sky Zones Framework
+**Purpose:** Implementation methodology (not specific site listings).
 
-This framework proposes classification of protected nighttime environments based on ecological sensitivity and astronomical value.
+**Language progression:**
+- Early: "Guidelines suggest...", "Methodology encompasses..."
+- Refined: "Standards require...", "Protocols specify..."
 
-### 2.1 Zone Categories
+**Include:**
+- Selection criteria, measurement protocols, monitoring frameworks
+- Stakeholder engagement processes, institutional coordination
 
-**Tier 1: Core Dark Sky Reserves**
-- Protected areas with <21.5 mag/arcsec² sky brightness
-- Minimal artificial lighting permitted
-- Examples: Bhimashankar Wildlife Sanctuary buffer zones
-```
-
-### Pilots Section (`/docs/content/docs/3.pilots/`)
-
-**Purpose**: Implementation methodology (not specific site listings)
-
-**Include**:
-- Selection criteria for pilot sites
-- Measurement protocols
-- Stakeholder engagement processes
-- Monitoring frameworks
-- Institutional coordination mechanisms
-- Implementation phases
-
-**Exclude**:
+**Exclude:**
 - Specific site selections (too premature)
-- Detailed budget allocations
-- Named individual responsibilities
+- Detailed budget allocations, named individual responsibilities
 
-**Example structure**:
-```markdown
-## 2. Site Selection Methodology
+## Citation Syntax
 
-Pilot zones should be selected using a multi-criteria framework balancing ecological sensitivity, astronomical potential, and implementation feasibility.
+All quantitative claims require citations. Syntax:
 
-### 2.1 Selection Criteria
-
-**Ecological Priority**
-- Presence of light-sensitive species
-- Proximity to protected areas
-- Migratory corridor significance
+```md
+:cited[The cited fact or statistic.]{#source-id}
+:cited[Claim supported by multiple sources.]{#id1,id2}
 ```
 
-## Component Usage Patterns
+The text inside `[...]` is the fact, statistic, or source name the citation supports:
+```md
+:cited[62% reduction in pollinator visits]{#knop-2017-pollination-threat}
+:cited[The 2023 RAND Europe study]{#hafner-2023-insomnia-burden} quantifies...
+```
 
-Use the right component for the right purpose:
+## Glossary Terms
 
-| Need | Component | When to Use | Example Context |
-|------|-----------|-------------|-----------------|
-| Key statistics | `::tip` | Highlighting quantified findings | "**Key Statistic**: :cited[62% reduction in pollinator visits]{#study}" |
-| Maharashtra context | `::callout{color="info"}` | State-specific notes in Research | "**Maharashtra Context**: Western Ghats biodiversity hotspot..." |
-| Background info | `::note` | Supplementary context | Explaining technical terms or processes |
-| Best practice | `::tip` | Recommendations | Policy implementation guidance |
-| Caution | `::warning` | Potential issues | Implementation challenges |
-| Must-know | `::important` | Required actions | Mandatory compliance requirements |
-| Success indicator | `::callout{color="success"}` | Positive outcomes | "Dark Sky Conservation offers a 'quick win'..." |
+First use of technical terms should include a glossary definition:
 
-**Component Selection Guide**:
-- Research section: Use `::tip` for key statistics, `::callout{color="info"}` for Maharashtra context
-- Policy section: Use `::important` for requirements, `::tip` for recommendations
-- Pilots section: Use `::warning` for implementation challenges, `::tip` for best practices
+```md
+:defn[Artificial Light at Night (ALAN)]{#alan}
+```
 
-## Code and Data Presentation
+## Math Expressions
 
-### Code Block Labels
-Always include file paths or context:
+- Inline: `$expression$`
+- Display block: `$$expression$$`
+- Escape dollar signs in text: `\$4.32 trillion`
+- Units: `$0.757\,\mathrm{tCO_2/MWh}$`
+
+## Component Selection by Section
+
+| Need | Component | Section |
+|------|-----------|---------|
+| Key statistics | `::tip` | Research |
+| Maharashtra context | `::callout{color="info"}` | Research |
+| Background info | `::note` | Any |
+| Recommendations | `::tip` | Policy |
+| Requirements | `::important` | Policy |
+| Implementation challenges | `::warning` | Pilots |
+| Best practices | `::tip` | Pilots |
+| Success indicators | `::callout{color="success"}` | Any |
+
+**Quick reference for callouts:**
+```md
+::tip
+Helpful advice, key statistics, recommendations.
+::
+
+::note
+Supplementary context, background information.
+::
+
+::important
+Must-know information to avoid problems.
+::
+
+::warning
+Could break or cause unexpected behavior.
+::
+
+::callout{color="info"}
+Maharashtra-specific contextual notes.
+::
+
+::callout{color="success"}
+Positive outcomes, success indicators.
+::
+```
+
+For the full component catalog (cards, tabs, steps, accordions, code-groups, etc.), see `references/COMPONENTS.md`.
+
+## Code Blocks
+
+Always include file labels:
 
 ````md
 ```ts [nuxt.config.ts]
-export default defineNuxtConfig({
-modules: ['@nuxt/content']
-})
+export default defineNuxtConfig({})
 ```
 
-```bash
+```bash [Terminal]
 npm install katex rehype-katex remark-math
 ```
 ````
 
-### Tables for Data
+For tabbed alternatives, use code groups:
+
+````md
+::code-group
+
+```bash [pnpm]
+pnpm add @nuxt/ui
+```
+
+```bash [npm]
+npm install @nuxt/ui
+```
+
+::
+````
+
+For complete code block syntax (highlighting, diffs, twoslash), see `references/MDC-SYNTAX.md`.
+
+## Tables for Data
+
 Use tables for quantified comparisons:
 
 ```md
@@ -259,93 +261,48 @@ Use tables for quantified comparisons:
 | Health | 40% CVD risk increase | Public Health |
 ```
 
-## Workflow and Skill Orchestration
+## Cross-References
 
-When working on documentation:
+Use `:read-more` at end of sections to link related pages:
 
-1. **Content Phase** (this skill - docs-writer)
-  - Determine section type (Research/Policy/Pilots)
-  - Apply audience-appropriate tone
-  - Follow section-specific rules
-  - Structure content logically
-  - Use active voice (85%+), present tense (90%)
-  - Apply modal verbs appropriately (can/should/may/must)
-  - Keep paragraphs 2-4 sentences
+```md
+:read-more{to="/docs/research/ecology"}
+:read-more{title="Custom link text" to="/docs/policy/recommendations"}
+```
 
-2. **Citation Phase** (refer to DOCUMENTATION_WRITING_GUIDELINES.md)
-  - Wrap the cited claim or source name inside the brackets: `:cited[cited text]{#id}`
-  - Multiple citations: `:cited[cited text]{#id1,id2}`
-  - The text inside `[...]` should be the fact, statistic, or source name the citation supports
-  - Example: `:cited[60% of invertebrates are nocturnal]{#holker-2010}`
-  - Example: `:cited[The 2023 RAND Europe study]{#hafner-2023-insomnia-burden}` quantifies...
-
-3. **Component Phase** (refer to DOCUMENTATION_WRITING_GUIDELINES.md)
-  - Select appropriate callout type (tip/info/warning/important/success)
-  - Card groups, accordions, etc.
-  - Internal links: `[text](internal:path)`
-  - Glossary terms: `:defn[term text]{#term-id}`
-
-4. **Math Phase** (refer to DOCUMENTATION_WRITING_GUIDELINES.md)
-  - Inline: `$expression$`
-  - Display: `$$expression$$`
-  - Escape dollar signs: `\$4.32 trillion`
-  - Units: `$0.757\,\mathrm{tCO_2/MWh}$`
+Inline links on first mention of concepts:
+```md
+The [`nuxt.config.ts`](/docs/getting-started/configuration) file can override...
+```
 
 ## Data Source
 
-**ALL quantitative data must come from**: `/Users/mac/Development/incubrain/product-validator/docs/MASTER_KEY.md`
+**ALL quantitative data must come from:** `examples/astronera/MASTER_KEY.md`
 
-Never invent statistics. Never extrapolate data not in Master Key. If data is not available, note the research gap instead.
+Never invent statistics. Never extrapolate data not in MASTER_KEY. If data is not available, note the research gap instead.
 
-## Common Writing Mistakes to Avoid
+## Workflow
 
-**Voice and Clarity**
-- Starting sentences with "It" or "This" without clear antecedent
-- Overusing passive voice: "is documented by" → "documents"
-- Stacking prepositions: "the value of the property of the config"
-- Weak language: "might", "could", "would" (use precise modals)
+1. **Determine section** from file path (Research/Policy/Pilots)
+2. **Apply section rules** for content boundaries and tone
+3. **Write content** with proper frontmatter, heading hierarchy, citations
+4. **Select components** appropriate to section type
+5. **Add math expressions** where quantitative data requires formulas
+6. **Verify** against quality checklist below
 
-**Word Choice**
-| Avoid | Use |
-|-------|-----|
-| utilize | use |
-| implement | add, create, establish |
-| leverage | use |
-| in order to | to |
-| due to the fact that | because |
+## Quality Checklist
 
-**Structure**
-- Burying important info at end of long sentences
-- Overusing "Note that" (just state the fact directly)
-- Starting with meta-commentary: "This section describes..."
-- Paragraphs exceeding 4 sentences
-
-**Documentation-Specific**
-- Mixing section types (policy in Research, evidence in Pilots)
-- Maharashtra content outside callouts in Research section
-- Citations before punctuation
-- Inventing data not in MASTER_KEY.md
-- Using em-dashes (—) instead of commas or parentheses
-
-## Quality Checks
-
-Before finalizing content:
-
-- [ ] Audience-appropriate tone (authoritative but accessible)
-- [ ] Section rules followed (Research/Policy/Pilots)
-- [ ] Language matches content maturity stage
+- [ ] Frontmatter has `title` and `description` (no `# h1` in body)
+- [ ] Section rules followed (Research/Policy/Pilots boundaries)
 - [ ] Active voice 85%+, present tense 90%+
-- [ ] Modal verbs used precisely (can/should/may/must)
-- [ ] Paragraphs 2-4 sentences maximum
-- [ ] All data from MASTER_KEY.md
-- [ ] Citations properly placed (after punctuation)
-- [ ] Appropriate component types (tip/info/warning/important)
-- [ ] No em-dashes (—)
-- [ ] No H1 title duplication from frontmatter
+- [ ] Modal verbs precise (can/should/may/must)
+- [ ] Paragraphs 2-4 sentences max
+- [ ] All data sourced from MASTER_KEY.md
+- [ ] Citations use `:cited[text]{#id}` syntax
+- [ ] Maharashtra context in Research only inside `::callout{color="info"}`
+- [ ] Component types match section (tip/info/warning/important)
+- [ ] No banned words (simply, just, obviously, utilize, leverage)
+- [ ] No em-dashes
 - [ ] No weak modals (might/could/would)
-- [ ] No starting with "It" or "This" without clear referent
-- [ ] Technical validation passes (citations, components, math) completed
-
-## Related Guidelines
-
-This skill focuses on **content strategy and audience**. The guidelines document handles **technical syntax**.
+- [ ] Heading hierarchy valid (no skipped levels)
+- [ ] Code blocks have file labels
