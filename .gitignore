@@ -33,6 +33,7 @@ CLAUDE.local.md
 
 # Agent skills (installed via scripts/install-skills.sh, manifest in .claude/skills.json)
 .agents/skills/
+.agents/skill-updates.log
 .claude/skills/manage-mcp
 .claude/skills/vitest
 .claude/skills/nuxt-ui

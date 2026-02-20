@@ -3,6 +3,39 @@
 # Run from project root: bash scripts/install-skills.sh
 set -euo pipefail
 
+# Log file to track update timestamps
+UPDATE_LOG=".agents/skill-updates.log"
+TWENTY_FOUR_HOURS=$((24 * 60 * 60))
+
+# Create log file if it doesn't exist
+mkdir -p "$(dirname "$UPDATE_LOG")"
+touch "$UPDATE_LOG"
+
+# Check if skill was updated in the past 24 hours
+is_recently_updated() {
+  local skill_name="$1"
+  local current_time=$(date +%s)
+
+  if grep -q "^$skill_name:" "$UPDATE_LOG" 2>/dev/null; then
+    local last_update=$(grep "^$skill_name:" "$UPDATE_LOG" | tail -1 | cut -d':' -f2)
+    local time_diff=$((current_time - last_update))
+
+    if [ "$time_diff" -lt "$TWENTY_FOUR_HOURS" ]; then
+      local hours_ago=$((time_diff / 3600))
+      echo "  → Already updated ${hours_ago}h ago, skipping"
+      return 0
+    fi
+  fi
+  return 1
+}
+
+# Log successful update
+log_update() {
+  local skill_name="$1"
+  local current_time=$(date +%s)
+  echo "$skill_name:$current_time" >> "$UPDATE_LOG"
+}
+
 # Define all skills as repo:skill pairs
 declare -a SKILLS=(
   # Development
@@ -46,14 +79,25 @@ for skill_entry in "${SKILLS[@]}"; do
 
   # Check if skill is already installed
   if echo "$INSTALLED_SKILLS" | grep -q "$skill_name"; then
+    # Skip update if done in past 24 hours
+    if is_recently_updated "$skill_name"; then
+      continue
+    fi
+
     echo "⟳ Updating: $skill_name"
-    npx skills update "$skill_name" --yes --agent claude-code 2>/dev/null || {
+    if npx skills update "$skill_name" --yes --agent claude-code 2>/dev/null; then
+      log_update "$skill_name"
+    else
       echo "  → Update failed, reinstalling..."
-      npx skills add "$repo" --skill "$skill_name" --yes --agent claude-code
-    }
+      if npx skills add "$repo" --skill "$skill_name" --yes --agent claude-code; then
+        log_update "$skill_name"
+      fi
+    fi
   else
     echo "⊕ Installing: $skill_name"
-    npx skills add "$repo" --skill "$skill_name" --yes --agent claude-code
+    if npx skills add "$repo" --skill "$skill_name" --yes --agent claude-code; then
+      log_update "$skill_name"
+    fi
   fi
 done
 
