@@ -19,8 +19,6 @@ pnpm typecheck       # Nuxt typecheck (layer)
 pnpm verify          # dev:prepare + lint + typecheck
 ```
 
-Config source: set `NUXT_PUBLIC_CONFIG_SOURCE=root` or `foundry`.
-
 ## Critical Rules
 
 1. **Never add features that don't capture signal.** If it doesn't help founders validate faster, reject it.
@@ -37,7 +35,6 @@ Config source: set `NUXT_PUBLIC_CONFIG_SOURCE=root` or `foundry`.
 **Out of scope:** Email sequences, authentication, payment processing, databases. Use external tools for these.
 
 **Key patterns:**
-- Multi-config: `NUXT_PUBLIC_CONFIG_SOURCE` switches between configs. See `shared/utils/config-resolver.ts`.
 - Event-driven: action → `useEvents()` → handler → provider. Swap analytics without changing event code. See `modules/events/*`.
 - Webhook streaming: capture → encrypt → webhook → destination. No storage needed. See `modules/events/server/handlers/webhook.ts`.
 - SSR: Nuxt 4, use `import.meta.client` guards for client-only APIs or `.client.ts|.server.ts` file naming.
@@ -72,10 +69,23 @@ If all answers are "No" → don't build it.
 
 ## Skills
 
-External agent skills are gitignored and installed on demand. Run `bash scripts/install-skills.sh` to install, or see [`.claude/skills.json`](.claude/skills.json) for the full manifest.
+External agent skills extend capabilities for specialized tasks. See [@.claude/AGENTS.md](.claude/AGENTS.md) for the complete skill reference and when to use each skill.
 
-Custom skills (tracked in git):
-- **docs-writer**: Dark Sky Conservation documentation writing
+**Installation:**
+```bash
+bash scripts/install-skills.sh  # Install or update all skills
+npx skills list                 # List installed skills
+```
+
+**Key Skills:**
+- **Development**: nuxt, nuxt-ui, nuxt-content, vue-best-practices, vitest, vueuse-functions
+- **Design**: frontend-design, theme-factory, web-design-guidelines
+- **Marketing**: copywriting, marketing-psychology
+- **Strategy**: brainstorming, systematic-debugging
+- **Tools**: agent-browser, manage-mcp
+- **Custom**: docs-writer (Dark Sky Conservation documentation)
+
+**Skill Priority:** Check skills first → VueUse → Library → Custom (last resort)
 
 ## Rules
 

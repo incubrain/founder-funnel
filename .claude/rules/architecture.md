@@ -23,11 +23,6 @@ Validation captures intent. Products deliver value. Mixing them creates scope cr
 - Progressive disclosure (start minimal, expand as validated)
 - See: `templates/*/content/pages/index.md` for stage comments
 
-**Multi-Config System:**
-- `NUXT_PUBLIC_CONFIG_SOURCE` = `root` | `foundry`
-- Showcase (`templates/`) ≠ User starting point (`root`)
-- See: `shared/utils/config-resolver.ts`
-
 **Event-Driven:**
 - User action → `useEvents()` → Handler → Provider
 - Swap analytics without changing event code

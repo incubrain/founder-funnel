@@ -11,14 +11,15 @@ interface SocialShareOptions {
  * Extracts business logic from SocialShare.vue.
  */
 export function useSocialShare(options: Ref<SocialShareOptions> | ComputedRef<SocialShareOptions>) {
-  const copied = ref(false)
-
   const shareUrl = computed(() => {
     const opts = unref(options)
     if (opts.url) return opts.url
     if (import.meta.client) return window.location.href
     return ''
   })
+
+  // Use VueUse clipboard instead of manual implementation
+  const { copy, copied } = useClipboard({ source: shareUrl })
 
   const encodeText = (text: string) => encodeURIComponent(text)
 
@@ -42,22 +43,9 @@ export function useSocialShare(options: Ref<SocialShareOptions> | ComputedRef<So
     }
   }
 
-  const copyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(shareUrl.value)
-      copied.value = true
-      setTimeout(() => {
-        copied.value = false
-      }, 2000)
-    }
-    catch {
-      // Clipboard API may not be available in some contexts
-    }
-  }
-
   const share = (platform: string) => {
     if (platform === 'copy') {
-      copyLink()
+      copy(shareUrl.value)
       return
     }
 
@@ -86,6 +74,5 @@ export function useSocialShare(options: Ref<SocialShareOptions> | ComputedRef<So
     shareUrl,
     menuItems,
     share,
-    copyLink,
   }
 }

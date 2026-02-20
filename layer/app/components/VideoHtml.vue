@@ -65,22 +65,21 @@ const toggleMute = () => {
   muted.value = !muted.value
 }
 
-// Autoplay logic
+// Autoplay and muted state management
 watchEffect(() => {
+  if (!videoRef.value) return
+
+  // Sync muted prop to media controls
+  muted.value = props.muted
+
+  // Trigger autoplay when conditions are met
   if (
-    videoRef.value
-    && props.autoplay
+    props.autoplay
     && props.muted
     && shouldLoad.value
     && !hasError.value
   ) {
     playing.value = true
-  }
-})
-
-watchEffect(() => {
-  if (videoRef.value) {
-    muted.value = props.muted
   }
 })
 

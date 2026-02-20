@@ -7,8 +7,8 @@
       "agent": "claude-code"
     },
     {
-      "name": "vitest",
-      "source": "https://github.com/antfu/skills",
+      "name": "brainstorming",
+      "source": "https://github.com/obra/superpowers",
       "agent": "claude-code"
     },
     {
@@ -37,11 +37,6 @@
       "agent": "claude-code"
     },
     {
-      "name": "vue-testing-best-practices",
-      "source": "https://github.com/vuejs-ai/skills",
-      "agent": "claude-code"
-    },
-    {
       "name": "nuxt-content",
       "source": "https://github.com/nuxt-content/nuxt-studio",
       "agent": "claude-code"
@@ -62,13 +57,48 @@
       "agent": "claude-code"
     },
     {
-      "name": "agent-browser",
-      "source": "https://github.com/vercel-labs/agent-browser",
+      "name": "frontend-design",
+      "source": "https://github.com/anthropics/skills",
+      "agent": "claude-code"
+    },
+    {
+      "name": "theme-factory",
+      "source": "https://github.com/anthropics/skills",
       "agent": "claude-code"
     },
     {
       "name": "web-design-guidelines",
       "source": "https://github.com/vercel-labs/agent-skills",
+      "agent": "claude-code"
+    },
+    {
+      "name": "copywriting",
+      "source": "https://github.com/coreyhaines31/marketingskills",
+      "agent": "claude-code"
+    },
+    {
+      "name": "marketing-psychology",
+      "source": "https://github.com/coreyhaines31/marketingskills",
+      "agent": "claude-code"
+    },
+    {
+      "name": "vue-testing-best-practices",
+      "source": "https://github.com/vuejs-ai/skills",
+      "agent": "claude-code"
+    },
+    {
+      "name": "systematic-debugging",
+      "source": "https://github.com/obra/superpowers",
+      "agent": "claude-code"
+    },
+    {
+      "name": "vitest",
+      "source": "https://github.com/antfu/skills",
+      "agent": "claude-code"
+    },
+    {
+      "name": "agent-browser",
+      "source": "https://github.com/vercel-labs/agent-browser",
       "agent": "claude-code"
     },
     {
