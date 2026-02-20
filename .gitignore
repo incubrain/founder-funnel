@@ -44,6 +44,13 @@ CLAUDE.local.md
 .claude/skills/nuxt-content
 .claude/skills/agent-browser
 .claude/skills/web-design-guidelines
+.claude/skills/skill-creator
+
+# Other agent tool directories (symlinks created by npx skills add)
+.agent/
+.cursor/
+.trae/
+.windsurf/
 
 # Documentation review comments (dev-only)
 .comments/
