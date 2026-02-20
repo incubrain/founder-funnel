@@ -1,8 +1,12 @@
 # Medium Priority Issues - Review & Action Plan
 
 **Generated:** 2026-02-20
+**Updated:** 2026-02-20 (Phase 1 completed)
 **Source:** Systematic 8-pair skill-based codebase review
 **Total Medium Issues:** 18 (excludes already-fixed h1 violations)
+**Completed:** 6 issues (3 production blockers + 3 medium priority)
+**Skipped:** 6 issues (Convert components - planned overhaul)
+**Remaining:** 6 issues (deferred for future sprint)
 
 ---
 
@@ -34,20 +38,37 @@ All 3 production blockers have been resolved:
 
 ---
 
-## Medium Priority Issues Requiring Attention
+## Medium Priority Issues - Phase 1 ✅ COMPLETED
 
-### Category: Vue Best Practices (8 issues)
+### Category: Vue Best Practices (3 issues fixed)
 
-#### 1. Multiple watchEffect calls in VideoHtml.vue
+#### 1. ✅ Multiple watchEffect calls in VideoHtml.vue
 **File:** `layer/app/components/VideoHtml.vue:69`
 **Issue:** Separate watchEffect calls for related logic
-**Recommendation:** Combine into single watchEffect with clear logic sections
-**Effort:** 15 minutes
-**Impact:** Code clarity, minor performance improvement
+**Solution:** Combined into single watchEffect with clear logic sections
+**Time:** 15 minutes
 
-#### 2. onMounted with manual cleanup in Changelog.vue
+#### 2. ✅ onMounted with manual cleanup in Changelog.vue
 **File:** `layer/app/components/content/Changelog.vue:42`
 **Issue:** Manual scroll event listener with onBeforeUnmount cleanup
+**Solution:** Replaced with `useEventListener(window, 'scroll', handleScroll)` from @vueuse/core
+**Time:** 10 minutes
+
+#### 6. ✅ Mixed prop sources in computed (Cta.vue)
+**File:** `layer/app/components/nav/Cta.vue:32`
+**Issue:** Computed property pulls from multiple prop sources without clear priority
+**Solution:** Simplified API - removed redundant `title` and `description` props, only use `cta` object
+**Time:** 20 minutes
+
+**Total Phase 1 Time:** 45 minutes
+
+---
+
+## Medium Priority Issues - Remaining
+
+### Category: Vue Best Practices (5 issues - deferred or skipped)
+
+#### 3. Await in component setup (FaqAccordion.vue)
 **Recommendation:** Replace with `useEventListener(window, 'scroll', handleScroll)` from @vueuse/core
 **Effort:** 10 minutes
 **Impact:** Cleaner code, automatic cleanup

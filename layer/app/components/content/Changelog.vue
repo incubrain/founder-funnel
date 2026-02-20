@@ -35,18 +35,16 @@ const { items, pending, getAuthorForItem } = useChangelog({
   showImage: props.showImage,
 })
 
-// Scroll-to-top
+// Scroll-to-top with automatic cleanup
 const showScrollButton = ref(false)
 
-onMounted(() => {
-  if (props.showScrollTop) {
-    const handleScroll = () => {
-      showScrollButton.value = window?.scrollY > props.scrollTopThreshold
-    }
-    window?.addEventListener('scroll', handleScroll)
-    onUnmounted(() => window?.removeEventListener('scroll', handleScroll))
-  }
-})
+const handleScroll = () => {
+  showScrollButton.value = window?.scrollY > props.scrollTopThreshold
+}
+
+if (props.showScrollTop) {
+  useEventListener(window, 'scroll', handleScroll)
+}
 
 const scrollToTop = () => {
   window?.scrollTo({ top: 0, behavior: 'smooth' })

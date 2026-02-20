@@ -1,4 +1,10 @@
 <script setup lang="ts">
+/**
+ * Cta - Call-to-action component with decorative brackets
+ *
+ * Simplified API: All content passed via single `cta` object.
+ * For custom layouts, use slots instead of props.
+ */
 interface Props {
   cta?: {
     headline?: string
@@ -10,26 +16,17 @@ interface Props {
       icon: string
     }
   }
-  title?: string
-  description?: string
   variant?: 'outline' | 'solid' | 'soft' | 'subtle' | 'naked'
   orientation?: 'vertical' | 'horizontal'
 }
 
 const props = withDefaults(defineProps<Props>(), {
   cta: undefined,
-  title: undefined,
-  description: undefined,
   variant: 'outline',
   orientation: 'vertical',
 })
 
-// Computed values to handle mix of direct props and cta object
-const displayTitle = computed(() => props.title || props.cta?.headline)
-const displayDescription = computed(
-  () => props.description || props.cta?.message,
-)
-// Generate links only if cta object is present and using default button logic
+// Generate button links for secondary CTAs (primary CTAs use form in footer slot)
 const defaultLinks = computed(() => {
   if (props.cta && !props.cta.primary) {
     return [
@@ -66,8 +63,8 @@ const defaultLinks = computed(() => {
     </div>
 
     <UPageCTA
-      :title="displayTitle"
-      :description="displayDescription"
+      :title="cta?.headline"
+      :description="cta?.message"
       :orientation="orientation"
       :variant="variant"
       :links="defaultLinks"
