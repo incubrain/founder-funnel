@@ -1,203 +1,125 @@
 ---
 name: docs-writer
-description: Creates and edits Nuxt Content MDC documentation for the Dark Sky Conservation project. Writes policy documentation targeting Maharashtra government officials and academic researchers. Handles section-specific rules (Research/Policy/Pilots), citation syntax, MDC component selection, and frontmatter conventions. Use when working on content/docs/ markdown files or .md documentation files.
+description: Create and edit Nuxt Content MDC documentation for IncuBrain Foundry templates. Handles page structure, MDC component selection, frontmatter conventions, cross-referencing, and content quality standards. Supports template-specific rules for astronera (Dark Sky Conservation with citations, glossary, policy docs) and foundry (developer-facing product documentation). Use when working on content/docs/ markdown files, .md documentation files, or any Nuxt Content pages.
 ---
 
-## Activation
+# Docs Writer
 
-This skill applies when editing `.md` files under `examples/astronera/content/docs/`. Determine the section from the file path and apply its rules throughout.
+Write documentation for Nuxt Content sites using MDC (Markdown Components) syntax.
+
+## Workflow
+
+1. **Determine template** from file path:
+   - `examples/astronera/content/docs/` → astronera rules (citations, glossary, government audience)
+   - `examples/foundry/content/docs/` → foundry rules (developer audience, signal-capture focus)
+   - Other paths → general MDC documentation
+2. **Apply page structure** (see below)
+3. **Select components** appropriate to content type — see `references/COMPONENTS.md`
+4. **Write content** following standards below
+5. **If astronera:** Apply citations, glossary, section rules per `references/ASTRONERA-CUSTOM.md`
+6. **Verify** against quality checklist
 
 ## Reference Files
 
-Detailed syntax and component specifications live in the `references/` directory. Consult on demand:
+Load on demand — do not read unless needed for the current task:
 
-- **`references/MDC-SYNTAX.md`** -- Complete MDC syntax: frontmatter, block/inline components, props, slots, nesting, code blocks
-- **`references/COMPONENTS.md`** -- Full catalog of available components with props tables and examples
-- **`references/NUXT-DOCS-PATTERNS.md`** -- Gold-standard page structure, writing conventions, cross-reference patterns
-- **`references/ASTRONERA-CUSTOM.md`** -- Citation `:cited[]{}`, glossary `:defn[]{}`, math, data source rules, section content boundaries (astronera template only)
+| File | When to read |
+|------|-------------|
+| `references/MDC-SYNTAX.md` | Unsure about MDC syntax (props, slots, nesting, code blocks) |
+| `references/COMPONENTS.md` | Choosing components or need props/examples |
+| `references/ASTRONERA-CUSTOM.md` | Editing astronera template files (citations, glossary, section rules) |
 
 ## Page Structure
-
-Every page follows this flow:
 
 ```md
 ---
 title: 'Page Title'
 description: 'One-sentence summary for meta tags.'
 navigation:
-  title: Short Nav Title
   icon: i-lucide-icon-name
 ---
 
-Intro paragraph(s) explaining the concept. No heading before this.
+Intro paragraph(s) — no heading before this. 1-3 sentences.
 
 ## Major Section
 
-Content with citations and callouts.
+Content with code examples and callouts.
 
 ### Subsection
 
 More specific details.
+
+:read-more{to="/docs/related-topic"}
 ```
 
 **Rules:**
-1. No `# h1` in body -- `title` frontmatter serves as h1
-2. 1-3 intro paragraphs immediately after frontmatter (before first heading)
-3. `## h2` for major sections, `### h3` for subsections
-4. Never skip heading levels (no h2 to h4)
-5. Landing/index pages use `navigation: false` and `surround: false`
-
-## Target Audience
-
-### Government Officials
-- State department heads (Environment, Tourism, Energy, Agriculture, Forest, Public Health)
-- Need evidence-based justification, clear recommendations, implementation guidance
-- Reading for decision-making on policy adoption and resource allocation
-
-### Academic Researchers
-- Policy analysts, technical advisors (IIT, IISER, TIFR, environmental organizations)
-- Need rigorous citations, methodological clarity, data transparency
-- Reading for evidence evaluation and technical consultation
+1. No `# h1` in body — `title` frontmatter is the h1
+2. Intro paragraphs immediately after frontmatter, before first `##`
+3. Never skip heading levels (no h2 → h4)
+4. Landing/index pages: `navigation: false` and `surround: false`, use `::card-group` to link subsections
+5. `:read-more` goes at end of sections, after the last paragraph or code block
+6. Code blocks always have file labels: `` ```ts [nuxt.config.ts] ``
 
 ## Writing Standards
 
-**Voice:** Third-person objective, authoritative but accessible. Active voice 85%+, present tense 90%.
+**Voice:** Active voice, present tense, direct and instructive.
 
-**Sentence patterns:**
-- Subject-first declarative (60%): "Light pollution disrupts nocturnal ecosystems."
-- Imperative instructions (25%): "Review the ecological impact evidence in Section 2.1."
-- Contextual openers (15%): "When protecting migratory corridors, restrict lighting."
+**Banned:** "simply", "just", "obviously", "easily", "utilize" (use "use"), "leverage" (use "use"), "in order to" (use "to"), "This section describes...", "Note that", em-dashes.
 
-**Paragraphs:** 2-4 sentences max. Topic sentence first, then supporting details.
+**Paragraphs:** 2-4 sentences max. Topic sentence first.
 
-**Modal verbs (precision in recommendations):**
+**Links:** Inline link on first mention of a concept: `` [`nuxt.config.ts`](/docs/getting-started/configuration) ``
 
-| Verb | Meaning | Frequency | Example |
-|------|---------|-----------|---------|
-| `can` | Optional | 40% | "Municipalities can implement lighting curfews." |
-| `should` | Recommended | 30% | "Policies should prioritize ecological zones." |
-| `may` | Possibility | 20% | "This may reduce bird collisions." |
-| `must` | Required | 10% | "Protected areas must limit upward light." |
+**No duplication:** Link to existing pages with `:read-more` instead of repeating information. Link to external library docs instead of reproducing them.
 
-Avoid: `might`, `could`, `would` (use sparingly for hypotheticals only).
+## Component Selection
 
-**Banned words/patterns:**
-- "simply", "just", "obviously", "easily"
-- "This section describes...", "In this document...", "Note that"
-- "utilize" (use "use"), "leverage" (use "use"), "in order to" (use "to")
-- Em-dashes (--) -- use commas or parentheses
-- Starting with "It" or "This" without clear antecedent
+Choose the right component for the content:
 
-## AstronEra-Specific Features
+| Need | Component |
+|------|-----------|
+| Cross-reference another page | `:read-more{to="/docs/..."}` |
+| Helpful advice or recommendation | `::tip` |
+| Supplementary context | `::note` |
+| Must-know information | `::important` |
+| Pitfall or danger | `::warning` |
+| Anti-pattern example | `::caution{icon="i-lucide-circle-x"}` |
+| Step-by-step tutorial | `::steps` |
+| Package manager alternatives | `::code-group` |
+| Section landing navigation | `::card-group` with `::card` items |
+| Expandable FAQ items | `::accordion` |
+| API parameters / props | `::field-group` with `::field` items |
+| Comparison data | Standard markdown table |
+| Long code block | `::code-collapse` |
 
-When editing `examples/astronera/content/docs/` files, consult `references/ASTRONERA-CUSTOM.md` for:
-- Citation syntax (`:cited[text]{#source-id}`)
-- Glossary terms (`:defn[term]{#id}`)
-- Math expressions (KaTeX)
-- Data source rules (MASTER_KEY.md)
-- Section-specific content boundaries and component selection (Research/Policy/Pilots)
+Full props and examples: `references/COMPONENTS.md`
 
-## Callout Quick Reference
+## Foundry Template Rules
 
-```md
-::tip
-Helpful advice, key statistics, recommendations.
-::
+For `examples/foundry/content/docs/`:
 
-::note
-Supplementary context, background information.
-::
+**Audience:** Technical founders and developers using the Foundry validation template.
 
-::important
-Must-know information to avoid problems.
-::
+**Tone:** Second person ("you"), practical, ship-first. "Create a file...", "Run the command..."
 
-::warning
-Could break or cause unexpected behavior.
-::
+**Content priorities:**
+- Signal capture paths (email, presales, bookings)
+- Configuration and customization
+- Deployment and integration
 
-::caution
-Potential for data loss or security issues.
-::
-```
-
-For colored callouts and the full component catalog, see `references/COMPONENTS.md`.
-
-## Code Blocks
-
-Always include file labels:
-
-````md
-```ts [nuxt.config.ts]
-export default defineNuxtConfig({})
-```
-
-```bash [Terminal]
-npm install katex rehype-katex remark-math
-```
-````
-
-For tabbed alternatives, use code groups:
-
-````md
-::code-group
-
-```bash [pnpm]
-pnpm add @nuxt/ui
-```
-
-```bash [npm]
-npm install @nuxt/ui
-```
-
-::
-````
-
-For complete code block syntax (highlighting, diffs, twoslash), see `references/MDC-SYNTAX.md`.
-
-## Tables for Data
-
-Use tables for quantified comparisons:
-
-```md
-| Impact Domain | Key Finding | Relevant Departments |
-|---------------|-------------|---------------------|
-| Ecology | 62% pollination reduction | Environment, Agriculture |
-| Health | 40% CVD risk increase | Public Health |
-```
-
-## Cross-References
-
-Use `:read-more` at end of sections to link related pages:
-
-```md
-:read-more{to="/docs/research/ecology"}
-:read-more{title="Custom link text" to="/docs/policy/recommendations"}
-```
-
-Inline links on first mention of concepts:
-```md
-The [`nuxt.config.ts`](/docs/getting-started/configuration) file can override...
-```
-
-## Workflow
-
-1. **Identify template** from file path (astronera? foundry? starter?)
-2. **Apply page structure** with proper frontmatter and heading hierarchy
-3. **Write content** following writing standards above
-4. **Select components** appropriate to content type
-5. **If astronera:** Apply section rules, citations, glossary terms per `references/ASTRONERA-CUSTOM.md`
-6. **Verify** against quality checklist below
+**Key conventions:**
+- Environment variables: document in `9.reference/5.environment-variables.md` only, link from other pages
+- Component props: document in `9.reference/1.components.md` only, link from feature pages
+- App config: document in `9.reference/4.app-config.md` only, link from other pages
 
 ## Quality Checklist
 
-- [ ] Frontmatter has `title` and `description` (no `# h1` in body)
+- [ ] Frontmatter has `title` and `description`
+- [ ] No `# h1` in body
 - [ ] Heading hierarchy valid (no skipped levels)
-- [ ] Active voice 85%+, present tense 90%+
-- [ ] Paragraphs 2-4 sentences max
-- [ ] No banned words (simply, just, obviously, utilize, leverage)
-- [ ] No em-dashes
+- [ ] Paragraphs 2-4 sentences
+- [ ] No banned words
 - [ ] Code blocks have file labels
-- [ ] Cross-references use correct link syntax
-- [ ] No content duplication (link to existing pages instead)
-- [ ] External library docs linked rather than reproduced
+- [ ] No content duplication (link instead)
+- [ ] External library docs linked, not reproduced
+- [ ] `:read-more` at end of sections, not mid-content

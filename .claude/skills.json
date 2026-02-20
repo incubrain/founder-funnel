@@ -60,6 +60,11 @@
       "name": "web-design-guidelines",
       "source": "https://github.com/vercel-labs/agent-skills",
       "agent": "claude-code"
+    },
+    {
+      "name": "skill-creator",
+      "source": "https://github.com/anthropics/skills",
+      "agent": "claude-code"
     }
   ]
 }

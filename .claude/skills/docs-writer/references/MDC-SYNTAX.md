@@ -1,61 +1,23 @@
 # MDC Syntax Reference
 
-Complete syntax specification for MDC (Markdown Components) used in Nuxt Content documentation files.
+MDC-specific syntax for Nuxt Content. Load this file when unsure about component syntax, props passing, slots, or nesting rules.
 
 ## Contents
 
-- [Front matter](#front-matter)
-- [Heading hierarchy](#heading-hierarchy)
+- [Frontmatter fields](#frontmatter-fields)
 - [Block components](#block-components)
 - [Inline components](#inline-components)
 - [Props passing](#props-passing)
 - [Named slots](#named-slots)
 - [Nesting](#nesting)
-- [Span syntax](#span-syntax)
 - [Inline attributes](#inline-attributes)
 - [Variable binding](#variable-binding)
 - [Code blocks](#code-blocks)
 - [Edge cases](#edge-cases)
 
-## Front matter
+## Frontmatter fields
 
-YAML front matter at the top of every `.md` file:
-
-```yaml
----
-title: 'Page Title'
-description: 'One-sentence meta description'
-navigation:
-  icon: i-lucide-icon-name
----
-```
-
-**Required fields:**
-- `title` -- Page title (serves as h1, never duplicate with `#` heading in body)
-- `description` -- One-sentence summary for meta tags and search
-
-**Optional fields:**
-- `navigation.icon` -- Sidebar icon (Lucide or VS Code icon identifiers)
-- `navigation: false` -- Hide from navigation (used on index/landing pages)
-- `surround: false` -- Disable prev/next navigation links
-- `titleTemplate` -- HTML title format: `'%s - My Docs'`
-- `links` -- Source links array (API reference pages):
-  ```yaml
-  links:
-    - label: Source
-      icon: i-simple-icons-github
-      to: https://github.com/org/repo/blob/main/path/to/file.ts
-      size: xs
-  ```
-
-## Heading hierarchy
-
-- **No `# h1` in body** -- `title` front matter serves as h1
-- `## h2` for major sections
-- `### h3` for subsections
-- `#### h4` sparingly for deep sub-topics
-- Never skip levels (no h2 -> h4 jump)
-- Intro paragraphs come immediately after front matter, before first heading
+Required: `title`, `description`. Optional: `navigation.icon`, `navigation: false`, `surround: false`, `titleTemplate`, `links` (source links array for API pages).
 
 ## Block components
 
@@ -209,38 +171,19 @@ Increase colon count for each nesting level:
 
 Closing colons must match opening count. Each level adds 2 spaces indentation in serialized output.
 
-## Span syntax
-
-Square brackets create inline spans for styling text:
-
-```md
-Hello [World]{.bg-blue-500}!
-[styled text]{#theid .aclass foo="bar"}
-```
-
 ## Inline attributes
 
-Apply to standard markdown elements:
+Apply attributes to standard markdown elements with `{}`:
 
 ```md
 **bold**{.text-red-500}
-_italic_{style="color: blue"}
 `code`{lang="ts"}
-[Link](url){.text-primary-500}
-![Image](url){.rounded-lg}
+[styled text]{#theid .aclass foo="bar"}
 ```
 
 ## Variable binding
 
-Bind front matter values in content:
-
-```md
----
-color: blue
----
-
-The color is {{ $doc.color || 'red' }}.
-```
+Bind frontmatter values: `{{ $doc.color || 'red' }}`
 
 ## Code blocks
 

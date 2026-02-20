@@ -1,9 +1,10 @@
 # MDC Component Catalog
 
-Complete catalog of components available in MDC markdown files. Organized by use case.
+Complete catalog of MDC components with props and examples. Load this file when choosing components or need syntax details.
 
 ## Contents
 
+- [Component selection guide](#component-selection-guide)
 - [Callout shortcuts](#callout-shortcuts)
 - [Callout (full)](#callout-full)
 - [Code group](#code-group)
@@ -21,6 +22,26 @@ Complete catalog of components available in MDC markdown files. Organized by use
 - [Code collapse](#code-collapse)
 - [Code tree](#code-tree)
 - [Code preview](#code-preview)
+
+## Component selection guide
+
+**Decision flow:**
+
+1. Linking to another page? → `:read-more`
+2. Alerting the reader? → Callout (pick severity: tip < note < important < warning < caution)
+3. Step-by-step instructions? → `::steps`
+4. Multiple code alternatives? → `::code-group`
+5. Section landing page? → `::card-group`
+6. FAQ or expandable items? → `::accordion`
+7. API props or params? → `::field-group`
+8. Data comparison? → Standard markdown table
+9. Long code block? → `::code-collapse`
+10. Side-by-side code + preview? → `::code-preview`
+
+**Avoid:**
+- Nesting more than 2 levels of components
+- Using `::tabs` when `::code-group` suffices (code-group is for code, tabs for non-code)
+- Using `::card` for single items (cards are for grids of 2+)
 
 ## Callout shortcuts
 
