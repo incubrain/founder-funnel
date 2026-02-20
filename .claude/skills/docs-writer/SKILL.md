@@ -14,6 +14,7 @@ Detailed syntax and component specifications live in the `references/` directory
 - **`references/MDC-SYNTAX.md`** -- Complete MDC syntax: frontmatter, block/inline components, props, slots, nesting, code blocks
 - **`references/COMPONENTS.md`** -- Full catalog of available components with props tables and examples
 - **`references/NUXT-DOCS-PATTERNS.md`** -- Gold-standard page structure, writing conventions, cross-reference patterns
+- **`references/ASTRONERA-CUSTOM.md`** -- Citation `:cited[]{}`, glossary `:defn[]{}`, math, data source rules, section content boundaries (astronera template only)
 
 ## Page Structure
 
@@ -87,109 +88,17 @@ Avoid: `might`, `could`, `would` (use sparingly for hypotheticals only).
 - Em-dashes (--) -- use commas or parentheses
 - Starting with "It" or "This" without clear antecedent
 
-## Section-Specific Rules
+## AstronEra-Specific Features
 
-### Research (`examples/astronera/content/docs/1.research/`)
+When editing `examples/astronera/content/docs/` files, consult `references/ASTRONERA-CUSTOM.md` for:
+- Citation syntax (`:cited[text]{#source-id}`)
+- Glossary terms (`:defn[term]{#id}`)
+- Math expressions (KaTeX)
+- Data source rules (MASTER_KEY.md)
+- Section-specific content boundaries and component selection (Research/Policy/Pilots)
 
-**Purpose:** Global scientific evidence documenting light pollution impacts.
+## Callout Quick Reference
 
-**Language:** "Studies document...", "Evidence indicates...", "Research demonstrates..."
-
-**Include:**
-- Peer-reviewed studies with `:cited[]{}` syntax
-- Global data and international examples
-- Maharashtra context ONLY inside `::callout{color="info"}` (1-2 sentences, factual)
-
-**Exclude:**
-- Policy recommendations (belongs in Policy section)
-- Implementation details (belongs in Pilots section)
-- "Why Maharashtra Must Act" or "Next Steps" sections
-
-**Example:**
-```md
-### 2.1 Pollination
-
-:cited[Light pollution disrupts nocturnal pollinator activity.]{#study-id} Research documents :cited[62% reduction in pollinator visits under ALAN conditions]{#another-study}.
-
-::callout{color="info"}
-Maharashtra's agricultural economy depends heavily on pollinator-dependent crops including cotton, pulses, and fruits.
-::
-```
-
-### Policy (`examples/astronera/content/docs/2.policy/`)
-
-**Purpose:** Legal frameworks, Maharashtra obligations, action plans.
-
-**Language progression:**
-- Early drafts: "Recommendations include...", "Framework proposes..."
-- Refined drafts: "Policy shall require...", "Standards mandate..."
-
-**Include:**
-- Constitutional obligations and legal precedents
-- International treaty commitments
-- State-specific regulatory frameworks
-- Justifications tied to Research evidence
-
-### Pilots (`examples/astronera/content/docs/3.pilots/`)
-
-**Purpose:** Implementation methodology (not specific site listings).
-
-**Language progression:**
-- Early: "Guidelines suggest...", "Methodology encompasses..."
-- Refined: "Standards require...", "Protocols specify..."
-
-**Include:**
-- Selection criteria, measurement protocols, monitoring frameworks
-- Stakeholder engagement processes, institutional coordination
-
-**Exclude:**
-- Specific site selections (too premature)
-- Detailed budget allocations, named individual responsibilities
-
-## Citation Syntax
-
-All quantitative claims require citations. Syntax:
-
-```md
-:cited[The cited fact or statistic.]{#source-id}
-:cited[Claim supported by multiple sources.]{#id1,id2}
-```
-
-The text inside `[...]` is the fact, statistic, or source name the citation supports:
-```md
-:cited[62% reduction in pollinator visits]{#knop-2017-pollination-threat}
-:cited[The 2023 RAND Europe study]{#hafner-2023-insomnia-burden} quantifies...
-```
-
-## Glossary Terms
-
-First use of technical terms should include a glossary definition:
-
-```md
-:defn[Artificial Light at Night (ALAN)]{#alan}
-```
-
-## Math Expressions
-
-- Inline: `$expression$`
-- Display block: `$$expression$$`
-- Escape dollar signs in text: `\$4.32 trillion`
-- Units: `$0.757\,\mathrm{tCO_2/MWh}$`
-
-## Component Selection by Section
-
-| Need | Component | Section |
-|------|-----------|---------|
-| Key statistics | `::tip` | Research |
-| Maharashtra context | `::callout{color="info"}` | Research |
-| Background info | `::note` | Any |
-| Recommendations | `::tip` | Policy |
-| Requirements | `::important` | Policy |
-| Implementation challenges | `::warning` | Pilots |
-| Best practices | `::tip` | Pilots |
-| Success indicators | `::callout{color="success"}` | Any |
-
-**Quick reference for callouts:**
 ```md
 ::tip
 Helpful advice, key statistics, recommendations.
@@ -207,16 +116,12 @@ Must-know information to avoid problems.
 Could break or cause unexpected behavior.
 ::
 
-::callout{color="info"}
-Maharashtra-specific contextual notes.
-::
-
-::callout{color="success"}
-Positive outcomes, success indicators.
+::caution
+Potential for data loss or security issues.
 ::
 ```
 
-For the full component catalog (cards, tabs, steps, accordions, code-groups, etc.), see `references/COMPONENTS.md`.
+For colored callouts and the full component catalog, see `references/COMPONENTS.md`.
 
 ## Code Blocks
 
@@ -275,34 +180,24 @@ Inline links on first mention of concepts:
 The [`nuxt.config.ts`](/docs/getting-started/configuration) file can override...
 ```
 
-## Data Source
-
-**ALL quantitative data must come from:** `examples/astronera/MASTER_KEY.md`
-
-Never invent statistics. Never extrapolate data not in MASTER_KEY. If data is not available, note the research gap instead.
-
 ## Workflow
 
-1. **Determine section** from file path (Research/Policy/Pilots)
-2. **Apply section rules** for content boundaries and tone
-3. **Write content** with proper frontmatter, heading hierarchy, citations
-4. **Select components** appropriate to section type
-5. **Add math expressions** where quantitative data requires formulas
+1. **Identify template** from file path (astronera? foundry? starter?)
+2. **Apply page structure** with proper frontmatter and heading hierarchy
+3. **Write content** following writing standards above
+4. **Select components** appropriate to content type
+5. **If astronera:** Apply section rules, citations, glossary terms per `references/ASTRONERA-CUSTOM.md`
 6. **Verify** against quality checklist below
 
 ## Quality Checklist
 
 - [ ] Frontmatter has `title` and `description` (no `# h1` in body)
-- [ ] Section rules followed (Research/Policy/Pilots boundaries)
+- [ ] Heading hierarchy valid (no skipped levels)
 - [ ] Active voice 85%+, present tense 90%+
-- [ ] Modal verbs precise (can/should/may/must)
 - [ ] Paragraphs 2-4 sentences max
-- [ ] All data sourced from MASTER_KEY.md
-- [ ] Citations use `:cited[text]{#id}` syntax
-- [ ] Maharashtra context in Research only inside `::callout{color="info"}`
-- [ ] Component types match section (tip/info/warning/important)
 - [ ] No banned words (simply, just, obviously, utilize, leverage)
 - [ ] No em-dashes
-- [ ] No weak modals (might/could/would)
-- [ ] Heading hierarchy valid (no skipped levels)
 - [ ] Code blocks have file labels
+- [ ] Cross-references use correct link syntax
+- [ ] No content duplication (link to existing pages instead)
+- [ ] External library docs linked rather than reproduced
