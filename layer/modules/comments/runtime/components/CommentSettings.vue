@@ -52,7 +52,10 @@ const { style } = useDraggable(toolbarEl, {
     >
       <!-- Collapsed: single icon button -->
       <template v-if="!isToolbarExpanded">
-        <div ref="handleEl" class="cursor-grab active:cursor-grabbing">
+        <div
+          ref="handleEl"
+          class="cursor-grab active:cursor-grabbing"
+        >
           <UButton
             icon="i-lucide-message-square-more"
             size="xs"
@@ -72,10 +75,16 @@ const { style } = useDraggable(toolbarEl, {
           class="cursor-grab active:cursor-grabbing text-muted hover:text-default"
           title="Drag to reposition"
         >
-          <UIcon name="i-lucide-grip-vertical" class="size-4" />
+          <UIcon
+            name="i-lucide-grip-vertical"
+            class="size-4"
+          />
         </div>
 
-        <UFieldGroup size="xs" class="flex flex-nowrap">
+        <UFieldGroup
+          size="xs"
+          class="flex flex-nowrap"
+        >
           <UButton
             v-for="mode in modeItems"
             :key="mode.value"
@@ -94,7 +103,10 @@ const { style } = useDraggable(toolbarEl, {
           variant="soft"
           @click="isPanelOpen = true"
         >
-          <template v-if="openComments.length" #trailing>
+          <template
+            v-if="openComments.length"
+            #trailing
+          >
             <UBadge
               :label="String(openComments.length)"
               size="xs"
