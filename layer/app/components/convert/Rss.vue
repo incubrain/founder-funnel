@@ -26,6 +26,21 @@ const { actions, handleSelect } = useRssFeed({
   feedUrl: props.feedUrl,
   location: props.location,
 })
+
+// Compute button classes to avoid dynamic Tailwind class generation
+const buttonClasses = computed(() => {
+  if (props.showLabel)
+    return ''
+
+  // Predefined color variants for proper Tailwind purging
+  const colorMap = {
+    primary: 'rounded-full flex p-2 bg-primary/10 hover:bg-primary/40',
+    secondary: 'rounded-full flex p-2 bg-secondary/10 hover:bg-secondary/40',
+    neutral: 'rounded-full flex p-2 bg-neutral/10 hover:bg-neutral/40',
+  }
+
+  return colorMap[props.color as keyof typeof colorMap] || colorMap.neutral
+})
 </script>
 
 <template>
@@ -41,9 +56,7 @@ const { actions, handleSelect } = useRssFeed({
       :size="size"
       :trailing-icon="showLabel ? 'i-lucide-chevron-down' : ''"
       :ui="{
-        base: showLabel
-          ? ''
-          : `rounded-full flex p-2 bg-${color}/10 hover:bg-${color}/40`,
+        base: buttonClasses,
         content: 'w-full',
         item: 'hover:bg-primary/10',
       }"

@@ -51,6 +51,18 @@ onMounted(() => {
 const scrollToTop = () => {
   window?.scrollTo({ top: 0, behavior: 'smooth' })
 }
+
+// Extract complex author mapping from template
+const getAuthorsForItem = (item: ChangelogCollectionItem) => {
+  const author = getAuthorForItem(item as unknown as Record<string, unknown>)
+  if (!author)
+    return []
+
+  return [{
+    ...author,
+    avatar: author.avatar ? { src: author.avatar } : undefined,
+  }]
+}
 </script>
 
 <template>
@@ -94,7 +106,7 @@ const scrollToTop = () => {
           :key="String(item[labelField])"
           :title="item.title"
           :description="item.description"
-          :authors="(getAuthorForItem(item as unknown as Record<string, unknown>) ? [{ ...getAuthorForItem(item as unknown as Record<string, unknown>)!, avatar: getAuthorForItem(item as unknown as Record<string, unknown>)?.avatar ? { src: getAuthorForItem(item as unknown as Record<string, unknown>)!.avatar! } : undefined }] : []) as any"
+          :authors="getAuthorsForItem(item)"
           :image="showImage ? item.image : undefined"
           :date="String(item[sortField])"
           :to="item.path"
