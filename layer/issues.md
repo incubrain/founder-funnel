@@ -50,8 +50,7 @@
 
 - [x] **DocsAsideLeftBody hardcoded `'docs'` collection:** Now uses `useContentConfig().collections.docs` for dynamic collection name resolution.
 
-- [ ] **RSS handler registry not extensible:** `server/utils/rss.handler.ts` has a hardcoded `RSS_HANDLERS` map. Consuming apps cannot register custom RSS feed handlers without modifying the layer. Consider a hook-based or config-driven registration approach.
-  - **Docs:** `docs/advanced/5.rss.md`
+- [x] **RSS handler registry not extensible:** Extracted into `modules/rss/` with config-driven feed registration via `rss.feeds` in nuxt.config.ts.
 
 - [x] **Double data fetching in `landing.vue`:** Now injects `site_config` from the provider set by `app.vue` instead of fetching separately.
 

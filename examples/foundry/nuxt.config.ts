@@ -32,6 +32,9 @@ export default defineNuxtConfig({
     '/decisions': { appLayout: 'default' },
     '/decisions/**': { appLayout: 'article' },
 
+    // RSS Feeds
+    '/rss-feeds': { appLayout: 'default' },
+
     // RSS
     // '/rss/**': {
     //   headers: {
@@ -113,6 +116,18 @@ export default defineNuxtConfig({
       'Template designed for technical founders validating ideas',
       'Built with Nuxt 4, Tailwind v4, TypeScript',
     ],
+  },
+
+  // RSS feeds — each key becomes /rss/{key}
+  rss: {
+    feeds: {
+      decisions: {
+        collection: 'changelog',
+        title: 'IncuBrain Foundry Changelog',
+        description: 'Latest decisions and changelogs from IncuBrain Foundry',
+        basePath: '/changelog',
+      },
+    },
   },
 
   studio: {

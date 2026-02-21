@@ -43,7 +43,6 @@
     "prepack": "rm -rf modules/**/node_modules"
   },
   "dependencies": {
-    "@iconify/json": "^2.2.439",
     "@nuxt/content": "^3.11.2",
     "@nuxt/image": "^2.0.0",
     "@nuxt/kit": "^4.3.1",
@@ -79,12 +78,20 @@
     "vue-tsc": "^3.2.1"
   },
   "peerDependencies": {
+    "@iconify-json/lucide": "*",
+    "@iconify-json/simple-icons": "*",
     "better-sqlite3": "12.x",
     "nuxt": "4.x",
     "nuxt-llms": "^0.2.0",
     "nuxt-studio": "^1.2.0"
   },
   "peerDependenciesMeta": {
+    "@iconify-json/lucide": {
+      "optional": true
+    },
+    "@iconify-json/simple-icons": {
+      "optional": true
+    },
     "better-sqlite3": {
       "optional": true
     },

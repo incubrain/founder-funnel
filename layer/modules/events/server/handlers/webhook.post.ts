@@ -3,10 +3,20 @@ import { formatDiscordMessage } from '../formatters/discord'
 import { formatSlackMessage } from '../formatters/slack'
 import { formatTelegramMessage } from '../formatters/telegram'
 import { RateLimiter, validateAntiSpam } from '../utils/anti-spam'
+import { retryWithBackoff, validateWebhookUrl } from '../utils/webhook-retry'
 
+// Strict schema matching FieldDef types from useFormCapture
 const captureSchema = z.object({
-  formData: z.record(z.string(), z.any()),
-  antiSpam: z.any().optional(),
+  formData: z.record(z.string(), z.union([
+    z.string(),
+    z.number(),
+    z.boolean(),
+  ])),
+  antiSpam: z.object({
+    honeypot: z.string().optional(),
+    timestamp: z.number().optional(),
+    hasJs: z.boolean().optional(),
+  }).optional(),
 })
 
 // Global rate limiter instance
@@ -110,6 +120,19 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  // Validate all webhook URLs for security
+  for (const url of webhookUrls) {
+    const validation = validateWebhookUrl(url)
+    if (!validation.valid) {
+      throw createEvlogError({
+        status: 500,
+        message: 'Invalid webhook URL detected',
+        why: `${url.substring(0, 30)}...: ${validation.reason}`,
+        fix: 'Only HTTPS URLs from allowed providers (Telegram, Slack, Discord, Zapier, IFTTT) are permitted',
+      })
+    }
+  }
+
   const telegramChatId = config.telegramChatId
 
   log.set({ webhooks: { count: webhookUrls.length } })
@@ -150,46 +173,43 @@ export default defineEventHandler(async (event) => {
         throw error
       }
 
-      try {
-        const response = await $fetch(url, {
-          method: 'POST',
-          body: message,
-        })
+      // Retry webhook delivery with exponential backoff
+      const response = await retryWithBackoff(
+        async () => {
+          const result = await $fetch(url, {
+            method: 'POST',
+            body: message,
+          })
 
-        // Validate Telegram response
-        if (
-          platform === 'telegram'
-          && response
-          && typeof response === 'object'
-        ) {
-          const telegramResponse = response as {
-            ok: boolean
-            description?: string
-            error_code?: number
+          // Validate Telegram response
+          if (
+            platform === 'telegram'
+            && result
+            && typeof result === 'object'
+          ) {
+            const telegramResponse = result as {
+              ok: boolean
+              description?: string
+              error_code?: number
+            }
+
+            if (!telegramResponse.ok) {
+              throw new Error(
+                telegramResponse.description || 'Telegram API returned ok: false',
+              )
+            }
           }
 
-          if (!telegramResponse.ok) {
-            log.error(new Error(telegramResponse.description || 'Telegram API returned ok: false'), {
-              step: `delivery-${platform}`,
-              errorCode: telegramResponse.error_code,
-            })
+          return result
+        },
+        {
+          maxAttempts: 3,
+          baseDelay: 1000,
+          logger: log,
+        },
+      )
 
-            throw new Error(
-              telegramResponse.description || 'Telegram API returned ok: false',
-            )
-          }
-        }
-
-        return { platform, url: url.substring(0, 30) + '...', success: true }
-      }
-      catch (error: unknown) {
-        log.error(error instanceof Error ? error : new Error(String(error)), {
-          step: `delivery-${platform}`,
-          url: url.substring(0, 10) + '...',
-        })
-
-        throw error
-      }
+      return { platform, url: url.substring(0, 30) + '...', success: true }
     }),
   )
 

@@ -32,7 +32,7 @@ Foundry is an open-source [Nuxt Layer](https://nuxt.com/docs/getting-started/lay
   ::
 
   ::card{title="Advanced" icon="i-lucide-settings" to="/docs/advanced"}
-  Structured logging, citations, search, RSS, MCP tools, and multi-config.
+  Structured logging, citations, search, RSS, MCP tools, multi-config, and developer tooling.
   ::
 
   ::card{title="Testing" icon="i-lucide-check-circle" to="/docs/testing"}

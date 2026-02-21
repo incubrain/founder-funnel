@@ -41,3 +41,15 @@ terms:
     definition:
       Measure of the profitability of an investment, calculated as net benefit
       divided by cost.
+  - id: experiential-tourism
+    term: Experiential Tourism
+    definition:
+      Tourism focused on immersive, participatory experiences rather than
+      passive sightseeing, including activities like stargazing, wildlife
+      observation, and cultural engagement.
+  - id: wellness-tourism
+    term: Wellness Tourism
+    definition:
+      Travel motivated by health and well-being outcomes, including
+      circadian health, sleep quality, and stress reduction through
+      exposure to natural environments and dark skies.

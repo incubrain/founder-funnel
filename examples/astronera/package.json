@@ -9,6 +9,8 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
+    "@iconify-json/lucide": "^1.2.90",
+    "@iconify-json/simple-icons": "^1.2.38",
     "@incubrain/foundry": "^0.5.2",
     "better-sqlite3": "^12.5.0",
     "nuxt": "^4.3.0",
