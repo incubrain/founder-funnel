@@ -3,6 +3,8 @@ import type { ContentNavigationItem } from '@nuxt/content'
 
 const appConfig = useAppConfig()
 const route = useRoute()
+const runtimeConfig = useRuntimeConfig()
+const citationsEnabled = computed(() => runtimeConfig.public.docs?.citations !== false)
 // Use unified content page composable
 const { collection, getPage, setContext } = useContentPage()
 
@@ -172,7 +174,10 @@ watch(
               :key="`surround-${route.path}`"
               :surround="surround"
             />
-            <Bibliography :key="`bibliography-${route.path}`" />
+            <Bibliography
+              v-if="citationsEnabled"
+              :key="`bibliography-${route.path}`"
+            />
           </template>
         </UPageBody>
 
