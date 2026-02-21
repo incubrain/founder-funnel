@@ -61,10 +61,7 @@ export default defineNuxtConfig({
     evlog: {
       sampling: {
         rates: { info: 10, warn: 50, debug: 0 },
-        keep: [
-          { status: 400 },
-          { duration: 1000 },
-        ],
+        keep: [{ status: 400 }, { duration: 1000 }],
       },
     },
 
@@ -94,6 +91,10 @@ export default defineNuxtConfig({
     build: {
       markdown: {
         highlight: {
+          theme: {
+            default: 'andromeeda',
+            dark: 'github-dark',
+          },
           langs: [
             'bash',
             'diff',
@@ -200,7 +201,9 @@ export default defineNuxtConfig({
   },
 
   hooks: {
-    'components:extend': (components: { pascalName: string, global?: boolean | 'sync' }[]) => {
+    'components:extend': (
+      components: { pascalName: string; global?: boolean | 'sync' }[],
+    ) => {
       const globals = components.filter((c: { pascalName: string }) =>
         ['UButton', 'UIcon', 'ProseDfn'].includes(c.pascalName),
       )
