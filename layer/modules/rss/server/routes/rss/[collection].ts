@@ -1,3 +1,5 @@
+import { getRSSHandler } from '../../utils/rss-registry'
+
 export default defineEventHandler(async (event) => {
   const log = useLogger(event)
   const collection = getRouterParam(event, 'collection')
@@ -13,7 +15,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Get handler from registry (auto-imported)
   const handler = getRSSHandler(collection)
 
   if (!handler) {
@@ -21,7 +22,7 @@ export default defineEventHandler(async (event) => {
       status: 404,
       message: `RSS feed not available for: ${collection}`,
       why: `No RSS handler registered for collection "${collection}"`,
-      fix: 'Register an RSS handler using registerRSSHandler() in server/utils/rss/',
+      fix: 'Add the feed to the rss.feeds config in nuxt.config.ts',
     })
   }
 

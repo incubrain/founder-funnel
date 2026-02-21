@@ -14,6 +14,7 @@ export default defineNuxtConfig({
     resolve('./modules/events'),
     resolve('./modules/vrt'),
     resolve('./modules/comments'),
+    resolve('./modules/rss'),
     'evlog/nuxt',
     '@nuxt/ui',
     '@nuxtjs/seo',
