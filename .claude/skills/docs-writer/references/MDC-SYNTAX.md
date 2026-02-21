@@ -67,8 +67,7 @@ A simple :inline-component in text.
 **With props:**
 ```md
 :icon{name="i-lucide-moon"}
-:read-more{to="/docs/guide/concepts"}
-:read-more{title="Custom title" to="/docs/path"}
+:badge[v2.0]{color="success"}
 ```
 
 **With label and props:**

@@ -28,7 +28,7 @@ pnpm preview
 
 Set your environment variables in the hosting provider's dashboard. At minimum, you need `NUXT_PUBLIC_SITE_URL`. Add `NUXT_WEBHOOK_URL` and analytics variables as needed.
 
-:read-more{title="Full environment variables reference" to="/docs/reference/environment-variables"}
+See the [full environment variables reference](/docs/reference/environment-variables) for all available variables.
 
 ## Supported Targets
 

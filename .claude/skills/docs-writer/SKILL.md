@@ -49,7 +49,7 @@ Content with code examples and callouts.
 
 More specific details.
 
-:read-more{to="/docs/related-topic"}
+See the [Related topic](/docs/related-topic) for more details.
 ```
 
 **Rules:**
@@ -57,7 +57,7 @@ More specific details.
 2. Intro paragraphs immediately after frontmatter, before first `##`
 3. Never skip heading levels (no h2 → h4)
 4. Landing/index pages: `navigation: false` and `surround: false`, use `::card-group` to link subsections
-5. `:read-more` goes at end of sections, after the last paragraph or code block
+5. Cross-reference links go at end of sections, after the last paragraph or code block — use standard `[text](/path)` markdown links
 6. Code blocks always have file labels: `` ```ts [nuxt.config.ts] ``
 
 ## Writing Standards
@@ -70,7 +70,7 @@ More specific details.
 
 **Links:** Inline link on first mention of a concept: `` [`nuxt.config.ts`](/docs/getting-started/configuration) ``
 
-**No duplication:** Link to existing pages with `:read-more` instead of repeating information. Link to external library docs instead of reproducing them.
+**No duplication:** Link to existing pages with standard `[text](/path)` links instead of repeating information. Link to external library docs instead of reproducing them.
 
 ## Component Selection
 
@@ -78,7 +78,7 @@ Choose the right component for the content:
 
 | Need | Component |
 |------|-----------|
-| Cross-reference another page | `:read-more{to="/docs/..."}` |
+| Cross-reference another page | `[Link text](/docs/...)` (standard markdown link) |
 | Helpful advice or recommendation | `::tip` |
 | Supplementary context | `::note` |
 | Must-know information | `::important` |
@@ -122,4 +122,4 @@ For `examples/foundry/content/docs/`:
 - [ ] Code blocks have file labels
 - [ ] No content duplication (link instead)
 - [ ] External library docs linked, not reproduced
-- [ ] `:read-more` at end of sections, not mid-content
+- [ ] Cross-reference links at end of sections, not mid-content

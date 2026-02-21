@@ -82,8 +82,7 @@ All convert components work in MDC syntax:
 
 Props use kebab-case in MDC (e.g., `submit-label` instead of `submitLabel`).
 
-:read-more{title="Components API reference" to="/docs/reference/components#convert-components"}
-:read-more{title="Events and tracking" to="/docs/events"}
+See the [Components API reference](/docs/reference/components#convert-components) and [Events and tracking](/docs/events) for more details.
 
 ::card-group
   ::card{title="Email Forms" icon="i-lucide-mail" to="/docs/signal-capture/email-forms"}

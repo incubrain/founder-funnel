@@ -75,7 +75,7 @@ If a content file doesn't match its schema, you'll get a clear build-time error.
 Nuxt Content uses file names for ordering and path generation:
 
 - **Numbered prefixes** control order: `1.introduction.md` comes before `2.quickstart.md`
-- **The number is stripped** from the URL: `1.introduction.md` → `/docs/getting-started/introduction`
+- **The number is stripped** from the URL: `1.quickstart.md` → `/docs/getting-started/quickstart`
 - **`index.md`** files become the directory root: `content/docs/index.md` → `/docs`
 - **Nested directories** create nested paths: `content/docs/1.getting-started/1.intro.md` → `/docs/getting-started/intro`
 

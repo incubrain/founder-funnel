@@ -13,7 +13,6 @@ Complete catalog of MDC components with props and examples. Load this file when 
 - [Card and card group](#card-and-card-group)
 - [Accordion](#accordion)
 - [Collapsible](#collapsible)
-- [Read more](#read-more)
 - [Details](#details)
 - [Field and field group](#field-and-field-group)
 - [Badge](#badge)
@@ -27,7 +26,7 @@ Complete catalog of MDC components with props and examples. Load this file when 
 
 **Decision flow:**
 
-1. Linking to another page? → `:read-more`
+1. Linking to another page? → Standard markdown link `[text](/path)`
 2. Alerting the reader? → Callout (pick severity: tip < note < important < warning < caution)
 3. Step-by-step instructions? → `::steps`
 4. Multiple code alternatives? → `::code-group`
@@ -290,36 +289,6 @@ Single expandable section.
 
 ::
 ```
-
-## Read more
-
-Cross-reference links. The primary mechanism for linking between docs pages.
-
-**Inline (auto-generates link text):**
-```md
-:read-more{to="/docs/guide/concepts/rendering"}
-```
-
-**Inline with custom title:**
-```md
-:read-more{title="Learn about rendering" to="/docs/guide/concepts/rendering"}
-```
-
-**Block (with custom descriptive text):**
-```md
-::read-more{to="/docs/api/configuration"}
-Every option is described in the **Configuration Reference**.
-::
-```
-
-**With icon:**
-```md
-::read-more{to="/docs/guide/experimental" icon="i-lucide-star"}
-Explore experimental features.
-::
-```
-
-**Placement rule:** Always at the end of a section, after the last paragraph/code block.
 
 ## Details
 

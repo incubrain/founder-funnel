@@ -63,8 +63,7 @@ The VRT job uses update mode in CI to handle cross-platform font rendering diffe
 - Third-party library behavior
 - Content typos (that's what preview is for)
 
-:read-more{title="Visual regression testing" to="/docs/testing/visual-regression"}
-:read-more{title="Agent navigability" to="/docs/testing/agent-navigability"}
+See [Visual regression testing](/docs/testing/visual-regression) and [Agent navigability](/docs/testing/agent-navigability) for details.
 
 ::card-group
   ::card{title="Visual Regression" icon="i-lucide-image" to="/docs/testing/visual-regression"}
