@@ -5,7 +5,7 @@ import {
   baseNavigationSchema,
   basePageSchema,
   baseTeamSchema,
-} from '@incubrain/foundry/content.collections'
+} from '@incubrain/foundry/schemas'
 
 export default defineContentConfig({
   collections: {
