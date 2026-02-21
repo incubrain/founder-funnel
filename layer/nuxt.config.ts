@@ -234,8 +234,8 @@ export default defineNuxtConfig({
 
   icon: {
     serverBundle: {
-      // {DX}: Using full @iconify/json no need to install collection packages
-      // collections array enables tree-shake
+      // Install individual @iconify-json/* packages (optional peer deps)
+      // Override ICON_LIBRARIES in shared/constants.ts to use different icon sets
       collections: [...ICON_LIBRARIES],
     },
   },

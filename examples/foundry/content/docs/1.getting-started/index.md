@@ -85,6 +85,8 @@ Embed scheduling links (Cal.com, Calendly) to let potential customers book time 
 
 ## What's Under the Hood
 
+Foundry is forked from [Docus](https://docus.dev){target="_blank"}, the documentation template by the Nuxt Content team. It shares many of the same capabilities — MDC components, content collections, full-text search, and theming. Foundry removes i18n (browser-native translation is advancing rapidly with AI, so maintaining translations just slows down shipping) and adds signal capture, event tracking, and webhook streaming for demand validation. The [Docus docs](https://docus.dev/en){target="_blank"} are a useful companion reference for inherited features.
+
 Foundry is built on a modern, well-supported stack:
 
 | Technology                                    | Purpose                          | Docs                                                 |
