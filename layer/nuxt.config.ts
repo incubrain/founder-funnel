@@ -15,6 +15,8 @@ export default defineNuxtConfig({
     resolve('./modules/vrt'),
     resolve('./modules/comments'),
     resolve('./modules/rss'),
+    resolve('./modules/changelog'),
+    resolve('./modules/docs'),
     'evlog/nuxt',
     '@nuxt/ui',
     '@nuxtjs/seo',
@@ -143,7 +145,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       debug: true,
-      configSource: '',
       siteUrl: '',
       scripts: {
         umamiAnalytics: {
@@ -165,7 +166,7 @@ export default defineNuxtConfig({
   alias: {
     '#constants': resolve('./shared/constants.ts'),
     '#navigation': resolve('./app/composables/useNavigation.ts'),
-    '#search': resolve('./app/composables/useSearch.ts'),
+    '#search': resolve('./modules/docs/runtime/composables/useSearchStub.ts'),
   },
 
   experimental: {
@@ -206,7 +207,7 @@ export default defineNuxtConfig({
       components: { pascalName: string; global?: boolean | 'sync' }[],
     ) => {
       const globals = components.filter((c: { pascalName: string }) =>
-        ['UButton', 'UIcon', 'ProseDfn'].includes(c.pascalName),
+        ['UButton', 'UIcon'].includes(c.pascalName),
       )
       globals.forEach((c: { global?: boolean | 'sync' }) => (c.global = true))
     },

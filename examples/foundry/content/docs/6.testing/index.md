@@ -6,7 +6,7 @@ description: Testing philosophy, available commands, and what to test.
 
 Ship first, test what matters. Foundry's testing strategy focuses on:
 
-1. **Visual correctness** — Do components look right? (VRT)
+1. **Visual correctness** — Do components look right? ([VRT module](/docs/modules/vrt))
 2. **Accessibility** — Can AI agents and screen readers navigate? (Agent navigability)
 3. **Core logic** — Do composables and server handlers work? (Unit tests)
 
@@ -54,7 +54,7 @@ The VRT job uses update mode in CI to handle cross-platform font rendering diffe
 - Anti-spam scoring produces expected results
 
 ### Test When Changed
-- Visual appearance of components (VRT)
+- Visual appearance of components ([VRT](/docs/modules/vrt))
 - Content rendering after schema changes
 - Layout behavior after route rule changes
 
@@ -63,14 +63,12 @@ The VRT job uses update mode in CI to handle cross-platform font rendering diffe
 - Third-party library behavior
 - Content typos (that's what preview is for)
 
-See [Visual regression testing](/docs/testing/visual-regression) and [Agent navigability](/docs/testing/agent-navigability) for details.
-
 ::card-group
-  ::card{title="Visual Regression" icon="i-lucide-image" to="/docs/testing/visual-regression"}
-  Screenshot comparison, baselines, and the VRT module.
-  ::
-
   ::card{title="Agent Navigability" icon="i-lucide-accessibility" to="/docs/testing/agent-navigability"}
   Accessibility landmarks, heading hierarchy, and smoke tests.
+  ::
+
+  ::card{title="Visual Regression" icon="i-lucide-image" to="/docs/modules/vrt"}
+  Screenshot comparison, baselines, and the VRT module.
   ::
 ::

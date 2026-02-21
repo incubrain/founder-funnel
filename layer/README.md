@@ -45,13 +45,11 @@ Full documentation: [foundry.incubrain.org](https://foundry.incubrain.org)
 
 ## Credits
 
-Foundry is forked from [Docus](https://docus.dev) ([GitHub](https://github.com/nuxt-content/docus)), the documentation template by the Nuxt Content team. Docus provides a fully integrated documentation solution with Nuxt UI, MDC components, full-text search, and theming. Foundry builds on this foundation and adds signal capture, event tracking, and webhook streaming for demand validation.
+Foundry's docs module is heavily inspired by [Docus](https://docus.dev) ([GitHub](https://github.com/nuxt-content/docus)), the documentation template by the Nuxt Content team. Docus provides a fully integrated documentation solution with Nuxt UI, MDC components, full-text search, and theming. Foundry builds on this foundation and adds signal capture, event tracking, and webhook streaming for demand validation.
 
 **What changed from Docus:**
 - Removed i18n — browser-native translation is improving rapidly with AI, and maintaining translations slows down shipping. Focus on writing great content in one language.
-- Added signal capture modules (email, presales, bookings)
-- Added analytics-agnostic event tracking with webhook delivery
-- Added structured logging with [evlog](https://github.com/davestewart/evlog)
+- Added glossary and citation system
 
 For Docus-inherited features (MDC components, content collections, search, theming), the [Docus documentation](https://docus.dev/en) is an excellent reference alongside these docs.
 

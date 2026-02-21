@@ -1,6 +1,10 @@
 import { z, property } from '@nuxt/content'
 import { ICON_LIBRARIES } from './shared/constants'
 
+// Re-export schemas from modules (source of truth lives in each module)
+export { baseChangelogSchema } from './modules/changelog/runtime/types'
+export { baseReferencesSchema, baseGlossarySchema } from './modules/docs/runtime/types'
+
 export const baseConfigSchema = z.object({
   business: z.object({
     name: z.string(),
@@ -50,53 +54,6 @@ export const basePageSchema = z.object({
       }),
     )
     .optional(),
-})
-
-export const baseReferencesSchema = z.object({
-  category: z.object({
-    id: z.string(),
-    label: z.string(),
-  }),
-  sources: z.array(
-    z.object({
-      id: z.string(),
-      title: z.string(),
-      author: z.string().optional(),
-      date: z.string(),
-      description: z.string().optional(),
-      credibilityScore: z.number().min(1).max(10).optional(),
-      affiliation: z.string().optional(),
-      pdf: z.string().optional(),
-      url: z.string().optional(),
-    }),
-  ),
-})
-
-export const baseGlossarySchema = z.object({
-  category: z.object({
-    id: z.string(), // replace with slug
-    label: z.string(),
-    color: z.string().optional(),
-  }),
-  terms: z.array(
-    z.object({
-      id: z.string(), // replace with slug
-      term: z.string(),
-      abbreviation: z.string().optional(),
-      definition: z.string(),
-    }),
-  ),
-})
-
-export const baseChangelogSchema = z.object({
-  label: z.string(),
-  version: z.string(),
-  date: z.string().optional(),
-  title: z.string(),
-  description: z.string().optional(),
-  excerpt: z.string().optional(),
-  image: property(z.string().optional()).editor({ input: 'media' }),
-  author: z.string().optional(), // team member slug
 })
 
 // Reusable navigation link schema

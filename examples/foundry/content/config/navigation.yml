@@ -53,7 +53,7 @@ footer:
           to: /docs/signal-capture
         - label: Events & Tracking
           icon: i-lucide-activity
-          to: /docs/events
+          to: /docs/modules/events
     - label: About
       icon: i-lucide-info
       to: /about

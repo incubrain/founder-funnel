@@ -54,7 +54,9 @@ export function useChangelog(options: ChangelogOptions) {
 
     return {
       name: `${member.givenName} ${member.surname}`,
-      avatar: member.avatar as unknown as string | undefined,
+      avatar: typeof member.avatar === 'object' && member.avatar
+        ? (member.avatar as { src?: string }).src
+        : (member.avatar as string | undefined),
       to: member.links?.find(link => link.label === 'GitHub')?.url,
       target: '_blank',
     }

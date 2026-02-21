@@ -23,20 +23,16 @@ Foundry is an open-source [Nuxt Layer](https://nuxt.com/docs/getting-started/lay
   Email forms, external payment links, pricing grids, and social proof.
   ::
 
-  ::card{title="Events & Tracking" icon="i-lucide-activity" to="/docs/events"}
-  Analytics-agnostic event system, providers, webhooks, and anti-spam.
-  ::
-
   ::card{title="Theming" icon="i-lucide-palette" to="/docs/theming"}
   Colors, layouts, component overrides, and Tailwind v4 integration.
   ::
 
   ::card{title="Advanced" icon="i-lucide-settings" to="/docs/advanced"}
-  Structured logging, citations, search, RSS, MCP tools, multi-config, and developer tooling.
+  Structured logging, MCP tools, and developer tooling.
   ::
 
   ::card{title="Testing" icon="i-lucide-check-circle" to="/docs/testing"}
-  Visual regression testing, agent navigability, and CI integration.
+  Agent navigability, CI integration, and testing strategy.
   ::
 
   ::card{title="Deployment" icon="i-lucide-cloud-upload" to="/docs/deployment"}
@@ -45,5 +41,9 @@ Foundry is an open-source [Nuxt Layer](https://nuxt.com/docs/getting-started/lay
 
   ::card{title="Reference" icon="i-lucide-library" to="/docs/reference"}
   Complete API reference for components, composables, schemas, and config.
+  ::
+
+  ::card{title="Modules" icon="i-lucide-puzzle" to="/docs/modules"}
+  Events, docs, RSS, changelog, comments, and VRT — opt-in feature modules.
   ::
 ::

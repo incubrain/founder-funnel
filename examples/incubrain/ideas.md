@@ -1,13 +1,6 @@
 - many of this guys videos: https://www.youtube.com/watch?v=WiTIgjYxWbE
 - future automation https://docs.anythingllm.com/
-- ***
 
-landing page ideas:
-
-- https://shipfa.st
-
-- Add a '/join' route that is concise and used for direct joining in marketing
-  campaigns (~150vh on desktop), probably would be part of the demand stage
 
 ## Ideas
 
@@ -147,23 +140,3 @@ landing page ideas:
   benefit from this thing. Message structure: Greet, Compliment,
   Problem/Solution, Referral.
 
-1. Pierre Herubel - Marketing Strategy
-2. Josh Sanders - Creator Growth
-3. Chris Donnelly - Social Media
-4. Ruben Hassid - AI Marketing
-5. Charlie Hills - AI + Content
-6. Jeff Gapinski - B2B CRO
-7. Jess Cook - Content
-8. Jason Vana - Branding
-9. Nicolas Cole - LinkedIn Writing
-10. Lara Acosta - Personal Branding
-11. Nathan Hirsch - Growth & Marketing
-12. Matt Gray - Entrepreneur Marketing
-13. Luke Shalom - LinkedIn Marketing
-14. Matt Barker - LinkedIn Content
-15. Jasmin Alic - LinkedIn Growth
-16. Connor Gillivan - SEO & Content
-17. Alex Hormozi - Sales & Branding
-18. Steven Schneider - SEO Content
-19. Chase Dimond - Email Marketing
-20. Marina Panova - LinkedIn Growth
