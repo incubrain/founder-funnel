@@ -11,7 +11,7 @@ Signal capture is collecting evidence that people want what you're building. In 
 - **Booking click** — "I'm interested enough to schedule time with you"
 - **Social engagement** — "I'm interested enough to follow or share"
 
-Each of these is a measurable signal. Foundry tracks them all through the [Events system](/docs/events).
+Each of these is a measurable signal. Foundry tracks them all through the [Events system](/docs/modules/events).
 
 ## Three Validation Paths
 
@@ -82,7 +82,7 @@ All convert components work in MDC syntax:
 
 Props use kebab-case in MDC (e.g., `submit-label` instead of `submitLabel`).
 
-See the [Components API reference](/docs/reference/components#convert-components) and [Events and tracking](/docs/events) for more details.
+See the [Components API reference](/docs/reference/components#convert-components) and [Events and tracking](/docs/modules/events) for more details.
 
 ::card-group
   ::card{title="Email Forms" icon="i-lucide-mail" to="/docs/signal-capture/email-forms"}
