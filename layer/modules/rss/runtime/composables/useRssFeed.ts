@@ -1,100 +1,52 @@
-import type { RSSReaderType, RssFeedOptions, RssAction } from '../types'
+import type { RSSFeedConfig } from '../types'
+
+interface RSSFeedInfo {
+  /** Feed slug (key from config) */
+  name: string
+  /** Full URL to the RSS XML */
+  url: string
+  /** Feed title */
+  title: string
+  /** Feed description */
+  description?: string
+}
 
 /**
- * Handles RSS feed URL resolution, reader link generation,
- * and event tracking for RSS subscriptions.
+ * Provides RSS feed metadata and the feeds page URL.
+ * Used by ConvertRss button and the RSS feeds page.
  */
-export function useRssFeed(options: RssFeedOptions) {
+export function useRssFeed() {
   const config = useRuntimeConfig()
   const { trackEvent } = useEvents()
-  const { copy } = useClipboard()
-  const toast = useToast()
 
-  const feedUrl = computed(() => {
-    if (options.feedUrl) return options.feedUrl
-    return `${config.public.siteUrl}/rss/${options.feedPath}`
+  const rssConfig = computed(() => (config.public as Record<string, unknown>).rss as {
+    feeds: Record<string, RSSFeedConfig>
+    route: string
+  } | undefined)
+
+  const feedsPageUrl = computed(() => rssConfig.value?.route || '/rss-feeds')
+
+  const feeds = computed<RSSFeedInfo[]>(() => {
+    const feedsMap = rssConfig.value?.feeds || {}
+    return Object.entries(feedsMap).map(([name, feed]) => ({
+      name,
+      url: `${config.public.siteUrl}/rss/${name}`,
+      title: feed.title || name.charAt(0).toUpperCase() + name.slice(1),
+      description: feed.description,
+    }))
   })
 
-  const trackRSSClick = (target: 'internal' | 'external', type: RSSReaderType) => {
+  const trackClick = (location: string) => {
     trackEvent({
-      id: `offer_click_rss_${options.location}_${options.feedPath}_${type}`,
+      id: `offer_click_rss_${location}`,
       type: 'offer_click',
-      target: `rss_${target}`,
+      target: 'rss_feeds_page',
     })
-  }
-
-  const copyFeedUrl = async () => {
-    await copy(feedUrl.value)
-    trackRSSClick('internal', 'copy')
-
-    toast.add({
-      title: 'Feed URL Copied',
-      description: 'Paste into your RSS reader',
-      icon: 'i-lucide-check',
-      color: 'success',
-    })
-  }
-
-  const openReader = (url: string, type: RSSReaderType) => {
-    trackRSSClick('external', type)
-    window.open(url, '_blank')
-  }
-
-  const actions = computed<RssAction[]>(() => [
-    {
-      label: 'Copy Feed URL',
-      icon: 'i-lucide-copy',
-      click: copyFeedUrl,
-    },
-    {
-      label: 'Open Feed',
-      icon: 'i-lucide-external-link',
-      click: () => {
-        trackRSSClick('internal', 'xml')
-        window.open(feedUrl.value, '_blank')
-      },
-    },
-    {
-      label: 'Feedly',
-      icon: 'i-simple-icons-feedly',
-      click: () => openReader(
-        `https://feedly.com/i/subscription/feed/${encodeURIComponent(feedUrl.value)}`,
-        'feedly',
-      ),
-    },
-    {
-      label: 'Inoreader',
-      icon: 'i-simple-icons-inoreader',
-      click: () => openReader(
-        `https://www.inoreader.com/?add_feed=${encodeURIComponent(feedUrl.value)}`,
-        'inoreader',
-      ),
-    },
-    {
-      label: 'NewsBlur',
-      icon: 'i-lucide-newspaper',
-      click: () => openReader(
-        `https://www.newsblur.com/?url=${encodeURIComponent(feedUrl.value)}`,
-        'newsblur',
-      ),
-    },
-    {
-      label: 'The Old Reader',
-      icon: 'i-lucide-book-open',
-      click: () => openReader(
-        `https://theoldreader.com/feeds/subscribe?url=${encodeURIComponent(feedUrl.value)}`,
-        'oldreader',
-      ),
-    },
-  ])
-
-  const handleSelect = (option: RssAction | null) => {
-    if (option?.click) option.click()
   }
 
   return {
-    feedUrl,
-    actions,
-    handleSelect,
+    feeds,
+    feedsPageUrl,
+    trackClick,
   }
 }

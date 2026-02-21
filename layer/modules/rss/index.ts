@@ -5,6 +5,7 @@ import {
   addServerHandler,
   addServerPlugin,
   createResolver,
+  extendPages,
 } from '@nuxt/kit'
 import type { RSSModuleOptions } from './runtime/types'
 
@@ -21,12 +22,14 @@ export default defineNuxtModule<RSSModuleOptions>({
     enabled: true,
     feeds: {},
     cacheTtl: 3600,
+    route: '/rss-feeds',
   },
 
   setup(options, nuxt) {
     if (!options.enabled) return
 
     const resolver = createResolver(import.meta.url)
+    const feedsRoute = options.route || '/rss-feeds'
 
     // Auto-import useRssFeed composable
     addImports({
@@ -55,20 +58,31 @@ export default defineNuxtModule<RSSModuleOptions>({
     // Add Nitro plugin that registers feeds from config at startup
     addServerPlugin(resolver.resolve('./server/plugins/rss-init'))
 
-    // Expose feed config to runtime (server-side reads this to register handlers)
+    // Inject the RSS feeds listing page
+    extendPages((pages) => {
+      pages.push({
+        name: 'rss-feeds',
+        path: feedsRoute,
+        file: resolver.resolve('./runtime/pages/rss-feeds.vue'),
+      })
+    })
+
+    // Expose feed config + page route to runtime
     nuxt.options.runtimeConfig.public.rss = {
       feeds: options.feeds || {},
       cacheTtl: options.cacheTtl || 3600,
+      route: feedsRoute,
     }
 
-    // Add prerender route for each configured feed
+    // Add prerender routes for each configured feed + the listing page
     const feeds = options.feeds || {}
-    const prerenderRoutes = Object.keys(feeds).map(name => `/rss/${name}`)
-    if (prerenderRoutes.length > 0) {
-      nuxt.options.nitro.prerender = nuxt.options.nitro.prerender || {}
-      nuxt.options.nitro.prerender.routes = nuxt.options.nitro.prerender.routes || []
-      nuxt.options.nitro.prerender.routes.push(...prerenderRoutes)
-    }
+    const prerenderRoutes = [
+      feedsRoute,
+      ...Object.keys(feeds).map(name => `/rss/${name}`),
+    ]
+    nuxt.options.nitro.prerender = nuxt.options.nitro.prerender || {}
+    nuxt.options.nitro.prerender.routes = nuxt.options.nitro.prerender.routes || []
+    nuxt.options.nitro.prerender.routes.push(...prerenderRoutes)
   },
 })
 

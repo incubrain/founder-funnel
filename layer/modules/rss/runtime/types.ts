@@ -70,18 +70,6 @@ export interface RSSModuleOptions {
   feeds?: Record<string, RSSFeedConfig>
   /** Cache-Control max-age in seconds (default: 3600) */
   cacheTtl?: number
-}
-
-export type RSSReaderType = 'feedly' | 'inoreader' | 'newsblur' | 'oldreader' | 'xml' | 'copy'
-
-export interface RssFeedOptions {
-  feedPath: string
-  feedUrl?: string
-  location: string
-}
-
-export interface RssAction {
-  label: string
-  icon: string
-  click: () => void
+  /** Route path for the RSS feeds listing page (default: '/rss-feeds') */
+  route?: string
 }
