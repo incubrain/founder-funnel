@@ -5,11 +5,11 @@ description: Complete API reference for components, composables, schemas, and co
 
 ::card-group
   ::card{title="Components" icon="i-lucide-layout-grid" to="/docs/reference/components"}
-  All 45 components with props, slots, and data-testid values.
+  All components with props, slots, and data-testid values.
   ::
 
   ::card{title="Composables" icon="i-lucide-plug" to="/docs/reference/composables"}
-  All 16 composables with function signatures and return values.
+  All composables with function signatures and return values.
   ::
 
   ::card{title="Content Schemas" icon="i-lucide-database" to="/docs/reference/content-schemas"}
