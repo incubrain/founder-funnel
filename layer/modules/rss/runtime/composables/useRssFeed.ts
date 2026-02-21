@@ -1,22 +1,8 @@
-type RSSReaderType = 'feedly' | 'inoreader' | 'newsblur' | 'oldreader' | 'xml' | 'copy'
-
-interface RssFeedOptions {
-  feedPath: string
-  feedUrl?: string
-  location: string
-}
-
-interface RssAction {
-  label: string
-  icon: string
-  click: () => void
-}
+import type { RSSReaderType, RssFeedOptions, RssAction } from '../types'
 
 /**
  * Handles RSS feed URL resolution, reader link generation,
  * and event tracking for RSS subscriptions.
- *
- * Extracts business logic from Rss.vue.
  */
 export function useRssFeed(options: RssFeedOptions) {
   const config = useRuntimeConfig()

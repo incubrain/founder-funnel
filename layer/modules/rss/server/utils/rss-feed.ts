@@ -1,23 +1,7 @@
 import type { H3Event } from 'h3'
 import { queryCollection } from '@nuxt/content/server'
 import type { Collections } from '@nuxt/content'
-
-export interface RSSItem {
-  title: string
-  link: string
-  guid: string
-  pubDate: string
-  description?: string
-  category?: string
-  author?: string
-}
-
-export interface RSSChannel {
-  title: string
-  link: string
-  description: string
-  items: RSSItem[]
-}
+import type { RSSChannel } from '../../runtime/types'
 
 export function escapeXml(str: string): string {
   return str

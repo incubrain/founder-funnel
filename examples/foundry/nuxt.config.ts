@@ -115,6 +115,18 @@ export default defineNuxtConfig({
     ],
   },
 
+  // RSS feeds — each key becomes /rss/{key}
+  rss: {
+    feeds: {
+      decisions: {
+        collection: 'changelog',
+        title: 'IncuBrain Foundry Changelog',
+        description: 'Latest decisions and changelogs from IncuBrain Foundry',
+        basePath: '/changelog',
+      },
+    },
+  },
+
   studio: {
     route: '/_studio',
     repository: {
