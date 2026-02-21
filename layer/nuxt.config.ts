@@ -62,10 +62,7 @@ export default defineNuxtConfig({
     evlog: {
       sampling: {
         rates: { info: 10, warn: 50, debug: 0 },
-        keep: [
-          { status: 400 },
-          { duration: 1000 },
-        ],
+        keep: [{ status: 400 }, { duration: 1000 }],
       },
     },
 
@@ -95,6 +92,10 @@ export default defineNuxtConfig({
     build: {
       markdown: {
         highlight: {
+          theme: {
+            default: 'andromeeda',
+            dark: 'github-dark',
+          },
           langs: [
             'bash',
             'diff',
@@ -165,7 +166,6 @@ export default defineNuxtConfig({
     '#constants': resolve('./shared/constants.ts'),
     '#navigation': resolve('./app/composables/useNavigation.ts'),
     '#search': resolve('./app/composables/useSearch.ts'),
-    '#config-resolver': resolve('./shared/config-resolver.ts'),
   },
 
   experimental: {
@@ -202,7 +202,9 @@ export default defineNuxtConfig({
   },
 
   hooks: {
-    'components:extend': (components: { pascalName: string, global?: boolean | 'sync' }[]) => {
+    'components:extend': (
+      components: { pascalName: string; global?: boolean | 'sync' }[],
+    ) => {
       const globals = components.filter((c: { pascalName: string }) =>
         ['UButton', 'UIcon', 'ProseDfn'].includes(c.pascalName),
       )
@@ -233,8 +235,8 @@ export default defineNuxtConfig({
 
   icon: {
     serverBundle: {
-      // {DX}: Using full @iconify/json no need to install collection packages
-      // collections array enables tree-shake
+      // Install individual @iconify-json/* packages (optional peer deps)
+      // Override ICON_LIBRARIES in shared/constants.ts to use different icon sets
       collections: [...ICON_LIBRARIES],
     },
   },

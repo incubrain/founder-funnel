@@ -33,17 +33,34 @@ CLAUDE.local.md
 
 # Agent skills (installed via scripts/install-skills.sh, manifest in .claude/skills.json)
 .agents/skills/
+.agents/skill-updates.log
 .claude/skills/manage-mcp
-.claude/skills/vitest
+.claude/skills/brainstorming
 .claude/skills/nuxt-ui
 .claude/skills/nuxt
 .claude/skills/vueuse-functions
 .claude/skills/vue-best-practices
 .claude/skills/pinia
-.claude/skills/vue-testing-best-practices
 .claude/skills/nuxt-content
-.claude/skills/agent-browser
+.claude/skills/review-logging-patterns
+.claude/skills/create-evlog-adapter
+.claude/skills/create-evlog-enricher
+.claude/skills/frontend-design
+.claude/skills/theme-factory
 .claude/skills/web-design-guidelines
+.claude/skills/copywriting
+.claude/skills/marketing-psychology
+.claude/skills/vue-testing-best-practices
+.claude/skills/systematic-debugging
+.claude/skills/vitest
+.claude/skills/agent-browser
+.claude/skills/skill-creator
+
+# Other agent tool directories (symlinks created by npx skills add)
+.agent/
+.cursor/
+.trae/
+.windsurf/
 
 # Documentation review comments (dev-only)
 .comments/

@@ -11,6 +11,8 @@
     "test:vrt:update": "VRT_UPDATE=1 vitest --config vitest.vrt.config.ts --run"
   },
   "dependencies": {
+    "@iconify-json/lucide": "^1.2.90",
+    "@iconify-json/simple-icons": "^1.2.38",
     "@incubrain/foundry": "workspace:*",
     "better-sqlite3": "^12.5.0",
     "nuxt": "^4.3.0",
