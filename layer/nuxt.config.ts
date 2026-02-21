@@ -145,7 +145,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       debug: true,
-      configSource: '',
       siteUrl: '',
       scripts: {
         umamiAnalytics: {

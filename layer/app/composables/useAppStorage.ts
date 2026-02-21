@@ -1,11 +1,10 @@
 // composables/useAppStorage.ts
 /**
- * Centralized storage abstraction with configSource prefix
+ * Centralized storage abstraction with 'fondry' prefix
  * Enables future migration to database storage with minimal changes
  */
 export const useAppStorage = () => {
-  const config = useRuntimeConfig()
-  const prefix = config.public.configSource
+  const prefix = 'foundry'
 
   /**
    * Get prefixed storage key

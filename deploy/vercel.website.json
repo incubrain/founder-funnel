@@ -11,8 +11,7 @@
     "NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID": "your-website-id-here",
     "PROVIDER": "node_server",
     "PORT": "3000",
-    "HOST": "0.0.0.0",
-    "NUXT_PUBLIC_CONFIG_SOURCE": "root"
+    "HOST": "0.0.0.0"
   },
   "headers": [
     {
