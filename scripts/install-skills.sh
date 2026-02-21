@@ -91,17 +91,17 @@ for skill_entry in "${SKILLS[@]}"; do
     fi
 
     echo "⟳ Updating: $skill_name"
-    if npx skills update "$skill_name" --agent claude-code 2>/dev/null; then
+    if npx skills update "$skill_name" --agent claude-code --yes 2>/dev/null; then
       log_update "$skill_name"
     else
       echo "  → Update failed, reinstalling..."
-      if npx skills add "$repo" --skill "$skill_name" --agent claude-code; then
+      if npx skills add "$repo" --skill "$skill_name" --agent claude-code --yes; then
         log_update "$skill_name"
       fi
     fi
   else
     echo "⊕ Installing: $skill_name"
-    if npx skills add "$repo" --skill "$skill_name" --agent claude-code; then
+    if npx skills add "$repo" --skill "$skill_name" --agent claude-code --yes; then
       log_update "$skill_name"
     fi
   fi
