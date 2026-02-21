@@ -82,9 +82,15 @@ importers:
 
   examples/astronera:
     dependencies:
+      '@iconify-json/lucide':
+        specifier: ^1.2.90
+        version: 1.2.90
+      '@iconify-json/simple-icons':
+        specifier: ^1.2.38
+        version: 1.2.71
       '@incubrain/foundry':
         specifier: ^0.5.2
-        version: 0.5.2(3dfe9450781ed8c614690e199d74fd7a)
+        version: 0.5.2(db342f8ba1f305757aec024e04ba9157)
       better-sqlite3:
         specifier: ^12.5.0
         version: 12.6.2
@@ -100,6 +106,12 @@ importers:
 
   examples/foundry:
     dependencies:
+      '@iconify-json/lucide':
+        specifier: ^1.2.90
+        version: 1.2.90
+      '@iconify-json/simple-icons':
+        specifier: ^1.2.38
+        version: 1.2.71
       '@incubrain/foundry':
         specifier: workspace:*
         version: link:../../layer
@@ -118,9 +130,12 @@ importers:
 
   layer:
     dependencies:
-      '@iconify/json':
-        specifier: ^2.2.439
-        version: 2.2.439
+      '@iconify-json/lucide':
+        specifier: '*'
+        version: 1.2.90
+      '@iconify-json/simple-icons':
+        specifier: '*'
+        version: 1.2.71
       '@nuxt/content':
         specifier: ^3.11.2
         version: 3.11.2(better-sqlite3@12.6.2)(magicast@0.5.1)(valibot@1.2.0(typescript@5.9.3))
@@ -1063,11 +1078,11 @@ packages:
   '@iarna/toml@3.0.0':
     resolution: {integrity: sha512-td6ZUkz2oS3VeleBcN+m//Q6HlCFCPrnI0FZhrt/h4XqLEdOyYp2u21nd8MdsR+WJy5r9PTDaHTDDfhf4H4l6Q==}
 
-  '@iconify-json/lucide@1.2.87':
-    resolution: {integrity: sha512-wxYIAp0f8Uw0rJa6BMWMaRbiHk3yV4XczA38GKXFlqyZtTdmHM1QOF4NZw5xpMlRDzbh2MnB7wjteLeFnn/ciQ==}
-
   '@iconify-json/lucide@1.2.90':
     resolution: {integrity: sha512-dPn1pRhfBa9KR+EVpdyM1Rvw3T36hCKYxd6TxK1ifffiNt0f5yXx8ZVhqnzPH4Vkz87yLMj5xFCXomNrnzd2kQ==}
+
+  '@iconify-json/simple-icons@1.2.71':
+    resolution: {integrity: sha512-rNoDFbq1fAYiEexBvrw613/xiUOPEu5MKVV/X8lI64AgdTzLQUUemr9f9fplxUMPoxCBP2rWzlhOEeTHk/Sf0Q==}
 
   '@iconify/collections@1.0.644':
     resolution: {integrity: sha512-feUVIH69byoiu8iocNU8II8MQfv+Xd5jA+cj6GN5wsLxkPEt2lpCGLMaK0NautY6itBdYN2pYC1I8sngvHJg2g==}
@@ -9204,11 +9219,11 @@ snapshots:
 
   '@iarna/toml@3.0.0': {}
 
-  '@iconify-json/lucide@1.2.87':
+  '@iconify-json/lucide@1.2.90':
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/lucide@1.2.90':
+  '@iconify-json/simple-icons@1.2.71':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -9331,7 +9346,7 @@ snapshots:
   '@img/sharp-win32-x64@0.34.5':
     optional: true
 
-  '@incubrain/foundry@0.5.2(3dfe9450781ed8c614690e199d74fd7a)':
+  '@incubrain/foundry@0.5.2(db342f8ba1f305757aec024e04ba9157)':
     dependencies:
       '@iconify/json': 2.2.439
       '@nuxt/content': 3.11.2(better-sqlite3@12.6.2)(magicast@0.5.1)(valibot@1.2.0(typescript@5.9.3))
@@ -15687,7 +15702,7 @@ snapshots:
 
   nuxt-studio@1.2.0(db0@0.3.4(better-sqlite3@12.6.2))(ioredis@5.9.2)(magicast@0.5.1)(vue@3.5.27(typescript@5.9.3)):
     dependencies:
-      '@iconify-json/lucide': 1.2.87
+      '@iconify-json/lucide': 1.2.90
       '@nuxtjs/mdc': 0.20.1(magicast@0.5.1)
       '@vueuse/core': 14.2.1(vue@3.5.27(typescript@5.9.3))
       defu: 6.1.4
