@@ -47,8 +47,11 @@ declare -a SKILLS=(
   "https://github.com/antfu/skills:vue-best-practices"
   "https://github.com/antfu/skills:pinia"
   "https://github.com/nuxt-content/nuxt-studio:nuxt-content"
-  
 
+  # Logging & Observability
+  "https://github.com/HugoRCD/evlog:review-logging-patterns"
+  "https://github.com/HugoRCD/evlog:create-evlog-adapter"
+  "https://github.com/HugoRCD/evlog:create-evlog-enricher"
 
   # Design & UX
   "https://github.com/anthropics/skills:frontend-design"
@@ -64,6 +67,9 @@ declare -a SKILLS=(
   "https://github.com/obra/superpowers:systematic-debugging"
   "https://github.com/antfu/skills:vitest"
   "https://github.com/vercel-labs/agent-browser:agent-browser"
+
+  # Meta
+  "https://github.com/anthropics/skills:skill-creator"
 )
 
 echo "Checking installed skills..."
@@ -85,17 +91,17 @@ for skill_entry in "${SKILLS[@]}"; do
     fi
 
     echo "⟳ Updating: $skill_name"
-    if npx skills update "$skill_name" --yes --agent claude-code 2>/dev/null; then
+    if npx skills update "$skill_name" --agent claude-code 2>/dev/null; then
       log_update "$skill_name"
     else
       echo "  → Update failed, reinstalling..."
-      if npx skills add "$repo" --skill "$skill_name" --yes --agent claude-code; then
+      if npx skills add "$repo" --skill "$skill_name" --agent claude-code; then
         log_update "$skill_name"
       fi
     fi
   else
     echo "⊕ Installing: $skill_name"
-    if npx skills add "$repo" --skill "$skill_name" --yes --agent claude-code; then
+    if npx skills add "$repo" --skill "$skill_name" --agent claude-code; then
       log_update "$skill_name"
     fi
   fi

@@ -33,26 +33,33 @@ sources:
       'Economic impact study of dark sky tourism in Colorado Plateau (Utah
       region).'
 
-  - id: thesill-2023-northumberland-10th
+  - id: nnpa-2018-dark-sky-economic-impact
     title:
-      'Northumberland International Dark Sky Park: 10th anniversary performance
-      report'
-    author: 'The Sill'
-    url: 'https://www.northumberlandnationalpark.org.uk/wp-content/uploads/2024/07/Report-2-Appendix-1-202324-Performance-report.pdf'
+      'Research into the Economic Impact of Dark Sky Tourism: Northumberland
+      International Dark Sky Park'
+    author: 'Dark Sky Steering Group / Northumberland National Park Authority'
+    url: 'https://www.northumberlandnationalpark.org.uk/new-film-celebrates-dark-sky-parks-10th-anniversary/'
     affiliation: government
-    credibilityScore: 9
-    date: '2023'
+    credibilityScore: 7
+    date: '2018'
     description:
-      'Performance report for Northumberland Dark Sky Park 10th anniversary.'
+      'Economic impact assessment of dark sky tourism in Northumberland
+      (2017 data). Commissioned by Dark Sky Steering Group. Found £25M
+      annual value, ~450 jobs, £1.93 ROI on lighting. Self-described as
+      partial assessment. Original full report not publicly available
+      online; figures cited in NNP Authority publications and UK
+      Parliamentary evidence (DarkSky UK AST001, ALN0039).'
 
   - id: northumberland-2024-steam-report
     title: 'Northumberland tourism economic impact report (STEAM)'
-    author: 'Northumberland County Council'
+    author: 'Visit Northumberland / Northumberland County Council'
     url: 'https://www.visitnorthumberland.org.uk/research-insights/regional-national/tourism-economic-impact-report'
     affiliation: government
     credibilityScore: 9
     date: '2024'
-    description: 'Tourism economic impact assessment for Northumberland.'
+    description:
+      'STEAM methodology report for total Northumberland visitor economy.
+      Covers all tourism sectors, not dark sky-specific.'
 
   - id: southafrica-2023-astrotourism-detailed
     title: 'National astro-tourism strategy (detailed document)'

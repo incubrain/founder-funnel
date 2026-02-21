@@ -31,4 +31,8 @@ description: Structured logging, citations, search, RSS, MCP tools, doc review, 
   ::card{title="Doc Review" icon="i-lucide-message-square" to="/docs/advanced/doc-review"}
   Highlight text and leave comments during documentation review.
   ::
+
+  ::card{title="Developer Tooling" icon="i-lucide-wrench" to="/docs/advanced/developer-tooling"}
+  AI-assisted workflow with Claude Code, agent skills, and VibeKanban.
+  ::
 ::
