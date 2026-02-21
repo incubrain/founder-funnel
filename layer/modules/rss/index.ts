@@ -5,7 +5,6 @@ import {
   addServerHandler,
   addServerPlugin,
   createResolver,
-  extendPages,
 } from '@nuxt/kit'
 import type { RSSModuleOptions } from './runtime/types'
 
@@ -58,15 +57,6 @@ export default defineNuxtModule<RSSModuleOptions>({
     // Add Nitro plugin that registers feeds from config at startup
     addServerPlugin(resolver.resolve('./server/plugins/rss-init'))
 
-    // Inject the RSS feeds listing page
-    extendPages((pages) => {
-      pages.push({
-        name: 'rss-feeds',
-        path: feedsRoute,
-        file: resolver.resolve('./runtime/pages/rss-feeds.vue'),
-      })
-    })
-
     // Expose feed config + page route to runtime
     nuxt.options.runtimeConfig.public.rss = {
       feeds: options.feeds || {},
@@ -74,15 +64,14 @@ export default defineNuxtModule<RSSModuleOptions>({
       route: feedsRoute,
     }
 
-    // Add prerender routes for each configured feed + the listing page
+    // Add prerender routes for each configured feed
     const feeds = options.feeds || {}
-    const prerenderRoutes = [
-      feedsRoute,
-      ...Object.keys(feeds).map(name => `/rss/${name}`),
-    ]
-    nuxt.options.nitro.prerender = nuxt.options.nitro.prerender || {}
-    nuxt.options.nitro.prerender.routes = nuxt.options.nitro.prerender.routes || []
-    nuxt.options.nitro.prerender.routes.push(...prerenderRoutes)
+    const prerenderRoutes = Object.keys(feeds).map(name => `/rss/${name}`)
+    if (prerenderRoutes.length > 0) {
+      nuxt.options.nitro.prerender = nuxt.options.nitro.prerender || {}
+      nuxt.options.nitro.prerender.routes = nuxt.options.nitro.prerender.routes || []
+      nuxt.options.nitro.prerender.routes.push(...prerenderRoutes)
+    }
   },
 })
 

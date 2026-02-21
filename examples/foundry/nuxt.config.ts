@@ -32,6 +32,9 @@ export default defineNuxtConfig({
     '/decisions': { appLayout: 'default' },
     '/decisions/**': { appLayout: 'article' },
 
+    // RSS Feeds
+    '/rss-feeds': { appLayout: 'default' },
+
     // RSS
     // '/rss/**': {
     //   headers: {
