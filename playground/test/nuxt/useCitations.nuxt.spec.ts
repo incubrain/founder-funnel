@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { describe, it, expect } from 'vitest'
 import { mockNuxtImport } from '@nuxt/test-utils/runtime'
-import { useCitations } from '@incubrain/foundry/app/composables/useCitations'
+import { useCitations } from '@incubrain/foundry/modules/docs/runtime/composables/useCitations'
 
 // Mock queryCollection using mockNuxtImport
 mockNuxtImport('queryCollection', () => {

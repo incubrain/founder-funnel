@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { describe, it, expect } from 'vitest'
 import { mockNuxtImport } from '@nuxt/test-utils/runtime'
-import { useGlossary } from '@incubrain/foundry/app/composables/useGlossary'
+import { useGlossary } from '@incubrain/foundry/modules/docs/runtime/composables/useGlossary'
 
 // Mock queryCollection
 mockNuxtImport('queryCollection', () => {
