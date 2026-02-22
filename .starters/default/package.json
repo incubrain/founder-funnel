@@ -8,7 +8,9 @@
     "build": "nuxt build",
     "preview": "nuxt preview",
     "test:vrt": "vitest --config vitest.vrt.config.ts --run",
-    "test:vrt:update": "VRT_UPDATE=1 vitest --config vitest.vrt.config.ts --run"
+    "test:vrt:update": "VRT_UPDATE=1 vitest --config vitest.vrt.config.ts --run",
+    "skills:install": "bash scripts/install-skills.sh",
+    "skills:update": "bash scripts/install-skills.sh"
   },
   "dependencies": {
     "@incubrain/foundry": "^0.5.2",
