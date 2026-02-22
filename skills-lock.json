@@ -6,40 +6,10 @@
       "sourceType": "github",
       "computedHash": "69e805b9bba58a76e3f9ac835d506a4f06f18a7867d2ba5e23e40638f6f351eb"
     },
-    "brainstorming": {
-      "source": "obra/superpowers",
-      "sourceType": "github",
-      "computedHash": "5cafa1558b0b6bd4d4c71f23d5567b7fcbbcdb4b0a50b0c5f69a80a3cebaf9b8"
-    },
-    "copywriting": {
-      "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "39b7a636c7e254a2f08dee43db6b9f6faf6723de999a6bbce2eb5ac95a130207"
-    },
-    "create-evlog-adapter": {
-      "source": "HugoRCD/evlog",
-      "sourceType": "github",
-      "computedHash": "f2d3a04c43a5db91cf632f8c3256824887423e189311e06b81e954905af908bd"
-    },
-    "create-evlog-enricher": {
-      "source": "HugoRCD/evlog",
-      "sourceType": "github",
-      "computedHash": "49b8d8cf918a3f7232b9799f28fb67acde61fda20d1a6307f550fc4b7a729c3d"
-    },
-    "frontend-design": {
-      "source": "anthropics/skills",
-      "sourceType": "github",
-      "computedHash": "063a0e6448123cd359ad0044cc46b0e490cc7964d45ef4bb9fd842bd2ffbca67"
-    },
     "manage-mcp": {
       "source": "nuxt-modules/mcp-toolkit",
       "sourceType": "github",
       "computedHash": "420323a751ff1ed0c8f1084471ce5c241ea0579904745c96938e23f13028c5d9"
-    },
-    "marketing-psychology": {
-      "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "1f9527f4b69799e8acd05966ea1f57798890948a1c8446016593c9b485e3e86d"
     },
     "nuxt": {
       "source": "antfu/skills",
@@ -60,26 +30,6 @@
       "source": "antfu/skills",
       "sourceType": "github",
       "computedHash": "897b6b0982956f41f5cc85128ca638b625e1b3c8bc619e303cd1e7661c95b7de"
-    },
-    "review-logging-patterns": {
-      "source": "HugoRCD/evlog",
-      "sourceType": "github",
-      "computedHash": "b6066c145420fc1e390d534b13c5ea133065308e3837a44315bbab171205ed4f"
-    },
-    "skill-creator": {
-      "source": "anthropics/skills",
-      "sourceType": "github",
-      "computedHash": "a096b9af85c9d954374ebe3f7a23b5b7737ed3f35fe2a8f5893742c4e00dba1c"
-    },
-    "systematic-debugging": {
-      "source": "obra/superpowers",
-      "sourceType": "github",
-      "computedHash": "72e9ab72627e4fd8ed26a582e82309a98ecdc4f6e1c99418430ac05682c9e91d"
-    },
-    "theme-factory": {
-      "source": "anthropics/skills",
-      "sourceType": "github",
-      "computedHash": "93e78aa44f8fa00bb2c0608f400de1e1dcd6494611dd8ea27c867654240c7bcd"
     },
     "vitest": {
       "source": "antfu/skills",
