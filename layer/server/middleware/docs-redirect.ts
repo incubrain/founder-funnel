@@ -1,5 +1,5 @@
 import { defineEventHandler, sendRedirect } from 'h3'
-import { queryCollectionNavigation } from '#content/server'
+import { queryCollectionNavigation } from '@nuxt/content/server'
 
 /**
  * Redirects docs directory routes to the first child page.
@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     // Try to fetch the navigation for the docs collection
-    const navigation = await queryCollectionNavigation('docs')
+    const navigation = await queryCollectionNavigation(event, 'docs')
 
     // Find the matching directory node
     const findNode = (items: any[], targetPath: string): any => {
@@ -59,8 +59,7 @@ export default defineEventHandler(async (event) => {
         return sendRedirect(event, firstChild.path, 302)
       }
     }
-  }
-  catch (error) {
+  } catch (error) {
     // Fail silently - let the normal 404 handling take over
     console.debug('docs-redirect middleware:', error)
   }
