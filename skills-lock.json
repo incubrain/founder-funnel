@@ -64,7 +64,7 @@
     "review-logging-patterns": {
       "source": "HugoRCD/evlog",
       "sourceType": "github",
-      "computedHash": "b6066c145420fc1e390d534b13c5ea133065308e3837a44315bbab171205ed4f"
+      "computedHash": "c4469d4ea1ff92c8be6bcfdb066b4465966caee05df02529155e5bcb8c15c01e"
     },
     "skill-creator": {
       "source": "anthropics/skills",
