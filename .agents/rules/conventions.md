@@ -140,8 +140,6 @@ useUserIdentity   → Anonymous ID
 
 ```bash
 pnpm test              # Run unit tests
-pnpm test:vrt          # Visual regression tests (compare against baselines)
-pnpm test:vrt:update   # Update VRT baselines (intentional visual changes only)
 pnpm lint              # Check code
 pnpm build             # Production build
 ```
@@ -149,7 +147,3 @@ pnpm build             # Production build
 **Before commit:**
 1. Tests pass (`pnpm test`)
 2. Lint passes (`pnpm lint`)
-3. If visual changes: VRT passes (`pnpm test:vrt`) or baselines updated
-4. If new pages/sections: agent-browser snapshot validates landmarks
-
-See @.claude/rules/visual-testing.md for full VRT workflow and agent navigability standards.

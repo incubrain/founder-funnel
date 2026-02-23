@@ -37,9 +37,7 @@
     "kanban": "npx vibe-kanban",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:coverage": "vitest --coverage",
-    "test:vrt": "vitest --config examples/foundry/vitest.vrt.config.ts --run",
-    "test:vrt:update": "VRT_UPDATE=1 vitest --config examples/foundry/vitest.vrt.config.ts --run"
+    "test:coverage": "vitest --coverage"
   },
   "dependencies": {
     "@nuxt/eslint": "^1.15.1",

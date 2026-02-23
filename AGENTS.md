@@ -13,8 +13,6 @@ pnpm build:ae        # Production build (astronera)
 pnpm lint            # ESLint check
 pnpm lint:fix        # ESLint autofix
 pnpm test            # Run tests
-pnpm test:vrt        # Visual regression tests
-pnpm test:vrt:update # Update VRT baselines
 pnpm typecheck       # Nuxt typecheck (layer)
 pnpm verify          # dev:prepare + lint + typecheck
 ```
@@ -43,7 +41,7 @@ pnpm verify          # dev:prepare + lint + typecheck
 
 ```bash
 layer/                         → Nuxt layer (core reusable code)
-layer/modules/                 → Feature modules (events, vrt, comments, rss, changelog, docs)
+layer/modules/                 → Feature modules (events, comments, rss, changelog, docs)
 examples/foundry/              → Founder Funnel example app
 examples/astronera/            → Astronera example app
 examples/starter/              → Starter template
@@ -78,7 +76,6 @@ Detailed rules are in `.agents/rules/` (symlinked at `.claude/rules/`):
 - @.agents/rules/conventions.md — Naming, component rules, code patterns
 - @.agents/rules/decisions.md — Boundary decisions and decision framework
 - @.agents/rules/anti-patterns.md — What to never do, red flags, values filter
-- @.agents/rules/visual-testing.md — VRT workflow, agent navigability standards
 
 ## Module Guides
 
@@ -86,7 +83,6 @@ Each module has its own AGENTS.md with detailed architecture, file maps, and mod
 
 - @layer/modules/events/AGENTS.md — Event tracking and webhook streaming
 - @layer/modules/comments/AGENTS.md — Documentation review system (dev-only)
-- @layer/modules/vrt/AGENTS.md — Visual regression testing
 - @layer/modules/rss/AGENTS.md — RSS feed generation
 - @layer/modules/changelog/AGENTS.md — Changelog generation
 - @layer/modules/docs/AGENTS.md — Documentation utilities

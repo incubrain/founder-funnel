@@ -12,7 +12,6 @@ export default defineNuxtConfig({
     resolve('./modules/config'),
     resolve('./modules/css'),
     resolve('./modules/events'),
-    resolve('./modules/vrt'),
     resolve('./modules/comments'),
     resolve('./modules/rss'),
     resolve('./modules/changelog'),

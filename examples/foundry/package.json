@@ -6,9 +6,7 @@
     "postinstall": "nuxt prepare",
     "build": "nuxt build",
     "dev": "nuxt dev",
-    "preview": "nuxt preview",
-    "test:vrt": "vitest --config vitest.vrt.config.ts --run",
-    "test:vrt:update": "VRT_UPDATE=1 vitest --config vitest.vrt.config.ts --run"
+    "preview": "nuxt preview"
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.90",

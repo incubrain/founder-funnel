@@ -44,6 +44,6 @@ Foundry is an open-source [Nuxt Layer](https://nuxt.com/docs/getting-started/lay
   ::
 
   ::card{title="Modules" icon="i-lucide-puzzle" to="/docs/modules"}
-  Events, docs, RSS, changelog, comments, and VRT — opt-in feature modules.
+  Events, docs, RSS, changelog, and comments — opt-in feature modules.
   ::
 ::

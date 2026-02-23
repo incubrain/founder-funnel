@@ -43,11 +43,6 @@ CLAUDE.local.md
 # Documentation review comments (dev-only)
 .comments/
 
-# VRT artifacts (baselines ARE committed, current/diff/actual are NOT)
-**/test/vrt/__screenshots__/__current__/
-**/test/vrt/__screenshots__/__diff__/
-**/test/vrt/__screenshots__/__actual__/
-
 # Misc
 strategy
 ideas
