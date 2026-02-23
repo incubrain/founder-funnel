@@ -1,3 +1,13 @@
+---
+paths:
+  - "layer/app/components/**"
+  - "layer/app/layouts/**"
+  - "layer/app/pages/**"
+  - "layer/app/assets/**/*.css"
+  - "layer/modules/vrt/**"
+  - "shared/config/**"
+---
+
 ## Visual Regression Testing
 
 **When to run VRT:**

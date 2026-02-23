@@ -351,15 +351,6 @@ The project already has auto-memory at `~/.claude/projects/<project>/memory/`. E
 - See layer/modules/*/AGENTS.md for module-specific docs
 ```
 
-### 2.7 LSP Plugin (Optional)
-
-Consider installing the TypeScript LSP plugin for real-time diagnostics:
-```bash
-claude plugin install typescript-lsp@claude-plugins-official
-```
-
-This gives Claude type error detection after every edit without needing to run `pnpm typecheck`. However, it adds overhead — evaluate after implementing other changes.
-
 ---
 
 ## Part 3: VibeKanban Orchestration
@@ -451,6 +442,58 @@ These should be linked as sub-issues or related to DRE-67.
 
 ---
 
+## Part 4b: Claude-Mem Plugin Evaluation
+
+### Verdict: Skip — Built-in Memory is Better Fit
+
+**What claude-mem does:** A Claude Code plugin that automatically captures structured observations from every tool use during a session. Stores them in SQLite + ChromaDB vectors. Injects a compressed index (~800 tokens) at session start, with on-demand semantic search for deeper recall.
+
+**Installation:** `npx claude plugin install thedotmack/claude-mem` — reasonably plug-and-play on macOS.
+
+### Pros
+- Fully automatic — no manual curation needed
+- AI-compressed observations capture nuanced learnings
+- Semantic search across session history (ChromaDB vectors)
+- Progressive disclosure minimizes context (~800 tokens baseline + on-demand)
+- Web UI for browsing memory at localhost:37777
+- Very active development (30k+ stars, v10.3.1)
+
+### Cons
+- **Not git-committable** — stores in `~/.claude-mem/`, not project directory. Cannot share with team via repo.
+- **Heavy infrastructure** — Requires Bun runtime, SQLite, ChromaDB, Python/uv, background worker on port 37777
+- **Non-deterministic** — AI decides what to capture and inject. Cannot easily audit what context is loaded.
+- **Security concerns** — Arbitrary file path writing, no auth/permissions hardening yet (open issues)
+- **AGPL-3.0 license** — Restrictive for any network deployment
+- **Memecoin promotion** in README ($CMEM on Solana) — credibility concern for a dev tool
+- **Zombie processes** — Background Bun worker can spawn duplicates (recently fixed but pattern is concerning)
+- **Windows unreliable** — Multiple open issues with path/memory problems
+
+### Why Built-in Memory Wins for This Project
+
+| Criterion | Built-in CLAUDE.md | Claude-Mem |
+|---|---|---|
+| Git-committable | Yes (`.claude/CLAUDE.md`) | No (`~/.claude-mem/`) |
+| Team-shareable | Yes (repo-level) | No (per-user) |
+| Dependencies | Zero | Bun, SQLite, ChromaDB, Python |
+| Deterministic | 100% (you write it) | No (AI decides) |
+| Token efficiency | 100% (curated) | ~800 baseline + search overhead |
+| Automatic capture | No (manual) | Yes |
+| Cross-platform | All | macOS/Linux only reliably |
+
+The project already has well-curated `.agents/rules/` files and a structured CLAUDE.md. The main gap (automatic session learnings) is lower priority than the team-shareable, git-committed, deterministic memory that the built-in system provides.
+
+**Recommendation:** Stick with built-in auto-memory. Seed MEMORY.md with known patterns. Revisit claude-mem if/when it supports project-local storage and stabilizes security model.
+
+---
+
+## Part 4c: LSP Plugin
+
+### Verdict: Skip
+
+TypeScript checking should run once before committing (`pnpm typecheck`) or when debugging type errors. Running it continuously via LSP would add significant context overhead and slow down the agent during normal development flow.
+
+---
+
 ## Part 5: Implementation Plan
 
 ### Phase 1: File Consolidation (Lowest Risk)
@@ -533,7 +576,7 @@ These should be linked as sub-issues or related to DRE-67.
 | VibeKanban agent configurations | Medium (task-appropriate agents) | Low | 4 |
 | Seed auto-memory | Low (bootstraps knowledge) | Low | 4 |
 | Beads adoption | High (but premature) | High | Deferred |
-| TypeScript LSP plugin | Medium (real-time diagnostics) | Low | Evaluate |
+| Claude-mem plugin | Medium (automatic memory) | Medium | Skipped (not git-shareable) |
 
 ---
 
