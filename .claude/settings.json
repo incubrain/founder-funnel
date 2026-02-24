@@ -3,23 +3,56 @@
     "allow": [
       "Bash(pnpm dev:*)",
       "Bash(pnpm build:*)",
-      "Bash(pnpm lint:*)",
-      "Bash(pnpm test:*)",
+      "Bash(pnpm lint*)",
+      "Bash(pnpm test*)",
       "Bash(pnpm run dev:*)",
       "Bash(pnpm run build:*)",
-      "Bash(pnpm run lint:*)",
-      "Bash(pnpm typecheck:*)",
-      "Bash(pnpm verify:*)",
-      "Bash(pnpm prepare:*)",
-      "Bash(git status:*)",
-      "Bash(git diff:*)",
-      "Bash(git log:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(pnpm run lint*)",
+      "Bash(pnpm typecheck*)",
+      "Bash(pnpm verify*)",
+      "Bash(pnpm prepare*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(npx eslint *)",
+      "Bash(npx prettier *)",
+      "Bash(bash scripts/install-skills.sh*)",
+      "Bash(npx skills *)"
     ],
     "deny": [
       "Read(./.env)",
-      "Read(./.env.*)"
+      "Read(./.env.*)",
+      "Read(./secrets/**)"
+    ]
+  },
+  "env": {
+    "CLAUDE_CODE_AUTOCOMPACT_PCT_OVERRIDE": "80"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'POST-COMPACTION: Use pnpm (not npm). Validation != Product. Max 50 lines/component. Check VueUse before custom. Event tracking via useEvents(). Content in YAML not code. Check .agents/rules/ for detailed guidelines. Read module AGENTS.md when working on a specific module.'"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "filepath=$(echo $CLAUDE_TOOL_INPUT | jq -r '.file_path // .filePath // empty'); if [ -n \"$filepath\" ]; then case \"$filepath\" in *.vue|*.ts|*.js) npx eslint --fix \"$filepath\" 2>/dev/null || true;; esac; fi",
+            "timeout": 30
+          }
+        ]
+      }
     ]
   }
 }

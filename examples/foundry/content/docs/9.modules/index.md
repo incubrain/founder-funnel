@@ -1,7 +1,7 @@
 ---
 label: Modules
 title: Modules Overview
-description: Opt-in Nuxt modules that extend the Foundry layer with events, docs, RSS, changelog, comments, and visual testing.
+description: Opt-in Nuxt modules that extend the Foundry layer with events, docs, RSS, changelog, and comments.
 ---
 
 Foundry is built from opt-in Nuxt modules. Each module adds a specific capability and can be enabled or disabled in your `nuxt.config.ts`. Modules that ship with the layer are enabled by default — disable any you don't need.
@@ -36,9 +36,5 @@ export default defineNuxtConfig({
 
   ::card{title="Comments" icon="i-lucide-message-square" to="/docs/modules/comments"}
   Dev-only highlight-and-comment review tool for documentation pages.
-  ::
-
-  ::card{title="VRT" icon="i-lucide-image" to="/docs/modules/vrt"}
-  Visual regression testing with Playwright screenshots and pixelmatch.
   ::
 ::

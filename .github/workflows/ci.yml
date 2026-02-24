@@ -80,58 +80,6 @@ jobs:
           path: logs/
           retention-days: 7
 
-  vrt:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
-        id: filter
-        with:
-          filters: |
-            visual:
-              - 'layer/app/components/**/*.vue'
-              - 'layer/app/assets/**'
-              - 'layer/modules/vrt/**'
-              - '**/test/vrt/**'
-              - 'examples/foundry/app/components/**'
-              - 'shared/config/**'
-
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
-        if: steps.filter.outputs.visual == 'true'
-
-      - uses: actions/setup-node@v4
-        if: steps.filter.outputs.visual == 'true'
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
-        if: steps.filter.outputs.visual == 'true'
-
-      - run: npx nuxt prepare layer
-        if: steps.filter.outputs.visual == 'true'
-
-      - name: Install Playwright browsers
-        if: steps.filter.outputs.visual == 'true'
-        run: npx playwright install chromium --with-deps
-
-      - name: Run VRT
-        if: steps.filter.outputs.visual == 'true'
-        # CI uses update mode: verifies screenshots capture successfully.
-        # Cross-platform font rendering differs, so comparing against
-        # macOS-generated baselines would produce false positives.
-        run: pnpm run test:vrt:update
-
-      - name: Upload VRT screenshots
-        if: steps.filter.outputs.visual == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: vrt-screenshots
-          path: test/vrt/__screenshots__/
-          retention-days: 7
-
   starter-build:
     needs: [quality, test]
     runs-on: ubuntu-latest

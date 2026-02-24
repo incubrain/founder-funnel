@@ -18,5 +18,5 @@ description: Structured logging, MCP tools, and developer tooling.
 ::
 
 ::callout{icon="i-lucide-puzzle" color="info"}
-Looking for events, docs, RSS, changelog, comments, or VRT? These have moved to the [Modules](/docs/modules) section.
+Looking for events, docs, RSS, changelog, or comments? These have moved to the [Modules](/docs/modules) section.
 ::

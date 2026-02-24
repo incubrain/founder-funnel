@@ -7,8 +7,6 @@
   "exports": {
     ".": "./nuxt.config.ts",
     "./schemas": "./content.collections.ts",
-    "./modules/vrt/shared": "./modules/vrt/shared/index.ts",
-    "./modules/vrt/shared/helpers": "./modules/vrt/shared/helpers.ts",
     "./*": "./*"
   },
   "license": "MIT",
@@ -29,9 +27,6 @@
     "modules/events/index.ts",
     "modules/events/runtime",
     "modules/events/server",
-    "modules/vrt/index.ts",
-    "modules/vrt/runtime",
-    "modules/vrt/shared",
     "server",
     "shared"
   ],

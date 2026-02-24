@@ -6,9 +6,8 @@ description: Testing philosophy, available commands, and what to test.
 
 Ship first, test what matters. Foundry's testing strategy focuses on:
 
-1. **Visual correctness** — Do components look right? ([VRT module](/docs/modules/vrt))
-2. **Accessibility** — Can AI agents and screen readers navigate? (Agent navigability)
-3. **Core logic** — Do composables and server handlers work? (Unit tests)
+1. **Accessibility** — Can AI agents and screen readers navigate? (Agent navigability)
+2. **Core logic** — Do composables and server handlers work? (Unit tests)
 
 Don't test everything. Test the things that, if broken, would stop signal capture.
 
@@ -17,8 +16,6 @@ Don't test everything. Test the things that, if broken, would stop signal captur
 | Command | What It Does |
 |---|---|
 | `pnpm test` | Run unit tests (Vitest) |
-| `pnpm test:vrt` | Visual regression tests (compare against baselines) |
-| `pnpm test:vrt:update` | Update VRT baselines (accept intentional visual changes) |
 | `pnpm lint` | ESLint check |
 | `pnpm typecheck` | Nuxt TypeScript check |
 | `pnpm verify` | `dev:prepare` + `lint` + `typecheck` |
@@ -29,22 +26,18 @@ A good pre-commit check:
 
 1. `pnpm lint` — Code style
 2. `pnpm test` — Unit tests
-3. If you changed visual components: `pnpm test:vrt`
-4. If you added new pages/sections: verify agent navigability
+3. If you added new pages/sections: verify agent navigability
 
 ## CI Pipeline
 
-The GitHub Actions CI runs five jobs:
+The GitHub Actions CI runs four jobs:
 
 | Job | Trigger | What It Does |
 |---|---|---|
 | `quality` | All pushes | Install, prepare, lint, typecheck |
 | `test` | All pushes | Unit tests via Vitest |
 | `build` | After quality + test | Matrix build for astronera and foundry |
-| `vrt` | PRs only | Visual regression tests (path-filtered) |
 | `starter-build` | After quality + test | Verifies starter template builds standalone |
-
-The VRT job uses update mode in CI to handle cross-platform font rendering differences.
 
 ## What to Test
 
@@ -54,7 +47,6 @@ The VRT job uses update mode in CI to handle cross-platform font rendering diffe
 - Anti-spam scoring produces expected results
 
 ### Test When Changed
-- Visual appearance of components ([VRT](/docs/modules/vrt))
 - Content rendering after schema changes
 - Layout behavior after route rule changes
 
@@ -66,9 +58,5 @@ The VRT job uses update mode in CI to handle cross-platform font rendering diffe
 ::card-group
   ::card{title="Agent Navigability" icon="i-lucide-accessibility" to="/docs/testing/agent-navigability"}
   Accessibility landmarks, heading hierarchy, and smoke tests.
-  ::
-
-  ::card{title="Visual Regression" icon="i-lucide-image" to="/docs/modules/vrt"}
-  Screenshot comparison, baselines, and the VRT module.
   ::
 ::
