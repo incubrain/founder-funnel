@@ -4,7 +4,7 @@
     "agent-browser": {
       "source": "vercel-labs/agent-browser",
       "sourceType": "github",
-      "computedHash": "69e805b9bba58a76e3f9ac835d506a4f06f18a7867d2ba5e23e40638f6f351eb"
+      "computedHash": "39eaa7216d358c36e55b37c90a1dda916a891e6b294faa28d17e3511510b82d6"
     },
     "brainstorming": {
       "source": "obra/superpowers",
@@ -69,7 +69,7 @@
     "skill-creator": {
       "source": "anthropics/skills",
       "sourceType": "github",
-      "computedHash": "a096b9af85c9d954374ebe3f7a23b5b7737ed3f35fe2a8f5893742c4e00dba1c"
+      "computedHash": "9b03bb78ec5c81c4e0546dbb78cfc970368c72dcae5482e8c59690175abbc8e7"
     },
     "systematic-debugging": {
       "source": "obra/superpowers",
@@ -99,7 +99,7 @@
     "vueuse-functions": {
       "source": "vueuse/skills",
       "sourceType": "github",
-      "computedHash": "d6459be248056a0e60434e922eb746be286200f616c6cbe68b928d8e5963456c"
+      "computedHash": "51467c2364e36ee5f40d1e83c94a6f53be3c12431bd8dcc81a650b8e195ae591"
     },
     "web-design-guidelines": {
       "source": "vercel-labs/agent-skills",
