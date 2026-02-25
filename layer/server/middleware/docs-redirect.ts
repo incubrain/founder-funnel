@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
     }
   }
   catch (error) {
-    // Fail silently - let the normal 404 handling take over
-    console.debug('docs-redirect middleware:', error)
+    const log = useLogger(event)
+    log.set({ docsRedirect: { path, error: error instanceof Error ? error.message : String(error) } })
   }
 })
