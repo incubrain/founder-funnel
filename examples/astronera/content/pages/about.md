@@ -130,7 +130,7 @@ orientation: horizontal
 Implementation Phase
 
 #description
-Supporting 6 priority sites for DarkSky International certification. Coordinating the trans-departmental regulatory framework and building institutional capacity across Maharashtra's government departments.
+Supporting 11 pilot sites across Maharashtra for dark sky policy implementation and DarkSky International certification. Coordinating the trans-departmental regulatory framework and building institutional capacity across government departments.
 ::
 
 ::section-wrapper

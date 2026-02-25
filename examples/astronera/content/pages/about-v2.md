@@ -28,7 +28,7 @@ links:
 From Stargazing to Policy
 
 #description
-What began as a passion for sharing the night sky became a mission to protect it — evolving from astronomy education into the Technical Secretariat for Maharashtra's Dark Sky Policy.
+What began as a passion for sharing the night sky became a mission to protect it — evolving from astronomy education into the Technical Secretariat for Maharashtra's Dark Sky Policy, working to get light pollution recognised under India's Environment Protection Act.
 
 #overlap
 
@@ -67,10 +67,10 @@ What began as a passion for sharing the night sky became a mission to protect it
         title: Policy Framework — TARA regulation launched
         image: /images/about/06.tara-comic-timeline-6.jpg
       - year: "2025–26"
-        title: Implementation — 6 sites for DSI certification
+        title: Implementation — 11 pilot sites across Maharashtra
         image: /images/about/07.tara-comic-timeline-7.jpg
       - year: "2030"
-        title: Vision — Asia-Pacific dark sky regulation model
+        title: Vision — ALAN recognised under India's EPA
         image: /images/about/08.tara-comic-timeline-8.jpg
     ---
     ::::
@@ -86,56 +86,26 @@ What began as a passion for sharing the night sky became a mission to protect it
   Impact in Numbers
 
   #bottom
-    ::::div{class="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto"}
-
-    :::::u-page-card
+    ::::impact-stats
     ---
-    variant: ghost
-    icon: i-lucide-map-pin
+    stats:
+      - value: "11"
+        label: Pilot Sites
+        sublabel: Across Maharashtra for policy implementation
+        icon: i-lucide-map-pin
+      - value: "1st"
+        label: Indian
+        sublabel: Dark Sky Defender recognition
+        icon: i-lucide-award
+      - value: "5+"
+        label: Departments
+        sublabel: Coordinating through TARA framework
+        icon: i-lucide-building-2
+      - value: "2018"
+        label: Founded
+        sublabel: Pune, Maharashtra
+        icon: i-lucide-calendar
     ---
-    #title
-    6 Priority Sites
-
-    #description
-    for DSI Certification
-    :::::
-
-    :::::u-page-card
-    ---
-    variant: ghost
-    icon: i-lucide-award
-    ---
-    #title
-    1st Indian
-
-    #description
-    Dark Sky Defender
-    :::::
-
-    :::::u-page-card
-    ---
-    variant: ghost
-    icon: i-lucide-building-2
-    ---
-    #title
-    5+ Departments
-
-    #description
-    in TARA Framework
-    :::::
-
-    :::::u-page-card
-    ---
-    variant: ghost
-    icon: i-lucide-calendar
-    ---
-    #title
-    Est. 2018
-
-    #description
-    Pune, Maharashtra
-    :::::
-
     ::::
   :::
 
@@ -241,9 +211,34 @@ What began as a passion for sharing the night sky became a mission to protect it
 
   :::section-wrapper
   ---
-  id: story-policy
+  id: cm-announcement
   orientation: horizontal
   class: bg-primary/5
+  icon: i-lucide-video
+  ---
+
+  #headline
+  National Space Day — 23rd August 2025
+
+  #title
+  Chief Minister Announces Dark Sky Policy
+
+  #description
+  The Honourable Chief Minister of Maharashtra announced the forthcoming Dark Sky Policy and recognised Shweta Kulkarni's Dark Sky Defender award during the National Space Day address — a landmark moment for dark sky conservation in India.
+
+  #left
+    ::::video-iframe
+    ---
+    src: https://www.youtube.com/embed/PLACEHOLDER_VIDEO_ID
+    title: CM Maharashtra announces Dark Sky Policy on National Space Day 2025
+    ---
+    ::::
+  :::
+
+  :::section-wrapper
+  ---
+  id: story-policy
+  orientation: horizontal
   ---
   ![Policy Launch](/images/about/06.tara-comic-timeline-6.jpg){.rounded-xl}
 
@@ -254,7 +249,7 @@ What began as a passion for sharing the night sky became a mission to protect it
   Policy to Implementation
 
   #description
-  Released the **Dark Sky Policy Roadmap for Maharashtra** — the first evidence-based, department-specific policy framework for light pollution governance in India. Now supporting 6 priority sites for DarkSky International certification and building institutional capacity across Maharashtra's government.
+  Released the **Dark Sky Policy Roadmap for Maharashtra** — the first evidence-based, department-specific policy framework for light pollution governance in India. Now supporting 11 pilot sites across Maharashtra and building institutional capacity across government departments.
 
   #links
     ::::u-button
@@ -303,7 +298,7 @@ What began as a passion for sharing the night sky became a mission to protect it
     The night sky connects science, culture, and the future of life on Earth. AstronEra's mission is to protect the night, not by resisting progress, but by designing it wisely. **When natural darkness is lost, we lose more than stars; we lose curiosity!**
 
     #footer
-      :::::div{class="flex items-center gap-3"}
+      :::::div{class="flex items-center gap-2 flex-wrap"}
       ::::::u-badge
       ---
       color: primary
@@ -342,87 +337,58 @@ What began as a passion for sharing the night sky became a mission to protect it
   AstronEra works alongside government, international bodies, and academic institutions to build a comprehensive dark sky conservation framework.
 
   #bottom
-    ::::div{class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto"}
+    ::::u-page-grid
+      :::::u-page-card
+      ---
+      icon: i-lucide-globe
+      variant: outline
+      ---
+      #title
+      DarkSky International
 
-    :::::u-page-card
+      #description
+      Technical partner for site certification and policy endorsement — the only Indian entity with a direct, formal relationship.
+      :::::
+
+      :::::u-page-card
+      ---
+      icon: i-lucide-landmark
+      variant: outline
+      ---
+      #title
+      Maharashtra Government
+
+      #description
+      Multiple departments coordinating through the TARA framework: Environment, Tourism, Forest & Wildlife, Urban Development, and Energy.
+      :::::
+
+      :::::u-page-card
+      ---
+      icon: i-lucide-graduation-cap
+      variant: outline
+      ---
+      #title
+      Academic Institutions
+
+      #description
+      Indian Institute of Astrophysics, IUCAA, and district colleges for research and implementation support.
+      :::::
+    ::::
+
+    ::::logo-bar
     ---
-    icon: i-lucide-globe
-    variant: outline
+    logos:
+      - src: /images/logos/dst.png
+        alt: DarkSky International
+      - src: /images/logos/iau.png
+        alt: International Astronomical Union
+      - src: /images/logos/iau-oad.png
+        alt: IAU Office of Astronomy for Development
+      - src: /images/logos/iimb-nsrcel.png
+        alt: IIMB NSRCEL
+      - src: /images/logos/in-fed.png
+        alt: Indian Federation
     ---
-    #title
-    DarkSky International
-
-    #description
-    Technical partner for site certification and policy endorsement — the only Indian entity with a direct, formal relationship.
-
-    #footer
-      ::::::logo-bar
-      ---
-      logos:
-        - src: /images/logos/dst.png
-          alt: DarkSky International
-      ---
-      ::::::
-    :::::
-
-    :::::u-page-card
-    ---
-    icon: i-lucide-landmark
-    variant: outline
-    ---
-    #title
-    Maharashtra Government
-
-    #description
-    Five departments coordinating through the TARA framework: Environment, Tourism, Forest & Wildlife, Urban Development, and Energy.
-
-    #footer
-      ::::::u-badge
-      ---
-      color: neutral
-      variant: subtle
-      ---
-      5 Departments
-      ::::::
-    :::::
-
-    :::::u-page-card
-    ---
-    icon: i-lucide-graduation-cap
-    variant: outline
-    ---
-    #title
-    Academic Institutions
-
-    #description
-    Indian Institute of Astrophysics, IUCAA, and district colleges for research and implementation support.
-
-    #footer
-      ::::::div{class="flex gap-2 flex-wrap"}
-      :::::::u-badge
-      ---
-      color: neutral
-      variant: subtle
-      ---
-      IIA
-      :::::::
-      :::::::u-badge
-      ---
-      color: neutral
-      variant: subtle
-      ---
-      IUCAA
-      :::::::
-      :::::::u-badge
-      ---
-      color: neutral
-      variant: subtle
-      ---
-      IAU
-      :::::::
-      ::::::
-    :::::
-
     ::::
   :::
 
@@ -438,10 +404,10 @@ What began as a passion for sharing the night sky became a mission to protect it
   Looking Ahead
 
   #title
-  Vision 2030 — The Model for Asia-Pacific
+  Vision 2030
 
   #description
-  Maharashtra becomes the model for dark sky regulation across the Asia-Pacific region, demonstrating that protecting the night sky is not a luxury — it is a legal right and economic opportunity. Through the TARA mechanism, evidence-based policy creates measurable impact across health, biodiversity, tourism, and climate.
+  Maharashtra becomes the model for Asia-Pacific dark sky regulation. Light pollution formally recognised as a pollutant under India's Environment Protection Act — demonstrating that protecting the night sky is not a luxury, but a legal right and economic opportunity.
 
   #links
     ::::u-button
@@ -468,7 +434,7 @@ What began as a passion for sharing the night sky became a mission to protect it
   :::u-page-c-t-a
   ---
   title: Our Mission
-  description: Through research, policy design, and internationally benchmarked frameworks, we are working to support Maharashtra in addressing light pollution as a public health, biodiversity, and climate concern. Dark skies are not a luxury — they are a legal right and economic opportunity.
+  description: "To get light pollution formally recognised as a pollutant under India's Environment Protection Act. Through research, policy design, and internationally benchmarked frameworks, we support Maharashtra in addressing ALAN as a public health, biodiversity, and climate concern — proving that dark skies are a legal right and economic opportunity."
   variant: subtle
   links:
     - label: Get Involved
