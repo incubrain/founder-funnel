@@ -32,6 +32,12 @@ export default defineNuxtConfig({
     '/about': {
       appLayout: 'landing',
     },
+    '/about-v1': {
+      appLayout: 'landing',
+    },
+    '/about-v2': {
+      appLayout: 'landing',
+    },
     '/team': {
       appLayout: 'default',
     },

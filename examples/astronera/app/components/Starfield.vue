@@ -7,7 +7,7 @@ const isDark = computed(() => colorMode.value === 'dark')
 <template>
   <div
     v-if="isClient && isDark"
-    class="fixed inset-0 z-0 pointer-events-none overflow-hidden"
+    class="absolute inset-0 z-0 pointer-events-none overflow-hidden"
     aria-hidden="true"
   >
     <div
@@ -27,8 +27,13 @@ const isDark = computed(() => colorMode.value === 'dark')
 
 <style scoped>
 @keyframes twinkle {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .shooting-star {
@@ -56,9 +61,19 @@ const isDark = computed(() => colorMode.value === 'dark')
 }
 
 @keyframes shoot {
-  0% { transform: translate(0, 0); opacity: 0; }
-  5% { opacity: 1; }
-  20% { transform: translate(-200px, 200px); opacity: 0; }
-  100% { opacity: 0; }
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  20% {
+    transform: translate(-200px, 200px);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 </style>
