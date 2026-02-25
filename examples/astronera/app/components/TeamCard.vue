@@ -1,6 +1,7 @@
 <script setup lang="ts">
 interface TeamMember {
   slug: string
+  isFounder?: boolean
   givenName: string
   surname: string
   email?: string
@@ -26,20 +27,30 @@ defineProps<Props>()
 
 <template>
   <UCard
-    variant="subtle"
+    :variant="member.isFounder ? 'soft' : 'subtle'"
     :ui="{
-      root: 'overflow-hidden transition-all duration-300 hover:shadow-xl',
+      root: `overflow-hidden transition-all duration-300 hover:shadow-xl ${member.isFounder ? 'ring-2 ring-primary/30' : ''}`,
       body: 'p-6 space-y-4',
     }"
   >
-    <!-- Avatar & Name -->
     <div class="flex flex-col items-center text-center space-y-3">
-      <UAvatar
-        :src="member.avatar.src"
-        :alt="member.avatar.alt"
-        size="3xl"
-        :ui="{ root: 'ring-4 ring-primary-500/10' }"
-      />
+      <div class="relative">
+        <UAvatar
+          :src="member.avatar.src"
+          :alt="member.avatar.alt"
+          size="3xl"
+          :ui="{ root: `ring-4 ${member.isFounder ? 'ring-primary/30' : 'ring-primary-500/10'}` }"
+        />
+        <UBadge
+          v-if="member.isFounder"
+          color="primary"
+          variant="solid"
+          size="xs"
+          class="absolute -bottom-1 left-1/2 -translate-x-1/2"
+        >
+          Founder
+        </UBadge>
+      </div>
       <div>
         <h3 class="text-xl font-bold text-foreground">
           {{ member.givenName }} {{ member.surname }}
@@ -53,7 +64,6 @@ defineProps<Props>()
       </div>
     </div>
 
-    <!-- Bio -->
     <p
       v-if="member.bio"
       class="text-sm text-muted-foreground leading-relaxed"

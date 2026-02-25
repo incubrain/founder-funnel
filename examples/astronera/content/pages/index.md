@@ -138,7 +138,7 @@ orientation: horizontal
 The Cost of Unregulated Light
 
 #description
-Maharashtra can turn wasted lighting into economic opportunity. Dark sky tourism generates USD 1–3 B globally, with certified regions seeing 30–40 % visitor growth. Dark sky–compliant lighting delivers ~190% returns via energy savings, lower maintenance, and sustained astrotourism.
+Maharashtra can turn wasted lighting into economic opportunity. Dark sky tourism generates USD 1–3 B globally, with certified regions seeing 30–40 % visitor growth. Dark sky–compliant lighting delivers ~190% returns via energy savings, lower maintenance, and sustained astrotourism. [Read the full economic analysis →](/darksky/research/tourism)
 ::
 
 ::section-wrapper
@@ -155,7 +155,7 @@ orientation: horizontal
 Ecosystems Under Artificial Light
 
 #description
-Artificial light at night disrupts ecosystems across Maharashtra, from forests and farms to rivers and coasts. With over 60% of species globally reliant on natural darkness, light pollution accelerates biodiversity loss and quietly undermines agriculture, fisheries, and ecological resilience.
+Artificial light at night disrupts ecosystems across Maharashtra, from forests and farms to rivers and coasts. With over 60% of species globally reliant on natural darkness, light pollution accelerates biodiversity loss and quietly undermines agriculture, fisheries, and ecological resilience. [Explore the ecological evidence →](/darksky/research/ecology)
 ::
 
 ::section-wrapper
@@ -171,7 +171,7 @@ orientation: horizontal
 Circadian Disruption at Scale
 
 #description
-ALAN suppresses melatonin and disrupts circadian rhythms. Chronic exposure is linked to elevated cardiovascular risk, metabolic disorders, and up to **2.5× higher dementia risk**, positioning light pollution as a **global health concern.**
+ALAN suppresses melatonin and disrupts circadian rhythms. Chronic exposure is linked to elevated cardiovascular risk, metabolic disorders, and up to **2.5× higher dementia risk**, positioning light pollution as a **global health concern.** [See the health research →](/darksky/research/health)
 ::
 
 ::section-wrapper
@@ -188,7 +188,7 @@ orientation: horizontal
 Energy Waste and Emissions
 
 #description
-Outdoor lighting is a major, under-regulated source of energy waste. Lighting contributes ~5% of global greenhouse gas emissions, and Maharashtra's urban and industrial footprint produces millions of tons of avoidable CO₂ under public infrastructure governance.
+Outdoor lighting is a major, under-regulated source of energy waste. Lighting contributes ~5% of global greenhouse gas emissions, and Maharashtra's urban and industrial footprint produces millions of tons of avoidable CO₂ under public infrastructure governance. [Read the climate analysis →](/darksky/research/climate)
 ::
 
 ::section-wrapper
@@ -281,7 +281,7 @@ orientation: horizontal
 Policy and Pilot Implementation
 
 #description
-AstronEra is coordinating a pathway to translate dark sky science into actionable governance, enabling light pollution management that is measurable, enforceable, and scalable within Maharashtra's administrative systems.
+AstronEra is coordinating a pathway to translate dark sky science into actionable governance, enabling light pollution management that is measurable, enforceable, and scalable within Maharashtra's administrative systems. [View the policy framework →](/darksky/policy)
 ::
 
 ::section-wrapper
@@ -300,7 +300,7 @@ Pilot Sites and Astrotourism
 #description
 AstronEra is working with pilot sites across Maharashtra to test real-world dark sky conservation–focused development to guide policy design and implementation.
 
-These pilots align with **DarkSky International** certification frameworks.
+These pilots align with **DarkSky International** certification frameworks. [Learn about the pilot program →](/darksky/pilots)
 ::
 
 ::section-wrapper{#founder}

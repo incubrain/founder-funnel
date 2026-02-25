@@ -24,7 +24,7 @@ const allItems = computed(() => {
       :prev="{ size: 'xl', square: true }"
       :next="{ size: 'xl', square: true }"
       :ui="{
-        item: 'basis-[320px] px-2 min-h-[360px] h-full',
+        item: 'basis-[320px] px-2 min-h-[360px] h-full [&>*]:h-full',
         viewport: 'overflow-hidden p-4',
         controls: 'relative my-12 hidden md:flex justify-center max-w-container mx-auto',
         arrows: 'flex gap-4',

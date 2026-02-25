@@ -67,6 +67,7 @@ defineSlots<ExtendedSlots>()
 
     <!-- Content that scrolls over hero -->
     <div class="relative min-h-screen bg-default">
+      <Starfield />
       <slot name="overlap" />
     </div>
   </div>
