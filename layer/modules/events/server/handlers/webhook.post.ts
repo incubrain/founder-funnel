@@ -174,7 +174,7 @@ export default defineEventHandler(async (event) => {
       }
 
       // Retry webhook delivery with exponential backoff
-      const response = await retryWithBackoff(
+      await retryWithBackoff(
         async () => {
           const result = await $fetch(url, {
             method: 'POST',

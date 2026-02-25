@@ -1,6 +1,12 @@
 import { defineEventHandler, sendRedirect } from 'h3'
 import { queryCollectionNavigation } from '@nuxt/content/server'
 
+interface NavItem {
+  path?: string
+  body?: unknown
+  children?: NavItem[]
+}
+
 /**
  * Redirects docs directory routes to the first child page.
  *
@@ -31,7 +37,7 @@ export default defineEventHandler(async (event) => {
     const navigation = await queryCollectionNavigation(event, 'docs')
 
     // Find the matching directory node
-    const findNode = (items: any[], targetPath: string): any => {
+    const findNode = (items: NavItem[], targetPath: string): NavItem | null => {
       for (const item of items) {
         // Normalize paths for comparison (remove trailing slash)
         const itemPath = item.path?.replace(/\/$/, '')
@@ -53,13 +59,14 @@ export default defineEventHandler(async (event) => {
 
     // If we found a node with children but no body (no content file),
     // redirect to the first child
-    if (node?.children?.length > 0 && !node.body) {
+    if (node?.children?.length && node.children.length > 0 && !node.body) {
       const firstChild = node.children[0]
       if (firstChild?.path) {
         return sendRedirect(event, firstChild.path, 302)
       }
     }
-  } catch (error) {
+  }
+  catch (error) {
     // Fail silently - let the normal 404 handling take over
     console.debug('docs-redirect middleware:', error)
   }

@@ -10,7 +10,8 @@ export async function processCopyList(projectDir: string): Promise<void> {
   let raw: string
   try {
     raw = await readFile(configPath, 'utf-8')
-  } catch {
+  }
+  catch {
     return
   }
 

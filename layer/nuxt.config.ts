@@ -203,7 +203,7 @@ export default defineNuxtConfig({
 
   hooks: {
     'components:extend': (
-      components: { pascalName: string; global?: boolean | 'sync' }[],
+      components: { pascalName: string, global?: boolean | 'sync' }[],
     ) => {
       const globals = components.filter((c: { pascalName: string }) =>
         ['UButton', 'UIcon'].includes(c.pascalName),
