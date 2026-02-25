@@ -22,6 +22,7 @@ links:
     variant: outline
     color: neutral
     size: xl
+    icon: i-lucide-users
 ---
 #title
 From Stargazing to Policy
@@ -39,6 +40,9 @@ What began as a passion for sharing the night sky became a mission to protect it
   ---
   #title
   The Journey
+
+  #description
+  Scroll through eight years of evolution — from astronomy education to state-level policy.
 
   #bottom
     ::::timeline-strip
@@ -82,33 +86,64 @@ What began as a passion for sharing the night sky became a mission to protect it
   Impact in Numbers
 
   #bottom
-    ::::div{class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto text-center"}
+    ::::div{class="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto"}
 
-      :::::div
-      [6]{class="text-4xl md:text-5xl font-bold text-primary block"}
-      [Priority Sites]{class="text-sm text-muted mt-1 block"}
-      [for DSI Certification]{class="text-xs text-muted/60 block"}
-      :::::
+    :::::u-page-card
+    ---
+    variant: ghost
+    icon: i-lucide-map-pin
+    ---
+    #title
+    6 Priority Sites
 
-      :::::div
-      [1st]{class="text-4xl md:text-5xl font-bold text-primary block"}
-      [Indian]{class="text-sm text-muted mt-1 block"}
-      [Dark Sky Defender]{class="text-xs text-muted/60 block"}
-      :::::
+    #description
+    for DSI Certification
+    :::::
 
-      :::::div
-      [5+]{class="text-4xl md:text-5xl font-bold text-primary block"}
-      [Departments]{class="text-sm text-muted mt-1 block"}
-      [in TARA Framework]{class="text-xs text-muted/60 block"}
-      :::::
+    :::::u-page-card
+    ---
+    variant: ghost
+    icon: i-lucide-award
+    ---
+    #title
+    1st Indian
 
-      :::::div
-      [2018]{class="text-4xl md:text-5xl font-bold text-primary block"}
-      [Founded]{class="text-sm text-muted mt-1 block"}
-      [Pune, Maharashtra]{class="text-xs text-muted/60 block"}
-      :::::
+    #description
+    Dark Sky Defender
+    :::::
+
+    :::::u-page-card
+    ---
+    variant: ghost
+    icon: i-lucide-building-2
+    ---
+    #title
+    5+ Departments
+
+    #description
+    in TARA Framework
+    :::::
+
+    :::::u-page-card
+    ---
+    variant: ghost
+    icon: i-lucide-calendar
+    ---
+    #title
+    Est. 2018
+
+    #description
+    Pune, Maharashtra
+    :::::
 
     ::::
+  :::
+
+  :::u-divider
+  ---
+  label: Our Story
+  icon: i-lucide-book-open
+  ---
   :::
 
   :::section-wrapper
@@ -145,6 +180,16 @@ What began as a passion for sharing the night sky became a mission to protect it
 
   #description
   Training tribal communities as certified AstroGuides. Recognised by the **IAU Office of Astronomy for Development**, establishing AstronEra as a credible force in astronomy outreach and community engagement across India.
+
+  #links
+    ::::u-badge
+    ---
+    color: success
+    variant: soft
+    icon: i-lucide-check-circle
+    ---
+    IAU Recognised
+    ::::
   :::
 
   :::section-wrapper
@@ -182,6 +227,16 @@ What began as a passion for sharing the night sky became a mission to protect it
 
   #description
   Hosted **IDSPAC 2023** in Manali — India's first international dark sky preservation conference. Established a formal relationship with **DarkSky International**. Founder Shweta Kulkarni named **Dark Sky Defender Asia 2024** — the first Indian to receive this honour.
+
+  #links
+    ::::u-badge
+    ---
+    color: primary
+    variant: soft
+    icon: i-lucide-star
+    ---
+    Dark Sky Defender Asia 2024
+    ::::
   :::
 
   :::section-wrapper
@@ -200,20 +255,79 @@ What began as a passion for sharing the night sky became a mission to protect it
 
   #description
   Released the **Dark Sky Policy Roadmap for Maharashtra** — the first evidence-based, department-specific policy framework for light pollution governance in India. Now supporting 6 priority sites for DarkSky International certification and building institutional capacity across Maharashtra's government.
+
+  #links
+    ::::u-button
+    ---
+    to: /darksky/policy
+    variant: outline
+    size: sm
+    trailing-icon: i-lucide-arrow-right
+    ---
+    Read the Policy
+    ::::
   :::
 
-  :::section-wrapper{#founder}
-    ::::founder-quote
+  :::u-divider
+  ---
+  label: The Founder
+  icon: i-lucide-user
+  ---
+  :::
+
+  :::section-wrapper
+  ---
+  id: founder-v2
+  orientation: horizontal
+  reverse: true
+  reverseBelow: md
+  ---
+  ![Shweta Kulkarni](/images/team/shweta-kulkarni.png){class="rounded-2xl w-full max-w-sm mx-auto" :zoom='false'}
+
+  #headline
+  The Force Behind AstronEra
+
+  #title
+  Shweta Kulkarni, FRAS
+
+  #description
+  Founder & CEO, AstronEra | Dark Sky Strategist (Maharashtra)
+
+  #bottom
+    ::::u-page-card
     ---
-    avatar: /images/team/shweta-kulkarni.png
-    name: Shweta Kulkarni, FRAS
-    subtitle: Dark Sky Strategist (Maharashtra)
-    title: Founder & CEO, AstronEra | Dark Sky Defender Asia 2024
+    variant: subtle
+    icon: i-lucide-quote
     ---
-    The night sky connects science, culture, and the future of life on Earth.
-    AstronEra's mission is to protect the night, not by resisting progress, but by designing it wisely.
-    **When natural darkness is lost, we lose more than stars; we lose curiosity!**
+    #description
+    The night sky connects science, culture, and the future of life on Earth. AstronEra's mission is to protect the night, not by resisting progress, but by designing it wisely. **When natural darkness is lost, we lose more than stars; we lose curiosity!**
+
+    #footer
+      :::::div{class="flex items-center gap-3"}
+      ::::::u-badge
+      ---
+      color: primary
+      variant: soft
+      icon: i-lucide-award
+      ---
+      Dark Sky Defender Asia 2024
+      ::::::
+      ::::::u-badge
+      ---
+      color: neutral
+      variant: subtle
+      ---
+      FRAS
+      ::::::
+      :::::
     ::::
+  :::
+
+  :::u-divider
+  ---
+  label: Our Network
+  icon: i-lucide-handshake
+  ---
   :::
 
   :::section-wrapper
@@ -224,67 +338,117 @@ What began as a passion for sharing the night sky became a mission to protect it
   #title
   Partners & Collaborators
 
+  #description
+  AstronEra works alongside government, international bodies, and academic institutions to build a comprehensive dark sky conservation framework.
+
   #bottom
-    ::::div{class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto"}
-      :::::u-page-card
+    ::::div{class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto"}
+
+    :::::u-page-card
+    ---
+    icon: i-lucide-globe
+    variant: outline
+    ---
+    #title
+    DarkSky International
+
+    #description
+    Technical partner for site certification and policy endorsement — the only Indian entity with a direct, formal relationship.
+
+    #footer
+      ::::::logo-bar
       ---
-      icon: i-lucide-globe
+      logos:
+        - src: /images/logos/dst.png
+          alt: DarkSky International
+      ---
+      ::::::
+    :::::
+
+    :::::u-page-card
+    ---
+    icon: i-lucide-landmark
+    variant: outline
+    ---
+    #title
+    Maharashtra Government
+
+    #description
+    Five departments coordinating through the TARA framework: Environment, Tourism, Forest & Wildlife, Urban Development, and Energy.
+
+    #footer
+      ::::::u-badge
+      ---
+      color: neutral
       variant: subtle
       ---
-      #title
-      DarkSky International
+      5 Departments
+      ::::::
+    :::::
 
-      #description
-      Technical partner for site certification and policy endorsement — the only Indian entity with a direct, formal relationship.
-      :::::
+    :::::u-page-card
+    ---
+    icon: i-lucide-graduation-cap
+    variant: outline
+    ---
+    #title
+    Academic Institutions
 
-      :::::u-page-card
+    #description
+    Indian Institute of Astrophysics, IUCAA, and district colleges for research and implementation support.
+
+    #footer
+      ::::::div{class="flex gap-2 flex-wrap"}
+      :::::::u-badge
       ---
-      icon: i-lucide-landmark
+      color: neutral
       variant: subtle
       ---
-      #title
-      Maharashtra Government
-
-      #description
-      Five departments coordinating through the TARA framework: Environment, Tourism, Forest, Urban Development, and Energy.
-      :::::
-
-      :::::u-page-card
+      IIA
+      :::::::
+      :::::::u-badge
       ---
-      icon: i-lucide-graduation-cap
+      color: neutral
       variant: subtle
       ---
-      #title
-      Academic Institutions
+      IUCAA
+      :::::::
+      :::::::u-badge
+      ---
+      color: neutral
+      variant: subtle
+      ---
+      IAU
+      :::::::
+      ::::::
+    :::::
 
-      #description
-      Indian Institute of Astrophysics, IUCAA, and district colleges for research and implementation support.
-      :::::
     ::::
   :::
 
   :::section-wrapper
   ---
   id: vision-v2
-  orientation: vertical
-  class: bg-primary/10 text-center
+  orientation: horizontal
+  class: bg-primary/5
   ---
+  ![Vision 2030](/images/about/08.tara-comic-timeline-8.jpg){.rounded-2xl}
+
   #headline
-  Vision 2030
+  Looking Ahead
 
   #title
-  The Model for Asia-Pacific
+  Vision 2030 — The Model for Asia-Pacific
 
   #description
-  Maharashtra becomes the model for dark sky regulation across the Asia-Pacific region, demonstrating that protecting the night sky is not a luxury — it is a legal right and economic opportunity. Through the TARA mechanism, we prove that evidence-based policy creates measurable impact across health, biodiversity, tourism, and climate.
+  Maharashtra becomes the model for dark sky regulation across the Asia-Pacific region, demonstrating that protecting the night sky is not a luxury — it is a legal right and economic opportunity. Through the TARA mechanism, evidence-based policy creates measurable impact across health, biodiversity, tourism, and climate.
 
   #links
     ::::u-button
     ---
     to: /darksky/policy
-    size: xl
-    icon: i-lucide-file-text
+    size: lg
+    trailing-icon: i-lucide-arrow-right
     ---
     Read the Policy Framework
     ::::
@@ -292,12 +456,33 @@ What began as a passion for sharing the night sky became a mission to protect it
     ::::u-button
     ---
     to: /darksky/research
-    size: xl
     variant: outline
+    color: neutral
+    size: lg
     icon: i-lucide-book-open
     ---
     Explore the Research
     ::::
+  :::
+
+  :::u-page-c-t-a
+  ---
+  title: Our Mission
+  description: Through research, policy design, and internationally benchmarked frameworks, we are working to support Maharashtra in addressing light pollution as a public health, biodiversity, and climate concern. Dark skies are not a luxury — they are a legal right and economic opportunity.
+  variant: subtle
+  links:
+    - label: Get Involved
+      to: mailto:connectus@astronera.org
+      size: xl
+      icon: i-lucide-mail
+    - label: Follow on X
+      to: https://x.com/AstronEra
+      variant: outline
+      color: neutral
+      size: xl
+      icon: i-simple-icons-x
+      target: _blank
+  ---
   :::
 
 ::
