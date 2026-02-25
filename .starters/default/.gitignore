@@ -23,3 +23,13 @@ logs
 .env
 .env.*
 !.env.example
+
+# Agent skills (external, installed at runtime)
+.agents/skills
+.cursor/
+.trae/
+.windsurf/
+
+# Claude Code local overrides
+CLAUDE.local.md
+.claude/settings.local.json

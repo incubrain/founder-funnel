@@ -90,7 +90,7 @@ importers:
         version: 1.2.71
       '@incubrain/foundry':
         specifier: ^0.5.2
-        version: 0.5.2(db342f8ba1f305757aec024e04ba9157)
+        version: 0.5.2(3dfe9450781ed8c614690e199d74fd7a)
       better-sqlite3:
         specifier: ^12.5.0
         version: 12.6.2
@@ -918,8 +918,8 @@ packages:
   '@iconify/collections@1.0.644':
     resolution: {integrity: sha512-feUVIH69byoiu8iocNU8II8MQfv+Xd5jA+cj6GN5wsLxkPEt2lpCGLMaK0NautY6itBdYN2pYC1I8sngvHJg2g==}
 
-  '@iconify/json@2.2.439':
-    resolution: {integrity: sha512-DFpo7ZqntngeDaVFtsj+AydUrJoEPW0FIpMrmngo3iHxLXpqcNe5lhztPqvVBoXllbohomcA1YRjRO/ljo7AnQ==}
+  '@iconify/json@2.2.443':
+    resolution: {integrity: sha512-xyDqw1FeuNWPhYj+Sp2I1kyD6J5U5s8GxEW+dgIY1/Vl0b65t+PlRVCxEBtx73CanfDUPrSEHbxKQJwzXrcV/w==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -8916,7 +8916,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify/json@2.2.439':
+  '@iconify/json@2.2.443':
     dependencies:
       '@iconify/types': 2.0.0
       pathe: 2.0.3
@@ -9031,9 +9031,9 @@ snapshots:
   '@img/sharp-win32-x64@0.34.5':
     optional: true
 
-  '@incubrain/foundry@0.5.2(db342f8ba1f305757aec024e04ba9157)':
+  '@incubrain/foundry@0.5.2(3dfe9450781ed8c614690e199d74fd7a)':
     dependencies:
-      '@iconify/json': 2.2.439
+      '@iconify/json': 2.2.443
       '@nuxt/content': 3.11.2(better-sqlite3@12.6.2)(magicast@0.5.1)(valibot@1.2.0(typescript@5.9.3))
       '@nuxt/image': 2.0.0(db0@0.3.4(better-sqlite3@12.6.2))(ioredis@5.9.2)(magicast@0.5.1)
       '@nuxt/kit': 4.3.1(magicast@0.5.1)

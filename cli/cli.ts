@@ -1,5 +1,6 @@
 import { resolve } from 'node:path'
 import { defineCommand, runMain } from 'citty'
+import { processCopyList } from './copy-files'
 import type { CLIOptions } from './types'
 
 export function createCLI(opts: CLIOptions) {
@@ -37,6 +38,8 @@ export function createCLI(opts: CLIOptions) {
         '-t',
         `gh:incubrain/foundry/.starters/${template}`,
       ])
+
+      await processCopyList(dir)
     },
   })
 
