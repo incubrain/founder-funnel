@@ -144,6 +144,7 @@ Maharashtra can turn wasted lighting into economic opportunity. Dark sky tourism
 ::section-wrapper
 ---
 reverse: true
+reverseBelow: md
 headline: Biodiversity Impact
 id: ecological
 orientation: horizontal
@@ -176,6 +177,7 @@ ALAN suppresses melatonin and disrupts circadian rhythms. Chronic exposure is li
 ::section-wrapper
 ---
 reverse: true
+reverseBelow: md
 headline: Climate Integration
 id: climate
 orientation: horizontal
@@ -285,6 +287,7 @@ AstronEra is coordinating a pathway to translate dark sky science into actionabl
 ::section-wrapper
 ---
 reverse: true
+reverseBelow: md
 headline: Pilot Implementation
 id: action-pilot
 orientation: horizontal
