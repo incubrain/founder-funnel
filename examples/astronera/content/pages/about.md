@@ -7,195 +7,196 @@ prose: false
 
 ::section-wrapper
 ---
-headline: Our Story
-id: story
-orientation: vertical
-class: text-center
+id: about-hero
+orientation: horizontal
 ---
+  :::video-iframe
+  ---
+  src: https://www.youtube.com/embed/2Nq47yMdIzU?si=kDLIBizYk_Qrp3eo
+  title: CM Maharashtra announces Dark Sky Policy on National Space Day 2025
+  ---
+  :::
+
+#headline
+Est. 2018 — Pune, India
+
 #title
 From Stargazing to Policy
 
 #description
-What began as a passion for sharing the night sky became a mission to protect it. AstronEra's journey from astronomy education platform to Technical Secretariat for Maharashtra's Dark Sky Policy is a story of recognising that real change requires systemic action.
-::
+What began as a passion for sharing the night sky became a mission to protect it. AstronEra's journey from astronomy education to Technical Secretariat for Maharashtra's Dark Sky Policy is a story of recognising that real change requires systemic action — and that light pollution must be recognised as a pollutant under India's Environment Protection Act.
 
-::section-wrapper
----
-headline: "2018"
-id: foundation
-orientation: horizontal
----
-![AstronEra Foundation](/images/about/01.tara-comic-timeline-1.jpg)
-
-#title
-Foundation
-
-#description
-AstronEra begins as an astronomy education platform, delivering stargazing experiences and courses across India. A spark of curiosity about the cosmos sets the stage for something far bigger.
-::
-
-::section-wrapper
----
-reverse: true
-reverseBelow: md
-headline: "2019–2021"
-id: credibility
-orientation: horizontal
-class: bg-primary/10
----
-![AstroTribe Program](/images/about/02.tara-comic-timeline-2.jpg)
-
-#title
-Building Credibility
-
-#description
-Development of the **AstroTribe** program, training tribal communities as certified AstroGuides. Recognised by the IAU Office of Astronomy for Development, establishing AstronEra as a credible force in astronomy outreach and community engagement.
-::
-
-::section-wrapper
----
-headline: "2022"
-id: pivot
-orientation: horizontal
----
-![Policy Research](/images/about/03.tara-comic-timeline-3.jpg)
-
-#title
-The Policy Shift
-
-#description
-The pivot moment: recognising that light pollution regulation required government action, not just education. AstronEra begins serious policy research, shifting from awareness to advocacy and systemic change.
-::
-
-::section-wrapper
----
-reverse: true
-reverseBelow: md
-headline: "2023"
-id: recognition
-orientation: horizontal
-class: bg-primary/10
----
-![IDSPAC Conference](/images/about/04.tara-comic-timeline-4.jpg)
-
-#title
-International Recognition
-
-#description
-Hosted **IDSPAC 2023** in Manali — India's first international dark sky preservation and astrotourism conference. Established a formal relationship with **DarkSky International**, connecting Maharashtra's efforts to the global movement.
-::
-
-::section-wrapper
----
-headline: "2024"
-id: defender
-orientation: horizontal
----
-![Dark Sky Defender](/images/about/05.tara-comic-timeline-5.jpg)
-
-#title
-Dark Sky Defender Asia
-
-#description
-Founder Shweta Kulkarni named **Dark Sky Defender Asia 2024** by DarkSky International — the first Indian to receive this recognition. Formalised AstronEra's role as Technical Secretariat for Maharashtra's dark sky conservation efforts.
-::
-
-::section-wrapper
----
-reverse: true
-reverseBelow: md
-headline: "2025"
-id: launch
-orientation: horizontal
-class: bg-primary/10
----
-![Policy Launch](/images/about/06.tara-comic-timeline-6.jpg)
-
-#title
-Policy Framework Launch
-
-#description
-Released the **Dark Sky Policy Roadmap for Maharashtra** — a comprehensive ALAN regulation framework through the TARA mechanism. The first evidence-based, department-specific policy framework for light pollution governance in India.
-::
-
-::section-wrapper
----
-headline: "2025–2026"
-id: implementation
-orientation: horizontal
----
-![Implementation](/images/about/07.tara-comic-timeline-7.jpg)
-
-#title
-Implementation Phase
-
-#description
-Supporting 11 pilot sites across Maharashtra for dark sky policy implementation and DarkSky International certification. Coordinating the trans-departmental regulatory framework and building institutional capacity across government departments.
-::
-
-::section-wrapper
----
-reverse: true
-reverseBelow: md
-headline: "Vision"
-id: vision
-orientation: horizontal
-class: bg-primary/10
----
-![Future Vision](/images/about/08.tara-comic-timeline-8.jpg)
-
-#title
-Vision 2030
-
-#description
-Maharashtra becomes the **model for Asia-Pacific** dark sky regulation, demonstrating the economic and ecological benefits of responsible lighting governance. A proof point that protecting the night sky is not a luxury — it is a legal right and economic opportunity.
-::
-
-::section-wrapper{#founder}
-  :::founder-quote
+#links
+  :::u-button
   ---
-  avatar: /images/team/shweta-kulkarni.png
-  name: Shweta Kulkarni, FRAS
-  subtitle: Dark Sky Strategist (Maharashtra)
-  title: Founder & CEO, AstronEra | Dark Sky Defender Asia 2024
+  to: /darksky/policy
+  variant: solid
+  size: lg
   ---
-  The night sky connects science, culture, and the future of life on Earth.
-  AstronEra's mission is to protect the night, not by resisting progress, but by designing it wisely.
-  **When natural darkness is lost, we lose more than stars; we lose curiosity!**
+  Policy Framework
+  :::
+
+  :::u-button
+  ---
+  to: /team
+  variant: outline
+  color: neutral
+  size: lg
+  icon: i-lucide-users
+  ---
+  Meet the Team
   :::
 ::
 
 ::section-wrapper
 ---
-headline: Partners
-id: partners
+id: journey-strip
+orientation: vertical
+class: pt-0
+---
+#title
+The Journey
+
+#description
+Scroll through eight years of evolution — from astronomy education to state-level policy.
+
+#default
+  :::timeline-strip
+  ---
+  milestones:
+    - year: "2018"
+      title: Foundation — Astronomy education platform launches
+      image: /images/about/01.tara-comic-timeline-1.jpg
+    - year: "2019"
+      title: AstroTribe — Training tribal communities as AstroGuides
+      image: /images/about/02.tara-comic-timeline-2.jpg
+    - year: "2022"
+      title: Policy Shift — From education to advocacy
+      image: /images/about/03.tara-comic-timeline-3.jpg
+    - year: "2023"
+      title: IDSPAC — India's first dark sky conference
+      image: /images/about/04.tara-comic-timeline-4.jpg
+    - year: "2024"
+      title: Dark Sky Defender Asia — First Indian recognition
+      image: /images/about/05.tara-comic-timeline-5.jpg
+    - year: "2025"
+      title: Policy Framework — TARA regulation launched
+      image: /images/about/06.tara-comic-timeline-6.jpg
+    - year: "2025–26"
+      title: Implementation — 11 pilot sites across Maharashtra
+      image: /images/about/07.tara-comic-timeline-7.jpg
+    - year: "2030"
+      title: Vision — ALAN recognised under India's EPA
+      image: /images/about/08.tara-comic-timeline-8.jpg
+  ---
+  :::
+::
+
+::u-divider
+---
+icon: i-lucide-bar-chart-3
+---
+::
+
+::section-wrapper
+---
+id: about-impact
 orientation: vertical
 ---
 #title
-Our Partners
+Impact at a Glance
+
+#default
+  :::impact-stats
+  ---
+  stats:
+    - value: "11"
+      label: Pilot Sites
+      sublabel: Across Maharashtra for policy implementation
+      icon: i-lucide-map-pin
+    - value: "1st"
+      label: Indian
+      sublabel: Dark Sky Defender recognition from DSI
+      icon: i-lucide-award
+    - value: "5+"
+      label: Departments
+      sublabel: Coordinating through the TARA framework
+      icon: i-lucide-building-2
+    - value: "2023"
+      label: IDSPAC
+      sublabel: India's first dark sky preservation conference
+      icon: i-lucide-globe
+  ---
+  :::
+::
+
+::section-wrapper
+---
+id: about-vision
+orientation: horizontal
+class: bg-default
+---
+![Vision 2030](/images/about/08.tara-comic-timeline-8.jpg){.rounded-2xl}
+
+#headline
+Looking Ahead
+
+#title
+Vision 2030
 
 #description
-AstronEra works alongside government, international bodies, and academic institutions to build a comprehensive dark sky conservation framework.
+Maharashtra becomes the **model for Asia-Pacific** dark sky regulation. Light pollution formally recognised as a pollutant under India's Environment Protection Act — just as noise, air, and water pollution are today. Demonstrating that protecting the night sky is not a luxury — it is a legal right and economic opportunity.
 
-#bottom
-  :::div{class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"}
+#links
+  :::u-button
+  ---
+  to: /darksky/policy
+  size: lg
+  trailing-icon: i-lucide-arrow-right
+  ---
+  Read the Policy Framework
+  :::
+::
+
+::u-divider
+---
+icon: i-lucide-quote
+---
+::
+
+
+::section-wrapper
+---
+id: about-partners
+orientation: vertical
+---
+#title
+Partners & Collaborators
+
+#description
+Building dark sky conservation through government, international, and academic collaboration.
+
+#default
+  :::u-page-grid
     ::::u-page-card
     ---
+    icon: i-lucide-globe
     variant: outline
     ---
     #title
     DarkSky International
 
     #description
-    Technical partner for dark sky site certification and policy endorsement. AstronEra is the only Indian entity with a direct, formal relationship with DSI.
+    Technical partner for site certification and policy endorsement. AstronEra is the only Indian entity with a direct, formal relationship with DSI.
     ::::
 
     ::::u-page-card
     ---
+    icon: i-lucide-landmark
     variant: outline
     ---
     #title
-    Maharashtra State Government
+    Maharashtra Government
 
     #description
     Multiple departments coordinating through the TARA framework: Environment, Tourism, Forest & Wildlife, Urban Development, and Energy.
@@ -203,26 +204,94 @@ AstronEra works alongside government, international bodies, and academic institu
 
     ::::u-page-card
     ---
+    icon: i-lucide-graduation-cap
     variant: outline
     ---
     #title
     Academic Institutions
 
     #description
-    Indian Institute of Astrophysics, IUCAA (Inter-University Centre for Astronomy & Astrophysics), and district colleges for implementation support.
+    Indian Institute of Astrophysics, IUCAA, and district colleges for research and implementation support.
     ::::
+  :::
+
+  :::logo-bar
+  ---
+  logos:
+    - src: /images/logos/dst.png
+      alt: DarkSky International
+    - src: /images/logos/iau.png
+      alt: International Astronomical Union
+    - src: /images/logos/iau-oad.png
+      alt: IAU Office of Astronomy for Development
+    - src: /images/logos/iimb-nsrcel.png
+      alt: IIMB NSRCEL
+    - src: /images/logos/in-fed.png
+      alt: Indian Federation
+  ---
   :::
 ::
 
 ::section-wrapper
 ---
-id: mission
-orientation: vertical
-class: bg-primary/10 text-center
+id: vision-v2
+orientation: horizontal
+class: bg-primary/5
 ---
+![Vision 2030](/images/about/08.tara-comic-timeline-8.jpg){.rounded-2xl}
+
+#headline
+Looking Ahead
+
 #title
-Our Mission
+Vision 2030
 
 #description
-Through research, policy design, and internationally benchmarked frameworks, we are working to support Maharashtra in addressing light pollution as a public health, biodiversity, and climate concern. Dark skies are not a luxury — they are a legal right and economic opportunity.
+Maharashtra becomes the model for Asia-Pacific dark sky regulation. Light pollution formally recognised as a pollutant under India's Environment Protection Act — demonstrating that protecting the night sky is not a luxury, but a legal right and economic opportunity.
+
+#links
+  :::u-button
+  ---
+  to: /darksky/policy
+  size: lg
+  trailing-icon: i-lucide-arrow-right
+  ---
+  Read the Policy Framework
+  :::
+
+  :::u-button
+  ---
+  to: /darksky/research
+  variant: outline
+  color: neutral
+  size: lg
+  icon: i-lucide-book-open
+  ---
+  Explore the Research
+  :::
+::
+
+::section-wrapper
+---
+id: cta-v2
+orientation: vertical
+---
+  :::u-page-c-t-a
+  ---
+  title: Our Mission
+  description: "To get light pollution formally recognised as a pollutant under India's Environment Protection Act. Through research, policy design, and internationally benchmarked frameworks, we support Maharashtra in addressing ALAN as a public health, biodiversity, and climate concern — proving that dark skies are a legal right and economic opportunity."
+  variant: subtle
+  links:
+    - label: Explore the Policy Framework
+      to: /darksky/policy
+      size: xl
+      trailing-icon: i-lucide-arrow-right
+    - label: View the Research
+      to: /darksky/research
+      variant: outline
+      color: neutral
+      size: xl
+      icon: i-lucide-book-open
+  ---
+  :::
 ::
