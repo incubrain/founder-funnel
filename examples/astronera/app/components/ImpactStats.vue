@@ -12,7 +12,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
     <UPageCard
       v-for="(stat, i) in stats"
       :key="i"

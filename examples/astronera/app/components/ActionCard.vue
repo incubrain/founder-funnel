@@ -33,6 +33,7 @@ defineSlots<{
       :src="img.src"
       :alt="img.alt"
       class="w-full aspect-square object-cover"
+      loading="lazy"
     />
 
     <div class="p-4 sm:p-6">

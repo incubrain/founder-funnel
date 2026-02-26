@@ -29,7 +29,7 @@ const _props = withDefaults(defineProps<Props>(), {
           :name="icon"
           class="size-7 text-primary shrink-0"
         />
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white">
+        <h3 class="text-xl font-bold text-highlighted">
           {{ title }}
         </h3>
       </div>
@@ -38,7 +38,7 @@ const _props = withDefaults(defineProps<Props>(), {
     <!-- Subtitle slot -->
     <div
       v-if="$slots.subtitle"
-      class="text-gray-700 dark:text-gray-300 mb-4"
+      class="text-muted mb-4"
     >
       <slot name="subtitle" />
     </div>
@@ -54,7 +54,7 @@ const _props = withDefaults(defineProps<Props>(), {
       <p
         v-for="(item, idx) in items"
         :key="idx"
-        class="text-gray-600 dark:text-gray-400"
+        class="text-muted"
       >
         <UBadge
           :label="item.label"

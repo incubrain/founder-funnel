@@ -12,7 +12,7 @@ interface Props {
 const props = defineProps<Props>()
 
 // duplicate items
-const allItems = props.items?.length ? [...props.items, ...props.items] : []
+const allItems = computed(() => props.items?.length ? [...props.items, ...props.items] : [])
 </script>
 
 <template>
@@ -46,7 +46,7 @@ const allItems = props.items?.length ? [...props.items, ...props.items] : []
       <UCard
         :ui="{
           root: 'bg-muted hover:bg-muted/50 transition-colors h-full',
-          body: 'space-y-4 p-0 sm:p-0 px-6 sm:px-4 items-start',
+          body: 'space-y-4 p-0 sm:p-0 px-4 sm:px-6 items-start',
           header: 'space-y-2',
         }"
       >

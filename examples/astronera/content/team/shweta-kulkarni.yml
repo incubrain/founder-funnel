@@ -16,7 +16,7 @@ links:
     icon: i-lucide-linkedin
   - label: X
     url: https://x.com/AstronEra
-    icon: i-lucide-x
+    icon: i-simple-icons-x
   - label: Email
     url: mailto:connectus@astronera.org
     icon: i-lucide-mail
