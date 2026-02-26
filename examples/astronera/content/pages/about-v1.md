@@ -157,7 +157,7 @@ The Honourable Chief Minister of Maharashtra announced the forthcoming Dark Sky 
 #left
   :::video-iframe
   ---
-  src: https://www.youtube.com/embed/PLACEHOLDER_VIDEO_ID
+  src: https://www.youtube.com/embed/2Nq47yMdIzU?si=kDLIBizYk_Qrp3eo
   title: CM Maharashtra announces Dark Sky Policy on National Space Day 2025
   ---
   :::
@@ -226,21 +226,21 @@ Founder & CEO, AstronEra | Dark Sky Strategist (Maharashtra)
 
   #footer
     ::::div{class="flex items-center gap-2 flex-wrap"}
-    :::::u-badge
-    ---
-    color: primary
-    variant: soft
-    icon: i-lucide-award
-    ---
-    Dark Sky Defender Asia 2024
-    :::::
-    :::::u-badge
-    ---
-    color: neutral
-    variant: subtle
-    ---
-    FRAS
-    :::::
+      :::::u-badge
+      ---
+      color: primary
+      variant: soft
+      icon: i-lucide-award
+      ---
+      Dark Sky Defender Asia 2024
+      :::::
+      :::::u-badge
+      ---
+      color: neutral
+      variant: subtle
+      ---
+      FRAS
+      :::::
     ::::
   :::
 ::

@@ -229,7 +229,7 @@ What began as a passion for sharing the night sky became a mission to protect it
   #left
     ::::video-iframe
     ---
-    src: https://www.youtube.com/embed/PLACEHOLDER_VIDEO_ID
+    src: https://www.youtube.com/embed/2Nq47yMdIzU?si=kDLIBizYk_Qrp3eo
     title: CM Maharashtra announces Dark Sky Policy on National Space Day 2025
     ---
     ::::
