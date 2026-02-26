@@ -24,7 +24,7 @@ Est. 2018 — Pune, India
 From Stargazing to Policy
 
 #description
-What began as a passion for sharing the night sky became a mission to protect it. AstronEra's journey from astronomy education to Technical Secretariat for Maharashtra's Dark Sky Policy is a story of recognising that real change requires systemic action — and that light pollution must be recognised as a pollutant under India's Environment Protection Act.
+On National Space Day 2025, the Hon. Chief Minister of Maharashtra announced the forthcoming Dark Sky Policy — recognising AstronEra's journey from astronomy education to Technical Secretariat for the state's dark sky conservation framework. Our goal: get light pollution recognised as a pollutant under India's Environment Protection Act.
 
 #links
   :::u-button
@@ -116,11 +116,11 @@ Impact at a Glance
       icon: i-lucide-map-pin
     - value: "1st"
       label: Indian
-      sublabel: Dark Sky Defender recognition from DSI
+      sublabel: Dark Sky Defender — recognised by DSI
       icon: i-lucide-award
     - value: "5+"
       label: Departments
-      sublabel: Coordinating through the TARA framework
+      sublabel: Coordinating through TARA framework
       icon: i-lucide-building-2
     - value: "2023"
       label: IDSPAC
@@ -145,7 +145,7 @@ Looking Ahead
 Vision 2030
 
 #description
-Maharashtra becomes the **model for Asia-Pacific** dark sky regulation. Light pollution formally recognised as a pollutant under India's Environment Protection Act — just as noise, air, and water pollution are today. Demonstrating that protecting the night sky is not a luxury — it is a legal right and economic opportunity.
+Maharashtra as the **model for Asia-Pacific** dark sky regulation. Light pollution recognised as a pollutant under India's Environment Protection Act — alongside noise, air, and water. Protecting the night sky is not a luxury — it is a legal right and economic opportunity.
 
 #links
   :::u-button
@@ -160,10 +160,9 @@ Maharashtra becomes the **model for Asia-Pacific** dark sky regulation. Light po
 
 ::u-divider
 ---
-icon: i-lucide-quote
+icon: i-lucide-handshake
 ---
 ::
-
 
 ::section-wrapper
 ---
@@ -174,7 +173,7 @@ orientation: vertical
 Partners & Collaborators
 
 #description
-Building dark sky conservation through government, international, and academic collaboration.
+Government, international bodies, academic institutions, and industry — collaborating on dark sky conservation.
 
 #default
   :::u-page-grid
@@ -187,7 +186,7 @@ Building dark sky conservation through government, international, and academic c
     DarkSky International
 
     #description
-    Technical partner for site certification and policy endorsement. AstronEra is the only Indian entity with a direct, formal relationship with DSI.
+    Technical partner for site certification and policy endorsement. The only Indian entity with a direct, formal DSI relationship.
     ::::
 
     ::::u-page-card
@@ -211,17 +210,39 @@ Building dark sky conservation through government, international, and academic c
     Academic Institutions
 
     #description
-    Indian Institute of Astrophysics, IUCAA, and district colleges for research and implementation support.
+    Indian Institute of Astrophysics, IUCAA, and district colleges providing research and implementation support.
+    ::::
+
+    ::::u-page-card
+    ---
+    icon: i-lucide-lightbulb
+    variant: outline
+    ---
+    #title
+    Lighting Companies
+
+    #description
+    Industry partners collaborating on dark sky–compliant lighting standards, retrofitting guidelines, and responsible outdoor lighting design.
+    ::::
+
+    ::::u-page-card
+    ---
+    icon: i-lucide-telescope
+    variant: outline
+    ---
+    #title
+    Astronomy Organisations
+
+    #description
+    National and international astronomy bodies supporting observational science, public outreach, and evidence-based advocacy for dark sky preservation.
     ::::
   :::
 
   :::logo-bar
   ---
   logos:
-    - src: /images/logos/dst.png
+    - src: /images/logos/dsi.png
       alt: DarkSky International
-    - src: /images/logos/iau.png
-      alt: International Astronomical Union
     - src: /images/logos/iau-oad.png
       alt: IAU Office of Astronomy for Development
     - src: /images/logos/iimb-nsrcel.png
@@ -247,7 +268,7 @@ Looking Ahead
 Vision 2030
 
 #description
-Maharashtra becomes the model for Asia-Pacific dark sky regulation. Light pollution formally recognised as a pollutant under India's Environment Protection Act — demonstrating that protecting the night sky is not a luxury, but a legal right and economic opportunity.
+Maharashtra as the model for Asia-Pacific dark sky regulation. Light pollution formally recognised under India's Environment Protection Act — proving that protecting the night sky is a legal right and economic opportunity.
 
 #links
   :::u-button
@@ -279,7 +300,7 @@ orientation: vertical
   :::u-page-c-t-a
   ---
   title: Our Mission
-  description: "To get light pollution formally recognised as a pollutant under India's Environment Protection Act. Through research, policy design, and internationally benchmarked frameworks, we support Maharashtra in addressing ALAN as a public health, biodiversity, and climate concern — proving that dark skies are a legal right and economic opportunity."
+  description: "Get light pollution formally recognised as a pollutant under India's Environment Protection Act. Through research, policy design, and internationally benchmarked frameworks, we support Maharashtra in addressing ALAN as a public health, biodiversity, and climate concern."
   variant: subtle
   links:
     - label: Explore the Policy Framework
