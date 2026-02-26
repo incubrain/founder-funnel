@@ -7,15 +7,12 @@ const rawItems = computed(() => slots.default?.() || []) // Array of VNodes from
 // Optional duplication (if loop prop isn't sufficient)
 const allItems = computed(() => {
   const items = rawItems.value
-  return [...items, ...items.map(vnode => cloneVNode(vnode))] // Clone for uniqueness
+  return [...items, ...items.map((vnode) => cloneVNode(vnode))] // Clone for uniqueness
 })
 </script>
 
 <template>
-  <div
-    v-if="allItems.length"
-    class="overflow-hidden"
-  >
+  <div v-if="allItems.length" class="overflow-hidden">
     <UCarousel
       v-slot="{ item }"
       :items="allItems"
@@ -26,7 +23,8 @@ const allItems = computed(() => {
       :ui="{
         item: 'basis-[320px] px-2 min-h-[360px] h-full [&>*]:h-full',
         viewport: 'overflow-hidden p-4',
-        controls: 'relative my-12 hidden md:flex justify-center max-w-container mx-auto',
+        controls:
+          'relative my-12 hidden md:flex justify-center max-w-container mx-auto',
         arrows: 'flex gap-4',
         prev: 'flex relative rounded-lg ring-default start-0 sm:start-0 top-0 translate-y-0',
         next: 'flex relative rounded-lg ring-default end-0 sm:end-0 top-0 translate-y-0',

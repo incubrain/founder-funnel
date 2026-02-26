@@ -38,3 +38,15 @@
   - it is possible we could keep it and overrite the `<video>` tag with our own custom prose component
   - **Docs:** resolution affects `docs/reference/1.components.md` (video component entries)
 - [ ] do we need .nuxtrc files when there is a `nuxt.config.ts` file?
+
+
+# Features
+
+- [ ] we need a generic PageHero component that can be used for all NON landing page hero sections, it should be flexible but also have a default look and layout, consider adding parallax effect, and the ability for full background images or patterns
+- [ ] we need at least 5, maybe 10 quality tailwing utility classes for background patterns that hook into the nuxt/ui theming system so users can override the colors
+- [ ] similar to the pattern task above, we need the same for background gradients
+- [ ] we need a dynamic form system that is elegant and flexible, use nuxt/ui for this, we already have the `useFormCapture` composable and the `ConvertForm` component, this is our base; but we need to brainstorm what usecases we need to cover and create something more comprehensive
+ - these are the forms we will need:
+  - contact form
+  - newsletter subscription form
+  - job application form (keep this pretty generic)

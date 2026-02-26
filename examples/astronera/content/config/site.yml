@@ -3,9 +3,11 @@ business:
   legalName: AEII Pvt. Ltd.
   foundingYear: 2018
   logo: /icon-192x192.png
-  mission:
+  mission: |
     Leading India's transition to responsible outdoor lighting through policy
     research, technical coordination, and DarkSky International certification.
+
+    In partnership with [DarkSky International](https://darksky.org)
 socials:
   x: https://x.com/AstronEra
   email: mailto:connectus@astronera.org

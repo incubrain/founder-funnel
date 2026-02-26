@@ -35,7 +35,7 @@ const copyrightYear = computed(() => {
 // Foundry branding
 const appConfig = useAppConfig()
 const foundry = computed(
-  () => appConfig.foundry as { version: string, url: string } | undefined,
+  () => appConfig.foundry as { version: string; url: string } | undefined,
 )
 
 const { trackEvent } = useEvents()
@@ -54,24 +54,15 @@ const handleFoundryClick = () => {
   <UContainer
     class="flex flex-col gap-4 md:flex-row justify-between w-full items-center"
   >
-    <p
-      v-if="credits"
-      class="text-sm text-muted whitespace-nowrap"
-    >
+    <p v-if="credits" class="text-sm text-muted whitespace-nowrap">
       {{ credits }}
     </p>
 
-    <p
-      v-else
-      class="text-sm text-muted whitespace-nowrap"
-    >
+    <p v-else class="text-sm text-muted whitespace-nowrap">
       © {{ copyrightYear }} {{ legalName }}
     </p>
 
-    <div
-      v-if="bottomLinks.length"
-      class="flex items-center gap-3"
-    >
+    <div v-if="bottomLinks.length" class="flex items-center gap-3">
       <UButton
         v-for="link in bottomLinks"
         :key="link.to"
@@ -84,17 +75,18 @@ const handleFoundryClick = () => {
       </UButton>
     </div>
 
-    <NuxtLink
-      v-if="foundry"
-      :to="foundry.url"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="text-xs text-muted hover:text-default transition-colors"
-      @click="handleFoundryClick"
-    >
-      Built with @incubrain/foundry{{
-        foundry.version ? ` v${foundry.version}` : ''
-      }}
-    </NuxtLink>
+    <span v-if="foundry" class="text-xs">
+      Built with
+      <NuxtLink
+        :to="foundry.url"
+        target="_blank"
+        class="text-(--ui-link-default)"
+        rel="noopener noreferrer"
+        @click="handleFoundryClick"
+      >
+        @incubrain/foundry
+      </NuxtLink>
+      {{ foundry.version ? ` v${foundry.version}` : '' }}
+    </span>
   </UContainer>
 </template>

@@ -1,6 +1,7 @@
 ---
 title: About AstronEra
 description: From astronomy education to India's leading dark sky policy consultancy
+hero: true
 navigation: false
 prose: false
 ---
@@ -10,12 +11,7 @@ prose: false
 id: about-hero
 orientation: horizontal
 ---
-  :::video-iframe
-  ---
-  src: https://www.youtube.com/embed/2Nq47yMdIzU?si=kDLIBizYk_Qrp3eo
-  title: CM Maharashtra announces Dark Sky Policy on National Space Day 2025
-  ---
-  :::
+:video-iframe{src="https://www.youtube.com/embed/2Nq47yMdIzU?si=kDLIBizYk_Qrp3eo" title="CM Maharashtra announces Dark Sky Policy on National Space Day 2025"}
 
 #headline
 Est. 2018 — Pune, India
@@ -27,22 +23,17 @@ From Stargazing to Policy
 On National Space Day 2025, the Hon. Chief Minister of Maharashtra announced the forthcoming Dark Sky Policy — recognising AstronEra's journey from astronomy education to Technical Secretariat for the state's dark sky conservation framework. Our goal: get light pollution recognised as a pollutant under India's Environment Protection Act.
 
 #links
-  :::u-button
-  ---
-  to: /darksky/policy
-  variant: solid
-  size: lg
-  ---
+  :::u-button{size="lg" to="/darksky/policy" variant="solid"}
   Policy Framework
   :::
 
   :::u-button
   ---
+  color: neutral
+  icon: i-lucide-users
+  size: lg
   to: /team
   variant: outline
-  color: neutral
-  size: lg
-  icon: i-lucide-users
   ---
   Meet the Team
   :::
@@ -50,17 +41,10 @@ On National Space Day 2025, the Hon. Chief Minister of Maharashtra announced the
 
 ::section-wrapper
 ---
+class: pt-0
 id: journey-strip
 orientation: vertical
-class: pt-0
 ---
-#title
-The Journey
-
-#description
-Scroll through eight years of evolution — from astronomy education to state-level policy.
-
-#default
   :::timeline-strip
   ---
   milestones:
@@ -82,7 +66,7 @@ Scroll through eight years of evolution — from astronomy education to state-le
     - year: "2025"
       title: Policy Framework — TARA regulation launched
       image: /images/about/06.tara-comic-timeline-6.jpg
-    - year: "2025–26"
+    - year: 2025–26
       title: Implementation — 11 pilot sites across Maharashtra
       image: /images/about/07.tara-comic-timeline-7.jpg
     - year: "2030"
@@ -90,23 +74,21 @@ Scroll through eight years of evolution — from astronomy education to state-le
       image: /images/about/08.tara-comic-timeline-8.jpg
   ---
   :::
+
+#title
+The Journey
+
+#description
+Scroll through eight years of evolution — from astronomy education to state-level policy.
 ::
 
-::u-divider
----
-icon: i-lucide-bar-chart-3
----
-::
+:u-divider{icon="i-lucide-bar-chart-3"}
 
 ::section-wrapper
 ---
 id: about-impact
 orientation: vertical
 ---
-#title
-Impact at a Glance
-
-#default
   :::impact-stats
   ---
   stats:
@@ -114,11 +96,11 @@ Impact at a Glance
       label: Pilot Sites
       sublabel: Across Maharashtra for policy implementation
       icon: i-lucide-map-pin
-    - value: "1st"
+    - value: 1st
       label: Indian
       sublabel: Dark Sky Defender — recognised by DSI
       icon: i-lucide-award
-    - value: "5+"
+    - value: 5+
       label: Departments
       sublabel: Coordinating through TARA framework
       icon: i-lucide-building-2
@@ -128,54 +110,18 @@ Impact at a Glance
       icon: i-lucide-globe
   ---
   :::
-::
-
-::section-wrapper
----
-id: about-vision
-orientation: horizontal
-class: bg-default
----
-![Vision 2030](/images/about/08.tara-comic-timeline-8.jpg){.rounded-2xl}
-
-#headline
-Looking Ahead
 
 #title
-Vision 2030
-
-#description
-Maharashtra as the **model for Asia-Pacific** dark sky regulation. Light pollution recognised as a pollutant under India's Environment Protection Act — alongside noise, air, and water. Protecting the night sky is not a luxury — it is a legal right and economic opportunity.
-
-#links
-  :::u-button
-  ---
-  to: /darksky/policy
-  size: lg
-  trailing-icon: i-lucide-arrow-right
-  ---
-  Read the Policy Framework
-  :::
+Impact at a Glance
 ::
 
-::u-divider
----
-icon: i-lucide-handshake
----
-::
+:u-divider{icon="i-lucide-handshake"}
 
 ::section-wrapper
 ---
 id: about-partners
 orientation: vertical
 ---
-#title
-Partners & Collaborators
-
-#description
-Government, international bodies, academic institutions, and industry — collaborating on dark sky conservation.
-
-#default
   :::u-page-grid
     ::::u-page-card
     ---
@@ -251,13 +197,19 @@ Government, international bodies, academic institutions, and industry — collab
       alt: Indian Federation
   ---
   :::
+
+#title
+Partners & Collaborators
+
+#description
+Government, international bodies, academic institutions, and industry — collaborating on dark sky conservation.
 ::
 
 ::section-wrapper
 ---
+class: bg-primary/5
 id: vision-v2
 orientation: horizontal
-class: bg-primary/5
 ---
 ![Vision 2030](/images/about/08.tara-comic-timeline-8.jpg){.rounded-2xl}
 
@@ -271,37 +223,25 @@ Vision 2030
 Maharashtra as the model for Asia-Pacific dark sky regulation. Light pollution formally recognised under India's Environment Protection Act — proving that protecting the night sky is a legal right and economic opportunity.
 
 #links
-  :::u-button
-  ---
-  to: /darksky/policy
-  size: lg
-  trailing-icon: i-lucide-arrow-right
-  ---
+  :::u-button{size="lg" to="/darksky/policy" trailing-icon="i-lucide-arrow-right"}
   Read the Policy Framework
   :::
 
   :::u-button
   ---
+  color: neutral
+  icon: i-lucide-book-open
+  size: lg
   to: /darksky/research
   variant: outline
-  color: neutral
-  size: lg
-  icon: i-lucide-book-open
   ---
   Explore the Research
   :::
 ::
 
-::section-wrapper
----
-id: cta-v2
-orientation: vertical
----
+::section-wrapper{#cta-v2 orientation="vertical"}
   :::u-page-c-t-a
   ---
-  title: Our Mission
-  description: "Get light pollution formally recognised as a pollutant under India's Environment Protection Act. Through research, policy design, and internationally benchmarked frameworks, we support Maharashtra in addressing ALAN as a public health, biodiversity, and climate concern."
-  variant: subtle
   links:
     - label: Explore the Policy Framework
       to: /darksky/policy
@@ -313,6 +253,12 @@ orientation: vertical
       color: neutral
       size: xl
       icon: i-lucide-book-open
+  description: Get light pollution formally recognised as a pollutant under
+    India's Environment Protection Act. Through research, policy design, and
+    internationally benchmarked frameworks, we support Maharashtra in addressing
+    ALAN as a public health, biodiversity, and climate concern.
+  title: Our Mission
+  variant: subtle
   ---
   :::
 ::

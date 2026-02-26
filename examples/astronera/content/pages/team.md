@@ -27,7 +27,7 @@ AstronEra is powered by a dedicated team of researchers, engineers, and conserva
 headline: Join Us
 id: careers
 orientation: vertical
-class: bg-primary/10 text-center
+class: bg-primary/10 text-center mt-12 rounded-lg
 ---
 #title
 Shape the Future of Dark Sky Conservation
