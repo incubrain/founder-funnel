@@ -17,13 +17,23 @@ interface NavItem {
  * Example:
  * /docs/getting-started → /docs/getting-started/introduction
  *
- * This matches how Nuxt.com handles their docs navigation.
+ * Reads the docs prefix from app.config.ts content.collections.docs.prefix
+ * so it works with custom prefixes like /darksky.
  */
 export default defineEventHandler(async (event) => {
   const path = event.node.req.url
 
-  // Only handle /docs paths
-  if (!path?.startsWith('/docs/')) {
+  // Resolve docs prefix from appConfig (defaults to '/docs')
+  const appConfig = useAppConfig()
+  const docsConfig = (appConfig as Record<string, unknown>).content
+    && ((appConfig as Record<string, unknown>).content as Record<string, unknown>).collections
+    && (((appConfig as Record<string, unknown>).content as Record<string, unknown>).collections as Record<string, unknown>).docs
+  const docsPrefix = (typeof docsConfig === 'object' && docsConfig !== null && 'prefix' in docsConfig)
+    ? (docsConfig as { prefix: string }).prefix
+    : '/docs'
+
+  // Only handle docs paths
+  if (!path?.startsWith(`${docsPrefix}/`) && path !== docsPrefix) {
     return
   }
 
