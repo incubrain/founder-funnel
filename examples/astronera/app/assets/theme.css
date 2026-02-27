@@ -136,14 +136,14 @@
 
 :root {
   /* Ensure links use red for action/urgency */
-  --ui-link-default: var(--ui-color-secondary-600);
-  --ui-link-hover: var(--ui-color-secondary-700);
-  --ui-link-active: var(--ui-color-secondary-500);
+  --ui-link-default: var(--ui-color-primary-600);
+  --ui-link-hover: var(--ui-color-primary-700);
+  --ui-link-active: var(--ui-color-primary-500);
 }
 
 .dark {
   /* Red links in dark mode for visibility */
-  --ui-link-default: var(--ui-color-secondary-400);
-  --ui-link-hover: var(--ui-color-secondary-300);
-  --ui-link-active: var(--ui-color-secondary-500);
+  --ui-link-default: var(--ui-color-primary-400);
+  --ui-link-hover: var(--ui-color-primary-300);
+  --ui-link-active: var(--ui-color-primary-500);
 }

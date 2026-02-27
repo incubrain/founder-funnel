@@ -19,8 +19,11 @@ export default defineNuxtConfig({
 ## Features
 
 - **Landing Pages** — Section-driven pages with signal capture (email, presales, bookings)
-- **Documentation** — Authority docs with citations, cross-linking, and MCP integration
-- **Event Tracking** — Analytics-agnostic event system with webhook streaming
+- **Documentation** — Authority docs with citations, glossary, bibliography, and MCP integration
+- **Event Tracking** — Analytics-agnostic event system with webhook streaming and retry
+- **RSS Feeds** — Config-driven feed generation from Nuxt Content collections
+- **Changelog** — Timeline component for versioned entries with author resolution
+- **Comments** — Dev-only documentation review system with text selection and element selection
 - **Nuxt Content** — Markdown-first content with MDC component support
 - **Nuxt UI** — Pre-styled components with Tailwind v4
 

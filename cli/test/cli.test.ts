@@ -54,8 +54,8 @@ describe('template validation', () => {
 
 describe('directory resolution', () => {
   it('resolves relative directory to absolute path', () => {
-    const dir = resolve('my-funnel')
-    expect(dir).toBe(resolve(process.cwd(), 'my-funnel'))
+    const dir = resolve('my-project')
+    expect(dir).toBe(resolve(process.cwd(), 'my-project'))
     expect(dir.startsWith('/')).toBe(true)
   })
 
@@ -65,9 +65,9 @@ describe('directory resolution', () => {
   })
 
   it('uses default directory name when none provided', () => {
-    const defaultDir = 'my-funnel'
+    const defaultDir = 'my-project'
     const dir = resolve(defaultDir)
-    expect(dir).toContain('my-funnel')
+    expect(dir).toContain('my-project')
   })
 })
 

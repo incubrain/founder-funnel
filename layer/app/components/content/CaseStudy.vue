@@ -25,7 +25,7 @@ defineProps<Props>()
   <section class="my-12 lg:my-16">
     <div class="max-w-4xl space-y-6">
       <div
-        class="p-5 rounded-lg bg-muted/10 border border-neutral-800 space-y-4"
+        class="p-5 rounded-lg bg-muted/10 border border-default space-y-4"
       >
         <div class="flex items-start gap-4">
           <NuxtImg
@@ -45,7 +45,7 @@ defineProps<Props>()
         </div>
 
         <!-- Quote -->
-        <div class="pt-3 border-t border-neutral-800/50">
+        <div class="pt-3 border-t border-default">
           <p class="text-base italic text-highlighted leading-relaxed">
             "{{ quote }}"
           </p>

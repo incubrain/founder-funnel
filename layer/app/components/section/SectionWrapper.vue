@@ -1,11 +1,20 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useIntersectionObserver } from '@vueuse/core'
+import { useIntersectionObserver, breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import type { PageSectionProps, PageSectionSlots } from '@nuxt/ui'
 
 const props = defineProps<PageSectionProps & {
   sectionId?: string
+  reverseBelow?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
 }>()
+
+const breakpoints = useBreakpoints(breakpointsTailwind)
+
+const resolvedReverse = computed(() => {
+  if (!props.reverse) return false
+  if (!props.reverseBelow) return true
+  return breakpoints.greaterOrEqual(props.reverseBelow).value
+})
 
 const sectionRef = ref<HTMLElement | null>(null)
 const { trackEvent } = useEvents()
@@ -32,7 +41,7 @@ defineSlots<PageSectionSlots>()
 <template>
   <div ref="sectionRef">
     <UPageSection
-      v-bind="$props"
+      v-bind="{ ...$props, reverse: resolvedReverse }"
       :id="sectionId"
       :aria-labelledby="headingId"
       :data-testid="sectionId ? `section-${sectionId}` : undefined"

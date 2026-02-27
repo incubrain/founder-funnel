@@ -20,7 +20,7 @@ export default defineNuxtPlugin({
           })
         }
         catch (error) {
-          console.error('umami', `Track failed: ${error instanceof Error ? error.message : String(error)}`)
+          log.error('umami', `Track failed: ${error instanceof Error ? error.message : String(error)}`)
         }
       }
     })

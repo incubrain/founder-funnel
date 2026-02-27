@@ -9,14 +9,14 @@ describe('useAppStorage', () => {
 
   it('prefixes keys correctly', () => {
     const { getKey } = useAppStorage()
-    expect(getKey('foo')).toBe('test-app_foo')
+    expect(getKey('foo')).toBe('foundry_foo')
   })
 
   it('sets and gets from local storage', () => {
     const { local } = useAppStorage()
     local.set('foo', 'bar')
     expect(local.get('foo')).toBe('bar')
-    expect(localStorage.getItem('test-app_foo')).toBe('bar')
+    expect(localStorage.getItem('foundry_foo')).toBe('bar')
   })
 
   it('clears prefixed items', () => {
