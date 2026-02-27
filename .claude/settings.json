@@ -19,7 +19,8 @@
       "Bash(npx eslint *)",
       "Bash(npx prettier *)",
       "Bash(bash scripts/install-skills.sh*)",
-      "Bash(npx skills *)"
+      "Bash(npx skills *)",
+      "Bash(bash .claude/scripts/visual-review.sh*)"
     ],
     "deny": [
       "Read(./.env)",
@@ -50,6 +51,16 @@
             "type": "command",
             "command": "filepath=$(echo $CLAUDE_TOOL_INPUT | jq -r '.file_path // .filePath // empty'); if [ -n \"$filepath\" ]; then case \"$filepath\" in *.vue|*.ts|*.js) npx eslint --fix \"$filepath\" 2>/dev/null || true;; esac; fi",
             "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd=$(echo $CLAUDE_TOOL_INPUT | jq -r '.command // empty'); case \"$cmd\" in *agent-browser*) echo \"[$(date +%Y-%m-%dT%H:%M:%S)] $cmd\" >> .claude/visual-test-log.md;; esac",
+            "timeout": 5
           }
         ]
       }

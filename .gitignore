@@ -30,6 +30,7 @@ repomix-changed.*
 # Claude Code local overrides
 CLAUDE.local.md
 .claude/settings.local.json
+.claude/visual-test-log.md
 
 # Agent skills
 # Custom skills live in /skills/ (committed to git)

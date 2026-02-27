@@ -6,9 +6,11 @@ This directory contains project-specific agent skills that are committed to git.
 
 ```
 /skills/
-└── docs-writer/          # Documentation writing skill
-    ├── SKILL.md          # Main skill definition
-    └── references/       # Reference documentation
+├── docs-writer/          # Documentation writing skill
+│   ├── SKILL.md          # Main skill definition
+│   └── references/       # Reference documentation
+└── visual-tester/        # UI/UX visual bug detection skill
+    └── SKILL.md          # Visual testing workflows using agent-browser
 ```
 
 ## How It Works

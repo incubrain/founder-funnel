@@ -50,6 +50,9 @@ shared/types/                  → TypeScript types
 deploy/                        → Dockerfiles and deployment configs
 .agents/rules/                 → Agent rule files (symlinked from .claude/rules/)
 .agents/skills/                → External skills (gitignored, install with scripts/install-skills.sh)
+.agents/vibekanban-configs.md  → VibeKanban agent configurations (6 roles)
+.claude/agents/                → Claude Code sub-agent definitions
+.claude/scripts/               → Utility scripts for agents
 skills/                        → Custom skills (committed to git)
 ```
 
@@ -97,7 +100,8 @@ External agent skills extend capabilities for specialized tasks. Skills are inst
 - **Marketing**: copywriting, marketing-psychology
 - **Strategy**: brainstorming, systematic-debugging
 - **Tools**: agent-browser, manage-mcp
-- **Custom** (in `skills/`): docs-writer
+- **Visual Testing**: visual-tester (uses agent-browser for UI/UX bug detection)
+- **Custom** (in `skills/`): docs-writer, visual-tester
 
 **Skill priority:** Check skills first → VueUse → Library → Custom (last resort)
 

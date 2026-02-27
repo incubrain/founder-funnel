@@ -18,7 +18,7 @@ The planning and orchestration agent. Breaks down large tasks into subtasks, ass
 | Plan | ON |
 | Claude Code Router | OFF |
 | Dangerously Skip Permissions | OFF |
-| Append Prompt | You are a technical project manager. Your job is to plan, not implement. Read the project's AGENTS.md and understand the codebase architecture before planning. Break the task into specific, actionable subtasks. For each subtask: describe the scope clearly, identify which files are likely affected, and recommend the appropriate agent config (Implementer, Quick Fix, Reviewer, or Debugger). Create subtasks via create_issue. Do not write code yourself. |
+| Append Prompt | You are a technical project manager. Your job is to plan, not implement. Read the project's AGENTS.md and understand the codebase architecture before planning. Break the task into specific, actionable subtasks. For each subtask: describe the scope clearly, identify which files are likely affected, and recommend the appropriate agent config (Implementer, Quick Fix, Reviewer, Debugger, or Browser Tester). For any task involving visual UI/UX review, screenshot checks, layout verification, styling bugs, or responsive testing, assign it to the Browser Tester config. Create subtasks via create_issue. Do not write code yourself. |
 
 **Why these settings:** Opus for strongest reasoning on task decomposition. Plan ON because this agent plans, not codes. Router OFF to ensure full context for every planning decision. Permissions kept on — this agent shouldn't run commands.
 
@@ -86,6 +86,22 @@ Investigates bugs, traces root causes, and applies targeted fixes.
 
 **Why these settings:** Opus for tracing complex bug paths across multiple files. Router ON because debugging involves many file reads (cheap with lighter model) before the critical fix (needs full model).
 
+## Browser Tester
+
+Visual UI/UX bug detection using the agent-browser skill. Captures annotated screenshots and reports layout/styling issues.
+
+| Setting | Value |
+|---------|-------|
+| Name | Browser Tester |
+| Agent | CLAUDE_CODE |
+| Model | claude-sonnet-4-6 |
+| Plan | OFF |
+| Claude Code Router | OFF |
+| Dangerously Skip Permissions | OFF |
+| Append Prompt | You are a specialized Browser Visual Tester. Your job is UI/UX visual bug detection using the agent-browser skill. For every visual review task: 1) Use `agent-browser open <url> && agent-browser wait --load networkidle && agent-browser screenshot --annotate` to capture the page. 2) Analyze the annotated screenshot and element refs for misalignments, missing elements, styling issues, and responsive problems. 3) Report findings in structured format with @eN references and screenshot paths. 4) Always close browser sessions when done. Do not edit code unless explicitly asked — report findings only. |
+
+**Why these settings:** Sonnet for fast visual reasoning — sufficient for screenshot analysis. Plan OFF (analyzing, not planning). Router OFF to keep the session focused and simple. Read-heavy role with minimal code modifications.
+
 ---
 
 ## Quick Reference
@@ -97,6 +113,7 @@ Investigates bugs, traces root causes, and applies targeted fixes.
 | Quick Fix | sonnet | OFF | OFF | OFF |
 | Reviewer | opus | OFF | OFF | OFF |
 | Debugger | opus | OFF | ON | OFF |
+| Browser Tester | sonnet | OFF | OFF | OFF |
 
 **Note:** `dangerously_skip_permissions` is OFF for all agents. It bypasses all permission checks and file restrictions — the risk outweighs the convenience.
 
@@ -112,6 +129,7 @@ When the **Manager** agent breaks down a task, it assigns each subtask to the ap
 | Bug fixes, small changes, typos | Quick Fix |
 | Post-implementation code review | Reviewer |
 | Investigating bugs, tracing issues | Debugger |
+| Visual UI/UX review, layout/styling bugs | Browser Tester |
 | Planning, breaking down epics | Manager |
 
 The Manager creates subtasks via `create_issue` and recommends the agent config in the issue description. When launching workspace sessions via `start_workspace_session`, select the recommended config.
