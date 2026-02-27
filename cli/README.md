@@ -7,15 +7,15 @@ CLI to scaffold a new [Foundry](https://github.com/incubrain/foundry) project.
 ```bash
 npx create-foundry my-project
 cd my-project
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 ## Options
 
 | Flag | Alias | Default | Description |
 |------|-------|---------|-------------|
-| `dir` | (positional) | `my-funnel` | Project directory |
+| `dir` | (positional) | `my-project` | Project directory |
 | `--template` | `-t` | `default` | Template to use |
 
 ## Templates

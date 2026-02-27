@@ -2,6 +2,53 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.0] - 2026-02-27
+
+### Added
+
+- **Comments module** — Dev-only documentation review system with text selection (CSS Custom Highlight API), element selection (vue-tracer), screenshots (html-to-image), and JSONL storage
+- **RSS module** — Config-driven RSS feed generation from Nuxt Content collections; register feeds in `nuxt.config.ts` with field mapping
+- **Changelog module** — Timeline component for versioned changelog entries with author resolution from team collection
+- **Docs module** — Glossary terms (`Defn`), inline citations (`Cited`), bibliography, full-text search, and 3-column docs layout; all features toggleable via config
+- **Docs navigation middleware** — Auto-redirect to first child page when visiting a docs section root
+- **SectionWrapper `reverseBelow` prop** — Responsive layout reversal using VueUse breakpoints; sections stack in reverse order on mobile
+- **Webhook retry utility** — Exponential backoff with jitter for webhook delivery
+- **CLI copy-list system** — Post-scaffold fetching of shared config files from GitHub with path traversal prevention
+- **CLI test suite** — Unit tests for scaffolding and argument parsing
+- **Comprehensive documentation** — 9 sections (50+ pages) covering getting started, content, signal capture, theming, advanced, testing, deployment, reference, and modules
+- **Starter template enhancements** — Split Hero into sub-components, added app.config.ts, team content, devDependencies for testing
+- **CI starter build job** — Validates the scaffolded starter template builds end-to-end
+
+### Changed
+
+- **Modular architecture** — Extracted RSS, Changelog, and Docs from layer root into isolated opt-in Nuxt modules under `modules/`
+- **Icon packages** — Replaced monolithic `@iconify/json` with individual `@iconify-json/lucide` and `@iconify-json/simple-icons` (peer dependencies)
+- **Console → evlog** — All remaining `console.*` calls replaced with evlog structured logging
+- **CaseStudy border tokens** — `border-neutral-800` → `border-default` for correct light/dark mode
+- **Footer components** — AppFooterBottom and AppFooterLeft restructured
+- **MCP tools** — `get-tools.ts` renamed to `get-page.ts`
+- **Webhook handler** — Significant rework of `webhook.post.ts` with improved formatting
+- **Starter dependency** — Pinned `@incubrain/foundry` to `^0.6.0` (was `latest`)
+- **CLI default directory** — `my-funnel` → `my-project`
+- **CI security** — Pinned GitHub Actions to commit SHAs
+- **Dependencies** — VueUse 14.2.1, minimark 1.0.0, MCP toolkit 0.7.0, Nuxt Content 3.11.2
+
+### Fixed
+
+- **Dynamic Tailwind classes** — PageSplit uses static class map instead of template literal interpolation, preventing build-time purging
+- **Citation ID handling** — Fixed citation reference resolution
+- **Docs redirect middleware** — Path handling fix
+- **CLI input validation** — Added path traversal prevention, repo/ref/path validation (CodeQL alert fix)
+- **Lint errors** — Resolved all lint errors across layer and CLI
+
+### Removed
+
+- **InlineTest component** — Removed test component from published package
+- **Legacy RSS files** — `convert/Rss.vue`, `useRssFeed.ts`, `rss.handler.ts` moved to RSS module
+- **Legacy logger** — `server/utils/logger.ts` replaced by evlog
+- **Legacy config resolver** — `shared/config-resolver.ts` removed
+- **Starter Dockerfile** — Removed `deploy/Dockerfile.starter`
+
 ## [0.5.2] - 2026-02-16
 
 ### Added

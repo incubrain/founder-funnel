@@ -7,7 +7,7 @@ const rawItems = computed(() => slots.default?.() || []) // Array of VNodes from
 // Optional duplication (if loop prop isn't sufficient)
 const allItems = computed(() => {
   const items = rawItems.value
-  return [...items, ...items.map((vnode) => cloneVNode(vnode))] // Clone for uniqueness
+  return [...items, ...items.map(vnode => cloneVNode(vnode))] // Clone for uniqueness
 })
 </script>
 

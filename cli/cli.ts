@@ -14,7 +14,7 @@ export function createCLI(opts: CLIOptions) {
         type: 'positional',
         description: 'Project directory',
         required: false,
-        default: 'my-funnel',
+        default: 'my-project',
       },
       template: {
         type: 'string',

@@ -1,7 +1,7 @@
 {
   "name": "@incubrain/foundry",
   "description": "Nuxt layer for IncuBrain Foundry",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "type": "module",
   "main": "./nuxt.config.ts",
   "exports": {
@@ -27,6 +27,16 @@
     "modules/events/index.ts",
     "modules/events/runtime",
     "modules/events/server",
+    "modules/comments/index.ts",
+    "modules/comments/runtime",
+    "modules/comments/server",
+    "modules/rss/index.ts",
+    "modules/rss/runtime",
+    "modules/rss/server",
+    "modules/changelog/index.ts",
+    "modules/changelog/runtime",
+    "modules/docs/index.ts",
+    "modules/docs/runtime",
     "server",
     "shared"
   ],

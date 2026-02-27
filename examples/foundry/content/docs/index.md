@@ -12,7 +12,7 @@ Foundry is an open-source [Nuxt Layer](https://nuxt.com/docs/getting-started/lay
 
 ::card-group
   ::card{title="Getting Started" icon="i-lucide-rocket" to="/docs/getting-started"}
-  Install, configure, and run your first validation funnel.
+  Install, configure, and run your first validation site.
   ::
 
   ::card{title="Content" icon="i-lucide-file-text" to="/docs/content"}

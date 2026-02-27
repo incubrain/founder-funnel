@@ -35,7 +35,7 @@ const copyrightYear = computed(() => {
 // Foundry branding
 const appConfig = useAppConfig()
 const foundry = computed(
-  () => appConfig.foundry as { version: string; url: string } | undefined,
+  () => appConfig.foundry as { version: string, url: string } | undefined,
 )
 
 const { trackEvent } = useEvents()

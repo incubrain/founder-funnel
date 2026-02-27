@@ -11,7 +11,7 @@ badge:
   to: https://github.com/incubrain/foundry
   icon: i-simple-icons-github
 intro:
-  title: Own Your Funnel
+  title: Own Your Validation
   highlight: Start Validating.
   description: >
     The open-source landing page template for technical founders. Capture leads, and validate your idea without monthly fees.
