@@ -59,7 +59,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cmd=$(echo $CLAUDE_TOOL_INPUT | jq -r '.command // empty'); case \"$cmd\" in *agent-browser*) echo \"[$(date +%Y-%m-%dT%H:%M:%S)] $cmd\" >> .claude/visual-test-log.md;; esac",
+            "command": "cmd=$(jq -r '.tool_input.command // empty'); if echo \"$cmd\" | grep -q 'agent-browser'; then echo \"[$(date +%Y-%m-%dT%H:%M:%S)] $cmd\" >> \"$CLAUDE_PROJECT_DIR\"/.claude/visual-test-log.md; fi",
             "timeout": 5
           }
         ]
