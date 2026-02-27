@@ -62,6 +62,7 @@ skills/                        → Custom skills (committed to git)
 - **Change validation path:** Edit `app/components/convert/*`
 - **Add event tracking:** Use `useEvents()` composable
 - **Deploy:** Standard Node.js/Docker — Dockerfile + `vercel.json` included
+- **Visual UI review:** Use the `visual-tester` skill or `browser-tester` sub-agent. See [Visual Testing](#visual-testing) below
 
 ## Before You Code
 
@@ -110,4 +111,35 @@ External agent skills extend capabilities for specialized tasks. Skills are inst
 bash scripts/install-skills.sh          # Install or update all skills
 npx skills list --agent claude-code     # List installed skills
 npx skills update skill-name            # Update a specific skill
+```
+
+## Visual Testing
+
+Use the `browser-tester` sub-agent or `visual-tester` skill to detect UI/UX bugs via annotated screenshots. The dev server must be running first (`pnpm dev:ae`, `pnpm dev:ff`, etc.).
+
+**When to use:**
+- After implementing UI changes — verify layout, spacing, and styling
+- Before merging — catch visual regressions
+- When investigating reported visual bugs — capture evidence with screenshots
+
+**Quick start:**
+```bash
+# One-command review (wrapper script)
+bash .claude/scripts/visual-review.sh http://localhost:3000 [optional-selector]
+
+# Manual workflow
+npx agent-browser open http://localhost:3000
+npx agent-browser wait --load networkidle
+npx agent-browser screenshot --annotate --full
+npx agent-browser close
+```
+
+**Sub-agents:** `.claude/agents/browser-tester.md` defines the Browser Visual Tester — use via VibeKanban's Browser Tester config or as a Claude Code sub-agent for visual review tasks.
+
+**Observability:** Every `agent-browser` command is logged to `.claude/visual-test-log.md` (gitignored) via a PostToolUse hook. Check this file to audit what commands were run during a visual review session.
+
+**`data-testid` selectors** for scoped reviews:
+```bash
+npx agent-browser snapshot -i -s "[data-testid='section-hero']"
+npx agent-browser snapshot -i -s "[data-testid='convert-form']"
 ```
