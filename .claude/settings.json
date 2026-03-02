@@ -49,7 +49,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "filepath=$(echo $CLAUDE_TOOL_INPUT | jq -r '.file_path // .filePath // empty'); if [ -n \"$filepath\" ]; then case \"$filepath\" in *.vue|*.ts|*.js) npx eslint --fix \"$filepath\" 2>/dev/null || true;; esac; fi",
+            "command": "filepath=$(jq -r '.tool_input.file_path // .tool_input.filePath // empty'); if [ -n \"$filepath\" ]; then case \"$filepath\" in *.vue|*.ts|*.js) npx eslint --fix \"$filepath\" 2>/dev/null || true;; esac; fi",
             "timeout": 30
           }
         ]
