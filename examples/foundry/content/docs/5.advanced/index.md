@@ -1,6 +1,6 @@
 ---
 title: Advanced
-description: Structured logging, MCP tools, and developer tooling.
+description: Structured logging, MCP tools, developer tooling, and agent configurations.
 ---
 
 ::card-group
@@ -14,6 +14,10 @@ description: Structured logging, MCP tools, and developer tooling.
 
   ::card{title="Developer Tooling" icon="i-lucide-wrench" to="/docs/advanced/developer-tooling"}
   AI-assisted workflow with Claude Code, agent skills, and VibeKanban.
+  ::
+
+  ::card{title="Agent Configurations" icon="i-lucide-users" to="/docs/advanced/agent-configurations"}
+  VibeKanban agent profiles for multi-agent AI development.
   ::
 ::
 
