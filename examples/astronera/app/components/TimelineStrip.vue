@@ -31,7 +31,11 @@ defineProps<{
         class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"
       />
       <div class="absolute bottom-0 left-0 right-0 p-3.5">
-        <UBadge color="primary" variant="subtle" size="xs">
+        <UBadge
+          color="primary"
+          variant="subtle"
+          size="xs"
+        >
           {{ item.year }}
         </UBadge>
         <p

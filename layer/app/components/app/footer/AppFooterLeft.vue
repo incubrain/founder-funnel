@@ -15,7 +15,10 @@ const mission = computed(() => siteConfig.value?.business?.mission ?? '')
 
 <template>
   <div class="flex flex-col gap-4 max-w-sm">
-    <NuxtLink to="/" class="flex items-center gap-2">
+    <NuxtLink
+      to="/"
+      class="flex items-center gap-2"
+    >
       <AppLogo :title="siteConfig?.business?.name" />
     </NuxtLink>
     <MDC

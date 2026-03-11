@@ -12,7 +12,10 @@ const allItems = computed(() => {
 </script>
 
 <template>
-  <div v-if="allItems.length" class="overflow-hidden">
+  <div
+    v-if="allItems.length"
+    class="overflow-hidden"
+  >
     <UCarousel
       v-slot="{ item }"
       :items="allItems"
