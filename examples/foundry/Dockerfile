@@ -19,22 +19,35 @@ RUN corepack enable && corepack prepare pnpm@10.12.0 --activate
 
 WORKDIR /app
 
-# Copy workspace metadata + lockfile
+# ------------------------------------------------
+# 1. Copy workspace metadata + lockfile (CRITICAL)
+# ------------------------------------------------
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
+
+# ------------------------------------------------
+# 2. Copy only package manifests needed for install
+# ------------------------------------------------
 COPY package.json .npmrc* ./
 COPY examples/foundry/package.json examples/foundry/
 
-# Install with filter
-RUN --mount=type=cache,id=pnpm-foundry-store,target=/root/.local/share/pnpm/store \
+# ------------------------------------------------
+# 3. Install ONLY foundry (uses root lockfile)
+# ------------------------------------------------
+
+RUN --mount=type=cache,id=s/705172d8-adee-407c-bc8c-5c02d4da348c-pnpm-store,target=/root/.local/share/pnpm/store \
     pnpm install \
     --filter ./examples/foundry... \
     --frozen-lockfile \
     --reporter=append-only
 
-# Copy source code
+# ------------------------------------------------
+# 4. Copy source code AFTER install (cache-friendly)
+# ------------------------------------------------
 COPY examples/foundry examples/foundry
 
-# Build
+# ------------------------------------------------
+# 5. Build only foundry
+# ------------------------------------------------
 RUN pnpm --filter ./examples/foundry... build
 
 # ============================================
