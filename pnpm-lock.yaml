@@ -89,8 +89,8 @@ importers:
         specifier: ^1.2.38
         version: 1.2.73
       '@incubrain/foundry':
-        specifier: ^0.6.0
-        version: 0.6.0(2d350ef8b7dd5c808e63df88b5267883)
+        specifier: ^0.6.1
+        version: 0.6.1(0cc254e63d49c4cbad1d28e393ed5032)
       better-sqlite3:
         specifier: ^12.5.0
         version: 12.6.2
@@ -113,8 +113,8 @@ importers:
         specifier: ^1.2.73
         version: 1.2.73
       '@incubrain/foundry':
-        specifier: workspace:*
-        version: link:../../layer
+        specifier: ^0.6.1
+        version: 0.6.1(0cc254e63d49c4cbad1d28e393ed5032)
       better-sqlite3:
         specifier: ^12.5.0
         version: 12.6.2
@@ -975,8 +975,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@incubrain/foundry@0.6.0':
-    resolution: {integrity: sha512-5oiJbRMLuTIxhzWyOpRRtUKHOl1VmvIFYAmAMBMiS+glNmfgsc5RhxWT8QyWGBlEmNZeO3Wc8sS3olcs+nmp3g==}
+  '@incubrain/foundry@0.6.1':
+    resolution: {integrity: sha512-7kbyJ2DuZzCQ0R+23QfkbzQPreeIv04Pv7DclPO2ZTGhIA18ER2g4uaqrTazNvNyG0RLzrDyEnAwcVCjE+g9HQ==}
     peerDependencies:
       '@iconify-json/lucide': '*'
       '@iconify-json/simple-icons': '*'
@@ -4656,32 +4656,6 @@ packages:
     resolution: {integrity: sha512-CRT1WTyuQoD771GW56XEZFQ/ZoSfWid1alKGDYMmkt2yl8UXrVR4pspqWNEcqKvVIzg6PAltWjxcSSPrboA4iA==}
     engines: {node: '>=18.0.0'}
 
-  evlog@1.11.0:
-    resolution: {integrity: sha512-ZMV1Dis4DzY2ZMTu+adQcB+oyP5hVw2QIa2mBlg60D5t+6wRQ24vqA1wMIYgSFRSwR8Smrg7Ezo3MOJo6jjBpg==}
-    peerDependencies:
-      '@nuxt/kit': ^4.3.1
-      h3: ^1.15.5
-      next: '>=14.0.0'
-      nitro: ^3.0.1-alpha.2
-      nitropack: ^2.13.1
-      ofetch: ^1.5.1
-      react: '>=18.0.0'
-    peerDependenciesMeta:
-      '@nuxt/kit':
-        optional: true
-      h3:
-        optional: true
-      next:
-        optional: true
-      nitro:
-        optional: true
-      nitropack:
-        optional: true
-      ofetch:
-        optional: true
-      react:
-        optional: true
-
   evlog@2.5.0:
     resolution: {integrity: sha512-HmUeRdhBvVbW/vJ5QANkKbO2PALuCncKPgGsg4TFqbUAmGGohTjHuzSmc78sjdAtkfz0sUuAHGxkBUH+hpUKCg==}
     peerDependencies:
@@ -6044,9 +6018,6 @@ packages:
 
   minimark@0.2.0:
     resolution: {integrity: sha512-AmtWU9pO0C2/3AM2pikaVhJ//8E5rOpJ7+ioFQfjIq+wCsBeuZoxPd97hBFZ9qrI7DMHZudwGH3r8A7BMnsIew==}
-
-  minimark@1.0.0:
-    resolution: {integrity: sha512-4maJvB7opKTzIWeh0jIpWf6FbN/nU3UjsjDnlLuYixnLp4laKoQrCYfmKA71Qm+EV3SUsKvawO+1EBiu11+kBg==}
 
   minimatch@10.2.4:
     resolution: {integrity: sha512-oRjTw/97aTBN0RHbYCdtF1MQfvusSIBQM0IZEgzl6426+8jSC0nF1a/GmnVLpfB9yyr6g6FTqWqiZVbxrtaCIg==}
@@ -9037,7 +9008,7 @@ snapshots:
   '@img/sharp-win32-x64@0.34.5':
     optional: true
 
-  '@incubrain/foundry@0.6.0(2d350ef8b7dd5c808e63df88b5267883)':
+  '@incubrain/foundry@0.6.1(0cc254e63d49c4cbad1d28e393ed5032)':
     dependencies:
       '@nuxt/content': 3.12.0(better-sqlite3@12.6.2)(magicast@0.5.2)(valibot@1.2.0(typescript@5.9.3))
       '@nuxt/image': 2.0.0(db0@0.3.4(better-sqlite3@12.6.2))(ioredis@5.9.3)(magicast@0.5.2)
@@ -9052,12 +9023,11 @@ snapshots:
       '@vueuse/nuxt': 14.2.1(magicast@0.5.2)(nuxt@4.3.1(@parcel/watcher@2.5.6)(@types/node@25.4.0)(@vue/compiler-sfc@3.5.29)(better-sqlite3@12.6.2)(cac@6.7.14)(db0@0.3.4(better-sqlite3@12.6.2))(eslint@10.0.3(jiti@2.6.1))(ioredis@5.9.3)(lightningcss@1.32.0)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(rollup@4.59.0)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.5(typescript@5.9.3))(yaml@2.8.2))(vue@3.5.29(typescript@5.9.3))
       canvas-confetti: 1.9.4
       defu: 6.1.4
-      evlog: 1.11.0(@nuxt/kit@4.3.1(magicast@0.5.2))(h3@1.15.6)(nitropack@2.13.1(better-sqlite3@12.6.2))(ofetch@1.5.1)
+      evlog: 2.5.0(@nuxt/kit@4.3.1(magicast@0.5.2))(express@5.2.1)(h3@1.15.6)(hono@4.12.3)(nitropack@2.13.1(better-sqlite3@12.6.2))(ofetch@1.5.1)
       exsolve: 1.0.8
       fuse.js: 7.1.0
       katex: 0.16.38
-      minimark: 1.0.0
-      motion-v: 1.10.3(@vueuse/core@14.2.1(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3))
+      motion-v: 2.0.0(@vueuse/core@14.2.1(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3))
       nuxt: 4.3.1(@parcel/watcher@2.5.6)(@types/node@25.4.0)(@vue/compiler-sfc@3.5.29)(better-sqlite3@12.6.2)(cac@6.7.14)(db0@0.3.4(better-sqlite3@12.6.2))(eslint@10.0.3(jiti@2.6.1))(ioredis@5.9.3)(lightningcss@1.32.0)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(rollup@4.59.0)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.5(typescript@5.9.3))(yaml@2.8.2)
       rehype-katex: 7.0.1
       remark-math: 6.0.0
@@ -9086,10 +9056,12 @@ snapshots:
       - '@googlemaps/markerclusterer'
       - '@inertiajs/vue3'
       - '@libsql/client'
+      - '@nestjs/common'
       - '@netlify/blobs'
       - '@paypal/paypal-js'
       - '@planetscale/database'
       - '@stripe/stripe-js'
+      - '@sveltejs/kit'
       - '@tiptap/extensions'
       - '@tiptap/y-tiptap'
       - '@types/google.maps'
@@ -9114,9 +9086,13 @@ snapshots:
       - db0
       - drauu
       - drizzle-orm
+      - elysia
       - embla-carousel
+      - express
+      - fastify
       - focus-trap
       - h3
+      - hono
       - idb-keyval
       - ioredis
       - joi
@@ -13869,13 +13845,6 @@ snapshots:
     dependencies:
       eventsource-parser: 3.0.6
 
-  evlog@1.11.0(@nuxt/kit@4.3.1(magicast@0.5.2))(h3@1.15.6)(nitropack@2.13.1(better-sqlite3@12.6.2))(ofetch@1.5.1):
-    optionalDependencies:
-      '@nuxt/kit': 4.3.1(magicast@0.5.2)
-      h3: 1.15.6
-      nitropack: 2.13.1(better-sqlite3@12.6.2)
-      ofetch: 1.5.1
-
   evlog@2.5.0(@nuxt/kit@4.3.1(magicast@0.5.2))(express@5.2.1)(h3@1.15.6)(hono@4.12.3)(nitropack@2.13.1(better-sqlite3@12.6.2))(ofetch@1.5.1):
     optionalDependencies:
       '@nuxt/kit': 4.3.1(magicast@0.5.2)
@@ -15552,11 +15521,6 @@ snapshots:
   mimic-response@3.1.0: {}
 
   minimark@0.2.0: {}
-
-  minimark@1.0.0:
-    dependencies:
-      entities: 7.0.1
-      js-yaml: 4.1.1
 
   minimatch@10.2.4:
     dependencies:

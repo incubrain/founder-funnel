@@ -31,6 +31,7 @@
     "layer:patch": "release-it patch --config .release-it.layer.json",
     "layer:bump": "release-it bump --config .release-it.layer.json",
     "layer:publish": "cd layer && npm publish --access public",
+    "cli:check": "pnpm pack --dry-run --filter create-foundry",
     "cli:build": "pnpm --filter create-foundry build",
     "cli:publish": "cd cli && npm publish --access public",
     "kanban": "npx vibe-kanban",

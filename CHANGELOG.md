@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.1] - 2026-03-12
+
+### Fixed
+
+- **Inline minimark error** — removed minimark dependency
+
 ## [0.6.0] - 2026-02-27
 
 ### Added
