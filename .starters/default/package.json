@@ -4,8 +4,7 @@
   "type": "module",
   "scripts": {
     "postinstall": "nuxt prepare",
-    "skills:install": "bash scripts/install-skills.sh",
-    "skills:update": "bash scripts/install-skills.sh",
+    "skills": "bash scripts/install-skills.sh",
     "dev": "nuxt dev",
     "build": "nuxt build",
     "preview": "nuxt preview"

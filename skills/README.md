@@ -48,8 +48,8 @@ bash scripts/install-skills.sh
 # Install for other agents
 bash scripts/install-skills.sh cursor
 
-# Or use npm script
-npm run skills:install
+# Or use pnpm script
+pnpm skills
 ```
 
 The script will:
