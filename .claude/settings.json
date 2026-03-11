@@ -19,7 +19,8 @@
       "Bash(npx eslint *)",
       "Bash(npx prettier *)",
       "Bash(bash scripts/install-skills.sh*)",
-      "Bash(npx skills *)"
+      "Bash(npx skills *)",
+      "Bash(bash .claude/scripts/visual-review.sh*)"
     ],
     "deny": [
       "Read(./.env)",
@@ -48,8 +49,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "filepath=$(echo $CLAUDE_TOOL_INPUT | jq -r '.file_path // .filePath // empty'); if [ -n \"$filepath\" ]; then case \"$filepath\" in *.vue|*.ts|*.js) npx eslint --fix \"$filepath\" 2>/dev/null || true;; esac; fi",
+            "command": "filepath=$(jq -r '.tool_input.file_path // .tool_input.filePath // empty'); if [ -n \"$filepath\" ]; then case \"$filepath\" in *.vue|*.ts|*.js) npx eslint --fix \"$filepath\" 2>/dev/null || true;; esac; fi",
             "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd=$(jq -r '.tool_input.command // empty'); if echo \"$cmd\" | grep -q 'agent-browser'; then echo \"[$(date +%Y-%m-%dT%H:%M:%S)] $cmd\" >> \"$CLAUDE_PROJECT_DIR\"/.claude/visual-test-log.md; fi",
+            "timeout": 5
           }
         ]
       }

@@ -43,8 +43,15 @@ if (isDev) {
 
 const extractRootDomain = (url: string | null) => {
   if (!url) return 'NO URL'
-  const urlObj = new URL(url)
-  return urlObj.origin
+  try {
+    const urlObj = new URL(url, 'https://placeholder.local')
+    // Relative URL (starts with /) — show path instead of domain
+    if (url.startsWith('/')) return url
+    return urlObj.origin
+  }
+  catch {
+    return url
+  }
 }
 
 defineSlots<{

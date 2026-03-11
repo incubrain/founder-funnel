@@ -1,12 +1,27 @@
 <script setup lang="ts">
-const site = useSiteConfig()
+interface SiteConfig {
+  business?: {
+    name?: string
+    mission?: string
+    logo?: string
+    [key: string]: unknown
+  }
+  [key: string]: unknown
+}
+
+const siteConfig = inject<Ref<SiteConfig | null>>('site_config', ref(null))
+const mission = computed(() => siteConfig.value?.business?.mission ?? '')
 </script>
 
 <template>
-  <NuxtLink
-    :to="'/'"
-    class="flex"
-  >
-    <AppLogo :title="site.name" />
-  </NuxtLink>
+  <div class="flex flex-col gap-4 max-w-sm">
+    <NuxtLink to="/" class="flex items-center gap-2">
+      <AppLogo :title="siteConfig?.business?.name" />
+    </NuxtLink>
+    <MDC
+      v-if="mission"
+      :value="mission"
+      class="text-sm text-muted leading-relaxed"
+    />
+  </div>
 </template>
