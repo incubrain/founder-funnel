@@ -1,2 +1,0 @@
-- [] currently we can only add comments to the body tag, it needs to be possible outside of the body as well
-- [] there is an issue where the comment popover is outside of the screen view when we have selected a large amount of text - it should always show in the center of the selection box, same with the hover 'tooltip'

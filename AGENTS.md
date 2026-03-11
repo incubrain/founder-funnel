@@ -41,7 +41,7 @@ pnpm verify          # dev:prepare + lint + typecheck
 
 ```bash
 layer/                         → Nuxt layer (core reusable code)
-layer/modules/                 → Feature modules (events, comments, rss, changelog, docs)
+layer/modules/                 → Feature modules (events, rss, changelog, docs)
 examples/foundry/              → Founder Funnel example app
 examples/astronera/            → Astronera example app
 examples/starter/              → Starter template
@@ -86,7 +86,6 @@ Detailed rules are in `.agents/rules/` (symlinked at `.claude/rules/`):
 Each module has its own AGENTS.md with detailed architecture, file maps, and modification guides. Read the relevant module guide when working on that module:
 
 - @layer/modules/events/AGENTS.md — Event tracking and webhook streaming
-- @layer/modules/comments/AGENTS.md — Documentation review system (dev-only)
 - @layer/modules/rss/AGENTS.md — RSS feed generation
 - @layer/modules/changelog/AGENTS.md — Changelog generation
 - @layer/modules/docs/AGENTS.md — Documentation utilities

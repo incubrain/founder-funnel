@@ -90,7 +90,7 @@ importers:
         version: 1.2.71
       '@incubrain/foundry':
         specifier: ^0.5.2
-        version: 0.5.2(db342f8ba1f305757aec024e04ba9157)
+        version: 0.5.2(c216210768695db10a4926334c54a658)
       better-sqlite3:
         specifier: ^12.5.0
         version: 12.6.2
@@ -114,7 +114,7 @@ importers:
         version: 1.2.71
       '@incubrain/foundry':
         specifier: ^0.5.2
-        version: 0.5.2(db342f8ba1f305757aec024e04ba9157)
+        version: 0.5.2(c216210768695db10a4926334c54a658)
       better-sqlite3:
         specifier: ^12.5.0
         version: 12.6.2
@@ -236,9 +236,6 @@ importers:
       '@types/node':
         specifier: ^22.19.3
         version: 22.19.13
-      html-to-image:
-        specifier: ^1.11.13
-        version: 1.11.13
       vue-tsc:
         specifier: ^3.2.1
         version: 3.2.5(typescript@5.9.3)
@@ -4995,9 +4992,6 @@ packages:
   html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
 
-  html-to-image@1.11.13:
-    resolution: {integrity: sha512-cuOPoI7WApyhBElTTb9oqsawRvZ0rHhaHwghRLlTuffoD1B2aDemlCruLeZrUIIdvG7gs9xeELEPm6PhuASqrg==}
-
   html-void-elements@3.0.0:
     resolution: {integrity: sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==}
 
@@ -8692,7 +8686,7 @@ snapshots:
   '@img/sharp-win32-x64@0.34.5':
     optional: true
 
-  '@incubrain/foundry@0.5.2(db342f8ba1f305757aec024e04ba9157)':
+  '@incubrain/foundry@0.5.2(c216210768695db10a4926334c54a658)':
     dependencies:
       '@iconify/json': 2.2.443
       '@nuxt/content': 3.11.2(better-sqlite3@12.6.2)(magicast@0.5.2)(valibot@1.2.0(typescript@5.9.3))
@@ -13442,8 +13436,6 @@ snapshots:
   html-entities@2.6.0: {}
 
   html-escaper@2.0.2: {}
-
-  html-to-image@1.11.13: {}
 
   html-void-elements@3.0.0: {}
 

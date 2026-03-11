@@ -33,8 +33,4 @@ export default defineNuxtConfig({
   ::card{title="Changelog" icon="i-lucide-clock" to="/docs/modules/changelog"}
   Changelog timeline with team member lookups and author resolution.
   ::
-
-  ::card{title="Comments" icon="i-lucide-message-square" to="/docs/modules/comments"}
-  Dev-only highlight-and-comment review tool for documentation pages.
-  ::
 ::

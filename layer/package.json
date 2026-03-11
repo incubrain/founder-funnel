@@ -27,9 +27,6 @@
     "modules/events/index.ts",
     "modules/events/runtime",
     "modules/events/server",
-    "modules/comments/index.ts",
-    "modules/comments/runtime",
-    "modules/comments/server",
     "modules/rss/index.ts",
     "modules/rss/runtime",
     "modules/rss/server",
@@ -79,7 +76,6 @@
     "@nuxt/eslint": "^1.15.1",
     "@nuxt/hints": "1.0.0-alpha.6",
     "@types/node": "^22.19.3",
-    "html-to-image": "^1.11.13",
     "vue-tsc": "^3.2.1"
   },
   "peerDependencies": {

@@ -6,7 +6,6 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- **Comments module** — Dev-only documentation review system with text selection (CSS Custom Highlight API), element selection (vue-tracer), screenshots (html-to-image), and JSONL storage
 - **RSS module** — Config-driven RSS feed generation from Nuxt Content collections; register feeds in `nuxt.config.ts` with field mapping
 - **Changelog module** — Timeline component for versioned changelog entries with author resolution from team collection
 - **Docs module** — Glossary terms (`Defn`), inline citations (`Cited`), bibliography, full-text search, and 3-column docs layout; all features toggleable via config
