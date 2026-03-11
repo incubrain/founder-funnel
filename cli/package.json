@@ -17,7 +17,7 @@
     "dev": "tsx main.ts"
   },
   "dependencies": {
-    "@nuxt/cli": "^3.33.1",
+    "@nuxt/cli": "^3.34.0",
     "citty": "^0.2.1"
   },
   "devDependencies": {

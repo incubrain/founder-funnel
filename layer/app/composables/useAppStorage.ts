@@ -1,6 +1,6 @@
 // composables/useAppStorage.ts
 /**
- * Centralized storage abstraction with 'fondry' prefix
+ * Centralized storage abstraction with 'foundry' prefix
  * Enables future migration to database storage with minimal changes
  */
 export const useAppStorage = () => {
