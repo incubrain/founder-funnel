@@ -71,20 +71,20 @@ header:
   navigation:
     - label: Dark Sky
       icon: i-lucide-moon
-      to: /darksky/research
+      to: /darksky/research/overview
       children:
         - label: Research
           icon: i-lucide-flask-conical
-          to: /darksky/research
+          to: /darksky/research/overview
         - label: Policy
           icon: i-lucide-book-open
-          to: /darksky/policy
+          to: /darksky/policy/overview
         - label: Pilots
           icon: i-lucide-sprout
-          to: /darksky/pilots
+          to: /darksky/pilots/overview
     - label: Resources
       icon: i-lucide-book-key
-      to: /resources/glossary
+      to: /resources/sources
       children:
         - label: Sources
           icon: i-lucide-file-pen-line
