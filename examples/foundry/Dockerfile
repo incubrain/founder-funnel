@@ -38,6 +38,7 @@ RUN --mount=type=cache,id=s/705172d8-adee-407c-bc8c-5c02d4da348c-pnpm-store,targ
     pnpm install \
     --filter ./examples/foundry... \
     --frozen-lockfile \
+    --ignore-scripts \
     --reporter=append-only
 
 # ------------------------------------------------
