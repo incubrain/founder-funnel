@@ -28,9 +28,20 @@ export default defineEventHandler(async (event) => {
   const docsConfig = (appConfig as Record<string, unknown>).content
     && ((appConfig as Record<string, unknown>).content as Record<string, unknown>).collections
     && (((appConfig as Record<string, unknown>).content as Record<string, unknown>).collections as Record<string, unknown>).docs
-  const docsPrefix = (typeof docsConfig === 'object' && docsConfig !== null && 'prefix' in docsConfig)
+
+  // Skip entirely if no docs collection is configured
+  if (!docsConfig || typeof docsConfig !== 'object') {
+    return
+  }
+
+  const docsPrefix = ('prefix' in docsConfig)
     ? (docsConfig as { prefix: string }).prefix
     : '/docs'
+
+  // Skip if no valid prefix
+  if (!docsPrefix) {
+    return
+  }
 
   // Only handle docs paths
   if (!path?.startsWith(`${docsPrefix}/`) && path !== docsPrefix) {
@@ -45,6 +56,11 @@ export default defineEventHandler(async (event) => {
   try {
     // Try to fetch the navigation for the docs collection
     const navigation = await queryCollectionNavigation(event, 'docs')
+
+    // Skip if no navigation data (collection may not exist)
+    if (!navigation || !navigation.length) {
+      return
+    }
 
     // Find the matching directory node
     const findNode = (items: NavItem[], targetPath: string): NavItem | null => {
@@ -71,13 +87,12 @@ export default defineEventHandler(async (event) => {
     // redirect to the first child
     if (node?.children?.length && node.children.length > 0 && !node.body) {
       const firstChild = node.children[0]
-      if (firstChild?.path) {
+      if (firstChild?.path && firstChild.path !== path) {
         return sendRedirect(event, firstChild.path, 302)
       }
     }
   }
-  catch (error) {
-    const log = useLogger(event)
-    log.set({ docsRedirect: { path, error: error instanceof Error ? error.message : String(error) } })
+  catch {
+    // Collection may not exist (e.g., app has no docs) — silently skip
   }
 })

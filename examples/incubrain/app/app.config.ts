@@ -18,6 +18,7 @@ export default defineAppConfig({
 
   content: {
     collections: {
+      docs: { name: 'docs', type: 'page', prefix: '/docs' },
       pages: {
         name: 'pages',
         type: 'page',

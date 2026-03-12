@@ -28,6 +28,9 @@ export default defineNuxtConfig({
     '/insights/**': { appLayout: 'article' },
   },
 
+  // Disable docs module (incubrain has no docs collection)
+  docs: { enabled: false },
+
   llms: {
     domain: SITE_URL,
     title: 'Incubrain',
@@ -76,6 +79,9 @@ export default defineNuxtConfig({
       'Three open-source pillars: Foundry, Founder, Builder',
     ],
   },
+
+  // Disable canonical URL redirect in dev (causes infinite loop with SSR)
+  seo: { redirectToCanonicalSiteUrl: false },
 
   studio: {
     route: '/_studio',
