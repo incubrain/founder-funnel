@@ -27,6 +27,9 @@ header:
     - label: Mentorship
       icon: i-lucide-users
       to: /mentorship
+    - label: Join Us
+      icon: i-lucide-heart
+      to: /join-us
     - label: Apply Now
       icon: i-lucide-send
       to: /apply
@@ -68,6 +71,9 @@ footer:
       icon: i-lucide-link
       to: /apply
       children:
+        - label: Join Us
+          icon: i-lucide-heart
+          to: /join-us
         - label: Apply Now
           icon: i-lucide-send
           to: /apply

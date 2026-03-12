@@ -19,6 +19,7 @@ export default defineNuxtConfig({
   routeRules: {
     // Landing pages
     '/': { appLayout: 'landing' },
+    '/join-us': { appLayout: 'default' },
     '/approach': { appLayout: 'default' },
     '/sectors': { appLayout: 'default' },
     '/apply': { appLayout: 'default' },
@@ -63,6 +64,15 @@ export default defineNuxtConfig({
         contentCollection: 'pages',
         contentFilters: [
           { field: 'path', operator: '=', value: '/approach' },
+        ],
+      },
+      {
+        title: 'Join Us',
+        description:
+          'Join the Incubrain team — culture, values, interview process, and open applications',
+        contentCollection: 'pages',
+        contentFilters: [
+          { field: 'path', operator: '=', value: '/join-us' },
         ],
       },
       {
