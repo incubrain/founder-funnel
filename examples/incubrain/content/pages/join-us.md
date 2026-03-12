@@ -2,6 +2,8 @@
 title: Join Us — Build the Future from Pune
 description: We're looking for obsessive innovators, open-source contributors, and good humans to join a lean team of AI-powered builders in Pune, Maharashtra.
 label: Join Us
+hero: false
+navigation: false
 ---
 
 ::section-join-hero

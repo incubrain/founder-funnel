@@ -16,29 +16,27 @@ defineProps<{
     :title="title"
     :description="description"
   >
-    <div class="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10">
+    <div class="mt-10 sm:mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
       <div
         v-for="(item, i) in items"
         :key="i"
-        class="flex gap-4"
+        class="space-y-3"
       >
-        <span class="text-3xl font-black text-primary/30 leading-none select-none">
-          {{ String(i + 1).padStart(2, '0') }}
-        </span>
-        <div>
-          <div class="flex items-center gap-2">
-            <UIcon
-              :name="item.icon"
-              class="size-4 text-primary"
-            />
-            <h3 class="text-base sm:text-lg font-heading font-bold text-highlighted">
-              {{ item.title }}
-            </h3>
-          </div>
-          <p class="mt-2 text-sm text-dimmed leading-relaxed">
-            {{ item.description }}
-          </p>
+        <div class="flex items-center gap-3">
+          <span class="text-2xl font-black text-primary/40 leading-none select-none">
+            {{ String(i + 1).padStart(2, '0') }}
+          </span>
+          <UIcon
+            :name="item.icon"
+            class="size-5 text-primary"
+          />
         </div>
+        <h3 class="text-base font-heading font-bold text-highlighted">
+          {{ item.title }}
+        </h3>
+        <p class="text-sm text-dimmed leading-relaxed">
+          {{ item.description }}
+        </p>
       </div>
     </div>
   </SectionWrapper>
