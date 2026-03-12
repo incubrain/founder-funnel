@@ -25,6 +25,13 @@ cta:
 ---
 ::
 
+::section-quote
+---
+quote: The best way to predict the future is to create it.
+author: Peter Drucker
+---
+::
+
 ::section-manifesto-list
 ---
 title: What We're Looking For
@@ -144,31 +151,37 @@ description: >
   being a good person, and innovating with AI.
 items:
   - title: Apply & Coffee Meet
+    icon: i-lucide-coffee
     description: >
       Submit your story (GitHub, why us, open-source contributions). If we like
       what we see, first step is an in-person coffee in Pune. Simple rule: if I
       don't want to have coffee with you, I don't want to hire you.
   - title: 1-Day Work Trial
+    icon: i-lucide-laptop
     description: >
       If the vibe's right, join us for a full day. Show us your magic. At the end,
       tell us what you did. If we don't like the answer, that's it — no hard feelings.
   - title: 1-Month Paid Trial
+    icon: i-lucide-calendar
     description: >
       Nail the day? Get the same chance for a month. Leverage our tools, contribute,
       grow. We'll see if you're family.
   - title: Full Hire
+    icon: i-lucide-handshake
     description: >
       If we still love working with you, you're in.
       Welcome to the future-builders.
 ---
 ::
 
-## Ready to Build the Future? {#apply}
-
-If you're obsessive about AI, innovation, and abundance — and you fit our weird family —
-apply now. Contribute to our open-source ([Foundry](https://foundry.incubrain.org),
-[Founder](https://founder.incubrain.org), [Builder](https://builder.incubrain.org))
-to stand out. Let's make an impact in Pune.
+::section-join-cta
+---
+title: Ready to Build the Future?
+description: >
+  If you're obsessive about AI, innovation, and abundance — and you fit our weird family —
+  apply now. Contribute to our open-source (Foundry, Founder, Builder)
+  to stand out. Let's make an impact in Pune.
+---
 
 ::convert-form
 ---
@@ -203,4 +216,6 @@ fields:
     placeholder: Links to PRs, projects, or anything you've built and shipped.
     required: false
 ---
+::
+
 ::

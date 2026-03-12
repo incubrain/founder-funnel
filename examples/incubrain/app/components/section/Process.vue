@@ -5,6 +5,7 @@ defineProps<{
   items?: Array<{
     title: string
     description: string
+    icon?: string
   }>
 }>()
 </script>
@@ -14,6 +15,7 @@ defineProps<{
     section-id="process"
     :title="title"
     :description="description"
+    class="bg-muted/50"
   >
     <div class="mt-10 sm:mt-14 max-w-4xl mx-auto">
       <div
@@ -31,9 +33,16 @@ defineProps<{
           />
         </div>
         <div class="pt-1">
-          <h3 class="text-base sm:text-lg font-heading font-bold text-highlighted">
-            {{ item.title }}
-          </h3>
+          <div class="flex items-center gap-2">
+            <UIcon
+              v-if="item.icon"
+              :name="item.icon"
+              class="size-4 text-primary"
+            />
+            <h3 class="text-base sm:text-lg font-heading font-bold text-highlighted">
+              {{ item.title }}
+            </h3>
+          </div>
           <p class="mt-1 text-sm text-dimmed leading-relaxed">
             {{ item.description }}
           </p>
