@@ -10,6 +10,15 @@ import {
 
 export default defineContentConfig({
   collections: {
+    docs: defineCollection({
+      type: 'page',
+      source: {
+        include: 'docs/**/*.md',
+        prefix: '/docs',
+      },
+      schema: basePageSchema,
+    }),
+
     pages: defineCollection({
       type: 'page',
       source: {

@@ -24,13 +24,16 @@ export default defineNuxtConfig({
     '/sectors': { appLayout: 'default' },
     '/apply': { appLayout: 'default' },
 
+    // Docs
+    '/docs': { appLayout: 'docs' },
+    '/docs/**': { appLayout: 'docs' },
+
     // Article-style pages
     '/mentorship': { appLayout: 'article' },
     '/insights/**': { appLayout: 'article' },
   },
 
-  // Disable docs module (incubrain has no docs collection)
-  docs: { enabled: false },
+  docs: { enabled: true },
 
   llms: {
     domain: SITE_URL,
