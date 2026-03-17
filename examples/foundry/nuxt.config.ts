@@ -2,8 +2,8 @@ import { createResolver } from '@nuxt/kit'
 
 const { resolve } = createResolver(import.meta.url)
 
-const SITE_URL
-  = process.env.NUXT_PUBLIC_SITE_URL || 'https://foundry.incubrain.org'
+const SITE_URL =
+  process.env.NUXT_PUBLIC_SITE_URL || 'https://foundry.incubrain.org'
 
 export default defineNuxtConfig({
   extends: ['@incubrain/foundry'],
@@ -34,14 +34,6 @@ export default defineNuxtConfig({
 
     // RSS Feeds
     '/rss-feeds': { appLayout: 'default' },
-
-    // RSS
-    // '/rss/**': {
-    //   headers: {
-    //     'Content-Type': 'application/xml; charset=utf-8',
-    //     'Cache-Control': 'public, max-age=3600',
-    //   },
-    // },
   },
 
   nitro: {
@@ -53,17 +45,6 @@ export default defineNuxtConfig({
   linkChecker: {
     excludeLinks: ['/decisions/**'],
   },
-
-  // vite: {
-  //   server: {
-  //     fs: {
-  //       allow: [resolve('../../'), resolve('../../layer')],
-  //     },
-  //     watch: {
-  //       followSymlinks: true,
-  //     },
-  //   },
-  // },
 
   llms: {
     domain: SITE_URL,

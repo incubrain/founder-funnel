@@ -9,6 +9,7 @@ packages:
   # Only include specific examples we're building
   - 'examples/foundry'
   - 'examples/astronera'
+  - 'examples/incubrain'
 
 ignoredBuiltDependencies:
   - '@parcel/watcher'
