@@ -22,7 +22,6 @@ interface AuthorData {
  * only handles rendering.
  */
 export function useChangelog(options: ChangelogOptions) {
-  const { collections } = useContentConfig()
   const appConfig = useAppConfig()
 
   const defaultAuthorSlug = computed(
@@ -32,7 +31,7 @@ export function useChangelog(options: ChangelogOptions) {
   // Query all team members (only if showAuthor is enabled)
   const { data: teamMembers } = options.showAuthor
     ? useAsyncData('team-members', () =>
-        queryCollection(collections.team).all() as Promise<TeamCollectionItem[]>,
+        queryCollection('team').all() as Promise<TeamCollectionItem[]>,
       )
     : { data: ref([] as TeamCollectionItem[]) }
 
@@ -64,7 +63,7 @@ export function useChangelog(options: ChangelogOptions) {
 
   // Query changelog items
   const { data: items, pending } = useAsyncData(
-    () => `changelog-${collections.changelog}`,
+    'changelog-items',
     () => {
       const selectFields: (keyof ChangelogCollectionItem)[] = [
         'path',
@@ -78,7 +77,7 @@ export function useChangelog(options: ChangelogOptions) {
         selectFields.push('image')
       }
 
-      const q = queryCollection(collections.changelog) as unknown as {
+      const q = queryCollection('changelog') as unknown as {
         select: (...fields: string[]) => unknown
         where: (field: string, op: string) => unknown
         order: (field: string, dir: string) => unknown

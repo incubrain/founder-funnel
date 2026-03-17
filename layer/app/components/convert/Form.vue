@@ -9,7 +9,7 @@ interface Props {
   submitLabel?: string
   note?: string
   layout?: 'stacked' | 'horizontal'
-  successRedirect?: string
+  successRedirect?: string | false
   offerSlug?: OfferId
 }
 

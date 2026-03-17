@@ -17,27 +17,13 @@ export default defineAppConfig({
   },
 
   content: {
-    collections: {
-      // Page collections (routable - type: 'page')
-      docs: { name: 'docs', type: 'page', prefix: '/docs' },
-      pages: {
-        name: 'pages',
-        type: 'page',
-        prefix: '/',
-        backLabel: 'Back',
-      },
-      // Data collections (not routable - type: 'data' or string shorthand)
-      changelog: { name: 'decisions', type: 'page', prefix: '/decisions/' },
-      references: { name: 'references', type: 'data' },
-      glossary: { name: 'glossary', type: 'data' },
-      faq: { name: 'faq', type: 'data' },
-      config: { name: 'config', type: 'data' },
-      navigation: { name: 'navigation', type: 'data' },
-      // Collections to include in search
-      searchable: ['docs', 'pages', 'decisions'],
+    routeMap: {
+      '/docs': 'docs',
+      '/decisions': 'decisions',
     },
+    searchable: ['docs', 'pages', 'decisions'],
+    pagesBackLabel: 'Back',
     defaultAuthor: 'drew-macgibbon',
-    // Additional routing paths (not tied to a specific collection)
     routing: {
       offers: '/offers',
       success: '/success',

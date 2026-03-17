@@ -3,42 +3,16 @@ import { describe, it, expect } from 'vitest'
 import { useContentConfig } from '@incubrain/foundry/app/composables/useContentConfig'
 
 describe('useContentConfig', () => {
-  describe('Configuration Helpers', () => {
-    it('resolves collection name correctly', () => {
-      const { getCollectionName } = useContentConfig()
-      expect(getCollectionName('docs')).toBe('docs')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect(getCollectionName('articles' as any)).toBe('pages')
-    })
-
-    it('resolves collection prefix correctly', () => {
-      const { getCollectionPrefix } = useContentConfig()
-      expect(getCollectionPrefix('docs')).toBe('/docs')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect(getCollectionPrefix('articles' as any)).toBe('/articles')
-    })
-
-    it('gets searchable collections', () => {
-      const { getSearchableCollections } = useContentConfig()
-      expect(getSearchableCollections()).toContain('docs')
-      expect(getSearchableCollections()).toContain('articles')
-    })
-  })
-
   describe('Route Mapping', () => {
-    it('maps routes to collections based on prefix', () => {
+    it('maps routes to collections based on routeMap prefix', () => {
       const { getCollectionForRoute } = useContentConfig()
       expect(getCollectionForRoute('/docs/introduction')).toBe('docs')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect(getCollectionForRoute('/articles/my-post')).toBe('pages' as any)
       expect(getCollectionForRoute('/')).toBe('pages') // Default fallback
     })
 
     it('handles exact prefix matches', () => {
       const { getCollectionForRoute } = useContentConfig()
       expect(getCollectionForRoute('/docs')).toBe('docs')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect(getCollectionForRoute('/articles')).toBe('pages' as any)
     })
   })
 
@@ -52,10 +26,6 @@ describe('useContentConfig', () => {
     it('does not double-prefix if already prefixed', () => {
       const { resolveInternalPath } = useContentConfig()
       expect(resolveInternalPath('/docs/intro', 'docs')).toBe('/docs/intro')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect(resolveInternalPath('/articles/post', 'articles' as any)).toBe(
-        '/articles/post',
-      )
     })
 
     it('preserves hash fragments', () => {
@@ -66,16 +36,12 @@ describe('useContentConfig', () => {
     })
   })
 
-  describe('Pre-resolved Values', () => {
-    it('provides correct collection short-names', () => {
-      const { collections } = useContentConfig()
-      expect(collections.docs).toBe('docs')
-      expect(collections.references).toBe('references')
-    })
-
-    it('provides correct routing prefixes', () => {
+  describe('Routing Constants', () => {
+    it('provides correct routing paths', () => {
       const { routing } = useContentConfig()
-      expect(routing.docsPrefix).toBe('/docs')
+      expect(routing.offers).toBe('/offers')
+      expect(routing.success).toBe('/success')
+      expect(routing.sources).toBe('/sources')
     })
   })
 })

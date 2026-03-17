@@ -2,182 +2,60 @@ import { inject, type Ref } from 'vue'
 import type { ContentNavigationItem, Collections } from '@nuxt/content'
 
 /**
- * Collection type - matches Nuxt Content's collection types
- * - 'page': Markdown files with routes (routable)
- * - 'data': YAML/JSON data files (not routable)
- */
-type CollectionType = 'page' | 'data'
-
-/**
- * Collection config can be a string (name only) or object with routing info
- */
-type CollectionConfig
-  = | keyof Collections
-    | {
-      name: keyof Collections
-      type?: CollectionType
-      prefix?: string
-      backLabel?: string
-    }
-
-/**
- * Route pattern config for mapping routes to collections
- */
-interface RoutePatternConfig {
-  pattern: string
-  collection: keyof Collections
-}
-
-/**
- * Centralized composable for content configuration and path resolution.
- * All collection name/prefix/routing logic lives here.
+ * Centralized composable for content route resolution and path helpers.
+ *
+ * Most consumers should use `queryCollection('collectionName')` directly
+ * (Nuxt Content provides full type safety). This composable handles:
+ * - Route → collection mapping (which collection serves a given URL path)
+ * - Internal path resolution (for markdown cross-links)
+ * - Navigation metadata lookup (for link popovers)
+ * - Routing constants (offers, success, sources paths)
  */
 export const useContentConfig = () => {
   const appConfig = useAppConfig()
-
-  /* -------------------------------------------------------------------------- */
-  /*                          COLLECTION CONFIG HELPERS                         */
-  /* -------------------------------------------------------------------------- */
-
-  /**
-   * Extract collection name from config (handles both string and object formats)
-   */
-  const getCollectionName = (
-    key: keyof Collections,
-    fallback?: string,
-  ): keyof Collections => {
-    const config = appConfig.content?.collections?.[key] as
-      | CollectionConfig
-      | undefined
-    const defaultFallback = (fallback ?? key) as keyof Collections
-    if (!config) return defaultFallback
-    if (typeof config === 'string') return config
-    return config.name || defaultFallback
-  }
-
-  /**
-   * Extract collection URL prefix from config
-   */
-  const getCollectionPrefix = (
-    key: keyof Collections,
-    fallback = '',
-  ): string => {
-    const config = appConfig.content?.collections?.[key] as
-      | CollectionConfig
-      | undefined
-    if (!config) return fallback
-    if (typeof config === 'string') return fallback
-    return config.prefix ?? fallback
-  }
-
-  /**
-   * Extract collection back label from config (for navigation)
-   */
-  const getCollectionBackLabel = (
-    key: keyof Collections,
-    fallback = 'Back',
-  ): string => {
-    const config = appConfig.content?.collections?.[key] as
-      | CollectionConfig
-      | undefined
-    if (!config) return fallback
-    if (typeof config === 'string') return fallback
-    return config.backLabel ?? fallback
-  }
-
-  /**
-   * Get routing path from content.routing config
-   */
-  const getRoutingPath = (key: string, fallback: string): string => {
-    const routing = appConfig.content?.routing as Record<string, string> | undefined
-    return routing?.[key] || fallback
-  }
-
-  /**
-   * Get searchable collections array
-   */
-  const getSearchableCollections = (): string[] => {
-    return appConfig.content?.collections?.searchable || ['docs']
-  }
 
   /* -------------------------------------------------------------------------- */
   /*                          ROUTE → COLLECTION MAPPING                        */
   /* -------------------------------------------------------------------------- */
 
   /**
-   * Build route patterns from collection prefixes in app.config.ts
-   * Only considers collections with type: 'page' (routable collections)
-   * Returns patterns sorted by specificity (longest prefix first)
+   * Get the route map from app.config.ts.
+   * This is a simple { prefix: collectionName } object.
+   * Sorted by prefix length descending for specificity.
    */
-  const getRoutePatterns = (): RoutePatternConfig[] => {
-    const collectionsConfig = appConfig.content?.collections
-    if (!collectionsConfig) return []
+  const getRouteMap = (): Array<{ prefix: string, collection: keyof Collections }> => {
+    const routeMap = appConfig.content?.routeMap as Record<string, string> | undefined
+    if (!routeMap) return []
 
-    const patterns: RoutePatternConfig[] = []
-
-    // Extract patterns from collection configs
-    for (const [key, config] of Object.entries(collectionsConfig)) {
-      // Skip non-collection entries like 'searchable'
-      if (key === 'searchable') continue
-
-      // Only consider object configs with type: 'page' (routable collections)
-      if (typeof config === 'object' && config !== null) {
-        const collectionType = (config as { type?: CollectionType }).type
-        const prefix = (config as { prefix?: string }).prefix
-
-        // Only include page-type collections with a prefix
-        if (collectionType === 'page' && prefix) {
-          patterns.push({
-            pattern: prefix,
-            collection: ((config as { name?: string }).name
-              || key) as keyof Collections,
-          })
-        }
-      }
-    }
-
-    // Sort by prefix length descending (more specific patterns first)
-    return patterns.sort((a, b) => b.pattern.length - a.pattern.length)
+    return Object.entries(routeMap)
+      .map(([prefix, collection]) => ({
+        prefix,
+        collection: collection as keyof Collections,
+      }))
+      .sort((a, b) => b.prefix.length - a.prefix.length)
   }
 
   /**
-   * Determine which collection a route belongs to based on path patterns.
-   * Uses collection prefixes from app.config.ts to match routes dynamically.
+   * Determine which collection a route belongs to based on path prefix.
    *
    * @param path - The route path to match (e.g., '/darksky/intro')
    * @returns The collection key that should be queried
    */
   const getCollectionForRoute = (path: string): keyof Collections => {
-    const patterns = getRoutePatterns()
+    const routes = getRouteMap()
 
-    // Normalize path to remove trailing slash for matching purposes
     const normalizedPath
       = path > '/' && path.endsWith('/') ? path.slice(0, -1) : path
 
-    // Match against configured prefixes
-    for (const { pattern, collection } of patterns) {
-      // Pattern match: exact prefix or prefix followed by /
+    for (const { prefix, collection } of routes) {
       if (
-        normalizedPath === pattern
-        || normalizedPath.startsWith(`${pattern}/`)
+        normalizedPath === prefix
+        || normalizedPath.startsWith(`${prefix}/`)
       ) {
         return collection
       }
     }
 
-    // Fallback: check content.routing for special routes
-    const routingConfig = appConfig.content?.routing
-    if (routingConfig) {
-      for (const [, routePath] of Object.entries(routingConfig)) {
-        if (typeof routePath === 'string') {
-          if (path === routePath || path.startsWith(`${routePath}/`)) {
-            return 'pages' as keyof Collections
-          }
-        }
-      }
-    }
-
-    // Default fallback to pages collection
     return 'pages' as keyof Collections
   }
 
@@ -185,7 +63,7 @@ export const useContentConfig = () => {
   /*                              PATH RESOLUTION                               */
   /* -------------------------------------------------------------------------- */
 
-  const seperatePathAndHash = (
+  const separatePathAndHash = (
     path: string,
   ): { path: string, hash: string } => {
     const hashIndex = path.indexOf('#')
@@ -196,15 +74,10 @@ export const useContentConfig = () => {
 
   /**
    * Resolve an internal path to include the correct collection prefix.
-   * Handles edge cases:
-   * - Path already includes a collection prefix → returns as-is
-   * - Path with/without leading slash → normalizes correctly
-   * - Empty or invalid paths → returns safe fallback
-   * - Hash fragments → preserved
+   * Used by ProseA.vue for cross-document markdown links.
    *
    * @param path - The path to resolve
-   * @param collection - Optional collection key to use for prefix lookup.
-   *                     If not provided, defaults to 'docs' for backward compatibility.
+   * @param collection - Collection key for prefix lookup
    */
   const resolveInternalPath = (
     path: string,
@@ -212,30 +85,27 @@ export const useContentConfig = () => {
   ): string => {
     if (!path) return '/'
 
-    // Separate hash fragment if present
-    const { path: pathWithoutHash, hash } = seperatePathAndHash(path)
+    const { path: pathWithoutHash, hash } = separatePathAndHash(path)
 
-    // Normalize path to have leading slash
     const normalizedPath = pathWithoutHash.startsWith('/')
       ? pathWithoutHash
       : `/${pathWithoutHash}`
 
-    // Check if path already matches any configured collection prefix
-    const patterns = getRoutePatterns()
-    for (const { pattern } of patterns) {
+    // Check if path already matches any configured route prefix
+    const routes = getRouteMap()
+    for (const { prefix } of routes) {
       if (
-        normalizedPath === pattern
-        || normalizedPath.startsWith(`${pattern}/`)
+        normalizedPath === prefix
+        || normalizedPath.startsWith(`${prefix}/`)
       ) {
-        // Path already has a collection prefix, return as-is
         return `${normalizedPath}${hash}`
       }
     }
 
-    // Get the prefix for the specified collection
-    const prefix = getCollectionPrefix(collection, '')
+    // Look up this collection's prefix from the route map
+    const entry = routes.find(r => r.collection === (collection as string))
+    const prefix = entry?.prefix || ''
 
-    // If no prefix configured or prefix is just '/', return the normalized path as-is
     if (!prefix || prefix === '/') return `${normalizedPath}${hash}`
 
     return `${prefix}${normalizedPath}${hash}`
@@ -256,26 +126,22 @@ export const useContentConfig = () => {
     ) || []
 
   /**
-   * Get page metadata from navigation by path
-   * Uses injected navigation data from app.vue
-   * Expects a fully resolved path (with collection prefix already applied)
+   * Get page metadata from navigation by path.
+   * Used by ProseA.vue for link popovers.
    */
   const getPageMetadata = (path: string) => {
     const navigationAll = inject<Ref<ContentNavigationItem[]>>('navigation_all')
     if (!navigationAll?.value) return null
 
-    const { path: pathWithoutHash } = seperatePathAndHash(path)
-    // Normalize to have leading slash
+    const { path: pathWithoutHash } = separatePathAndHash(path)
     const normalizedPath = pathWithoutHash.startsWith('/')
       ? pathWithoutHash
       : `/${pathWithoutHash}`
 
-    // Try exact match
     const flatNav = flattenNavigation(navigationAll.value)
     const match = flatNav.find(item => item.path === normalizedPath)
     if (match) return match
 
-    // Handle potential trailing slash differences
     return flatNav.find(
       item =>
         item.path?.replace(/\/$/, '') === normalizedPath.replace(/\/$/, ''),
@@ -283,54 +149,28 @@ export const useContentConfig = () => {
   }
 
   /* -------------------------------------------------------------------------- */
-  /*                              CONVENIENCE GETTERS                           */
+  /*                              ROUTING CONSTANTS                             */
   /* -------------------------------------------------------------------------- */
 
-  // Pre-resolved collection names for common use cases
-  const collections = {
-    docs: getCollectionName('docs'),
-    pages: getCollectionName('pages'),
-    references: getCollectionName('references'),
-    glossary: getCollectionName('glossary'),
-    faq: getCollectionName('faq'),
-    config: getCollectionName('config'),
-    changelog: getCollectionName('changelog'),
-    team: getCollectionName('team'),
-    navigation: getCollectionName('navigation'),
+  const getRoutingPath = (key: string, fallback: string): string => {
+    const routingConfig = appConfig.content?.routing as Record<string, string> | undefined
+    return routingConfig?.[key] || fallback
   }
 
-  // Pre-resolved routing paths
   const routing = {
-    docsPrefix: getCollectionPrefix('docs', ''),
-    pagesPrefix: getCollectionPrefix('pages', '/articles'),
-    pagesBackLabel: getCollectionBackLabel('pages', 'Back'),
-    glossaryPrefix: getCollectionPrefix('glossary', '/glossary'),
+    pagesBackLabel: (appConfig.content?.pagesBackLabel as string) || 'Back',
     offers: getRoutingPath('offers', '/offers'),
     success: getRoutingPath('success', '/success'),
     sources: getRoutingPath('sources', '/sources'),
+    glossary: getRoutingPath('glossary', '/glossary'),
   }
 
   return {
-    // Config helpers (for dynamic lookups)
-    getCollectionName,
-    getCollectionPrefix,
-    getCollectionBackLabel,
-    getRoutingPath,
-    getSearchableCollections,
-
-    // Route → Collection mapping
-    getRoutePatterns,
     getCollectionForRoute,
-
-    // Path resolution
     resolveInternalPath,
-
-    // Navigation helpers
     flattenNavigation,
     getPageMetadata,
-
-    // Pre-resolved values (for convenience)
-    collections,
+    getRoutingPath,
     routing,
   }
 }

@@ -13,7 +13,8 @@ layer/                    → Nuxt layer (core reusable code)
 layer/modules/            → Feature modules (events, rss, changelog, docs)
 examples/foundry/         → Founder Funnel example app
 examples/astronera/       → Astronera example app
-examples/starter/         → Starter template
+examples/incubrain/       → Incubrain example app
+.starters/default/        → Starter template (used by CLI)
 shared/config/            → Shared configuration
 shared/types/             → Shared TypeScript types
 .agents/rules/            → Agent rule files

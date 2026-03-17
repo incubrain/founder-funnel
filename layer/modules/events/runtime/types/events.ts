@@ -76,6 +76,11 @@ export interface ModuleOptions {
   debug: boolean
 }
 
+/**
+ * Input type for trackEvent() — requires `type`, auto-fills `id` and `timestamp`
+ */
+export type TrackEventInput = Pick<EventPayload, 'type'> & Partial<Omit<EventPayload, 'type'>>
+
 export interface EventsHooks {
   'events:track': (payload: EventPayload) => void | Promise<void>
   'events:provider:register': (provider: AnalyticsProvider) => void

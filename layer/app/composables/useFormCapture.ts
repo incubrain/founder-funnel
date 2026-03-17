@@ -13,7 +13,7 @@ interface FormCaptureOptions {
   fields: FieldDef[]
   location: string
   offerSlug?: OfferId
-  successRedirect?: string
+  successRedirect?: string | false
 }
 
 /**
@@ -69,10 +69,8 @@ export function useFormCapture(options: FormCaptureOptions) {
     jsToken.value = crypto.randomUUID()
   })
 
-  const redirectPath = computed(() => {
-    if (successRedirect) return successRedirect
-    return offerSlug ? `/success?offer=${offerSlug}` : '/success'
-  })
+  const shouldRedirect = successRedirect !== false && !!successRedirect
+  const redirectPath = successRedirect || ''
 
   const handleSubmit = async () => {
     isSubmitting.value = true
@@ -82,7 +80,16 @@ export function useFormCapture(options: FormCaptureOptions) {
 
       // Client-side honeypot check (silent reject)
       if (honeypot.value) {
-        navigateTo(redirectPath.value)
+        if (shouldRedirect) {
+          navigateTo(redirectPath)
+        }
+        else {
+          toast.add({
+            title: 'Thank you!',
+            description: 'Your submission has been received.',
+            color: 'success',
+          })
+        }
         return
       }
 
@@ -99,7 +106,16 @@ export function useFormCapture(options: FormCaptureOptions) {
           },
         },
       })
-      navigateTo(redirectPath.value)
+      if (shouldRedirect) {
+        navigateTo(redirectPath)
+      }
+      else {
+        toast.add({
+          title: 'Thank you!',
+          description: 'Your submission has been received.',
+          color: 'success',
+        })
+      }
     }
     catch (error: unknown) {
       // Zod validation failure

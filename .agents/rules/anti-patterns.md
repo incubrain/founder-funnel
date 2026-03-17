@@ -22,7 +22,8 @@ Use composables instead or provide/inject
 See: `useContentCache()` vs passing props through SectionWrapper
 
 **Never ignore complexity budget:**
-Component >100 lines → Consider Refactor
+Layer component >50 lines → Refactor (extract composable or split)
+Example app component >150 lines → Extract composables
 Props >5 → Config object
 Abstraction >2 layers → Too deep
 

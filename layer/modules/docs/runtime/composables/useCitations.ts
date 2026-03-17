@@ -3,8 +3,6 @@ import { useFuse } from '@vueuse/integrations/useFuse'
 
 export const useCitations = () => {
   const route = useRoute()
-  const { collections } = useContentConfig()
-
   // Reactively switch between route-specific state
   const citations = computed({
     get: () => useState<string[]>(`citations-${route.path}`, () => []).value,
@@ -15,7 +13,7 @@ export const useCitations = () => {
 
   // Fetch references ONCE
   const { data: allCategoryRefs } = useAsyncData('references', () =>
-    queryCollection(collections.references).all() as Promise<ReferencesCollectionItem[]>,
+    queryCollection('references').all() as Promise<ReferencesCollectionItem[]>,
   )
 
   const allRefs = computed(() => {

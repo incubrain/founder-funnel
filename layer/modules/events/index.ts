@@ -85,5 +85,6 @@ export default defineNuxtModule<ModuleOptions>({
 export type {
   ModuleOptions,
   EventPayload,
+  TrackEventInput,
   AnalyticsProvider,
 } from './runtime/types/events'

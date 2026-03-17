@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const route = useRoute()
-const { routing } = useContentConfig()
+const appConfig = useAppConfig()
+const pagesBackLabel = (appConfig.content?.pagesBackLabel as string) || 'Back'
+const pagesPrefix = (appConfig.content?.pagesPrefix as string) || '/'
 
 // Use unified content page composable
 const { collection, getPage, setContext } = useContentPage()
@@ -51,12 +53,12 @@ watchEffect(() => {
         <UPageHeader>
           <template #headline>
             <UButton
-              :to="routing.pagesPrefix"
+              :to="pagesPrefix"
               icon="i-lucide-arrow-left"
               color="neutral"
               variant="ghost"
               size="sm"
-              :label="routing.pagesBackLabel"
+              :label="pagesBackLabel"
             />
           </template>
 

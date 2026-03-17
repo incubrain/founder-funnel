@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
 
-const { collections } = useContentConfig()
-
 const { data: navigation } = await useAsyncData('docs-navigation', () => {
-  return queryCollectionNavigation(collections.docs, ['title', 'label', 'path', 'stem'])
+  return queryCollectionNavigation('docs', ['title', 'label', 'path', 'stem'])
 })
 
 const mapNavigation = (

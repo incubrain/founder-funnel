@@ -17,20 +17,11 @@ export default defineAppConfig({
   },
 
   content: {
-    collections: {
-      docs: { name: 'docs', type: 'page', prefix: '/docs' },
-      pages: {
-        name: 'pages',
-        type: 'page',
-        prefix: '/',
-        backLabel: 'Back',
-      },
-      faq: { name: 'faq', type: 'data' },
-      config: { name: 'config', type: 'data' },
-      navigation: { name: 'navigation', type: 'data' },
-      team: { name: 'team', type: 'data' },
-      searchable: ['pages'],
+    routeMap: {
+      '/docs': 'docs',
     },
+    searchable: ['pages'],
+    pagesBackLabel: 'Back',
     defaultAuthor: 'drew-macgibbon',
   },
 })

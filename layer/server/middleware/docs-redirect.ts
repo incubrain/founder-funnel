@@ -17,28 +17,23 @@ interface NavItem {
  * Example:
  * /docs/getting-started → /docs/getting-started/introduction
  *
- * Reads the docs prefix from app.config.ts content.collections.docs.prefix
+ * Reads the docs prefix from app.config.ts content.routeMap
  * so it works with custom prefixes like /darksky.
  */
 export default defineEventHandler(async (event) => {
   const path = event.node.req.url
 
-  // Resolve docs prefix from appConfig (defaults to '/docs')
+  // Resolve docs prefix from routeMap (find which prefix maps to 'docs')
   const appConfig = useAppConfig()
-  const docsConfig = (appConfig as Record<string, unknown>).content
-    && ((appConfig as Record<string, unknown>).content as Record<string, unknown>).collections
-    && (((appConfig as Record<string, unknown>).content as Record<string, unknown>).collections as Record<string, unknown>).docs
+  const routeMap = (appConfig as Record<string, unknown>).content
+    && ((appConfig as Record<string, unknown>).content as Record<string, unknown>).routeMap as Record<string, string> | undefined
 
-  // Skip entirely if no docs collection is configured
-  if (!docsConfig || typeof docsConfig !== 'object') {
-    return
-  }
-
-  const docsPrefix = ('prefix' in docsConfig)
-    ? (docsConfig as { prefix: string }).prefix
+  // Find the prefix that maps to the 'docs' collection
+  const docsPrefix = routeMap
+    ? Object.entries(routeMap).find(([, collection]) => collection === 'docs')?.[0]
     : '/docs'
 
-  // Skip if no valid prefix
+  // Skip if no docs route configured
   if (!docsPrefix) {
     return
   }

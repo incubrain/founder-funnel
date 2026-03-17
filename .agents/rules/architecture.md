@@ -37,7 +37,8 @@ Validation captures intent. Products deliver value. Mixing them creates scope cr
 
 **Complexity Budget:**
 ```
-Max component: 50 lines
+Max layer component: 50 lines (reusable)
+Max example app component: ~150 lines (extract composables beyond this)
 Max props: 5
 Max abstraction: 2 layers deep
 Max nesting: 3 levels

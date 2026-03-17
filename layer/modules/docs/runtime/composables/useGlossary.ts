@@ -1,11 +1,9 @@
 import type { GlossaryCollectionItem } from '@nuxt/content'
 
 export const useGlossary = () => {
-  const { collections } = useContentConfig()
-
   // Fetch glossary ONCE and cache globally
   const { data: glossaryData } = useAsyncData('glossary-all', () =>
-    queryCollection(collections.glossary).all() as Promise<GlossaryCollectionItem[]>,
+    queryCollection('glossary').all() as Promise<GlossaryCollectionItem[]>,
   )
 
   // Flatten all terms for easy lookup
@@ -53,8 +51,8 @@ export const useGlossary = () => {
    * - termId with/without prefix → normalizes correctly
    */
   const resolveGlossaryPath = (termId: string): string => {
-    const { getRoutingPath } = useContentConfig()
-    const glossaryPage = getRoutingPath('glossary', '/glossary')
+    const { routing } = useContentConfig()
+    const glossaryPage = routing.glossary
     return `${glossaryPage}?search=${termId.toLowerCase()}`
   }
 

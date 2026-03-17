@@ -30,7 +30,7 @@ interface Props {
   location: string
 }
 
-const { collections, routing } = useContentConfig()
+const { routing } = useContentConfig()
 
 const props = withDefaults(defineProps<Props>(), {
   variant: 'button',
@@ -43,7 +43,7 @@ const props = withDefaults(defineProps<Props>(), {
 const { data: offer } = useAsyncData(
   `offer-${props.offerSlug}`,
   () =>
-    queryCollection(collections.pages)
+    queryCollection('pages')
       .path(`${routing.offers}/${props.offerSlug}`)
       .first(),
   {

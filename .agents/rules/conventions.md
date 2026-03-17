@@ -46,8 +46,8 @@ hasPermission
 
 ## Component Rules
 
-**Max 50 lines:**
-If longer → Extract composable or split component
+**Max 50 lines for layer components (reusable).**
+Example app components can be longer but should extract composables when exceeding ~150 lines.
 
 **Max 5 props:**
 If more → Use config object prop

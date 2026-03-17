@@ -46,7 +46,9 @@ layer/              Nuxt layer (npm: @incubrain/foundry)
 examples/
   ├── foundry/      Demo site
   ├── astronera/    Real-world example
-  └── starter/      Minimal template
+  └── incubrain/    Incubation platform example
+.starters/
+  └── default/      Minimal template (used by CLI)
 cli/                create-foundry CLI
 ```
 

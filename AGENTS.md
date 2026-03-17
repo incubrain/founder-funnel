@@ -7,8 +7,8 @@ A validation tool for technical founders — captures signal (email, presales, b
 ```bash
 pnpm dev:ff          # Founder Funnel dev server
 pnpm dev:ae          # Astronera dev server
-pnpm dev:web         # Starter web dev server
-pnpm dev:docs        # Starter docs dev server
+pnpm dev:starter     # Starter template dev server
+pnpm dev:ib          # Incubrain dev server
 pnpm build:ae        # Production build (astronera)
 pnpm lint            # ESLint check
 pnpm lint:fix        # ESLint autofix
@@ -22,7 +22,7 @@ pnpm verify          # dev:prepare + lint + typecheck
 1. **Never add features that don't capture signal.** If it doesn't help founders validate faster, reject it.
 2. **Never build custom when VueUse/library exists.** Priority: VueUse → library → custom (last resort). Check composables.vueuse.org first.
 3. **Validation ≠ Product.** Email sequences, auth, payment processing, gated content are product features — out of scope.
-4. **Complexity budget:** max 50 lines per component, max 5 props, max 2 abstraction layers, max 3 nesting levels.
+4. **Complexity budget:** max 50 lines per layer component (reusable); example app components can be longer but extract composables at ~150 lines. Max 5 props, max 2 abstraction layers, max 3 nesting levels.
 5. **Content in YAML/Markdown, not hardcoded.** Customers edit content files, not code.
 6. **Ship first, optimize later.** Ship working → measure → optimize what data proves necessary.
 
@@ -44,7 +44,8 @@ layer/                         → Nuxt layer (core reusable code)
 layer/modules/                 → Feature modules (events, rss, changelog, docs)
 examples/foundry/              → Founder Funnel example app
 examples/astronera/            → Astronera example app
-examples/starter/              → Starter template
+examples/incubrain/            → Incubrain example app
+.starters/default/             → Starter template (used by CLI)
 shared/config/                 → Configuration files
 shared/types/                  → TypeScript types
 deploy/                        → Dockerfiles and deployment configs

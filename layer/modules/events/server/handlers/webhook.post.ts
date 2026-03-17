@@ -14,8 +14,8 @@ const captureSchema = z.object({
   ])),
   antiSpam: z.object({
     honeypot: z.string().optional(),
-    timestamp: z.number().optional(),
-    hasJs: z.boolean().optional(),
+    timeOnForm: z.number().optional(),
+    jsToken: z.string().optional(),
   }).optional(),
 })
 

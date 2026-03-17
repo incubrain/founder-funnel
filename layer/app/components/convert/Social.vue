@@ -2,8 +2,6 @@
 import type { ButtonProps } from '@nuxt/ui'
 import type { TeamCollectionItem } from '@nuxt/content'
 
-const { collections } = useContentConfig()
-
 interface Props {
   location: string
   size?: ButtonProps['size']
@@ -24,7 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const { data: founder } = await useAsyncData('app-founder', () =>
-  queryCollection(collections.team).where('isFounder', '=', true).first() as Promise<TeamCollectionItem | null>,
+  queryCollection('team').where('isFounder', '=', true).first() as Promise<TeamCollectionItem | null>,
 )
 const { trackEvent } = useEvents()
 

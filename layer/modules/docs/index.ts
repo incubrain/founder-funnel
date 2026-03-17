@@ -1,6 +1,7 @@
 import {
   defineNuxtModule,
   addImports,
+  addComponent,
   addComponentsDir,
   addLayout,
   createResolver,
@@ -24,14 +25,25 @@ export default defineNuxtModule<DocsModuleOptions>({
   },
 
   setup(options, nuxt) {
+    const resolver = createResolver(import.meta.url)
+
     if (!options.enabled) {
       // Point #search alias to a no-op stub so app.vue still works
-      nuxt.options.alias['#search'] = createResolver(import.meta.url)
+      nuxt.options.alias['#search'] = resolver
         .resolve('./runtime/composables/useSearchStub.ts')
+
+      // Register stub components so MDC references resolve gracefully
+      registerStubComponents(resolver, {
+        citations: true,
+        glossary: true,
+      })
+
+      if (import.meta.dev) {
+        console.warn('[docs] Module is disabled — stub components are being used. Enable with `docs: { enabled: true }` in nuxt.config.ts')
+      }
+
       return
     }
-
-    const resolver = createResolver(import.meta.url)
 
     // Register docs layout
     addLayout(resolver.resolve('./runtime/layouts/docs.vue'), 'docs')
@@ -83,6 +95,10 @@ export default defineNuxtModule<DocsModuleOptions>({
         },
       ])
     }
+    else {
+      // Register citation stubs when citations feature is disabled
+      registerStubComponents(resolver, { citations: true, glossary: false })
+    }
 
     // Glossary (GlossaryTable, Defn)
     if (options.glossary !== false) {
@@ -90,6 +106,10 @@ export default defineNuxtModule<DocsModuleOptions>({
         name: 'useGlossary',
         from: resolver.resolve('./runtime/composables/useGlossary.ts'),
       })
+    }
+    else {
+      // Register glossary stubs when glossary feature is disabled
+      registerStubComponents(resolver, { citations: false, glossary: true })
     }
 
     // Expose config to runtime for conditional rendering in layouts
@@ -102,6 +122,26 @@ export default defineNuxtModule<DocsModuleOptions>({
     // It's auto-registered via addComponentsDir above when glossary is enabled
   },
 })
+
+/**
+ * Register stub components so MDC references like :cited{} and :defn{}
+ * resolve gracefully instead of failing when features are disabled.
+ */
+function registerStubComponents(
+  resolver: ReturnType<typeof createResolver>,
+  features: { citations: boolean, glossary: boolean },
+) {
+  if (features.citations) {
+    addComponent({ name: 'Cited', filePath: resolver.resolve('./runtime/components/stubs/CitedStub.vue') })
+    addComponent({ name: 'Bibliography', filePath: resolver.resolve('./runtime/components/stubs/BibliographyStub.vue') })
+    addComponent({ name: 'SourcesTable', filePath: resolver.resolve('./runtime/components/stubs/SourcesTableStub.vue') })
+  }
+
+  if (features.glossary) {
+    addComponent({ name: 'Defn', filePath: resolver.resolve('./runtime/components/stubs/DefnStub.vue') })
+    addComponent({ name: 'GlossaryTable', filePath: resolver.resolve('./runtime/components/stubs/GlossaryTableStub.vue') })
+  }
+}
 
 /**
  * Build a glob pattern that includes core components + feature-gated components.

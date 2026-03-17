@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "pnpm run --filter @incubrain/foundry dev",
     "build": "pnpm run --filter @incubrain/foundry build",
-    "dev:web": "nuxt dev examples/starter/web",
-    "dev:docs": "nuxt dev examples/starter/docs",
+    "dev:starter": "nuxt dev .starters/default",
     "dev:foundry": "nuxt dev examples/foundry",
     "dev:ae": "nuxt dev examples/astronera",
     "dev:ib": "nuxt dev examples/incubrain",

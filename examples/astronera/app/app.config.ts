@@ -17,18 +17,10 @@ export default defineAppConfig({
   },
 
   content: {
-    collections: {
-      // Page collections (routable)
-      docs: { name: 'docs', type: 'page', prefix: '/darksky' },
-      pages: { name: 'pages', type: 'page', prefix: '/' },
-      // Data collections (not routable)
-      glossary: { name: 'glossary', type: 'data' },
-      references: { name: 'references', type: 'data' },
-      navigation: { name: 'navigation', type: 'data' },
-      config: { name: 'config', type: 'data' },
-      team: { name: 'team', type: 'data' },
-      searchable: ['docs'],
+    routeMap: {
+      '/darksky': 'docs',
     },
+    searchable: ['docs'],
     defaultAuthor: 'shweta-kulkarni',
     routing: {
       sources: '/resources/references',
