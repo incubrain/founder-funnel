@@ -192,6 +192,40 @@ title: Proven Track Record
 ---
 ::
 
+::section-stories
+---
+title: AI Makes You Capable
+description: Real stories proving that one person plus AI equals limitless — across every age, background, and industry.
+items:
+  - id: solo-founders
+    title: Solo Founders Winning Big
+    description: "$80M exits, $3.1M/year solo businesses, teenagers building $30M apps. No co-founders, no VC required."
+    icon: i-lucide-trophy
+    to: /docs/stories/solo-founders
+  - id: barriers-dissolved
+    title: Every Barrier, Dissolved
+    description: "A Kenyan engineer solving what Google wouldn't. A 60-year-old beating VC-backed startups. Coding without code."
+    icon: i-lucide-unlock
+    to: /docs/stories/barriers-dissolved
+  - id: impossible-possible
+    title: The Impossible Becomes Possible
+    description: "A dog owner creates a cancer vaccine. AI solves what Knuth couldn't. Two people outperform Wall Street."
+    icon: i-lucide-atom
+    to: /docs/stories/impossible-possible
+  - id: the-signal
+    title: "The Signal: Why Now"
+    description: "Teenage unicorn founders, Morgan Stanley's warning, and 70–80% odds on a one-person billion-dollar company."
+    icon: i-lucide-signal
+    to: /docs/stories/the-signal
+cta:
+  headline: See all 18 stories
+  message: Curated from 36 researched cases of AI empowering individuals to achieve the impossible.
+  label: Read the Full Collection
+  to: /docs/stories
+  icon: i-lucide-arrow-right
+---
+::
+
 ::section-offer
 ---
 cta:
