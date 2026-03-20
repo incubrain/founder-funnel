@@ -54,4 +54,8 @@ See [Colors](/docs/theming/colors) for details.
   ::card{title="Components" icon="i-lucide-component" to="/docs/theming/components"}
   Override layer components and create custom sections.
   ::
+
+  ::card{title="Backgrounds" icon="i-lucide-paintbrush-vertical" to="/docs/theming/backgrounds"}
+  Theme-aware patterns, gradients, and layered background effects.
+  ::
 ::
