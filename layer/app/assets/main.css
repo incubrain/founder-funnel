@@ -253,6 +253,123 @@
 }
 
 /* ============================================================================
+   BACKGROUND PATTERN UTILITIES
+   Theme-aware patterns using Nuxt UI semantic colors.
+   Override colors by redefining --color-primary-* in your app's theme.css
+   ============================================================================ */
+
+@utility bg-pattern-grid {
+  background-image:
+    linear-gradient(var(--ui-border-inverted) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ui-border-inverted) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.1;
+}
+
+@utility bg-pattern-grid-sm {
+  background-image:
+    linear-gradient(var(--ui-border-inverted) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ui-border-inverted) 1px, transparent 1px);
+  background-size: 30px 30px;
+  opacity: 0.08;
+}
+
+@utility bg-pattern-grid-lg {
+  background-image:
+    linear-gradient(var(--ui-border-inverted) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ui-border-inverted) 1px, transparent 1px);
+  background-size: 90px 90px;
+  opacity: 0.12;
+}
+
+@utility bg-pattern-dots {
+  background-image: radial-gradient(
+    color-mix(in oklch, var(--ui-primary), transparent 70%) 1px,
+    transparent 1px
+  );
+  background-size: 20px 20px;
+}
+
+@utility bg-pattern-diagonal {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--ui-border) 0,
+    var(--ui-border) 1px,
+    transparent 1px,
+    transparent 16px
+  );
+}
+
+@utility bg-pattern-cross {
+  background-image:
+    linear-gradient(var(--ui-border-inverted) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ui-border-inverted) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: center;
+  opacity: 0.06;
+}
+
+/* ============================================================================
+   BACKGROUND GRADIENT UTILITIES
+   Theme-aware gradients using Nuxt UI semantic colors.
+   ============================================================================ */
+
+@utility bg-gradient-radial-primary {
+  background-image: radial-gradient(
+    ellipse 80% 80% at 50% -20%,
+    color-mix(in oklch, var(--ui-primary), transparent 80%),
+    transparent
+  );
+}
+
+@utility bg-gradient-radial-secondary {
+  background-image: radial-gradient(
+    ellipse 80% 80% at 50% -20%,
+    color-mix(in oklch, var(--ui-secondary), transparent 80%),
+    transparent
+  );
+}
+
+@utility bg-gradient-fade-t {
+  background-image: linear-gradient(to top, var(--ui-bg), transparent);
+}
+
+@utility bg-gradient-fade-b {
+  background-image: linear-gradient(to bottom, var(--ui-bg), transparent);
+}
+
+@utility bg-gradient-spotlight {
+  background-image: radial-gradient(
+    circle at 50% 0%,
+    color-mix(in oklch, var(--ui-primary), transparent 85%),
+    transparent 70%
+  );
+}
+
+@utility bg-gradient-mesh {
+  background-image:
+    radial-gradient(at 20% 20%, color-mix(in oklch, var(--ui-primary), transparent 85%) 0%, transparent 50%),
+    radial-gradient(at 80% 80%, color-mix(in oklch, var(--ui-secondary), transparent 85%) 0%, transparent 50%);
+}
+
+/* ============================================================================
+   ANIMATION UTILITIES
+   ============================================================================ */
+
+@utility perspective-1000 {
+  perspective: 1000px;
+}
+
+@utility animate-bounce-slow {
+  animation: bounce-slow 4s infinite ease-in-out;
+}
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* ============================================================================
    BASE STYLES
    ============================================================================ */
 

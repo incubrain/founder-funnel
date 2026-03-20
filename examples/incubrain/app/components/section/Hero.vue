@@ -49,8 +49,8 @@ defineProps<{
   <section
     class="relative overflow-hidden bg-default min-h-[85vh] flex items-center justify-center pt-12 pb-16"
   >
-    <div class="absolute inset-0 bg-radial-hero" />
-    <div class="absolute top-0 inset-0 bg-grid-default pointer-events-none z-0" />
+    <div class="absolute inset-0 bg-gradient-radial-primary" />
+    <div class="absolute top-0 inset-0 bg-pattern-grid pointer-events-none z-0" />
 
     <div
       class="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center"
@@ -183,37 +183,3 @@ defineProps<{
   </section>
 </template>
 
-<style scoped>
-.bg-radial-hero {
-  background-image: radial-gradient(
-    ellipse 80% 80% at 40% -20%,
-    color-mix(in oklch, var(--ui-primary), transparent 80%),
-    transparent
-  );
-}
-
-.perspective-1000 {
-  perspective: 1000px;
-}
-
-.bg-grid-default {
-  background-image:
-    linear-gradient(var(--ui-border-inverted) 1px, transparent 1px),
-    linear-gradient(90deg, var(--ui-border-inverted) 1px, transparent 1px);
-  background-size: 60px 60px;
-  opacity: 0.1;
-}
-
-@keyframes bounce-slow {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-.animate-bounce-slow {
-  animation: bounce-slow 4s infinite ease-in-out;
-}
-</style>
