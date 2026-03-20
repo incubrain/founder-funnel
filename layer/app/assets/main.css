@@ -370,6 +370,33 @@
 }
 
 /* ============================================================================
+   PAGE & LAYOUT TRANSITIONS
+   Matches the transition names in nuxt.config: page (out-in), layout (out-in).
+   Old content fades out smoothly while new content loads behind it,
+   preventing the blank flash between layout switches.
+   ============================================================================ */
+
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 150ms ease;
+}
+
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+}
+
+.layout-enter-active,
+.layout-leave-active {
+  transition: opacity 200ms ease;
+}
+
+.layout-enter-from,
+.layout-leave-to {
+  opacity: 0;
+}
+
+/* ============================================================================
    BASE STYLES
    ============================================================================ */
 

@@ -51,13 +51,10 @@ export const useContentPage = () => {
     () => getCollectionForRoute(route.path) as keyof PageCollections,
   )
 
-  // Clear context immediately when route changes (before new data loads)
-  watch(
-    () => route.path,
-    () => {
-      context.value = null
-    },
-  )
+  // Context is NOT cleared on route change — old content persists until
+  // the new layout calls setContext() with fresh data. This prevents the
+  // blank flash that occurred when context was eagerly nulled before the
+  // new layout's async getPage() resolved.
 
   /**
    * Fetch page data for the current route.
