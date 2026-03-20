@@ -1,7 +1,23 @@
 ---
 title: Incubrain Research
-description: Deep research and analysis across 12 sectors where AI creates exponential growth opportunities.
+description: Deep research across sectors, AI drivers, and empowerment stories — data-driven analysis for technical founders.
 navigation: true
+---
+
+## AI Drivers
+
+13 forces driving AI's exponential progress — each powerful alone, but together they compound to ~10-20x improvement per year. Data-driven analysis with 2026-2028 projections.
+
+::card-group
+  ::card{title="Overview: The Compounding Revolution" icon="i-lucide-trending-up" to="/docs/ai-drivers"}
+  How 13 drivers multiply together: hardware, algorithms, agents, investment, and more. The math of compounding and what it means for founders.
+  ::
+
+  ::card{title="AI Empowerment Stories" icon="i-lucide-sparkles" to="/docs/stories"}
+  Real stories proving one person plus AI equals limitless — solo founders, barrier-breaking builders, and impossible achievements.
+  ::
+::
+
 ---
 
 ## Sector Research

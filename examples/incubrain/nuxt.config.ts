@@ -79,6 +79,24 @@ export default defineNuxtConfig({
         ],
       },
       {
+        title: 'AI Drivers',
+        description:
+          '13 compounding drivers of AI progress — hardware, algorithms, agents, investment, and more — with data-driven 2026-2028 projections',
+        contentCollection: 'docs',
+        contentFilters: [
+          { field: 'path', operator: 'LIKE', value: '/docs/ai-drivers%' },
+        ],
+      },
+      {
+        title: 'AI Empowerment Stories',
+        description:
+          'Real stories of solo founders, barrier-breaking builders, and impossible achievements — proving one person plus AI equals limitless',
+        contentCollection: 'docs',
+        contentFilters: [
+          { field: 'path', operator: 'LIKE', value: '/docs/stories%' },
+        ],
+      },
+      {
         title: 'Overview',
         description: 'Incubrain homepage and value proposition',
         contentCollection: 'pages',

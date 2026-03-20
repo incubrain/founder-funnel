@@ -24,6 +24,12 @@ header:
     - label: Our Approach
       icon: i-lucide-compass
       to: /approach
+    - label: Stories
+      icon: i-lucide-sparkles
+      to: /docs/stories
+    - label: AI Drivers
+      icon: i-lucide-trending-up
+      to: /docs/ai-drivers
     - label: Mentorship
       icon: i-lucide-users
       to: /mentorship
@@ -48,6 +54,12 @@ footer:
         - label: Our Approach
           icon: i-lucide-compass
           to: /approach
+        - label: AI Empowerment Stories
+          icon: i-lucide-sparkles
+          to: /docs/stories
+        - label: AI Drivers
+          icon: i-lucide-trending-up
+          to: /docs/ai-drivers
         - label: Mentorship
           icon: i-lucide-users
           to: /mentorship
