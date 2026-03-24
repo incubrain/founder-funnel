@@ -6,8 +6,6 @@ import type { SpamFlags } from '@incubrain/foundry/modules/events/server/utils/a
 
 const cleanFlags: SpamFlags = { honeypot: false, fast: false, noJs: false, score: 0 }
 const riskyFlags: SpamFlags = { honeypot: false, fast: true, noJs: true, score: 70 }
-const spamFlags: SpamFlags = { honeypot: true, fast: true, noJs: true, score: 100 }
-
 const formData = { email: 'test@example.com', name: 'Jane', formId: 'hero-signup' }
 
 describe('formatDiscordMessage', () => {
