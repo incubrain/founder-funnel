@@ -13,8 +13,8 @@ const { data: site } = useAsyncData('app-config', () =>
 /*                             LOAD COMPOSABLES                                */
 /* -------------------------------------------------------------------------- */
 
-const { navigationHeader, navigationFooter, navigationAll, banner } =
-  await useNavigation()
+const { navigationHeader, navigationFooter, navigationAll, banner }
+  = await useNavigation()
 
 const { searchFiles } = await useSearch()
 
@@ -63,7 +63,10 @@ provide('site_config', site ?? ref(null))
     <AppFooter v-if="$route.meta.footer !== false" />
 
     <ClientOnly>
-      <LazyUContentSearch :files="searchFiles" :navigation="navigationAll" />
+      <LazyUContentSearch
+        :files="searchFiles"
+        :navigation="navigationAll"
+      />
     </ClientOnly>
   </UApp>
 </template>
