@@ -1,5 +1,6 @@
 import { queryCollection } from '@nuxt/content/server'
 import type { Collections } from '@nuxt/content'
+import { computeContentHash } from '../../utils/content-hash'
 
 export default defineMcpTool({
   description: `Lists all available documentation pages with their categories and basic information.
@@ -43,13 +44,25 @@ OUTPUT: Returns a structured list with:
             .select('title' as 'id', 'path' as 'id', 'description' as 'id')
             .all()
 
-          return (pages as unknown as Record<string, string>[]).map(page => ({
-            title: page.title,
-            path: page.path,
-            description: page.description,
-            locale: collectionName.replace('docs_', ''),
-            url: `${siteUrl}${page.path}`,
-          }))
+          return Promise.all(
+            (pages as unknown as Record<string, string>[]).map(async (page) => {
+              let contentHash: string | null = null
+              try {
+                const raw = await $fetch<string>(`/raw${page.path}.md`, { baseURL: siteUrl! })
+                contentHash = computeContentHash(raw)
+              }
+              catch { /* hash unavailable */ }
+
+              return {
+                title: page.title,
+                path: page.path,
+                description: page.description,
+                locale: collectionName.replace('docs_', ''),
+                contentHash,
+                url: `${siteUrl}${page.path}`,
+              }
+            }),
+          )
         }),
       )
 

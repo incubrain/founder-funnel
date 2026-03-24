@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { queryCollection } from '@nuxt/content/server'
 import type { Collections } from '@nuxt/content'
+import { computeContentHash } from '../../utils/content-hash'
 import { inferSiteURL } from '../../../shared/utils/meta'
 
 export default defineMcpTool({
@@ -51,11 +52,14 @@ WORKFLOW: This tool returns the complete page content including title, descripti
         baseURL: siteUrl,
       })
 
+      const contentHash = computeContentHash(content)
+
       return jsonResult({
         title: pageData.title,
         path: pageData.path,
         description: pageData.description,
         content,
+        contentHash,
         url: `${siteUrl}${pageData.path}`,
       })
     }
