@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.0] - 2026-03-24
+
+### Added
+
+- **MCP tools for decisions & change detection** — `list-decisions`, `get-decision` query the changelog collection; `what-changed` returns SHA-256 content hashes across docs + changelog for efficient remote polling with optional `since` filter
+- **Content hash enrichment** — `list-pages` and `get-page` MCP tools now include `contentHash` (SHA-256 of raw markdown) enabling remote systems to detect content changes without re-fetching
+- **Content-hash utility** — `computeContentHash()` server utility for SHA-256 fingerprinting of content
+- **Auto-registration plugin** — Nitro plugin that registers Foundry sites with the Incubrain mentorship network on production startup (`NUXT_FOUNDRY_REGISTER=true`); sends site URL, MCP endpoint, and available RSS feeds
+- **12 background utilities** — 6 theme-aware patterns (`bg-pattern-grid`, `grid-sm`, `grid-lg`, `dots`, `diagonal`, `cross`) and 6 gradients (`bg-gradient-radial-primary`, `radial-secondary`, `fade-t`, `fade-b`, `spotlight`, `mesh`) using Nuxt UI semantic CSS variables; automatically follow app theme overrides
+- **Animation utilities** — `perspective-1000` and `animate-bounce-slow` extracted from Hero components into reusable layer utilities
+- **Page & layout transitions** — CSS opacity transitions (150ms page, 200ms layout) matching the `out-in` transition names in nuxt.config
+- **Unit tests** — 32 new tests for content-hash utility, RSS XML generation (`escapeXml`, `buildRSSFeed`), and webhook formatters (Discord, Slack, Telegram); total test count: 86
+
+### Changed
+
+- **`useContentPage()` context lifecycle** — Context is no longer eagerly cleared on route change; old content persists until the new layout calls `setContext()` with fresh data, eliminating the blank flash between layouts
+- **Hero components refactored** — Foundry and Incubrain Hero components now use layer background utilities (`bg-gradient-radial-primary`, `bg-pattern-grid`) instead of duplicated scoped CSS
+
+### Fixed
+
+- **Layout flickering on cross-layout navigation** — Removed eager `context.value = null` watcher in `useContentPage` that caused blank renders during layout transitions; combined with new transition CSS for smooth opacity fades
+
 ## [0.6.1] - 2026-03-12
 
 ### Fixed
