@@ -7,6 +7,9 @@
 - **Landing pages** with email capture, presales, and booking flows
 - **Authority docs** with citations, cross-linking, and MCP integration
 - **Event tracking** that streams to your webhooks (Telegram, Slack, Discord)
+- **MCP tools** for AI agents — query docs, decisions, and detect content changes
+- **Auto-registration** with the Incubrain mentorship network (opt-in)
+- **Theme-aware backgrounds** — 12 pattern/gradient utilities that follow your brand
 - **Zero lock-in** — standard Nuxt app, swap any tool anytime
 
 **Stack:** Nuxt 4 · Tailwind v4 · TypeScript
@@ -69,6 +72,24 @@ Set up webhooks:
 cp .env.example .env
 NUXT_WEBHOOK_URL=https://discord.com/api/webhooks/...
 ```
+
+## MCP Tools
+
+AI agents can query your site via the [Model Context Protocol](https://modelcontextprotocol.io):
+
+| Tool | Purpose |
+|---|---|
+| `list-pages` | Browse docs with content hashes |
+| `get-page` | Retrieve full markdown + hash |
+| `list-decisions` | Browse decision log entries |
+| `get-decision` | Retrieve full decision markdown |
+| `what-changed` | Lightweight polling — paths + SHA-256 hashes with `since` filter |
+
+Tools are auto-registered from `server/mcp/tools/`. Visit `/_mcp/tools` in dev to verify.
+
+## Mentorship Network
+
+Set `NUXT_FOUNDRY_REGISTER=true` in production to auto-register with the Incubrain mentorship network. Your site's MCP endpoint and RSS feeds are shared so mentors can track your progress.
 
 ## What's Not Included
 

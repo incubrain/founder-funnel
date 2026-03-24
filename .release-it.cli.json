@@ -1,0 +1,13 @@
+{
+  "git": false,
+  "github": false,
+  "npm": {
+    "publish": false
+  },
+  "plugins": {
+    "@release-it/bumper": {
+      "in": "./cli/package.json",
+      "out": "./cli/package.json"
+    }
+  }
+}
