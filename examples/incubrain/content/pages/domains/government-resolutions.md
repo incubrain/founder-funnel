@@ -76,30 +76,76 @@ items:
 ---
 ::
 
-::section-demo
+::section-document-showcase
 ---
 title: See It In Action
 description: >
-  Scanned government documents go in. Machine-readable, verified Marathi text comes out.
-input:
-  src: https://placehold.co/500x350/f5f5f5/333333?text=Scanned+GR+Page
-  alt: Scanned Government Resolution document
-  caption: Original scanned GR document (image only, not searchable)
-output:
-  text: |
-    महाराष्ट्र शासन निर्णय
-    क्रमांक: संकीर्ण-२०२४/प्र.क्र.१२३/२४
-    दिनांक: १५ मार्च २०२४
+  Documents from different eras, departments, and formats — all processed through the same pipeline.
+samples:
+  - id: modern-agriculture
+    label: Agriculture Dept (2024)
+    era: Post-2015 — Native Unicode digital
+    image: https://placehold.co/400x600/f5f5f4/78716c?text=कृषी+विभाग+GR+2024
+    text: |
+      महाराष्ट्र शासन निर्णय
+      कृषी, पशुसंवर्धन, दुग्ध व्यवसाय विकास व मत्स्यव्यवसाय विभाग
 
-    विषय: कृषी विभागाच्या योजनांचे
-    अंमलबजावणी मार्गदर्शक तत्त्वे...
-  caption: Extracted and verified Marathi text (searchable, indexable, AI-ready)
-reviewApp:
-  src: https://placehold.co/900x400/1a1a2e/e0e0e0?text=Review+App+Demo+GIF
-  alt: Incubrain AI-assisted review platform
-  caption: >
-    AI-assisted review platform — multiple OCR models pre-verify output,
-    human reviewers confirm via mobile-friendly interface.
+      क्रमांक: संकीर्ण-२०२४/प्र.क्र.१२३/२४
+      दिनांक: १५ मार्च २०२४
+
+      विषय: कृषी विभागाच्या योजनांचे अंमलबजावणी
+      मार्गदर्शक तत्त्वे सुधारित करण्याबाबत.
+
+      प्रस्तावना: राज्यातील शेतकऱ्यांना विविध कृषी
+      योजनांचा लाभ मिळावा यासाठी...
+  - id: legacy-revenue
+    label: Revenue Dept (2010)
+    era: 2005-2015 — Legacy font encoded (Shree Dev)
+    image: https://placehold.co/400x600/f5f5f4/78716c?text=महसूल+विभाग+GR+2010
+    text: |
+      महाराष्ट्र शासन
+      महसूल व वन विभाग
+
+      शासन निर्णय क्रमांक: जमीन-२०१०/प्र.क्र.४५/ज-१
+      दिनांक: २२ जुलै २०१०
+
+      विषय: जमीन महसूल अधिनियमांतर्गत
+      सुधारणा करण्याबाबत.
+
+      शासन निर्णय: सदर प्रकरणी विचारान्ती
+      खालीलप्रमाणे निर्णय घेण्यात येतो...
+  - id: scanned-education
+    label: Education Dept (1998)
+    era: Pre-2010 — Scanned paper document
+    image: https://placehold.co/400x600/f5f5f4/78716c?text=शिक्षण+विभाग+GR+1998
+    text: |
+      महाराष्ट्र शासन
+      शालेय शिक्षण व क्रीडा विभाग
+
+      शासन निर्णय क्रमांक: शिक्षण-९८/प्र.क्र.७८/९८
+      दिनांक: ०५ ऑगस्ट १९९८
+
+      विषय: प्राथमिक शिक्षणाच्या सार्वत्रिकीकरणाबाबत
+      राज्यस्तरीय धोरण निश्चित करणे.
+
+      उपरोक्त विषयाच्या अनुषंगाने शासनाने
+      विचारविनिमय करून निर्णय घेतला...
+  - id: mixed-urban
+    label: Urban Dev (2012)
+    era: Mixed encoding — Unicode headers, legacy body
+    image: https://placehold.co/400x600/f5f5f4/78716c?text=नगर+विकास+GR+2012
+    text: |
+      महाराष्ट्र शासन
+      नगर विकास विभाग
+
+      शासन निर्णय क्रमांक: नवि-२०१२/प्र.क्र.२३४/नवि-३३
+      दिनांक: १८ नोव्हेंबर २०१२
+
+      विषय: महानगरपालिका क्षेत्रातील
+      विकास नियंत्रण नियमावलीत सुधारणा.
+
+      सदर शासन निर्णयान्वये महाराष्ट्र प्रादेशिक
+      नियोजन व नगर रचना अधिनियमात बदल...
 ---
 ::
 
