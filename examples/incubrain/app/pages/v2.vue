@@ -358,7 +358,7 @@ function maxFor(key: string) {
                 <div class="flex-1 h-7 bg-muted/50 rounded relative">
                   <div
                     class="h-full rounded"
-                    :class="model.isOurs ? 'bg-primary' : 'bg-muted'"
+                    :class="model.isOurs ? 'bg-primary' : 'bg-primary/30'"
                     :style="{ width: `${Math.max(((model as Record<string, number>)[metric.key] / maxFor(metric.key)) * 100, 8)}%` }"
                   />
                   <span
