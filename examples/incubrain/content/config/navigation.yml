@@ -1,10 +1,10 @@
 banner:
-  id: 'mentorship-2026'
-  icon: i-lucide-brain
-  title: 'AI-powered mentorship for technical founders. Limited to 20 spots.'
+  id: 'marathi-ai-2026'
+  icon: i-lucide-languages
+  title: 'Domain-specific AI infrastructure for Maharashtra'
   actions:
-    - label: Apply Now
-      to: /apply
+    - label: View Benchmarks
+      to: /benchmarks
       trailingIcon: i-lucide-arrow-right
       color: primary
       variant: solid
@@ -18,77 +18,38 @@ header:
     x: https://x.com/DrewMacGibbon
     github: https://github.com/incubrain
   navigation:
-    - label: Sectors
-      icon: i-lucide-layers
-      to: /sectors
-    - label: Our Approach
-      icon: i-lucide-compass
-      to: /approach
-    - label: Stories
-      icon: i-lucide-sparkles
-      to: /docs/stories
-    - label: AI Drivers
-      icon: i-lucide-trending-up
-      to: /docs/ai-drivers
-    - label: Mentorship
-      icon: i-lucide-users
-      to: /mentorship
-    - label: Join Us
-      icon: i-lucide-heart
-      to: /join-us
-    - label: Apply Now
-      icon: i-lucide-send
-      to: /apply
-  showSearch: true
+    - label: Government Resolutions
+      icon: i-lucide-landmark
+      to: /gr
+    - label: Pipeline
+      icon: i-lucide-workflow
+      to: /pipeline
+    - label: Benchmarks
+      icon: i-lucide-bar-chart-3
+      to: /benchmarks
+  showSearch: false
   showColorMode: true
 
 footer:
   columns:
-    - label: Explore
-      icon: i-lucide-compass
-      to: /sectors
+    - label: Domains
+      icon: i-lucide-layers
       children:
-        - label: 12 Sectors
-          icon: i-lucide-layers
-          to: /sectors
-        - label: Our Approach
-          icon: i-lucide-compass
-          to: /approach
-        - label: AI Empowerment Stories
-          icon: i-lucide-sparkles
-          to: /docs/stories
-        - label: AI Drivers
-          icon: i-lucide-trending-up
-          to: /docs/ai-drivers
-        - label: Mentorship
-          icon: i-lucide-users
-          to: /mentorship
-    - label: Open Source Tools
-      icon: i-lucide-code
-      to: https://github.com/incubrain
+        - label: Government Resolutions
+          icon: i-lucide-landmark
+          to: /gr
+    - label: Technology
+      icon: i-lucide-cpu
       children:
-        - label: Foundry
-          icon: i-lucide-rocket
-          to: https://foundry.incubrain.org
-          target: _blank
-        - label: Founder
-          icon: i-lucide-brain
-          to: https://founder.incubrain.org
-          target: _blank
-        - label: Builder
-          icon: i-lucide-wrench
-          to: https://builder.incubrain.org
-          target: _blank
+        - label: Review Pipeline
+          icon: i-lucide-workflow
+          to: /pipeline
+        - label: Benchmarks
+          icon: i-lucide-bar-chart-3
+          to: /benchmarks
     - label: Connect
       icon: i-lucide-link
-      to: /apply
       children:
-        - label: Join Us
-          icon: i-lucide-heart
-          to: /join-us
-        - label: Apply Now
-          icon: i-lucide-send
-          to: /apply
         - label: GitHub
           icon: i-simple-icons-github
           to: https://github.com/incubrain

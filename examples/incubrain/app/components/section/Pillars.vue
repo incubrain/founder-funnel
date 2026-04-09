@@ -25,7 +25,7 @@ defineProps<{
         :href="item.to"
         target="_blank"
         rel="noopener"
-        class="group relative flex flex-col gap-4 p-6 rounded-xl border border-default bg-muted/30 hover:bg-muted/60 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+        class="group relative flex flex-col gap-4 p-6 rounded-xl border border-default bg-default shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1"
       >
         <div class="flex items-center gap-3">
           <div

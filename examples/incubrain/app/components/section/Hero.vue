@@ -42,6 +42,11 @@ defineProps<{
     text: string
     icons: string[]
   }
+  pattern?: {
+    name: string
+    opacity?: number
+  }
+  watermark?: string
 }>()
 </script>
 
@@ -50,7 +55,21 @@ defineProps<{
     class="relative overflow-hidden bg-default min-h-[85vh] flex items-center justify-center pt-12 pb-16"
   >
     <div class="absolute inset-0 bg-gradient-radial-primary" />
-    <div class="absolute top-0 inset-0 bg-pattern-grid pointer-events-none z-0" />
+    <BgPattern
+      v-if="pattern"
+      :name="(pattern.name as any)"
+      :opacity="pattern.opacity || 0.12"
+      absolute
+    />
+    <div
+      v-if="watermark"
+      class="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden"
+      aria-hidden="true"
+    >
+      <span class="text-[12rem] sm:text-[18rem] lg:text-[24rem] font-bold text-primary/[0.07] leading-none select-none whitespace-nowrap">
+        {{ watermark }}
+      </span>
+    </div>
 
     <div
       class="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center"
@@ -73,7 +92,7 @@ defineProps<{
         class="text-center max-w-4xl mx-auto space-y-6 mb-8"
       >
         <h1
-          class="font-heading font-black text-5xl sm:text-7xl lg:text-7xl text-center tracking-tight mb-8 leading-[1.1]"
+          class="font-heading font-black text-5xl sm:text-7xl lg:text-8xl text-center tracking-tighter mb-8 leading-[1.05]"
         >
           <span class="block">{{ intro.title }}</span>
           <span
@@ -84,7 +103,7 @@ defineProps<{
         </h1>
 
         <p
-          class="font-serif text-lg sm:text-xl md:text-2xl text-neutral-400 max-w-2xl mx-auto leading-relaxed"
+          class="text-base sm:text-lg md:text-xl text-dimmed max-w-xl mx-auto leading-relaxed text-pretty"
         >
           {{ intro.description }}
         </p>

@@ -1,7 +1,7 @@
 export default defineAppConfig({
   title: 'Incubrain',
   description:
-    'AI-powered incubation hub for technical solopreneurs — outperform 20-person teams with AI, compute, and mentorship',
+    'Purpose-built Marathi OCR and data pipeline for digitizing Maharashtra\'s government records',
 
   url: 'https://incubrain.org',
 
@@ -17,11 +17,15 @@ export default defineAppConfig({
   },
 
   content: {
-    routeMap: {
-      '/docs': 'docs',
-    },
     searchable: ['pages'],
     pagesBackLabel: 'Back',
     defaultAuthor: 'drew-macgibbon',
+  },
+
+  ui: {
+    colors: {
+      primary: 'amber',
+      secondary: 'stone',
+    },
   },
 })

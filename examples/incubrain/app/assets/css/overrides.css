@@ -1,0 +1,85 @@
+/* Incubrain app-level design overrides */
+
+/* ── Typography: Swap to Outfit for headings (premium, not default) ── */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap');
+
+:root {
+  --font-heading: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Apply heading font to all heading elements */
+h1, h2, h3, h4, h5, h6,
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+/* ── Typography polish ── */
+
+/* Balance headlines to prevent orphans */
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+/* Tabular figures for metric/data displays */
+[data-testid="section-metrics"] .text-3xl,
+[data-testid="section-metrics"] .text-4xl,
+[data-testid="section-benchmark"] .text-xs {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tighter letter-spacing on large display text */
+h1 {
+  letter-spacing: -0.025em;
+}
+
+h2 {
+  letter-spacing: -0.015em;
+}
+
+/* ── Surface polish ── */
+
+/* Subtle noise overlay for depth (applied to sections with muted bg) */
+.bg-muted\/50::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Ensure muted sections are positioned for the noise overlay */
+.bg-muted\/50 {
+  position: relative;
+}
+
+/* ── Card upgrades ── */
+
+/* Colored shadows instead of generic black — tint with primary */
+.border-default.bg-default {
+  box-shadow: 0 1px 3px color-mix(in oklch, var(--ui-primary), transparent 92%);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.border-default.bg-default:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 12px color-mix(in oklch, var(--ui-primary), transparent 85%),
+    0 1px 3px color-mix(in oklch, var(--ui-primary), transparent 90%);
+}
+
+/* ── Smooth scroll ── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Active/pressed feedback for buttons ── */
+button:active,
+a[role="button"]:active,
+.btn:active {
+  transform: scale(0.98) !important;
+  transition: transform 100ms ease;
+}
