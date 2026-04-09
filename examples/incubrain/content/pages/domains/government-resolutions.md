@@ -83,9 +83,11 @@ description: >
   Documents from different eras, departments, and formats — all processed through the same pipeline.
 samples:
   - id: modern-agriculture
-    label: Agriculture Dept (2024)
+    label: Agriculture (2024)
     era: Post-2015 — Native Unicode digital
-    image: https://placehold.co/400x600/f5f5f4/78716c?text=कृषी+विभाग+GR+2024
+    images:
+      - https://placehold.co/400x560/f5f5f4/78716c?text=कृषी+विभाग+Page+1
+      - https://placehold.co/400x560/f5f5f4/78716c?text=कृषी+विभाग+Page+2
     text: |
       महाराष्ट्र शासन निर्णय
       कृषी, पशुसंवर्धन, दुग्ध व्यवसाय विकास व मत्स्यव्यवसाय विभाग
@@ -99,9 +101,12 @@ samples:
       प्रस्तावना: राज्यातील शेतकऱ्यांना विविध कृषी
       योजनांचा लाभ मिळावा यासाठी...
   - id: legacy-revenue
-    label: Revenue Dept (2010)
+    label: Revenue (2010)
     era: 2005-2015 — Legacy font encoded (Shree Dev)
-    image: https://placehold.co/400x600/f5f5f4/78716c?text=महसूल+विभाग+GR+2010
+    images:
+      - https://placehold.co/400x560/f5f5f4/78716c?text=महसूल+विभाग+Page+1
+      - https://placehold.co/400x560/f5f5f4/78716c?text=महसूल+विभाग+Page+2
+      - https://placehold.co/400x560/f5f5f4/78716c?text=महसूल+विभाग+Page+3
     text: |
       महाराष्ट्र शासन
       महसूल व वन विभाग
@@ -115,9 +120,10 @@ samples:
       शासन निर्णय: सदर प्रकरणी विचारान्ती
       खालीलप्रमाणे निर्णय घेण्यात येतो...
   - id: scanned-education
-    label: Education Dept (1998)
+    label: Education (1998)
     era: Pre-2010 — Scanned paper document
-    image: https://placehold.co/400x600/f5f5f4/78716c?text=शिक्षण+विभाग+GR+1998
+    images:
+      - https://placehold.co/400x560/f5f5f4/78716c?text=शिक्षण+विभाग+Page+1
     text: |
       महाराष्ट्र शासन
       शालेय शिक्षण व क्रीडा विभाग
@@ -133,7 +139,9 @@ samples:
   - id: mixed-urban
     label: Urban Dev (2012)
     era: Mixed encoding — Unicode headers, legacy body
-    image: https://placehold.co/400x600/f5f5f4/78716c?text=नगर+विकास+GR+2012
+    images:
+      - https://placehold.co/400x560/f5f5f4/78716c?text=नगर+विकास+Page+1
+      - https://placehold.co/400x560/f5f5f4/78716c?text=नगर+विकास+Page+2
     text: |
       महाराष्ट्र शासन
       नगर विकास विभाग
