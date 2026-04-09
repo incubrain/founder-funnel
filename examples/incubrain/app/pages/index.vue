@@ -122,17 +122,31 @@ function maxFor(key: string) {
         </p>
       </div>
       <div class="relative">
-        <div class="flex items-center gap-16 md:gap-20 animate-marquee whitespace-nowrap">
-          <span
-            v-for="(name, i) in [
-              'Sarvam AI', 'Bhashini', 'AI4Bharat', 'OpenAI', 'Google DeepMind', 'Meta AI', 'Microsoft', 'Mistral',
-              'Sarvam AI', 'Bhashini', 'AI4Bharat', 'OpenAI', 'Google DeepMind', 'Meta AI', 'Microsoft', 'Mistral',
+        <div class="flex items-center gap-16 md:gap-24 animate-marquee whitespace-nowrap">
+          <img
+            v-for="(logo, i) in [
+              { src: '/logos/sarvam.svg', alt: 'Sarvam AI' },
+              { src: '/logos/bhashini.svg', alt: 'Bhashini' },
+              { src: '/logos/ai4bharat.svg', alt: 'AI4Bharat' },
+              { src: '/logos/openai.svg', alt: 'OpenAI' },
+              { src: '/logos/google-deepmind.svg', alt: 'Google DeepMind' },
+              { src: '/logos/meta.svg', alt: 'Meta AI' },
+              { src: '/logos/microsoft.svg', alt: 'Microsoft' },
+              { src: '/logos/mistral.svg', alt: 'Mistral' },
+              { src: '/logos/sarvam.svg', alt: 'Sarvam AI' },
+              { src: '/logos/bhashini.svg', alt: 'Bhashini' },
+              { src: '/logos/ai4bharat.svg', alt: 'AI4Bharat' },
+              { src: '/logos/openai.svg', alt: 'OpenAI' },
+              { src: '/logos/google-deepmind.svg', alt: 'Google DeepMind' },
+              { src: '/logos/meta.svg', alt: 'Meta AI' },
+              { src: '/logos/microsoft.svg', alt: 'Microsoft' },
+              { src: '/logos/mistral.svg', alt: 'Mistral' },
             ]"
             :key="i"
-            class="text-2xl md:text-3xl font-heading font-bold text-dimmed/40 shrink-0 grayscale"
+            :src="logo.src"
+            :alt="logo.alt"
+            class="h-8 md:h-10 w-auto shrink-0 opacity-40 grayscale dark:invert"
           >
-            {{ name }}
-          </span>
         </div>
       </div>
     </section>
