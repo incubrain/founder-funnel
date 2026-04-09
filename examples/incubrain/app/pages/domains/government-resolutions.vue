@@ -78,7 +78,7 @@ const pipeline = [
       <div class="absolute inset-0 bg-gradient-to-b from-primary-100/50 to-default dark:from-primary-950/20 dark:to-default" />
       <BgPattern
         name="paithani-classic"
-        :opacity="0.1"
+        :opacity="0.5"
         absolute
       />
 
@@ -121,8 +121,8 @@ const pipeline = [
     <!-- ══ PROBLEM — 2x2 grid matching homepage ══ -->
     <section class="py-24 md:py-32 border-t border-default relative overflow-hidden">
       <BgPattern
-        name="asawali-dots"
-        :opacity="0.08"
+        name="paithani-asawali"
+        :opacity="0.5"
         absolute
       />
       <div class="relative z-10 max-w-6xl mx-auto px-6">
@@ -159,7 +159,7 @@ const pipeline = [
     <section class="py-24 md:py-32 bg-muted/30 border-t border-default relative overflow-hidden">
       <BgPattern
         name="warli"
-        :opacity="0.06"
+        :opacity="0.5"
         absolute
       />
       <div class="relative z-10 max-w-7xl mx-auto px-6">
@@ -260,8 +260,8 @@ const pipeline = [
     <!-- ══ PIPELINE — Horizontal rows matching homepage ══ -->
     <section class="py-24 md:py-32 border-t border-default relative overflow-hidden">
       <BgPattern
-        name="paithani-modern-minimal"
-        :opacity="0.06"
+        name="warli"
+        :opacity="0.5"
         absolute
       />
       <div class="relative z-10 max-w-6xl mx-auto px-6">
@@ -302,8 +302,8 @@ const pipeline = [
     <!-- ══ METRICS — Matching homepage style ══ -->
     <section class="py-24 md:py-32 bg-muted/30 border-t border-default relative overflow-hidden">
       <BgPattern
-        name="asawali-lotus"
-        :opacity="0.06"
+        name="paithani-lotus"
+        :opacity="0.5"
         absolute
       />
       <div class="relative z-10 max-w-6xl mx-auto px-6">
@@ -346,8 +346,8 @@ const pipeline = [
     <section class="relative py-24 md:py-32 border-t border-default overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-t from-primary-100 via-primary-50 to-default dark:from-primary-950/30 dark:via-default dark:to-default" />
       <BgPattern
-        name="paithani-classic"
-        :opacity="0.08"
+        name="paithani-bangdi"
+        :opacity="0.5"
         absolute
       />
       <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">

@@ -66,7 +66,7 @@ const metrics = [
       <div class="absolute inset-0 bg-gradient-to-b from-primary-100/50 to-default dark:from-primary-950/20 dark:to-default" />
       <BgPattern
         name="paithani-classic"
-        :opacity="0.1"
+        :opacity="0.5"
         absolute
       />
 
@@ -110,13 +110,13 @@ const metrics = [
         <BgPattern
           v-if="i === 1"
           name="warli"
-          :opacity="0.05"
+          :opacity="0.5"
           absolute
         />
         <BgPattern
           v-if="i === 3"
-          name="asawali-lotus"
-          :opacity="0.05"
+          name="ajanta"
+          :opacity="0.5"
           absolute
         />
 
@@ -161,8 +161,8 @@ const metrics = [
     <!-- ══ METRICS ══ -->
     <section class="py-24 md:py-32 relative overflow-hidden">
       <BgPattern
-        name="paithani-modern-minimal"
-        :opacity="0.06"
+        name="paithani-lotus"
+        :opacity="0.5"
         absolute
       />
       <div class="relative z-10 max-w-6xl mx-auto px-6">
@@ -200,8 +200,8 @@ const metrics = [
     <section class="relative py-24 md:py-32 border-t border-default overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-t from-primary-100 via-primary-50 to-default dark:from-primary-950/30 dark:via-default dark:to-default" />
       <BgPattern
-        name="paithani-classic"
-        :opacity="0.08"
+        name="paithani-bangdi"
+        :opacity="0.5"
         absolute
       />
       <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">

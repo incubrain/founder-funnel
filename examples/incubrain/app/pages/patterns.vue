@@ -1,23 +1,15 @@
 <script setup lang="ts">
 definePageMeta({ layout: false })
 
-type PatternName = 'paithani' | 'warli' | 'ajanta' | 'paithani-classic' | 'paithani-asawali' | 'paithani-lotus' | 'paithani-bangdi' | 'paithani-modern-geo' | 'paithani-modern-minimal' | 'asawali-peacock' | 'asawali-lotus' | 'asawali-paisley' | 'asawali-mixed' | 'asawali-dots'
+type PatternName = 'paithani-classic' | 'paithani-asawali' | 'paithani-lotus' | 'paithani-bangdi' | 'warli' | 'ajanta'
 
-const patterns: Array<{ name: PatternName, label: string }> = [
-  { name: 'paithani', label: 'Paithani (Original)' },
-  { name: 'paithani-classic', label: 'Classic Peacock Pair' },
-  { name: 'paithani-asawali', label: 'Asawali (Flowering Vine)' },
-  { name: 'asawali-peacock', label: 'Asawali + Peacock Eyes' },
-  { name: 'asawali-lotus', label: 'Asawali + Lotus' },
-  { name: 'asawali-paisley', label: 'Asawali + Paisley' },
-  { name: 'asawali-mixed', label: 'Asawali + Mixed Motifs' },
-  { name: 'asawali-dots', label: 'Asawali + Rangoli Dots' },
-  { name: 'paithani-lotus', label: 'Lotus Medallion' },
-  { name: 'paithani-bangdi', label: 'Bangdi Mor (Bangle Peacock)' },
-  { name: 'paithani-modern-geo', label: 'Modern Geometric' },
-  { name: 'paithani-modern-minimal', label: 'Modern Minimal' },
-  { name: 'warli', label: 'Warli' },
-  { name: 'ajanta', label: 'Ajanta' },
+const patterns: Array<{ name: PatternName, label: string, usage: string }> = [
+  { name: 'paithani-classic', label: 'Classic Peacock Pair', usage: 'Hero sections' },
+  { name: 'paithani-asawali', label: 'Asawali (Flowering Vine)', usage: 'Problem / challenge grids' },
+  { name: 'paithani-lotus', label: 'Lotus Medallion', usage: 'Metrics sections' },
+  { name: 'paithani-bangdi', label: 'Bangdi Mor (Bangle Peacock)', usage: 'CTA sections' },
+  { name: 'warli', label: 'Warli', usage: 'Pipeline / process sections' },
+  { name: 'ajanta', label: 'Ajanta', usage: 'Platform / feature sections' },
 ]
 
 const opacities = [0.1, 0.2, 0.3, 0.5]
@@ -97,6 +89,9 @@ function toggle() {
             </div>
             <div class="text-xs text-dimmed font-mono mt-1">
               {{ pat.name }}
+            </div>
+            <div class="text-[10px] text-primary mt-2">
+              {{ pat.usage }}
             </div>
           </button>
         </div>

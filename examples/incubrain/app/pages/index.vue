@@ -66,7 +66,7 @@ function maxFor(key: string) {
       <div class="absolute inset-0 bg-gradient-to-t from-primary-600/90 via-primary-500/60 to-primary-400/30 dark:from-primary-950 dark:via-primary-900/80 dark:to-primary-800/40" />
       <BgPattern
         name="paithani-classic"
-        :opacity="0.1"
+        :opacity="0.5"
         absolute
       />
 
@@ -140,8 +140,8 @@ function maxFor(key: string) {
     <!-- ══ PROBLEM — Large statement + grid ══ -->
     <section class="py-24 md:py-32 border-t border-default relative overflow-hidden">
       <BgPattern
-        name="asawali-dots"
-        :opacity="0.1"
+        name="paithani-asawali"
+        :opacity="0.5"
         absolute
       />
       <div class="relative z-10 max-w-6xl mx-auto px-6">
@@ -257,8 +257,8 @@ function maxFor(key: string) {
     <!-- ══ WHY INCUBRAIN — Zig-zag (Mistral "What can do" style) ══ -->
     <section class="py-24 md:py-32 bg-muted/30 border-t border-default relative overflow-hidden">
       <BgPattern
-        name="asawali-lotus"
-        :opacity="0.1"
+        name="ajanta"
+        :opacity="0.5"
         absolute
       />
       <div class="relative z-10 max-w-6xl mx-auto px-6">
@@ -315,8 +315,8 @@ function maxFor(key: string) {
     <!-- ══ BENCHMARK — MarathiLine 2.5K comparison ══ -->
     <section class="py-24 md:py-32 border-t border-default relative overflow-hidden">
       <BgPattern
-        name="asawali-lotus"
-        :opacity="0.1"
+        name="paithani-lotus"
+        :opacity="0.5"
         absolute
       />
       <div class="relative z-10 max-w-6xl mx-auto px-6">
@@ -386,8 +386,8 @@ function maxFor(key: string) {
     <section class="relative py-24 md:py-40 border-t border-default overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-t from-primary-100 via-primary-50 to-default dark:from-primary-950/30 dark:via-default dark:to-default" />
       <BgPattern
-        name="paithani-classic"
-        :opacity="0.08"
+        name="paithani-bangdi"
+        :opacity="0.5"
         absolute
       />
 
