@@ -122,37 +122,21 @@ function maxFor(key: string) {
         </p>
       </div>
       <div class="relative">
-        <div class="flex items-center gap-14 md:gap-20 animate-marquee whitespace-nowrap">
-          <div
-            v-for="(company, i) in [
-              { icon: 'i-simple-icons-sarvam', name: 'Sarvam AI' },
-              { icon: 'i-simple-icons-google', name: 'Google DeepMind' },
-              { icon: 'i-simple-icons-openai', name: 'OpenAI' },
-              { icon: 'i-simple-icons-meta', name: 'Meta AI' },
-              { icon: 'i-simple-icons-microsoft', name: 'Microsoft' },
-              { icon: 'i-simple-icons-mistral', name: 'Mistral' },
-              { icon: 'i-simple-icons-amazonwebservices', name: 'AWS' },
-              { icon: 'i-simple-icons-nvidia', name: 'NVIDIA' },
-              { icon: 'i-simple-icons-sarvam', name: 'Sarvam AI' },
-              { icon: 'i-simple-icons-google', name: 'Google DeepMind' },
-              { icon: 'i-simple-icons-openai', name: 'OpenAI' },
-              { icon: 'i-simple-icons-meta', name: 'Meta AI' },
-              { icon: 'i-simple-icons-microsoft', name: 'Microsoft' },
-              { icon: 'i-simple-icons-mistral', name: 'Mistral' },
-              { icon: 'i-simple-icons-amazonwebservices', name: 'AWS' },
-              { icon: 'i-simple-icons-nvidia', name: 'NVIDIA' },
+        <div class="flex items-center gap-16 md:gap-24 animate-marquee whitespace-nowrap">
+          <img
+            v-for="(logo, i) in [
+              '/logos/sarvam.svg', '/logos/bhashini.svg', '/logos/openai.svg',
+              '/logos/google.svg', '/logos/meta.svg', '/logos/microsoft.svg',
+              '/logos/mistral.svg', '/logos/nvidia.svg', '/logos/aws.svg',
+              '/logos/sarvam.svg', '/logos/bhashini.svg', '/logos/openai.svg',
+              '/logos/google.svg', '/logos/meta.svg', '/logos/microsoft.svg',
+              '/logos/mistral.svg', '/logos/nvidia.svg', '/logos/aws.svg',
             ]"
             :key="i"
-            class="shrink-0 flex items-center gap-3 opacity-40"
+            :src="logo"
+            :alt="logo.split('/').pop()?.replace('.svg', '') || ''"
+            class="h-6 md:h-8 w-auto shrink-0 opacity-30 dark:invert"
           >
-            <UIcon
-              :name="company.icon"
-              class="size-7 md:size-8 text-highlighted"
-            />
-            <span class="text-sm md:text-base font-heading font-semibold text-highlighted">
-              {{ company.name }}
-            </span>
-          </div>
         </div>
       </div>
     </section>
