@@ -10,6 +10,8 @@ useHead({
 
 useScrollReveal()
 
+const { y: scrollY } = useWindowScroll()
+
 const features = [
   {
     title: 'Domain-adapted OCR',
@@ -221,10 +223,13 @@ function maxFor(key: string) {
             class="reveal shrink-0 w-[520px] md:w-[640px] lg:w-[720px] h-[340px] md:h-[420px] rounded-2xl overflow-hidden relative group"
             :style="{ animationDelay: `${i * 80}ms` }"
           >
-            <!-- Card background image -->
+            <!-- Card background image with scroll parallax -->
             <div
-              class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-              :style="{ backgroundImage: `url('${domain.img}')` }"
+              class="absolute inset-[-15%] bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+              :style="{
+                backgroundImage: `url('${domain.img}')`,
+                transform: `translateY(${(scrollY * 0.03) % 30}px)`,
+              }"
             />
             <!-- Dark gradient overlay -->
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
@@ -297,7 +302,7 @@ function maxFor(key: string) {
               :class="i % 2 !== 0 ? 'md:col-start-1 md:row-start-1' : 'md:col-start-7'"
             >
               <NuxtImg
-                :src="`https://placehold.co/600x360/f5f5f4/a8a29e?text=Visual+${i + 1}`"
+                :src="`https://picsum.photos/seed/${['ocr-devanagari', 'quality-review', 'data-structure'][i]}/600/360`"
                 :alt="feat.title"
                 class="w-full h-full object-cover"
               />
