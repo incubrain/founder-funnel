@@ -92,10 +92,10 @@ function maxFor(key: string) {
 
           <div class="flex flex-wrap gap-4 pt-2">
             <a
-              href="/benchmarks"
+              href="/domains/government-resolutions"
               class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-primary-700 font-semibold text-sm hover:bg-white/90 transition-all duration-200 active:scale-[0.98]"
             >
-              View Benchmarks
+              Government Resolutions
               <UIcon
                 name="i-lucide-arrow-right"
                 class="size-4"
@@ -405,8 +405,8 @@ function maxFor(key: string) {
           style="animation-delay: 200ms"
         >
           <UButton
-            to="/benchmarks"
-            label="View Benchmark Results"
+            to="/domains/government-resolutions"
+            label="Explore Our First Domain"
             icon="i-lucide-arrow-right"
             trailing
             size="xl"

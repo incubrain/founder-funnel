@@ -13,9 +13,9 @@ badge:
   icon: i-lucide-workflow
 cta:
   primary:
-    label: View Benchmarks
-    to: /benchmarks
-    icon: i-lucide-bar-chart-3
+    label: Government Resolutions
+    to: /domains/government-resolutions
+    icon: i-lucide-landmark
 intro:
   title: From Raw Scan
   highlight: To AI-Ready Text.

@@ -19,9 +19,8 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    '/benchmarks': { appLayout: 'default' },
     '/domains/**': { appLayout: 'landing' },
-    '/products/**': { appLayout: 'default' },
+    '/products/**': { appLayout: 'landing' },
   },
 
   docs: { enabled: false },
@@ -41,21 +40,21 @@ export default defineNuxtConfig({
         contentFilters: [{ field: 'path', operator: '=', value: '/' }],
       },
       {
-        title: 'Benchmarks',
+        title: 'Government Resolutions',
         description:
-          'Marathi OCR benchmark results — CER, WER, exact match, throughput vs PaddleOCR, EasyOCR, and Tesseract',
+          'Digitizing Maharashtra\'s 200,000+ GRs through AI-powered OCR with human-verified quality control',
         contentCollection: 'pages',
         contentFilters: [
-          { field: 'path', operator: '=', value: '/benchmarks' },
+          { field: 'path', operator: '=', value: '/domains/government-resolutions' },
         ],
       },
       {
-        title: 'Review Pipeline',
+        title: 'Document Review Pipeline',
         description:
           'Five-stage quality control pipeline from raw scans to verified AI-ready Marathi text',
         contentCollection: 'pages',
         contentFilters: [
-          { field: 'path', operator: '=', value: '/pipeline' },
+          { field: 'path', operator: '=', value: '/products/document-review-pipeline' },
         ],
       },
     ],

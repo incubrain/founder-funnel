@@ -13,9 +13,9 @@ badge:
   icon: i-lucide-landmark
 cta:
   primary:
-    label: View Benchmarks
-    to: /benchmarks
-    icon: i-lucide-bar-chart-3
+    label: Review Pipeline
+    to: /products/document-review-pipeline
+    icon: i-lucide-workflow
   secondary:
     label: Review Pipeline
     to: /products/document-review-pipeline
@@ -174,8 +174,8 @@ description: >
   200,000 Government Resolutions processed through a unified pipeline,
   delivered as a single open-source searchable database.
 cta:
-  label: View Benchmark Results
-  to: /benchmarks
+  label: Explore the Review Pipeline
+  to: /products/document-review-pipeline
   icon: i-lucide-arrow-right
 pattern:
   name: paithani-classic
