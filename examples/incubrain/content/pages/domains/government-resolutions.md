@@ -18,7 +18,7 @@ cta:
     icon: i-lucide-bar-chart-3
   secondary:
     label: Review Pipeline
-    to: /pipeline
+    to: /products/document-review-pipeline
     icon: i-lucide-workflow
 intro:
   title: 200,000 Government Resolutions.

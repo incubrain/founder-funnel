@@ -28,18 +28,10 @@ const features = [
   },
 ]
 
-const pipeline = [
-  { step: '01', title: 'Ingest', description: 'Documents retrieved from source repositories. The pipeline identifies each document type — scanned paper, legacy-encoded PDF, or native Unicode — and routes to the appropriate processing path.', icon: 'i-lucide-scan-line' },
-  { step: '02', title: 'Recognise', description: 'Domain-adapted OCR model processes each line. Trained on 600,000+ Marathi samples and fine-tuned per domain. Native Unicode text extracted directly. All output normalised to standard Devanagari.', icon: 'i-lucide-languages' },
-  { step: '03', title: 'Review', description: 'Four-model consensus committee pre-verifies output. Where three agree, text is auto-promoted. Remaining output reviewed by trained Marathi-fluent labellers via a purpose-built application.', icon: 'i-lucide-check-circle-2' },
-  { step: '04', title: 'Publish', description: 'Verified text structured with entity extraction, metadata tagging, and cross-referencing. The complete corpus becomes a searchable database. All outputs open source.', icon: 'i-lucide-globe-2' },
-]
-
 const metrics = [
-  { value: '6.23%', label: 'Character Error Rate', detail: 'Lowest of any system on MarathiLine benchmark', hero: true },
-  { value: '5x', label: 'Better Exact Match', detail: '35.8% vs 7.4% for PaddleOCR' },
+  { value: '6.23%', label: 'Character Error Rate', detail: 'Vs 8.34% PaddleOCR, 16.72% Tesseract on MarathiLine benchmark', hero: true },
+  { value: '5x', label: 'Better Exact Match', detail: '35.8% vs 7.4% for the nearest competitor' },
   { value: '20x', label: 'Faster Processing', detail: '124.5 lines/sec vs 6-10 for alternatives' },
-  { value: '600K+', label: 'Training Samples', detail: 'Real scans, verified datasets, synthetic data' },
 ]
 </script>
 
@@ -303,55 +295,6 @@ const metrics = [
       </div>
     </section>
 
-    <!-- ══ PIPELINE — Clean horizontal rows ══ -->
-    <section
-      id="pipeline"
-      class="py-24 md:py-32 border-t border-default relative overflow-hidden"
-    >
-      <BgPattern
-        name="paithani-modern-minimal"
-        :opacity="0.1"
-        absolute
-      />
-      <div class="relative z-10 max-w-6xl mx-auto px-6">
-        <div class="reveal mb-16 md:mb-20">
-          <p class="text-xs uppercase tracking-widest text-primary font-medium mb-6">
-            How it works
-          </p>
-          <h2 class="text-3xl md:text-5xl font-heading font-bold tracking-tighter leading-tight max-w-3xl">
-            Four stages from scanned image to verified data.
-          </h2>
-        </div>
-
-        <div class="space-y-0">
-          <div
-            v-for="(step, i) in pipeline"
-            :key="step.step"
-            class="reveal grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 py-10 border-t border-default"
-            :style="{ animationDelay: `${i * 120}ms` }"
-          >
-            <div class="md:col-span-1">
-              <span class="text-xs font-heading font-medium text-dimmed tabular-nums">{{ step.step }}</span>
-            </div>
-            <div class="md:col-span-3 flex items-center gap-3">
-              <UIcon
-                :name="step.icon"
-                class="size-5 text-primary"
-              />
-              <h3 class="text-xl font-heading font-bold text-highlighted">
-                {{ step.title }}
-              </h3>
-            </div>
-            <div class="md:col-span-8">
-              <p class="text-muted leading-relaxed max-w-[60ch]">
-                {{ step.description }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- ══ METRICS — Bento grid ══ -->
     <section class="py-24 md:py-32 border-t border-default relative overflow-hidden">
       <BgPattern
@@ -362,11 +305,11 @@ const metrics = [
       <div class="relative z-10 max-w-6xl mx-auto px-6">
         <div class="reveal mb-16">
           <p class="text-xs uppercase tracking-widest text-primary font-medium mb-6">
-            Results
+            OCR performance
           </p>
           <h2 class="text-3xl md:text-5xl font-heading font-bold tracking-tighter leading-tight max-w-3xl">
-            Independently benchmarked.
-            <span class="text-muted">Best in class.</span>
+            Purpose-built beats general-purpose.
+            <span class="text-muted">Every time.</span>
           </h2>
         </div>
 
@@ -398,59 +341,6 @@ const metrics = [
             >
               {{ m.detail }}
             </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ ROADMAP ══ -->
-    <section class="py-24 md:py-32 border-t border-default relative overflow-hidden">
-      <BgPattern
-        name="warli"
-        :opacity="0.1"
-        absolute
-      />
-      <div class="max-w-6xl mx-auto px-6">
-        <div class="reveal mb-16">
-          <p class="text-xs uppercase tracking-widest text-primary font-medium mb-6">
-            What comes after
-          </p>
-          <h2 class="text-3xl md:text-5xl font-heading font-bold tracking-tighter leading-tight max-w-3xl">
-            The GR pilot proves the pipeline.
-            <span class="text-muted">Everything else scales from there.</span>
-          </h2>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0">
-          <div
-            v-for="(item, i) in [
-              { title: 'Government Resolutions', status: 'In progress', active: true },
-              { title: 'Court & Revenue Records', status: 'Next' },
-              { title: 'Historical Manuscripts', status: 'Planned' },
-              { title: 'Newspapers & Periodicals', status: 'Planned' },
-            ]"
-            :key="i"
-            class="reveal p-8 border-t lg:border-t-0 lg:border-l border-default first:border-l-0 first:border-t-0"
-            :style="{ animationDelay: `${i * 100}ms` }"
-          >
-            <div class="flex items-center gap-2 mb-4">
-              <span
-                class="size-2 rounded-full"
-                :class="item.active ? 'bg-primary animate-pulse' : 'bg-muted'"
-              />
-              <span
-                class="text-xs uppercase tracking-widest font-medium"
-                :class="item.active ? 'text-primary' : 'text-dimmed'"
-              >
-                {{ item.status }}
-              </span>
-            </div>
-            <h3
-              class="text-base font-heading font-semibold"
-              :class="item.active ? 'text-highlighted' : 'text-muted'"
-            >
-              {{ item.title }}
-            </h3>
           </div>
         </div>
       </div>
@@ -492,7 +382,7 @@ const metrics = [
             color="primary"
           />
           <UButton
-            to="/pipeline"
+            to="/products/document-review-pipeline"
             label="Explore the Pipeline"
             size="xl"
             color="neutral"

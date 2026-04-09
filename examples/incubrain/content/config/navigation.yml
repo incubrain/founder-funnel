@@ -18,12 +18,20 @@ header:
     x: https://x.com/DrewMacGibbon
     github: https://github.com/incubrain
   navigation:
-    - label: Government Resolutions
-      icon: i-lucide-landmark
-      to: /gr
-    - label: Pipeline
-      icon: i-lucide-workflow
-      to: /pipeline
+    - label: Domains
+      icon: i-lucide-layers
+      children:
+        - label: Government Resolutions
+          icon: i-lucide-landmark
+          description: 200,000+ Maharashtra GRs
+          to: /domains/government-resolutions
+    - label: Products
+      icon: i-lucide-box
+      children:
+        - label: Document Review Pipeline
+          icon: i-lucide-workflow
+          description: AI-assisted quality control for Marathi documents
+          to: /products/document-review-pipeline
     - label: Benchmarks
       icon: i-lucide-bar-chart-3
       to: /benchmarks
@@ -37,13 +45,13 @@ footer:
       children:
         - label: Government Resolutions
           icon: i-lucide-landmark
-          to: /gr
-    - label: Technology
-      icon: i-lucide-cpu
+          to: /domains/government-resolutions
+    - label: Products
+      icon: i-lucide-box
       children:
-        - label: Review Pipeline
+        - label: Document Review Pipeline
           icon: i-lucide-workflow
-          to: /pipeline
+          to: /products/document-review-pipeline
         - label: Benchmarks
           icon: i-lucide-bar-chart-3
           to: /benchmarks

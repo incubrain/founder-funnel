@@ -141,6 +141,6 @@ items:
     name: Review Pipeline
     description: See how documents flow from raw scans to verified, AI-ready text through our quality control system.
     icon: i-lucide-workflow
-    to: /pipeline
+    to: /products/document-review-pipeline
 ---
 ::
