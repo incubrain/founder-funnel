@@ -119,13 +119,8 @@ const pipeline = [
     </section>
 
     <!-- ══ PROBLEM — 2x2 grid matching homepage ══ -->
-    <section class="py-24 md:py-32 border-t border-default relative overflow-hidden">
-      <BgPattern
-        name="paithani-asawali"
-        :opacity="0.5"
-        absolute
-      />
-      <div class="relative z-10 max-w-6xl mx-auto px-6">
+    <section class="py-24 md:py-32 border-t border-default">
+      <div class="max-w-6xl mx-auto px-6">
         <div class="reveal mb-16">
           <p class="text-xs uppercase tracking-widest text-primary font-medium mb-6">
             The challenge
@@ -156,13 +151,8 @@ const pipeline = [
     </section>
 
     <!-- ══ DOCUMENT SHOWCASE — Full width ══ -->
-    <section class="py-24 md:py-32 bg-muted/30 border-t border-default relative overflow-hidden">
-      <BgPattern
-        name="warli"
-        :opacity="0.5"
-        absolute
-      />
-      <div class="relative z-10 max-w-7xl mx-auto px-6">
+    <section class="py-24 md:py-32 bg-muted/30 border-t border-default">
+      <div class="max-w-7xl mx-auto px-6">
         <div class="reveal mb-8">
           <p class="text-xs uppercase tracking-widest text-primary font-medium mb-6">
             See it in action
@@ -258,13 +248,8 @@ const pipeline = [
     </section>
 
     <!-- ══ PIPELINE — Horizontal rows matching homepage ══ -->
-    <section class="py-24 md:py-32 border-t border-default relative overflow-hidden">
-      <BgPattern
-        name="warli"
-        :opacity="0.5"
-        absolute
-      />
-      <div class="relative z-10 max-w-6xl mx-auto px-6">
+    <section class="py-24 md:py-32 border-t border-default">
+      <div class="max-w-6xl mx-auto px-6">
         <div class="reveal mb-16">
           <p class="text-xs uppercase tracking-widest text-primary font-medium mb-6">
             The GR pipeline
@@ -345,11 +330,6 @@ const pipeline = [
     <!-- ══ CTA ══ -->
     <section class="relative py-24 md:py-32 border-t border-default overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-t from-primary-100 via-primary-50 to-default dark:from-primary-950/30 dark:via-default dark:to-default" />
-      <BgPattern
-        name="paithani-bangdi"
-        :opacity="0.5"
-        absolute
-      />
       <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
         <h2 class="reveal text-3xl md:text-5xl font-heading font-bold tracking-tighter leading-[1.1]">
           Maharashtra's GR archive

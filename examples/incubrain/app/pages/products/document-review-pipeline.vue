@@ -107,19 +107,6 @@ const metrics = [
         class="py-20 md:py-28 border-b border-default relative overflow-hidden"
         :class="i % 2 === 0 ? '' : 'bg-muted/30'"
       >
-        <BgPattern
-          v-if="i === 1"
-          name="warli"
-          :opacity="0.5"
-          absolute
-        />
-        <BgPattern
-          v-if="i === 3"
-          name="ajanta"
-          :opacity="0.5"
-          absolute
-        />
-
         <div class="relative z-10 max-w-6xl mx-auto px-6">
           <div
             class="reveal grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-center"
@@ -199,11 +186,6 @@ const metrics = [
     <!-- ══ CTA ══ -->
     <section class="relative py-24 md:py-32 border-t border-default overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-t from-primary-100 via-primary-50 to-default dark:from-primary-950/30 dark:via-default dark:to-default" />
-      <BgPattern
-        name="paithani-bangdi"
-        :opacity="0.5"
-        absolute
-      />
       <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
         <h2 class="reveal text-3xl md:text-5xl font-heading font-bold tracking-tighter leading-[1.1]">
           Data quality is the single biggest lever.

@@ -94,7 +94,22 @@ The generic AI blue/purple gradient is banned. This palette uses warm stone neut
 - Avoid cliche metaphors (no rocket = launch, no shield = security)
 
 ## Patterns
-- BgPattern component with Maharashtrian motifs
-- Used as contained decorative elements, not full-page backgrounds
-- `paithani-classic` as primary pattern
-- Scoped to specific sections at 10-20% opacity
+
+**Rule: Never two patterned sections adjacent.** Patterns alternate with clean sections — pattern, clean, pattern, clean. This prevents a tacky, overdecorated look.
+
+### Pattern Assignment (consistent across all pages)
+| Section Type | Pattern | Opacity |
+|---|---|---|
+| Hero | `paithani-classic` | 0.5 |
+| Metrics | `paithani-lotus` | 0.5 |
+| CTA | `paithani-bangdi` | 0.5 |
+
+Only 3 section types get patterns. All other sections (problem grids, pipeline rows, platform features, document showcases) remain clean.
+
+### Available Patterns
+- `paithani-classic` — Classic Peacock Pair
+- `paithani-asawali` — Flowering Vine
+- `paithani-lotus` — Lotus Medallion
+- `paithani-bangdi` — Bangdi Mor (Bangle Peacock)
+- `warli` — Warli tribal art
+- `ajanta` — Ajanta cave paintings
