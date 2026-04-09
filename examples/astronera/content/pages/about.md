@@ -232,7 +232,7 @@ Maharashtra as the model for Asia-Pacific dark sky regulation. Light pollution f
   color: neutral
   icon: i-lucide-book-open
   size: lg
-  to: /darksky/research
+  to: /darksky/research/overview
   variant: outline
   ---
   Explore the Research
@@ -244,11 +244,11 @@ Maharashtra as the model for Asia-Pacific dark sky regulation. Light pollution f
   ---
   links:
     - label: Explore the Policy Framework
-      to: /darksky/policy
+      to: /darksky/policy/overview
       size: xl
       trailing-icon: i-lucide-arrow-right
     - label: View the Research
-      to: /darksky/research
+      to: /darksky/research/overview
       variant: outline
       color: neutral
       size: xl

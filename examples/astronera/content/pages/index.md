@@ -12,7 +12,7 @@ prose: false
 links:
   - label: Policy Framework
     size: xl
-    to: /darksky/policy
+    to: /darksky/policy/overview
     trailing-icon: i-lucide-arrow-right
     variant: solid
     color: neutral
@@ -294,7 +294,7 @@ Policy and Pilot Implementation
 #description
 AstronEra is coordinating a pathway to translate dark sky science into actionable governance, enabling light pollution management that is measurable, enforceable, and scalable within Maharashtra's administrative systems. 
 
-[View the policy framework →](/darksky/policy)
+[View the policy framework →](/darksky/policy/overview)
 ::
 
 ::section-wrapper
@@ -313,7 +313,7 @@ Pilot Sites and Astrotourism
 #description
 AstronEra is working with pilot sites across Maharashtra to test real-world dark sky conservation–focused development to guide policy design and implementation. These pilots align with **DarkSky International** certification frameworks. 
 
-[Learn about the pilot program →](/darksky/pilots)
+[Learn about the pilot program →](/darksky/pilots/overview)
 ::
 
 ::section-wrapper{#founder}
