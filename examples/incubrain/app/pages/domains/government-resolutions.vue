@@ -284,8 +284,9 @@ const pipeline = [
       </div>
     </section>
 
-    <!-- ══ METRICS — Matching homepage style ══ -->
-    <section class="py-24 md:py-32 bg-muted/30 border-t border-default relative overflow-hidden">
+    <!-- ══ METRICS + CTA — Combined final section with pattern ══ -->
+    <section class="relative py-24 md:py-32 border-t border-default overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-t from-primary-100 via-primary-50/50 to-default dark:from-primary-950/30 dark:via-primary-950/10 dark:to-default" />
       <BgPattern
         name="paithani-lotus"
         :opacity="0.5"
@@ -310,7 +311,7 @@ const pipeline = [
               { value: '100', label: 'Jobs Created', detail: 'Marathi-fluent labellers' },
             ]"
             :key="i"
-            class="reveal p-6 rounded-2xl border border-default text-center"
+            class="reveal p-6 rounded-2xl border border-default bg-default text-center"
             :style="{ animationDelay: `${i * 100}ms` }"
           >
             <div class="text-3xl md:text-4xl font-heading font-bold text-primary tabular-nums">
@@ -324,29 +325,26 @@ const pipeline = [
             </p>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- ══ CTA ══ -->
-    <section class="relative py-24 md:py-32 border-t border-default overflow-hidden">
-      <div class="absolute inset-0 bg-gradient-to-t from-primary-100 via-primary-50 to-default dark:from-primary-950/30 dark:via-default dark:to-default" />
-      <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
-        <h2 class="reveal text-3xl md:text-5xl font-heading font-bold tracking-tighter leading-[1.1]">
-          Maharashtra's GR archive
-          <span class="text-primary">searchable for the first time.</span>
-        </h2>
-        <div
-          class="reveal mt-10 flex flex-wrap justify-center gap-4"
-          style="animation-delay: 150ms"
-        >
-          <UButton
-            to="/products/document-review-pipeline"
-            label="Explore the Review Pipeline"
-            icon="i-lucide-arrow-right"
-            trailing
-            size="xl"
-            color="primary"
-          />
+        <!-- CTA integrated into metrics section -->
+        <div class="mt-20 text-center">
+          <h2 class="reveal text-3xl md:text-5xl font-heading font-bold tracking-tighter leading-[1.1]">
+            Maharashtra's GR archive
+            <span class="text-primary">searchable for the first time.</span>
+          </h2>
+          <div
+            class="reveal mt-10 flex flex-wrap justify-center gap-4"
+            style="animation-delay: 150ms"
+          >
+            <UButton
+              to="/products/document-review-pipeline"
+              label="Explore the Review Pipeline"
+              icon="i-lucide-arrow-right"
+              trailing
+              size="xl"
+              color="primary"
+            />
+          </div>
         </div>
       </div>
     </section>
