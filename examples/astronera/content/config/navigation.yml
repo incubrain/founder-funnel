@@ -17,10 +17,10 @@ footer:
   columns:
     - label: Research
       icon: i-lucide-flask-conical
-      to: /darksky/research
+      to: /darksky/research/overview
       children:
         - label: Overview
-          to: /darksky/research
+          to: /darksky/research/overview
         - label: Ecology & Biodiversity
           to: /darksky/research/ecology
         - label: Human Health
@@ -31,11 +31,11 @@ footer:
           to: /darksky/research/tourism
     - label: Policy
       icon: i-lucide-book-open
-      to: /darksky/policy
+      to: /darksky/policy/overview
       children:
         - label: Overview
-          to: /darksky/policy
-        - label: Global Presedents
+          to: /darksky/policy/overview
+        - label: Global Precedents
           to: /darksky/policy/global-precedents
         - label: Legal Obligations
           to: /darksky/policy/legal-obligations
@@ -49,10 +49,10 @@ footer:
           to: /darksky/policy/technical-secretariat
     - label: Pilots
       icon: i-lucide-book-key
-      to: /darksky/pilots
+      to: /darksky/pilots/overview
       children:
         - label: Overview
-          to: /darksky/pilots
+          to: /darksky/pilots/overview
     - label: Resources
       icon: i-lucide-book-key
       to: /resources/glossary
