@@ -28,11 +28,23 @@ const features = [
   },
 ]
 
-const metrics = [
-  { value: '6.23%', label: 'Character Error Rate', detail: 'Vs 8.34% PaddleOCR, 16.72% Tesseract on MarathiLine benchmark', hero: true },
-  { value: '5x', label: 'Better Exact Match', detail: '35.8% vs 7.4% for the nearest competitor' },
-  { value: '20x', label: 'Faster Processing', detail: '124.5 lines/sec vs 6-10 for alternatives' },
+const benchmarkMetrics = [
+  { label: 'Character Error Rate (CER)', hint: 'Lower is better — percentage of incorrectly recognised characters', key: 'cer' },
+  { label: 'Word Error Rate (WER)', hint: 'Lower is better — percentage of incorrectly recognised words', key: 'wer' },
+  { label: 'Exact Line Match', hint: 'Higher is better — percentage of lines recognised perfectly', key: 'exactMatch' },
+  { label: 'Throughput (lines/second)', hint: 'Higher is better — processing speed on the same hardware', key: 'throughput' },
 ]
+
+const benchmarkModels = [
+  { name: 'Incubrain', cer: 6.23, wer: 21.91, exactMatch: 35.8, throughput: 124.5, isOurs: true },
+  { name: 'PaddleOCR', cer: 8.34, wer: 44.69, exactMatch: 7.4, throughput: 6.2 },
+  { name: 'EasyOCR', cer: 15.31, wer: 52.75, exactMatch: 5.6, throughput: 9.5 },
+  { name: 'Tesseract', cer: 16.72, wer: 48.75, exactMatch: 5.6, throughput: 7.7 },
+]
+
+function maxFor(key: string) {
+  return Math.max(...benchmarkModels.map(m => (m as Record<string, number>)[key]))
+}
 </script>
 
 <template>
@@ -295,7 +307,7 @@ const metrics = [
       </div>
     </section>
 
-    <!-- ══ METRICS — Bento grid ══ -->
+    <!-- ══ BENCHMARK — MarathiLine 2.5K comparison ══ -->
     <section class="py-24 md:py-32 border-t border-default relative overflow-hidden">
       <BgPattern
         name="asawali-lotus"
@@ -303,7 +315,7 @@ const metrics = [
         absolute
       />
       <div class="relative z-10 max-w-6xl mx-auto px-6">
-        <div class="reveal mb-16">
+        <div class="reveal mb-12">
           <p class="text-xs uppercase tracking-widest text-primary font-medium mb-6">
             OCR performance
           </p>
@@ -311,36 +323,55 @@ const metrics = [
             Purpose-built beats general-purpose.
             <span class="text-muted">Every time.</span>
           </h2>
+          <p class="text-muted text-base mt-4 max-w-2xl text-pretty">
+            MarathiLine 2.5K benchmark — 2,500 real Marathi document line images,
+            balanced across clean printed, degraded, and mixed sources.
+          </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- 4 benchmark charts in 2x2 grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div
-            v-for="(m, i) in metrics"
-            :key="i"
-            class="reveal rounded-2xl border border-default bg-muted/30 p-8 md:p-10"
-            :class="m.hero ? 'md:col-span-2 md:row-span-2 flex flex-col justify-center' : ''"
-            :style="{ animationDelay: `${i * 100}ms` }"
+            v-for="(metric, mi) in benchmarkMetrics"
+            :key="metric.key"
+            class="reveal rounded-2xl border border-default p-6 md:p-8"
+            :style="{ animationDelay: `${mi * 100}ms` }"
           >
-            <div
-              class="font-heading font-bold tabular-nums"
-              :class="[
-                m.hero ? 'text-6xl md:text-8xl text-primary' : 'text-3xl md:text-4xl text-highlighted',
-              ]"
-            >
-              {{ m.value }}
-            </div>
-            <div
-              class="font-heading font-semibold mt-3"
-              :class="m.hero ? 'text-xl text-highlighted' : 'text-sm text-highlighted'"
-            >
-              {{ m.label }}
-            </div>
-            <p
-              class="text-muted mt-2"
-              :class="m.hero ? 'text-base max-w-[45ch]' : 'text-xs'"
-            >
-              {{ m.detail }}
+            <h3 class="text-sm font-heading font-bold text-highlighted mb-0.5">
+              {{ metric.label }}
+            </h3>
+            <p class="text-xs text-dimmed mb-5">
+              {{ metric.hint }}
             </p>
+            <div class="space-y-2.5">
+              <div
+                v-for="model in benchmarkModels"
+                :key="`${metric.key}-${model.name}`"
+                class="flex items-center gap-3"
+              >
+                <span
+                  class="w-24 text-xs text-right font-medium shrink-0"
+                  :class="model.isOurs ? 'text-primary font-bold' : 'text-dimmed'"
+                >
+                  {{ model.name }}
+                </span>
+                <div class="flex-1 h-7 bg-muted/50 rounded relative">
+                  <div
+                    class="h-full rounded"
+                    :class="model.isOurs ? 'bg-primary' : 'bg-muted'"
+                    :style="{ width: `${Math.max(((model as Record<string, number>)[metric.key] / maxFor(metric.key)) * 100, 8)}%` }"
+                  />
+                  <span
+                    class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-bold whitespace-nowrap tabular-nums"
+                    :class="model.isOurs ? 'text-inverted' : 'text-highlighted'"
+                  >
+                    {{ metric.key === 'throughput'
+                      ? (model as Record<string, number>)[metric.key].toLocaleString()
+                      : (model as Record<string, number>)[metric.key] }}{{ metric.key !== 'throughput' ? '%' : '' }}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -32,9 +32,6 @@ header:
           icon: i-lucide-workflow
           description: AI-assisted quality control for Marathi documents
           to: /products/document-review-pipeline
-    - label: Benchmarks
-      icon: i-lucide-bar-chart-3
-      to: /benchmarks
   showSearch: false
   showColorMode: true
 
@@ -52,9 +49,6 @@ footer:
         - label: Document Review Pipeline
           icon: i-lucide-workflow
           to: /products/document-review-pipeline
-        - label: Benchmarks
-          icon: i-lucide-bar-chart-3
-          to: /benchmarks
     - label: Connect
       icon: i-lucide-link
       children:

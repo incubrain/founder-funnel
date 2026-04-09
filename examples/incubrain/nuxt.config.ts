@@ -21,7 +21,7 @@ export default defineNuxtConfig({
   routeRules: {
     '/': { appLayout: 'landing' },
     '/benchmarks': { appLayout: 'default' },
-    '/domains/**': { appLayout: 'default' },
+    '/domains/**': { appLayout: 'landing' },
     '/products/**': { appLayout: 'default' },
   },
 
