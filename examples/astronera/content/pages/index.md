@@ -12,7 +12,8 @@ prose: false
 links:
   - label: Policy Framework
     size: xl
-    to: /darksky/policy/overview
+    to: /pdfs/tara-dark-sky-policy-maharashtra.pdf
+    target: _blank
     trailing-icon: i-lucide-arrow-right
     variant: solid
     color: neutral
