@@ -122,31 +122,37 @@ function maxFor(key: string) {
         </p>
       </div>
       <div class="relative">
-        <div class="flex items-center gap-16 md:gap-24 animate-marquee whitespace-nowrap">
-          <img
-            v-for="(logo, i) in [
-              { src: '/logos/sarvam.svg', alt: 'Sarvam AI' },
-              { src: '/logos/bhashini.svg', alt: 'Bhashini' },
-              { src: '/logos/ai4bharat.svg', alt: 'AI4Bharat' },
-              { src: '/logos/openai.svg', alt: 'OpenAI' },
-              { src: '/logos/google-deepmind.svg', alt: 'Google DeepMind' },
-              { src: '/logos/meta.svg', alt: 'Meta AI' },
-              { src: '/logos/microsoft.svg', alt: 'Microsoft' },
-              { src: '/logos/mistral.svg', alt: 'Mistral' },
-              { src: '/logos/sarvam.svg', alt: 'Sarvam AI' },
-              { src: '/logos/bhashini.svg', alt: 'Bhashini' },
-              { src: '/logos/ai4bharat.svg', alt: 'AI4Bharat' },
-              { src: '/logos/openai.svg', alt: 'OpenAI' },
-              { src: '/logos/google-deepmind.svg', alt: 'Google DeepMind' },
-              { src: '/logos/meta.svg', alt: 'Meta AI' },
-              { src: '/logos/microsoft.svg', alt: 'Microsoft' },
-              { src: '/logos/mistral.svg', alt: 'Mistral' },
+        <div class="flex items-center gap-14 md:gap-20 animate-marquee whitespace-nowrap">
+          <div
+            v-for="(company, i) in [
+              { icon: 'i-simple-icons-sarvam', name: 'Sarvam AI' },
+              { icon: 'i-simple-icons-google', name: 'Google DeepMind' },
+              { icon: 'i-simple-icons-openai', name: 'OpenAI' },
+              { icon: 'i-simple-icons-meta', name: 'Meta AI' },
+              { icon: 'i-simple-icons-microsoft', name: 'Microsoft' },
+              { icon: 'i-simple-icons-mistral', name: 'Mistral' },
+              { icon: 'i-simple-icons-amazonwebservices', name: 'AWS' },
+              { icon: 'i-simple-icons-nvidia', name: 'NVIDIA' },
+              { icon: 'i-simple-icons-sarvam', name: 'Sarvam AI' },
+              { icon: 'i-simple-icons-google', name: 'Google DeepMind' },
+              { icon: 'i-simple-icons-openai', name: 'OpenAI' },
+              { icon: 'i-simple-icons-meta', name: 'Meta AI' },
+              { icon: 'i-simple-icons-microsoft', name: 'Microsoft' },
+              { icon: 'i-simple-icons-mistral', name: 'Mistral' },
+              { icon: 'i-simple-icons-amazonwebservices', name: 'AWS' },
+              { icon: 'i-simple-icons-nvidia', name: 'NVIDIA' },
             ]"
             :key="i"
-            :src="logo.src"
-            :alt="logo.alt"
-            class="h-8 md:h-10 w-auto shrink-0 opacity-40 grayscale dark:invert"
+            class="shrink-0 flex items-center gap-3 opacity-40"
           >
+            <UIcon
+              :name="company.icon"
+              class="size-7 md:size-8 text-highlighted"
+            />
+            <span class="text-sm md:text-base font-heading font-semibold text-highlighted">
+              {{ company.name }}
+            </span>
+          </div>
         </div>
       </div>
     </section>
