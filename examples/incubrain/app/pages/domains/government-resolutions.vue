@@ -15,9 +15,44 @@ const activeTab = ref<'ocr' | 'structured'>('ocr')
 
 const documents = [
   {
-    id: 'early-digital-2013',
-    label: 'Home Dept (2013)',
-    era: 'Early digital — 5 pages, likely legacy font encoded',
+    id: 'pre-2010-2007',
+    label: '2007',
+    era: 'Pre-2010 — Scanned / legacy encoded, 2 pages',
+    images: [
+      '/gr-samples/gr-2007-1116-page-1.png',
+      '/gr-samples/gr-2007-1116-page-2.png',
+    ],
+    text: 'महाराष्ट्र शासन\nगृह विभाग\n\nदिनांक: ०५ फेब्रुवारी २००७\n\nPre-2010 era document. Created with\nlegacy fonts — text extraction produces\ngarbled ASCII characters. Full OCR\nrequired for any usable text output.',
+  },
+  {
+    id: 'pre-2010-2008',
+    label: '2008',
+    era: 'Pre-2010 — 25 page document, showing first 5',
+    images: [
+      '/gr-samples/gr-2008-1032-page-01.png',
+      '/gr-samples/gr-2008-1032-page-02.png',
+      '/gr-samples/gr-2008-1032-page-03.png',
+      '/gr-samples/gr-2008-1032-page-04.png',
+      '/gr-samples/gr-2008-1032-page-05.png',
+    ],
+    text: 'महाराष्ट्र शासन\n\nदिनांक: १२ नोव्हेंबर २००८\n\n25-page government resolution.\nLegacy font era — Shree Dev, Kruti Dev,\nor similar proprietary encoding.\nStandard text extraction fails entirely.',
+  },
+  {
+    id: 'pre-2010-2009',
+    label: '2009',
+    era: 'Pre-2010 — Scanned paper, 4 pages',
+    images: [
+      '/gr-samples/gr-2009-1710-page-1.png',
+      '/gr-samples/gr-2009-1710-page-2.png',
+      '/gr-samples/gr-2009-1710-page-3.png',
+      '/gr-samples/gr-2009-1710-page-4.png',
+    ],
+    text: 'महाराष्ट्र शासन\n\nदिनांक: २७ एप्रिल २००९\n\nScanned paper document — the original\nwas typed, printed, and scanned.\nNo digital text layer exists.\nFull OCR is the only extraction path.',
+  },
+  {
+    id: 'transition-2013',
+    label: '2013',
+    era: 'Transition — 5 pages, legacy to digital shift',
     images: [
       '/gr-samples/gr-2013-home-page-1.png',
       '/gr-samples/gr-2013-home-page-2.png',
@@ -25,23 +60,12 @@ const documents = [
       '/gr-samples/gr-2013-home-page-4.png',
       '/gr-samples/gr-2013-home-page-5.png',
     ],
-    text: 'Government of Maharashtra\nHome Department\n\nDated: 15 July 2013\n\nEarly digital era GR. Likely created\nwith legacy fonts (Kruti Dev / Shree Dev).\nText extraction produces garbled ASCII.\nFull OCR required for accurate text.',
+    text: 'Government of Maharashtra\nHome Department\n\nDated: 15 July 2013\n\nTransition era — departments shifting\nfrom legacy fonts to Unicode.\nMixed encoding common within\nsingle documents.',
   },
   {
-    id: 'transition-2015',
-    label: 'General Admin (2015)',
-    era: 'Transition era — 3 pages, mixed encoding possible',
-    images: [
-      '/gr-samples/gr-2015-promotion-page-1.png',
-      '/gr-samples/gr-2015-promotion-page-2.png',
-      '/gr-samples/gr-2015-promotion-page-3.png',
-    ],
-    text: 'महाराष्ट्र शासन\nसामान्य प्रशासन विभाग\n\nदिनांक: ०६ ऑक्टोबर २०१५\n\nTransition era document. May contain\nmixed encoding — Unicode headers with\nlegacy font body text. Standard text\nextraction unreliable across the document.',
-  },
-  {
-    id: 'legacy-2017',
-    label: 'Compassionate (2017)',
-    era: 'Legacy transition — 28 page policy document',
+    id: 'modern-2017',
+    label: '2017',
+    era: 'Modern — 28 page policy document, showing 5',
     images: [
       '/gr-samples/gr-2017-compassionate-page-01.png',
       '/gr-samples/gr-2017-compassionate-page-02.png',
@@ -49,24 +73,11 @@ const documents = [
       '/gr-samples/gr-2017-compassionate-page-04.png',
       '/gr-samples/gr-2017-compassionate-page-05.png',
     ],
-    text: 'महाराष्ट्र शासन\nसामान्य प्रशासन विभाग\n\nदिनांक: २१ सप्टेंबर २०१७\n\nविषय: अनुकंपा तत्वावर शासन सेवेत\nनियुक्ती देण्यासंदर्भात सुधारित धोरण\n\n28-page comprehensive policy document.\nShowing first 5 pages. Full document\nprocessed through the pipeline.',
-  },
-  {
-    id: 'modern-2022',
-    label: 'Technical Ed (2022)',
-    era: 'Modern — 47 page GR, native Unicode',
-    images: [
-      '/gr-samples/gr-2022-te-page-01.png',
-      '/gr-samples/gr-2022-te-page-02.png',
-      '/gr-samples/gr-2022-te-page-03.png',
-      '/gr-samples/gr-2022-te-page-04.png',
-      '/gr-samples/gr-2022-te-page-05.png',
-    ],
-    text: 'महाराष्ट्र शासन\nतंत्रशिक्षण विभाग\n\nदिनांक: ०३ जून २०२२\n\nModern native Unicode document.\n47-page GR — showing first 5 pages.\nText extractable but no search, indexing,\nor cross-referencing exists.\nEntity extraction required.',
+    text: 'महाराष्ट्र शासन\nसामान्य प्रशासन विभाग\n\nदिनांक: २१ सप्टेंबर २०१७\n\nविषय: अनुकंपा तत्वावर शासन सेवेत\nनियुक्ती देण्यासंदर्भात सुधारित धोरण\n\n28-page comprehensive policy document.\nNative Unicode — text extractable but\nnot searchable or cross-referenced.',
   },
   {
     id: 'current-2026',
-    label: 'Latest (2026)',
+    label: '2026',
     era: 'Current — 9 page GR, full pipeline demo',
     images: [
       '/gr-samples/gr-2026-sample1-page-1.png',
@@ -79,7 +90,7 @@ const documents = [
       '/gr-samples/gr-2026-sample1-page-8.png',
       '/gr-samples/gr-2026-sample1-page-9.png',
     ],
-    text: 'महाराष्ट्र शासन निर्णय\n\nदिनांक: ०९ एप्रिल २०२६\n\n9-page Government Resolution.\nFull pipeline processing demonstrated\nacross headers, body text, tables,\nand signatures.',
+    text: 'महाराष्ट्र शासन निर्णय\n\nदिनांक: ०९ एप्रिल २०२६\n\n9-page Government Resolution.\nFull pipeline processing — OCR,\nconsensus review, entity extraction,\nand structured database output.',
   },
 ]
 
