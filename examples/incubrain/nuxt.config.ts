@@ -18,10 +18,7 @@ export default defineNuxtConfig({
     description: 'Purpose-built Marathi OCR and data pipeline for digitizing Maharashtra\'s government records',
   },
 
-  routeRules: {
-    '/domains/**': { appLayout: 'landing' },
-    '/products/**': { appLayout: 'landing' },
-  },
+  routeRules: {},
 
   docs: { enabled: false },
 
