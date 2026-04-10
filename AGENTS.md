@@ -6,10 +6,10 @@ A validation tool for technical founders — captures signal (email, presales, b
 
 ```bash
 pnpm dev:ff          # Founder Funnel dev server
-pnpm dev:ae          # Astronera dev server
+
 pnpm dev:starter     # Starter template dev server
 pnpm dev:ib          # Incubrain dev server
-pnpm build:ae        # Production build (astronera)
+
 pnpm lint            # ESLint check
 pnpm lint:fix        # ESLint autofix
 pnpm test            # Run tests
@@ -43,7 +43,6 @@ pnpm verify          # dev:prepare + lint + typecheck
 layer/                         → Nuxt layer (core reusable code)
 layer/modules/                 → Feature modules (events, rss, changelog, docs)
 examples/foundry/              → Founder Funnel example app
-examples/astronera/            → Astronera example app
 examples/incubrain/            → Incubrain example app
 .starters/default/             → Starter template (used by CLI)
 shared/config/                 → Configuration files
@@ -115,7 +114,7 @@ npx skills update skill-name            # Update a specific skill
 
 ## Visual Testing
 
-Use the `browser-tester` sub-agent or `visual-tester` skill to detect UI/UX bugs via annotated screenshots. The dev server must be running first (`pnpm dev:ae`, `pnpm dev:ff`, etc.).
+Use the `browser-tester` sub-agent or `visual-tester` skill to detect UI/UX bugs via annotated screenshots. The dev server must be running first (`pnpm dev:ff`, `pnpm dev:ib`, etc.).
 
 **When to use:**
 - After implementing UI changes — verify layout, spacing, and styling

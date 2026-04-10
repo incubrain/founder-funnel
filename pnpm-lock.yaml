@@ -80,30 +80,6 @@ importers:
         specifier: ^4.19.0
         version: 4.21.0
 
-  examples/astronera:
-    dependencies:
-      '@iconify-json/lucide':
-        specifier: ^1.2.90
-        version: 1.2.96
-      '@iconify-json/simple-icons':
-        specifier: ^1.2.38
-        version: 1.2.73
-      '@incubrain/foundry':
-        specifier: ^0.6.1
-        version: 0.6.1(c3a09462921dc91c316eb0c21231b08e)
-      better-sqlite3:
-        specifier: ^12.5.0
-        version: 12.6.2
-      nuxt:
-        specifier: ^4.3.0
-        version: 4.3.1(@parcel/watcher@2.5.6)(@types/node@25.4.0)(@vue/compiler-sfc@3.5.29)(better-sqlite3@12.6.2)(cac@6.7.14)(db0@0.3.4(better-sqlite3@12.6.2))(eslint@10.0.3(jiti@2.6.1))(ioredis@5.9.3)(lightningcss@1.32.0)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(rollup@4.59.0)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.5(typescript@5.9.3))(yaml@2.8.2)
-      nuxt-llms:
-        specifier: ^0.2.0
-        version: 0.2.0(magicast@0.5.2)
-      nuxt-studio:
-        specifier: ^1.3.2
-        version: 1.4.0(db0@0.3.4(better-sqlite3@12.6.2))(ioredis@5.9.3)(magicast@0.5.2)(vue@3.5.29(typescript@5.9.3))
-
   examples/foundry:
     dependencies:
       '@iconify-json/lucide':
@@ -115,30 +91,6 @@ importers:
       '@incubrain/foundry':
         specifier: ^0.6.1
         version: 0.6.1(c3a09462921dc91c316eb0c21231b08e)
-      better-sqlite3:
-        specifier: ^12.5.0
-        version: 12.6.2
-      nuxt:
-        specifier: ^4.3.0
-        version: 4.3.1(@parcel/watcher@2.5.6)(@types/node@25.4.0)(@vue/compiler-sfc@3.5.29)(better-sqlite3@12.6.2)(cac@6.7.14)(db0@0.3.4(better-sqlite3@12.6.2))(eslint@10.0.3(jiti@2.6.1))(ioredis@5.9.3)(lightningcss@1.32.0)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(rollup@4.59.0)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.5(typescript@5.9.3))(yaml@2.8.2)
-      nuxt-llms:
-        specifier: ^0.2.0
-        version: 0.2.0(magicast@0.5.2)
-      nuxt-studio:
-        specifier: ^1.4.0
-        version: 1.4.0(db0@0.3.4(better-sqlite3@12.6.2))(ioredis@5.9.3)(magicast@0.5.2)(vue@3.5.29(typescript@5.9.3))
-
-  examples/incubrain:
-    dependencies:
-      '@iconify-json/lucide':
-        specifier: ^1.2.96
-        version: 1.2.96
-      '@iconify-json/simple-icons':
-        specifier: ^1.2.73
-        version: 1.2.73
-      '@incubrain/foundry':
-        specifier: workspace:*
-        version: link:../../layer
       better-sqlite3:
         specifier: ^12.5.0
         version: 12.6.2

@@ -70,7 +70,7 @@ Max nesting: 3 levels
 - Create `server/plugins/evlog-drain.ts` in your app to send logs externally
 - Supports: Sentry, Axiom, PostHog, Better Stack, OTLP, or custom
 - Use `createDrainPipeline()` for batching + retry in production
-- See: `examples/astronera/server/plugins/evlog-drain.ts`
+- See: `examples/foundry/server/plugins/evlog-drain.ts`
 
 **Browser Transport:**
 - Client-side `log.info()`/`log.error()` auto-sent to server via `/api/_evlog/ingest`

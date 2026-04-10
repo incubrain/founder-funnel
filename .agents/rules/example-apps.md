@@ -20,7 +20,7 @@ Example apps extend the core layer. They demonstrate usage patterns and serve as
 **Server plugins:**
 - Create evlog drain plugins in `server/plugins/evlog-drain.ts`
 - Use `createDrainPipeline()` for production batching + retry
-- See `examples/astronera/server/plugins/evlog-drain.ts` for reference
+- See `examples/foundry/server/plugins/evlog-drain.ts` for reference
 
 **Environment variables:**
 - App-specific env vars in `.env` (gitignored)

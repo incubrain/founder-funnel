@@ -37,7 +37,7 @@ Then `pnpm layer:publish` publishes to npm separately. This two-step approach le
 
 Update example apps to use the new version:
 ```bash
-# In examples/astronera/package.json and examples/foundry/package.json
+# In examples/foundry/package.json (and other example apps)
 "@incubrain/foundry": "^0.7.0"
 ```
 

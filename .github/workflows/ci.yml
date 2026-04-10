@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app: [astronera, foundry]
+        app: [foundry]
       fail-fast: false
     env:
       CI_PRERENDER: true

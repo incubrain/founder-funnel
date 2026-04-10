@@ -8,14 +8,14 @@
     "build": "pnpm run --filter @incubrain/foundry build",
     "dev:starter": "nuxt dev .starters/default",
     "dev:foundry": "nuxt dev examples/foundry",
-    "dev:ae": "nuxt dev examples/astronera",
+
     "dev:ib": "nuxt dev examples/incubrain",
-    "build:ae": "nuxt build examples/astronera > build.log 2>&1",
+
     "build:foundry": "nuxt build examples/foundry > build.log 2>&1",
     "build:ib": "nuxt build examples/incubrain > build.log 2>&1",
     "build:ci": "node scripts/build-diagnostic.mjs",
     "build:ci:layer": "node scripts/build-diagnostic.mjs layer",
-    "build:ci:astronera": "node scripts/build-diagnostic.mjs examples/astronera",
+
     "build:ci:foundry": "node scripts/build-diagnostic.mjs examples/foundry",
     "generate": "pnpm -r generate",
     "preview": "pnpm --filter web preview",
@@ -23,7 +23,7 @@
     "lint:fix": "eslint . --fix",
     "ship": "git push",
     "skills": "bash scripts/install-skills.sh",
-    "docker": "docker build --memory=4g -f examples/astronera/Dockerfile -t astronera . && docker run --env-file .env --rm -p 3000:3000 astronera",
+
     "repomix": "repomix --ignore='examples,deploy,public,**/public/**,context,**/assets/**,**/decisions/**,.claude,**/content/**/*.{md,yml},apps/docs/**.md'",
     "repomix:new": "{ git ls-files --others --exclude-standard; git diff --name-only; git diff --cached --name-only; } | sort -u | repomix --stdin -o repomix-changed.xml",
     "typecheck": "nuxt typecheck layer",

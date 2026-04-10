@@ -48,7 +48,6 @@ export default defineNuxtConfig({
 layer/              Nuxt layer (npm: @incubrain/foundry)
 examples/
   ├── foundry/      Demo site
-  ├── astronera/    Real-world example
   └── incubrain/    Incubation platform example
 .starters/
   └── default/      Minimal template (used by CLI)

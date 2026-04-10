@@ -36,7 +36,7 @@ The GitHub Actions CI runs four jobs:
 |---|---|---|
 | `quality` | All pushes | Install, prepare, lint, typecheck |
 | `test` | All pushes | Unit tests via Vitest |
-| `build` | After quality + test | Matrix build for astronera and foundry |
+| `build` | After quality + test | Matrix build for foundry |
 | `starter-build` | After quality + test | Verifies starter template builds standalone |
 
 ## What to Test
