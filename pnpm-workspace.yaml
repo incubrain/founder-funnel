@@ -5,10 +5,7 @@ packages:
   - 'layer'
   - 'cli'
   - 'playground'
-
-  # Only include specific examples we're building
   - 'examples/foundry'
-  - 'examples/incubrain'
 
 ignoredBuiltDependencies:
   - '@parcel/watcher'
@@ -20,3 +17,6 @@ ignoredBuiltDependencies:
 onlyBuiltDependencies:
   - better-sqlite3
   - sharp
+
+minimumReleaseAgeExclude:
+  - '@incubrain/foundry'

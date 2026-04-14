@@ -82,7 +82,7 @@ All notable changes to this project will be documented in this file.
 
 - **Package exports** — `@incubrain/foundry/schemas` export enables consumers to import content collection zod schemas directly instead of redefining them; wildcard `./*` export preserves deep imports
 - **evlog structured logging** — AI-friendly error context with `why`/`fix` fields, enrichment plugin (user agent + geo), tail sampling plugin, and browser transport
-- **evlog drain scaffolding** — `createDrainPipeline()` for batching + retry; example drain in `examples/astronera/server/plugins/evlog-drain.ts`
+- **evlog drain scaffolding** — `createDrainPipeline()` for batching
 - **CI pipeline** — Lint, typecheck, and build diagnostics for AI agent observability
 - **Team collection** — `baseTeamSchema` in layer content collections
 

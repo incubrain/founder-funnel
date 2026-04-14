@@ -2,7 +2,6 @@
 // scripts/build-diagnostic.mjs
 // Wraps `nuxt build` and writes structured JSONL diagnostics to logs/
 // Usage: node scripts/build-diagnostic.mjs <app-dir>
-//   e.g. node scripts/build-diagnostic.mjs examples/astronera
 
 import { spawn } from 'node:child_process'
 import { appendFile, mkdir } from 'node:fs/promises'

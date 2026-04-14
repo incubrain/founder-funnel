@@ -43,14 +43,12 @@ pnpm verify          # dev:prepare + lint + typecheck
 layer/                         → Nuxt layer (core reusable code)
 layer/modules/                 → Feature modules (events, rss, changelog, docs)
 examples/foundry/              → Founder Funnel example app
-examples/incubrain/            → Incubrain example app
 .starters/default/             → Starter template (used by CLI)
 shared/config/                 → Configuration files
 shared/types/                  → TypeScript types
 deploy/                        → Dockerfiles and deployment configs
 .agents/rules/                 → Agent rule files (symlinked from .claude/rules/)
 .agents/skills/                → External skills (gitignored, install with scripts/install-skills.sh)
-.agents/vibekanban-configs.md  → VibeKanban agent configurations (6 roles)
 .claude/agents/                → Claude Code sub-agent definitions
 .claude/scripts/               → Utility scripts for agents
 skills/                        → Custom skills (committed to git)
@@ -133,7 +131,7 @@ npx agent-browser screenshot --annotate --full
 npx agent-browser close
 ```
 
-**Sub-agents:** `.claude/agents/browser-tester.md` defines the Browser Visual Tester — use via VibeKanban's Browser Tester config or as a Claude Code sub-agent for visual review tasks.
+**Sub-agents:** `.claude/agents/browser-tester.md` defines the Browser Visual Tester — use as a Claude Code sub-agent for visual review tasks.
 
 **Observability:** Every `agent-browser` command is logged to `.claude/visual-test-log.md` (gitignored) via a PostToolUse hook. Check this file to audit what commands were run during a visual review session.
 
