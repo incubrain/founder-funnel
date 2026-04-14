@@ -3,7 +3,6 @@ import { useNavigation } from '#navigation'
 import { useSearch } from '#search'
 
 const { title, seo } = useAppConfig()
-const isDev = import.meta.dev
 
 const { data: site } = useAsyncData('app-config', () =>
   queryCollection('config').where('stem', '=', 'config/site').first(),

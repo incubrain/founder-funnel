@@ -1,6 +1,6 @@
 {
   "name": "create-foundry",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Create a new IncuBrain Foundry project",
   "license": "MIT",
   "type": "module",
@@ -18,12 +18,12 @@
   },
   "dependencies": {
     "@nuxt/cli": "^3.34.0",
-    "citty": "^0.2.1"
+    "citty": "^0.2.2"
   },
   "devDependencies": {
-    "@types/node": "^22.19.3",
-    "tsup": "^8.5.0",
-    "tsx": "^4.19.0"
+    "@types/node": "^25.5.2",
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0"
   },
   "repository": {
     "type": "git",

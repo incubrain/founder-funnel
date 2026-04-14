@@ -8,14 +8,9 @@
     "build": "pnpm run --filter @incubrain/foundry build",
     "dev:starter": "nuxt dev .starters/default",
     "dev:foundry": "nuxt dev examples/foundry",
-
-    "dev:ib": "nuxt dev examples/incubrain",
-
     "build:foundry": "nuxt build examples/foundry > build.log 2>&1",
-    "build:ib": "nuxt build examples/incubrain > build.log 2>&1",
     "build:ci": "node scripts/build-diagnostic.mjs",
     "build:ci:layer": "node scripts/build-diagnostic.mjs layer",
-
     "build:ci:foundry": "node scripts/build-diagnostic.mjs examples/foundry",
     "generate": "pnpm -r generate",
     "preview": "pnpm --filter web preview",
@@ -23,7 +18,6 @@
     "lint:fix": "eslint . --fix",
     "ship": "git push",
     "skills": "bash scripts/install-skills.sh",
-
     "repomix": "repomix --ignore='examples,deploy,public,**/public/**,context,**/assets/**,**/decisions/**,.claude,**/content/**/*.{md,yml},apps/docs/**.md'",
     "repomix:new": "{ git ls-files --others --exclude-standard; git diff --name-only; git diff --cached --name-only; } | sort -u | repomix --stdin -o repomix-changed.xml",
     "typecheck": "nuxt typecheck layer",
@@ -37,31 +31,30 @@
     "cli:release": "release-it --config .release-it.cli.json",
     "cli:release:dry": "release-it --config .release-it.cli.json --dry-run",
     "cli:publish": "cd cli && npm publish --access public",
-    "kanban": "npx vibe-kanban",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
-    "@nuxt/eslint": "^1.15.1",
-    "@nuxt/eslint-config": "^1.15.1",
+    "@nuxt/eslint": "^1.15.2",
+    "@nuxt/eslint-config": "^1.15.2",
     "@release-it/bumper": "^7.0.5",
-    "@release-it/conventional-changelog": "^10.0.5",
-    "eslint": "^10.0.3",
-    "nuxt": "4.3.1",
-    "release-it": "^19.2.3",
-    "typescript": "^5.9.3",
-    "vue-tsc": "^3.2.2"
+    "@release-it/conventional-changelog": "^10.0.6",
+    "eslint": "^10.2.0",
+    "nuxt": "4.4.2",
+    "release-it": "^19.2.4",
+    "typescript": "^6.0.2",
+    "vue-tsc": "^3.2.6"
   },
   "packageManager": "pnpm@10.28.2",
   "devDependencies": {
     "@nuxt/test-utils": "^4.0.0",
-    "@vitest/browser-playwright": "^4.0.18",
-    "@vitest/coverage-v8": "^4.0.18",
+    "@vitest/browser-playwright": "^4.1.2",
+    "@vitest/coverage-v8": "^4.1.2",
     "@vue/test-utils": "^2.4.6",
     "eslint-plugin-vuejs-accessibility": "^2.5.0",
-    "happy-dom": "^20.8.3",
-    "playwright-core": "^1.58.2",
-    "vitest": "^4.0.18"
+    "happy-dom": "^20.8.9",
+    "playwright-core": "^1.59.1",
+    "vitest": "^4.1.2"
   }
 }

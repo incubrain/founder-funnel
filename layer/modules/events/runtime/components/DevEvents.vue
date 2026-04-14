@@ -137,7 +137,7 @@ const triggerEvent = async () => {
     return
   }
 
-  await trackEvent(payload)
+  await trackEvent(payload as Parameters<typeof trackEvent>[0])
 }
 
 const handleClose = () => {

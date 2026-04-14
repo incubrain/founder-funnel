@@ -40,13 +40,10 @@ watch(
   page,
   async (newPage) => {
     if (newPage) {
-      defineOgImage({
-        component: 'Frame',
-        props: {
-          title: newPage.title,
-          description: newPage.description,
-          image: ((siteConfig.value as Record<string, unknown> | null)?.business as Record<string, unknown> | undefined)?.logo,
-        },
+      defineOgImageComponent('Frame', {
+        title: newPage.title,
+        description: newPage.description,
+        image: ((siteConfig.value as Record<string, unknown> | null)?.business as Record<string, unknown> | undefined)?.logo,
       })
     }
   },

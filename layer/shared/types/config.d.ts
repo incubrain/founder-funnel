@@ -34,11 +34,16 @@ declare module 'nuxt/schema' {
         navigation: CollectionConfig
         searchable: string[]
       }
+      routeMap?: Record<string, string>
+      searchable?: string[]
+      pagesBackLabel?: string
+      pagesPrefix?: string
       defaultAuthor?: string
       routing: {
-        sources: string
-        offers: string
-        success: string
+        sources?: string
+        offers?: string
+        success?: string
+        glossary?: string
       }
     }
     seo: {

@@ -9,12 +9,12 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@iconify-json/lucide": "^1.2.96",
-    "@iconify-json/simple-icons": "^1.2.73",
-    "@incubrain/foundry": "^0.6.1",
-    "better-sqlite3": "^12.5.0",
-    "nuxt": "^4.3.0",
+    "@iconify-json/lucide": "^1.2.101",
+    "@iconify-json/simple-icons": "^1.2.76",
+    "@incubrain/foundry": "^0.7.0",
+    "better-sqlite3": "^12.8.0",
+    "nuxt": "^4.4.2",
     "nuxt-llms": "^0.2.0",
-    "nuxt-studio": "^1.4.0"
+    "nuxt-studio": "^1.5.1"
   }
 }
