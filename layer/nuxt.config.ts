@@ -1,4 +1,5 @@
-import { createResolver } from '@nuxt/kit'
+import { join } from 'node:path'
+import { createResolver, useNuxt } from '@nuxt/kit'
 import { defineNuxtConfig } from 'nuxt/config'
 import { ICON_LIBRARIES } from './shared/constants'
 
@@ -15,6 +16,18 @@ export default defineNuxtConfig({
     resolve('./modules/rss'),
     resolve('./modules/changelog'),
     resolve('./modules/docs'),
+    () => {
+      // Auto-register the consumer's app/assets/icons/ SVGs under the `custom:` prefix.
+      // Drop SVG files in <consumer>/app/assets/icons/ and use them as `i-custom:<name>`.
+      // Adopted from upstream docus #1288.
+      const nuxt = useNuxt()
+      nuxt.options.icon ||= {}
+      nuxt.options.icon.customCollections ||= []
+      nuxt.options.icon.customCollections.push({
+        prefix: 'custom',
+        dir: join(nuxt.options.srcDir, 'assets/icons'),
+      })
+    },
     'evlog/nuxt',
     '@nuxt/ui',
     '@nuxtjs/seo',
