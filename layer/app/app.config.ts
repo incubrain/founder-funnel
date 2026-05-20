@@ -120,6 +120,7 @@ export default defineAppConfig({
       },
       defaultVariants: {
         variant: 'link',
+        highlight: true,
       },
     },
     pageLinks: {
