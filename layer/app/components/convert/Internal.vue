@@ -1,7 +1,7 @@
 <!-- app/components/convert/Internal.vue -->
 <script setup lang="ts">
 import type { ButtonProps, PageCardProps } from '@nuxt/ui'
-import type { OfferId } from '~~/modules/events/runtime/types/events'
+import type { OfferId } from '../../../modules/events/runtime/types/events'
 
 interface Props {
   // Option 1: Query by slug

@@ -1,7 +1,7 @@
 <!-- app/components/convert/External.vue -->
 <script setup lang="ts">
 import type { ButtonProps } from '@nuxt/ui'
-import type { OfferId } from '~~/modules/events/runtime/types/events'
+import type { OfferId } from '../../../modules/events/runtime/types/events'
 
 interface Props {
   // Functional

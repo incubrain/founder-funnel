@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { OfferId } from '~~/modules/events/runtime/types/events'
+import type { OfferId } from '../../modules/events/runtime/types/events'
 
 export interface FieldDef {
   name: string
