@@ -9,6 +9,9 @@ const props = withDefaults(
   },
 )
 
+const appConfig = useAppConfig()
+const primaryColor = computed(() => appConfig.ui?.colors?.primary ?? 'emerald')
+
 const title = computed(() => (props.title || '').slice(0, 60))
 const description = computed(() => (props.description || '').slice(0, 200))
 </script>
@@ -60,7 +63,7 @@ const description = computed(() => (props.description || '').slice(0, 200))
     <div class="pl-[100px]">
       <p
         v-if="headline"
-        class="uppercase text-[24px] text-emerald-500 mb-4 font-semibold"
+        :class="`uppercase text-[24px] text-${primaryColor}-500 mb-4 font-semibold`"
       >
         {{ headline }}
       </p>
