@@ -16,6 +16,7 @@ export default defineNuxtConfig({
     resolve('./modules/rss'),
     resolve('./modules/changelog'),
     resolve('./modules/docs'),
+    resolve('./modules/markdown-rewrite'),
     () => {
       // Auto-register the consumer's app/assets/icons/ SVGs under the `custom:` prefix.
       // Drop SVG files in <consumer>/app/assets/icons/ and use them as `i-custom:<name>`.
