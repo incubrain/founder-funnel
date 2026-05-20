@@ -1,6 +1,7 @@
 import { defineNuxtModule, logger } from '@nuxt/kit'
 import { resolve } from 'node:path'
 import { readFile, writeFile } from 'node:fs/promises'
+import type { Nitro } from 'nitropack'
 
 /**
  * Vercel edge redirects for agent-friendly markdown.
@@ -21,7 +22,7 @@ export default defineNuxtModule({
     name: 'markdown-rewrite',
   },
   setup(_options, nuxt) {
-    nuxt.hooks.hook('nitro:init', (nitro) => {
+    nuxt.hooks.hook('nitro:init', (nitro: Nitro) => {
       if (nitro.options.dev || !nitro.options.preset.includes('vercel')) {
         return
       }
