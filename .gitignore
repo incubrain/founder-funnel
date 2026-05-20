@@ -52,3 +52,8 @@ trash
 tree.txt
 **/*-copy.md
 **/* copy.md
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key

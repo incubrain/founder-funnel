@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "product_validator",
+  "project_id": "280ef499-fe38-43a7-b040-65317c40c8c7"
+}

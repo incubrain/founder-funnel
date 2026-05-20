@@ -1,4 +1,62 @@
 {
+  "env": {
+    "CLAUDE_CODE_AUTOCOMPACT_PCT_OVERRIDE": "80"
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "filepath=$(jq -r '.tool_input.file_path // .tool_input.filePath // empty'); if [ -n \"$filepath\" ]; then case \"$filepath\" in *.vue|*.ts|*.js) npx eslint --fix \"$filepath\" 2\u003e/dev/null || true;; esac; fi",
+            "timeout": 30,
+            "type": "command"
+          }
+        ],
+        "matcher": "Write|Edit"
+      },
+      {
+        "hooks": [
+          {
+            "command": "cmd=$(jq -r '.tool_input.command // empty'); if echo \"$cmd\" | grep -q 'agent-browser'; then echo \"[$(date +%Y-%m-%dT%H:%M:%S)] $cmd\" \u003e\u003e \"$CLAUDE_PROJECT_DIR\"/.claude/visual-test-log.md; fi",
+            "timeout": 5,
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "command": "bd prime",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "echo 'POST-COMPACTION: Use pnpm (not npm). Validation != Product. Max 50 lines/component. Check VueUse before custom. Event tracking via useEvents(). Content in YAML not code. Check .agents/rules/ for detailed guidelines. Read module AGENTS.md when working on a specific module.'",
+            "type": "command"
+          }
+        ],
+        "matcher": "compact"
+      },
+      {
+        "hooks": [
+          {
+            "command": "bd prime",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ]
+  },
   "permissions": {
     "allow": [
       "Bash(pnpm dev:*)",
@@ -26,44 +84,6 @@
       "Read(./.env)",
       "Read(./.env.*)",
       "Read(./secrets/**)"
-    ]
-  },
-  "env": {
-    "CLAUDE_CODE_AUTOCOMPACT_PCT_OVERRIDE": "80"
-  },
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "compact",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo 'POST-COMPACTION: Use pnpm (not npm). Validation != Product. Max 50 lines/component. Check VueUse before custom. Event tracking via useEvents(). Content in YAML not code. Check .agents/rules/ for detailed guidelines. Read module AGENTS.md when working on a specific module.'"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "filepath=$(jq -r '.tool_input.file_path // .tool_input.filePath // empty'); if [ -n \"$filepath\" ]; then case \"$filepath\" in *.vue|*.ts|*.js) npx eslint --fix \"$filepath\" 2>/dev/null || true;; esac; fi",
-            "timeout": 30
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cmd=$(jq -r '.tool_input.command // empty'); if echo \"$cmd\" | grep -q 'agent-browser'; then echo \"[$(date +%Y-%m-%dT%H:%M:%S)] $cmd\" >> \"$CLAUDE_PROJECT_DIR\"/.claude/visual-test-log.md; fi",
-            "timeout": 5
-          }
-        ]
-      }
     ]
   }
 }
