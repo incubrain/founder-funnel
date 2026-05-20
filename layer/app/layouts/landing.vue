@@ -4,9 +4,6 @@ const route = useRoute()
 // Use unified content page composable
 const { getPage, setContext } = useContentPage()
 
-// Inject site config (provided by app.vue)
-const siteConfig = inject<Ref<Record<string, unknown> | null>>('site_config', ref(null))
-
 // Fetch page data
 const { data: page } = await getPage()
 
@@ -40,10 +37,9 @@ watch(
   page,
   async (newPage) => {
     if (newPage) {
-      defineOgImageComponent('Frame', {
+      defineOgImageComponent('Landing', {
         title: newPage.title,
         description: newPage.description,
-        image: ((siteConfig.value as Record<string, unknown> | null)?.business as Record<string, unknown> | undefined)?.logo,
       })
     }
   },
