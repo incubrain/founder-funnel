@@ -11,7 +11,7 @@
   "dependencies": {
     "@iconify-json/lucide": "^1.2.101",
     "@iconify-json/simple-icons": "^1.2.76",
-    "@incubrain/foundry": "^0.7.0",
+    "@incubrain/foundry": "workspace:^",
     "better-sqlite3": "^12.8.0",
     "nuxt": "^4.4.2",
     "nuxt-llms": "^0.2.0",

@@ -17,6 +17,25 @@ pnpm typecheck       # Nuxt typecheck (layer)
 pnpm verify          # dev:prepare + lint + typecheck
 ```
 
+## Local layer vs published npm package
+
+**By default, `examples/foundry` and other examples consume the local `layer/` workspace** — `examples/foundry/package.json` declares `"@incubrain/foundry": "workspace:^"`, and `.npmrc` has `link-workspace-packages=true`. Any change you make in `layer/` is immediately picked up by `pnpm dev:foundry` / `pnpm build:foundry` without needing to publish.
+
+**To verify the published npm package (`@incubrain/foundry@<version>`) builds cleanly** — useful before cutting a release — temporarily swap the spec:
+
+```bash
+# Switch examples back to the published package
+(cd examples/foundry && pnpm add '@incubrain/foundry@^0.7.0')
+pnpm build:foundry
+
+# Switch back to local
+(cd examples/foundry && pnpm add '@incubrain/foundry@workspace:^')
+```
+
+**`playground/` always uses local layer** (`workspace:*`) — it's the canonical target for `pnpm --filter playground build` regression checks.
+
+If `pnpm build:foundry` fails with errors that reference `node_modules/.pnpm/@incubrain+foundry@<version>/...`, examples is on the published package and the error is in that release, not your local work.
+
 ## Critical Rules
 
 1. **Never add features that don't capture signal.** If it doesn't help founders validate faster, reject it.
