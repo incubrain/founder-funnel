@@ -1,0 +1,5 @@
+storage/
+htpasswd
+auth-token
+*.log
+verdaccio.pid

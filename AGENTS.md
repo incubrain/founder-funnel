@@ -17,6 +17,86 @@ pnpm typecheck       # Nuxt typecheck (layer)
 pnpm verify          # dev:prepare + lint + typecheck
 ```
 
+## Testing layer changes in external consumers (verdaccio)
+
+For external consumer repos like `astronera` or `incubrain` that don't share this workspace, use a **local verdaccio registry**. pnpm's `link:` protocol doesn't work cleanly cross-repo (cross-tree ESM resolution + isolation boundary issues — see the deep-dive in past bd issues).
+
+### One-time setup
+
+```bash
+pnpm i -g verdaccio          # global install, ~30s
+pnpm verdaccio:start         # in a dedicated terminal — keep it running
+```
+
+The config at `.verdaccio/config.yaml` allows the local `foundry-local` user to publish `@incubrain/*` packages. The user gets registered automatically on the first `publish:local` run; the token is cached in `.verdaccio/auth-token` (gitignored).
+
+### Publishing the local layer
+
+```bash
+pnpm layer:publish:local
+```
+
+Each publish gets a unique prerelease version (`0.7.0-local.<epoch>`) tagged `local` in verdaccio. The `latest` tag stays untouched, so consumers never accidentally pick up a local build via `^X.Y.Z`. Your `layer/package.json` is restored after the publish — uncommitted changes are preserved.
+
+### Consumer-side setup
+
+In each consumer repo (astronera, incubrain), add four scripts + the pre-commit guard:
+
+```json
+"scripts": {
+  "postinstall":        "nuxt prepare && simple-git-hooks",
+  "foundry:local":      "pnpm add @incubrain/foundry@local --registry http://localhost:4873",
+  "foundry:remote":     "pnpm add @incubrain/foundry@^0.7.0",
+  "dev:foundry-local":  "pnpm foundry:local && pnpm dev",
+  "build:foundry-local":"pnpm foundry:local && pnpm build"
+},
+"devDependencies": {
+  "simple-git-hooks": "^2.11.1"
+},
+"simple-git-hooks": {
+  "pre-commit": "bash scripts/foundry-guard.sh"
+}
+```
+
+And `scripts/foundry-guard.sh` (the pre-commit hook):
+
+```bash
+#!/usr/bin/env bash
+set -e
+if git diff --cached --name-only | grep -qx 'package.json'; then
+  if git diff --cached package.json | grep -E '^\+.*"@incubrain/foundry"\s*:\s*"(link:|file:|[0-9]+\.[0-9]+\.[0-9]+-local\.)' >/dev/null; then
+    echo "❌ package.json has @incubrain/foundry pointing at a local-only version."
+    echo "   Run 'pnpm foundry:remote' before committing."
+    exit 1
+  fi
+fi
+```
+
+### Iteration loop
+
+```bash
+# foundry: make changes in layer/, then:
+pnpm layer:publish:local
+
+# consumer (in a separate terminal):
+pnpm foundry:local && pnpm dev
+# or: pnpm dev:foundry-local
+```
+
+Each cycle takes ~3-5 seconds for publish, ~3-5 seconds for the consumer install. Total round-trip ~10 seconds.
+
+### Before committing in the consumer
+
+```bash
+pnpm foundry:remote
+```
+
+The pre-commit guard blocks accidental commits of `@local` versions. If you somehow get past it, CI will fail because the `0.7.0-local.<epoch>` version doesn't exist on public npm.
+
+### Adding any new layer file to the published package
+
+If you add a file to `layer/` that should ship with the package — a new module, a server util, etc. — add it to the `files:` array in `layer/package.json`. Otherwise it's stripped at publish time and consumers will see "module not found" errors.
+
 ## Local layer vs published npm package
 
 **By default, `examples/foundry` and other examples consume the local `layer/` workspace** — `examples/foundry/package.json` declares `"@incubrain/foundry": "workspace:^"`, and `.npmrc` has `link-workspace-packages=true`. Any change you make in `layer/` is immediately picked up by `pnpm dev:foundry` / `pnpm build:foundry` without needing to publish.

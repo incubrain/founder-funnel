@@ -24,6 +24,7 @@
     "app",
     "modules/config.ts",
     "modules/css.ts",
+    "modules/markdown-rewrite.ts",
     "modules/events/index.ts",
     "modules/events/runtime",
     "modules/events/server",
@@ -42,7 +43,8 @@
     "build": "nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "prepack": "rm -rf modules/**/node_modules"
+    "prepack": "rm -rf modules/**/node_modules",
+    "publish:local": "bash scripts/publish-local.sh"
   },
   "dependencies": {
     "@nuxt/content": "^3.13.0",
