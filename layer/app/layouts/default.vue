@@ -1,20 +1,21 @@
 <script setup lang="ts">
-// Pure presentation. Reads page metadata from the shared content context if
-// the catch-all populated it; otherwise renders the slot bare. Does NOT
-// fetch and does NOT throw — that responsibility moved to `pages/[...slug].vue`.
-const { context } = useContentPage()
-const page = computed(
-  () => (context.value?.page ?? null) as Record<string, any> | null,
-)
+// Layout pulls page data via the same key the catch-all uses; useAsyncData
+// dedupes, so this is a cache hit, not a second HTTP request. We need the
+// data at LAYOUT render time (not just page render time) because layouts
+// render before their slot — if we read from a shared context that the
+// catch-all populates inside its slot, SSR sees `null` and the client
+// hydrates with the populated value → guaranteed CLS / hydration mismatch.
+const { getPage } = useContentPage()
+const { data: page } = await getPage()
 </script>
 
 <template>
   <UMain>
     <UPage class="pb-12 lg:pb-16">
       <UPageHero
-        v-if="page?.hero && (page?.title || page?.description)"
-        :title="page?.title"
-        :description="page?.description"
+        v-if="(page as any)?.hero && ((page as any)?.title || (page as any)?.description)"
+        :title="(page as any)?.title"
+        :description="(page as any)?.description"
       />
       <UContainer>
         <slot />

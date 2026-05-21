@@ -49,17 +49,29 @@ provide('site_config', site ?? ref(null))
 
 <template>
   <UApp>
-    <NuxtLoadingIndicator color="var(--ui-primary)" />
+    <!--
+      Sticky-footer pattern. Without it, when `<NuxtPage>` is empty or
+      pending (SPA routes with `ssr: false`, slow async setups, etc.) the
+      footer collapses against the header on first paint and jumps down
+      when the page resolves — the "content rendered below footer" symptom.
+      The `flex-col` wrapper makes `flex-1` reserve the remaining viewport
+      height for the layout/page so the footer stays pinned to the bottom.
+    -->
+    <div class="min-h-screen flex flex-col">
+      <NuxtLoadingIndicator color="var(--ui-primary)" />
 
-    <AppBanner v-if="$route.meta.banner !== false" />
+      <AppBanner v-if="$route.meta.banner !== false" />
 
-    <AppHeader v-if="$route.meta.header !== false" />
+      <AppHeader v-if="$route.meta.header !== false" />
 
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+      <div class="flex-1">
+        <NuxtLayout>
+          <NuxtPage />
+        </NuxtLayout>
+      </div>
 
-    <AppFooter v-if="$route.meta.footer !== false" />
+      <AppFooter v-if="$route.meta.footer !== false" />
+    </div>
 
     <ClientOnly>
       <LazyUContentSearch

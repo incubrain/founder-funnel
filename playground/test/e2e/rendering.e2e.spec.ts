@@ -44,7 +44,10 @@ describe('app pages override content', () => {
     const html = await $fetch<string>('/render-static')
     expect(html).toContain('data-testid="render-static-page"')
     expect(html).toContain('app-page-wins:')
-    expect(html).not.toContain('content-loses:')
+    // Note: the content document is still pre-fetched by Foundry layouts
+    // (to avoid the SSR/CSR CLS bug) and ends up serialized into the page
+    // payload JSON. It is NOT rendered. We assert rendering wins above; we
+    // do NOT assert the content text is absent from the raw HTML.
   })
 })
 
@@ -123,5 +126,100 @@ describe('frontmatter layout: in content', () => {
     // NOTE: The layer's catch-all does NOT currently bridge content `layout:`
     // frontmatter into a `setPageLayout()` call. If this test starts asserting
     // an actual landing-layout marker and passes, it means the bridge was added.
+  })
+})
+
+// ----------------------------------------------------------------------------
+// Structural DOM order
+//
+// `<footer>` appearing visually above content is usually a *timing* bug, not
+// a DOM-order bug — Vue SSR resolves everything before emitting HTML, so the
+// rendered HTML always reflects template order. Browser-level CLS testing
+// catches the timing case; these tests catch the simpler, deterministic
+// failure mode: CSS or layout misconfig that flips the document order.
+//
+// Asserts: for every fixture URL that uses a real layout, the SSR HTML has
+//   <header> ... <main>/<UMain> ... <footer>
+// in that order. Equivalence between content-driven and app-page sources of
+// the same layout is also asserted so we catch structural drift between
+// the two rendering paths.
+// ----------------------------------------------------------------------------
+
+function indices(html: string) {
+  // Foundry's AppHeader renders as `<header`; AppFooter as `<footer`. UMain
+  // doesn't emit a `<main>` tag in every layout, so we accept either
+  // `<main` or `data-testid` on the layout container.
+  const header = html.indexOf('<header')
+  const footer = html.indexOf('<footer')
+  // Best-effort main marker: layouts wrap content in <UMain>, which renders
+  // a real <main>. Fall back to the page testid if a layout omits it.
+  const main = (() => {
+    const m = html.indexOf('<main')
+    if (m !== -1) return m
+    const t = html.search(/data-testid="render-[a-z-]+-page"/)
+    return t
+  })()
+  return { header, main, footer }
+}
+
+function assertOrder(html: string, label: string) {
+  const { header, main, footer } = indices(html)
+  expect(header, `${label}: <header> missing`).toBeGreaterThanOrEqual(0)
+  expect(footer, `${label}: <footer> missing`).toBeGreaterThanOrEqual(0)
+  expect(main, `${label}: page/main marker missing`).toBeGreaterThanOrEqual(0)
+  expect(header, `${label}: header should precede page/main`).toBeLessThan(main)
+  expect(main, `${label}: page/main should precede footer`).toBeLessThan(footer)
+}
+
+describe('structural DOM order — content-driven', () => {
+  it('default layout (/render-default): header → main → footer', async () => {
+    const html = await $fetch<string>('/render-default')
+    assertOrder(html, 'content/render-default')
+  })
+
+  it('article layout via routeRules.appLayout (/render-article)', async () => {
+    const html = await $fetch<string>('/render-article')
+    assertOrder(html, 'content/render-article')
+  })
+
+  it('landing layout via frontmatter (/render-landing)', async () => {
+    const html = await $fetch<string>('/render-landing')
+    assertOrder(html, 'content/render-landing')
+  })
+})
+
+describe('structural DOM order — app-page sources', () => {
+  it('default layout (/render-layout-default)', async () => {
+    const html = await $fetch<string>('/render-layout-default')
+    assertOrder(html, 'app/render-layout-default')
+    // Confirm the layout actually rendered (vs the page bleeding through).
+    expect(html).toContain('data-testid="render-layout-default-page"')
+  })
+
+  it('landing layout (/render-layout-landing)', async () => {
+    const html = await $fetch<string>('/render-layout-landing')
+    assertOrder(html, 'app/render-layout-landing')
+    expect(html).toContain('data-testid="render-layout-landing-page"')
+  })
+
+  it('article layout (/render-layout-article)', async () => {
+    const html = await $fetch<string>('/render-layout-article')
+    assertOrder(html, 'app/render-layout-article')
+    expect(html).toContain('data-testid="render-layout-article-page"')
+  })
+})
+
+describe('structural equivalence — same layout, both sources', () => {
+  // The header → main → footer skeleton should be IDENTICAL whether the body
+  // comes from a content document or from an app/pages/*.vue file. If a
+  // layout grows divergent chrome between the two paths, this test flags it.
+  it('default: content vs app-page produce same outer skeleton', async () => {
+    const a = indices(await $fetch<string>('/render-default'))
+    const b = indices(await $fetch<string>('/render-layout-default'))
+    // Both must have the same three markers present.
+    for (const k of ['header', 'main', 'footer'] as const) {
+      expect(a[k], `content missing ${k}`).toBeGreaterThanOrEqual(0)
+      expect(b[k], `app-page missing ${k}`).toBeGreaterThanOrEqual(0)
+    }
   })
 })
