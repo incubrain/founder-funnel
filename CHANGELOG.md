@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.1] - 2026-05-21
+
+### Added
+
+- **Sticky-footer pattern in `app.vue`** — `min-h-screen flex flex-col` wrapper with `flex-1` on the layout slot keeps the footer pinned to the viewport bottom while `<NuxtPage>` is empty or pending. Fixes the "footer rendered above content" symptom on SPA routes (`ssr: false`) and pages with heavy async setup — e.g. astronera's `/viirs/maharashtra` map page
+- **`routeRules.appLayout` runtime bridge** — new global middleware (`app/middleware/app-layout.global.ts`) reads `getRouteRules({ path }).appLayout` and calls `setPageLayout()`. Nuxt 4 type-augments the field but ships no runtime handler; layouts now actually swap per `routeRules` mapping without each consumer wiring their own middleware
+- **Server-side content endpoints** — `/api/_foundry/content/page` and `/api/_foundry/content/surround` are the single typed boundary for content lookups. Layouts and the catch-all consume them via `useFetch`. Side benefit: ready hook point for future caching, auth, or rate-limiting around content access
+- **`ContentDoc` type** — exported from `useContentPage`. Minimal shape (title, description, hero, label, date, image, path, seo) intersected with `Record<string, unknown>` for arbitrary frontmatter
+- **`modules/markdown-rewrite.ts` shipped in tarball** — was missing from `layer/package.json` `files:` array. Consumers using the layer's Vercel edge-redirect module now have the file present
+- **Playground rendering test matrix** — 17 E2E tests in `playground/test/e2e/rendering.e2e.spec.ts` cover default SSR, SPA-only routes, app-page vs content precedence, dynamic params, `<ClientOnly>` islands, `routeRules` (headers/redirect/appLayout), structural DOM order, and content/app-page layout equivalence. Run with `pnpm --filter playground test:e2e`
+- **Rendering-modes documentation** — `examples/foundry/content/docs/5.advanced/4.rendering-modes.md` documents URL → page resolution order, layout selection rules, every rendering knob, real-world consumer patterns, and debugging tips
+- **Local registry workflow (verdaccio)** — `.verdaccio/config.yaml` + `layer/scripts/publish-local.sh` + root `verdaccio:start` / `layer:publish:local` scripts. Enables testing local layer changes in external consumer repos (astronera, incubrain). Documented in `AGENTS.md`
+
+### Changed
+
+- **Layouts decoupled from content existence** — `default`, `landing`, `article` no longer call `throw createError(404)` when content is missing. App pages that opt into a Foundry layout (`definePageMeta({ layout: 'article' })`) no longer 404 unless they explicitly set `layout: false`. Both incubrain and astronera previously worked around this by setting `layout: false` on every hand-built app page
+- **Catch-all owns the 404** — `layer/app/pages/[...slug].vue` does `getPage()` + `setContext()` + the 404 throw. Layouts fetch their own copy via the same `useFetch` key (deduped) so SSR has page data at layout-render time. Previously each layout fetched independently and threw separately
+- **`useContentPage.getPage()` uses `useFetch`** — talks to `/api/_foundry/content/page` instead of calling the auto-imported `queryCollection` directly. Sidesteps a dev-mode crash (`event.req.headers.entries is not a function`) under our pinned h3@1 + `@nuxt/content@3.13`
+- **`as any` casts replaced with typed Content shapes** — 15 usages across `useContentPage`, layouts, the catch-all, the appLayout middleware, and the server endpoints now use `ContentDoc`, `keyof PageCollections`, `ContentNavigationItem`, and Nuxt's `LayoutKey` parameter inference
+
+### Fixed
+
+- **`UPageHero` 0.10 CLS on content-driven pages** — layouts used to read from a shared context that the catch-all populated *inside* its slot, AFTER the layout's render committed. SSR emitted no hero (`v-if` false); client hydrated with hero (`v-if` true); body shifted 448px. Both layouts and the catch-all now fetch via the same dedupe key, so SSR and CSR render identical HTML. Measured drop from CLS 0.102 → 0.0004 on `/render-landing`, 0.076 → 0.0003 on `/render-default`
+- **Footer rendering above content on SPA / async-pending routes** — see Added: sticky-footer pattern in `app.vue`
+- **`routeRules.appLayout` was a silent no-op** — see Added: runtime bridge middleware
+- **Root `/` URL 404 in the catch-all** — `useContentPage.getPage()` stripped the trailing slash from `/` into an empty string, causing `queryCollection.path('').first()` to return null. Now preserves the root slash so the catch-all correctly serves `content/pages/index.md`
+
+### Known issues
+
+- **`pnpm verify` typecheck failures unrelated to this release** — 10 pre-existing TypeScript errors block the verify gate (h3 v1/v2 type drift in `modules/rss/server`, `server/mcp/tools/list-pages.ts`, `server/middleware/docs-redirect.ts`; `event.node` possibly-undefined access in `app/utils/prerender.ts`; missing `toc` prop type in `modules/docs/runtime/layouts/docs.vue`). 0.7.0 shipped past these as well. Tracked in `bd:product-validator-o3q`; will be addressed alongside the deferred Nitro v3 / h3@2 / unhead@3 cascade. 0.7.1 was released by bypassing the verify hook (`release-it --no-before-init` or equivalent)
+
 ## [0.7.0] - 2026-03-24
 
 ### Added
