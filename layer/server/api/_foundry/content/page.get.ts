@@ -1,3 +1,4 @@
+import type { Collections } from '@nuxt/content'
 import { defineEventHandler, getQuery, createError } from 'h3'
 import { queryCollection } from '@nuxt/content/server'
 
@@ -9,5 +10,9 @@ export default defineEventHandler(async (event) => {
   if (!q.collection || !q.path) {
     throw createError({ statusCode: 400, statusMessage: 'collection and path required' })
   }
-  return queryCollection(event, q.collection as any).path(q.path).first()
+  // The query param is a string; queryCollection wants a typed Collections
+  // key. Trust the caller (Foundry's own catch-all is the only consumer).
+  return queryCollection(event, q.collection as keyof Collections)
+    .path(q.path)
+    .first()
 })

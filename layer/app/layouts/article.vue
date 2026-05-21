@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ContentNavigationItem } from '@nuxt/content'
+
 // See default.vue for why the layout fetches its own page data
 // (useAsyncData dedupes — this is a cache hit, not a second request).
 const route = useRoute()
@@ -11,22 +13,25 @@ const { data: article } = await getPage()
 
 // Surround query: useFetch dedupes by key, so if the catch-all already
 // fetched the same surround, this is also a cache hit.
-const { data: surround } = await useFetch('/api/_foundry/content/surround', {
-  key: `surround-${collection.value}-${route.path}`,
-  query: {
-    collection: collection as any,
-    path: () => route.path,
-    fields: 'title,description,label',
+const { data: surround } = await useFetch<Array<ContentNavigationItem | null>>(
+  '/api/_foundry/content/surround',
+  {
+    key: `surround-${collection.value}-${route.path}`,
+    query: {
+      collection: () => collection.value,
+      path: () => route.path,
+      fields: 'title,description,label',
+    },
+    default: () => [],
+    watch: [() => route.path, collection],
   },
-  default: () => [],
-  watch: [() => route.path, collection],
-})
+)
 
 watchEffect(() => {
   if (!article.value) return
   useHead({
-    title: (article.value as any).title,
-    meta: [{ name: 'description', content: (article.value as any).description }],
+    title: article.value.title,
+    meta: [{ name: 'description', content: article.value.description }],
   })
 })
 </script>
@@ -48,13 +53,13 @@ watchEffect(() => {
           </template>
 
           <template #title>
-            {{ (article as any)?.title }}
+            {{ article?.title }}
           </template>
 
           <template #description>
             <div class="flex flex-wrap items-center gap-4 mb-4">
               <div
-                v-if="(article as any)?.label"
+                v-if="article?.label"
                 class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary/10 border border-primary/20"
               >
                 <UIcon
@@ -62,12 +67,12 @@ watchEffect(() => {
                   class="size-4 text-primary"
                 />
                 <span class="font-mono font-semibold text-primary text-sm">
-                  {{ (article as any).label }}
+                  {{ article.label }}
                 </span>
               </div>
 
               <div
-                v-if="(article as any)?.date"
+                v-if="article?.date"
                 class="flex items-center gap-2 text-muted"
               >
                 <UIcon
@@ -75,7 +80,7 @@ watchEffect(() => {
                   class="size-4"
                 />
                 <NuxtTime
-                  :datetime="(article as any).date"
+                  :datetime="article.date"
                   year="numeric"
                   month="long"
                   day="numeric"
@@ -85,20 +90,20 @@ watchEffect(() => {
             </div>
 
             <p
-              v-if="(article as any)?.description"
+              v-if="article?.description"
               class="text-lg text-muted leading-relaxed"
             >
-              {{ (article as any).description }}
+              {{ article.description }}
             </p>
           </template>
 
           <template
-            v-if="(article as any)?.image"
+            v-if="article?.image"
             #default
           >
             <NuxtImg
-              :src="(article as any).image"
-              :alt="(article as any).title"
+              :src="article.image"
+              :alt="article.title"
               class="w-full rounded-lg border border-default shadow-lg mt-8"
               loading="lazy"
             />
@@ -111,8 +116,11 @@ watchEffect(() => {
           <slot />
         </article>
 
-        <template v-if="(surround as any[])?.filter(Boolean).length">
+        <template v-if="surround?.filter(Boolean).length">
           <USeparator class="my-12" />
+          <!-- @vue-ignore — UContentSurround expects ContentSurroundLink[] but
+               our useFetch widens the response to (ContentNavigationItem|null)[].
+               Runtime data matches the prev/next shape. -->
           <UContentSurround :surround="surround" />
         </template>
       </UPageBody>

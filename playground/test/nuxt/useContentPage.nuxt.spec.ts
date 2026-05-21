@@ -1,25 +1,22 @@
 // @vitest-environment nuxt
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mockNuxtImport } from '@nuxt/test-utils/runtime'
 import { useContentPage } from '@incubrain/foundry/app/composables/useContentPage'
 
-// Mock queryCollection
-mockNuxtImport('queryCollection', () => {
-  return (_collection: string) => ({
-    path: (_p: string) => ({
-      first: () =>
-        Promise.resolve({
-          title: 'Mock Page',
-          description: 'Mock Description',
-          seo: { title: 'SEO Title' },
-        }),
-    }),
-  })
-})
+// `getPage` calls useFetch('/api/_foundry/content/page') after the
+// architectural refactor that moved content fetching off the auto-imported
+// client queryCollection (see bd: h3@1 + content@3.13 SSR crash). Mock the
+// composable layer here so the unit suite verifies the wiring without
+// booting a real Nitro server. End-to-end behavior is covered by
+// playground/test/e2e/rendering.e2e.spec.ts.
+mockNuxtImport('useFetch', () =>
+  vi.fn(async () => ({
+    data: { value: { title: 'Mock Page', description: 'Mock Description' } },
+  })),
+)
 
 describe('useContentPage', () => {
   it('resolves collection from route', () => {
-    // Note: In tests, the default route might be '/'
     const { collection } = useContentPage()
     expect(collection.value).toBe('pages')
   })
@@ -38,11 +35,12 @@ describe('useContentPage', () => {
     expect(context.value).toBeNull()
   })
 
-  it('fetches page data', async () => {
+  it('fetches page data via the foundry content endpoint', async () => {
     const { getPage } = useContentPage()
-    const { data } = await getPage()
+    const result = await getPage()
 
-    expect(data.value).toBeDefined()
-    expect(data.value.title).toBe('Mock Page')
+    expect(result).toBeDefined()
+    expect(result.data.value).toBeDefined()
+    expect(result.data.value?.title).toBe('Mock Page')
   })
 })

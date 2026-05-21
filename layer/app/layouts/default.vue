@@ -13,9 +13,9 @@ const { data: page } = await getPage()
   <UMain>
     <UPage class="pb-12 lg:pb-16">
       <UPageHero
-        v-if="(page as any)?.hero && ((page as any)?.title || (page as any)?.description)"
-        :title="(page as any)?.title"
-        :description="(page as any)?.description"
+        v-if="page?.hero && (page?.title || page?.description)"
+        :title="page?.title"
+        :description="page?.description"
       />
       <UContainer>
         <slot />

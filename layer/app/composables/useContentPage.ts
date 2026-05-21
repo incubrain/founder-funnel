@@ -1,5 +1,21 @@
 import type { PageCollections } from '@nuxt/content'
 
+/**
+ * Minimal shape of a Nuxt Content document as the layer reads it. Real
+ * documents have arbitrary frontmatter keys; we list the ones layouts
+ * touch and intersect with Record<string, unknown> for the rest.
+ */
+export type ContentDoc = {
+  title?: string
+  description?: string
+  hero?: boolean
+  label?: string
+  date?: string
+  image?: string
+  path?: string
+  seo?: { title?: string, description?: string }
+} & Record<string, unknown>
+
 export interface ContentPageContext {
   /** Which content collection produced this page */
   collection: string
@@ -60,9 +76,11 @@ export const useContentPage = () => {
         ? route.path.slice(0, -1)
         : route.path
     })
-    return useFetch('/api/_foundry/content/page', {
+    return useFetch<ContentDoc | null>('/api/_foundry/content/page', {
       key: `page-${collection.value}-${path.value}`,
-      query: { collection: collection as any, path },
+      // Getters keep the query reactive without an unsafe cast through the
+      // useFetch query type.
+      query: { collection: () => collection.value, path },
       watch: [() => route.path, collection],
     })
   }

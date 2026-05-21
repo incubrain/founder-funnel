@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { ContentNavigationItem } from '@nuxt/content'
+import type { ContentDoc } from '../composables/useContentPage'
+
 // The catch-all is the only surface that 404s when a route has no matching
 // content document. Layouts read from the shared content context — they do
 // not fetch and do not throw.
@@ -15,19 +18,22 @@ if (!page.value) {
   })
 }
 
-const { data: surround } = await useFetch('/api/_foundry/content/surround', {
-  key: `surround-${collection.value}-${route.path}`,
-  query: {
-    collection: collection as any,
-    path: () => route.path,
-    fields: 'title,description,label',
+const { data: surround } = await useFetch<Array<ContentNavigationItem | null>>(
+  '/api/_foundry/content/surround',
+  {
+    key: `surround-${collection.value}-${route.path}`,
+    query: {
+      collection: () => collection.value,
+      path: () => route.path,
+      fields: 'title,description,label',
+    },
+    default: () => [],
+    watch: [() => route.path, collection],
   },
-  default: () => [],
-  watch: [() => route.path, collection],
-})
+)
 
 watchEffect(() => {
-  if (!page.value || (page.value as any).path !== route.path) return
+  if (!page.value || page.value.path !== route.path) return
   setContext(page.value as unknown as Record<string, unknown>, {
     surround: surround.value,
   })
@@ -38,7 +44,7 @@ watchEffect(() => {
   <div>
     <ContentRenderer
       v-if="context?.page"
-      :key="(context.page as any).path"
+      :key="(context.page as ContentDoc).path"
       :value="context.page"
     />
   </div>
