@@ -9,6 +9,10 @@ dist
 # Node dependencies
 node_modules
 
+# Node compile cache — populated by tools that opt into Node 22+'s
+# v8 compile cache via NODE_COMPILE_CACHE. Regeneratable; can hit
+node-compile-cache/
+
 # Logs
 logs
 *.log
