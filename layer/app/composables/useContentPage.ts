@@ -26,60 +26,47 @@ export interface ContentPageContext {
 /**
  * Unified content page composable.
  *
- * Handles:
- * - Route-based collection resolution (from app.config.ts)
- * - Page data fetching via useAsyncData
- * - Shared state for layouts/pages/components
+ * All content fetching goes through Foundry's server endpoints
+ * (/api/_foundry/content/*) which talk to the SQLite DB directly. We do NOT
+ * use the auto-imported `queryCollection` here — its SSR path goes through
+ * an internal HTTP roundtrip that breaks under our pinned h3@1 + content@3.13
+ * (see `layer/server/utils/content-query.ts` for the bug detail).
  *
- * Usage:
- * ```ts
- * const { page, collection, context } = useContentPage();
- * ```
+ * Going through our own endpoint also gives us a single observable boundary
+ * for caching, auth, and rate-limiting later, and removes a layer of
+ * environment-conditional code (no `import.meta.server` branching here).
  */
 export const useContentPage = () => {
   const route = useRoute()
   const { getCollectionForRoute } = useContentConfig()
 
-  // Shared state (for components that need access without re-fetching)
   const context = useState<ContentPageContext | null>(
     'content-page',
     () => null,
   )
 
-  // Dynamically determine collection based on route
   const collection = computed(
     () => getCollectionForRoute(route.path) as keyof PageCollections,
   )
 
-  // Context is NOT cleared on route change — old content persists until
-  // the new layout calls setContext() with fresh data. This prevents the
-  // blank flash that occurred when context was eagerly nulled before the
-  // new layout's async getPage() resolved.
-
   /**
-   * Fetch page data for the current route.
-   * Wraps useAsyncData with automatic collection resolution.
+   * Fetch page data for the current route via Foundry's content endpoint.
    */
   const getPage = () => {
-    // strip trailing slash
-    const path = computed(() =>
-      route.path.endsWith('/') ? route.path.slice(0, -1) : route.path,
-    )
-    return useAsyncData(
-      () => `page-${collection.value}-${path.value}`,
-      () => {
-        return queryCollection(collection.value).path(path.value).first()
-      },
-      {
-        watch: [() => route.path, collection],
-      },
-    )
+    // Preserve root '/' (don't strip its trailing slash into an empty path).
+    const path = computed(() => {
+      if (route.path === '/') return '/'
+      return route.path.endsWith('/')
+        ? route.path.slice(0, -1)
+        : route.path
+    })
+    return useFetch('/api/_foundry/content/page', {
+      key: `page-${collection.value}-${path.value}`,
+      query: { collection: collection as any, path },
+      watch: [() => route.path, collection],
+    })
   }
 
-  /**
-   * Update the shared context (call after fetching page data).
-   * Automatically extracts SEO fields from page.
-   */
   const setContext = (
     page: Record<string, unknown> | null,
     extras?: Partial<Omit<ContentPageContext, 'collection' | 'page' | 'seo'>>,
@@ -102,16 +89,9 @@ export const useContentPage = () => {
   }
 
   return {
-    /** Current collection (computed from route) */
     collection,
-
-    /** Fetch page data for current route */
     getPage,
-
-    /** Update shared context after fetching */
     setContext,
-
-    /** Shared context state (read-only for components) */
     context,
   }
 }

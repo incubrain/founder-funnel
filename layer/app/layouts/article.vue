@@ -1,42 +1,16 @@
 <script setup lang="ts">
-const route = useRoute()
+// Pure presentation. Reads page + surround from the content context populated
+// by `pages/[...slug].vue`. No fetching, no 404 throw.
 const appConfig = useAppConfig()
 const pagesBackLabel = (appConfig.content?.pagesBackLabel as string) || 'Back'
 const pagesPrefix = (appConfig.content?.pagesPrefix as string) || '/'
 
-// Use unified content page composable
-const { collection, getPage, setContext } = useContentPage()
-
-// Fetch article data
-const { data: article } = await getPage()
-
-if (!article.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: 'Page not found',
-    fatal: true,
-  })
-}
-
-// Fetch surround (prev/next)
-const { data: surround } = await useAsyncData(
-  () => `article-surround-${collection.value}-${route.path}`,
-  () =>
-    queryCollectionItemSurroundings(collection.value, route.path, {
-      fields: ['title', 'description', 'label'],
-    }),
-  {
-    watch: [() => route.path, collection],
-  },
+const { context } = useContentPage()
+const article = computed(
+  () => (context.value?.page ?? null) as Record<string, any> | null,
 )
+const surround = computed(() => (context.value?.surround ?? []) as unknown[])
 
-// Publish context for components
-watchEffect(() => {
-  if (!article.value || article.value.path !== route.path) return
-  setContext(article.value as unknown as Record<string, unknown>, { surround: surround.value })
-})
-
-// SEO
 watchEffect(() => {
   if (!article.value) return
   useHead({
@@ -82,7 +56,7 @@ watchEffect(() => {
               </div>
 
               <div
-                v-if="(article as any)?.date"
+                v-if="article?.date"
                 class="flex items-center gap-2 text-muted"
               >
                 <UIcon
@@ -90,7 +64,7 @@ watchEffect(() => {
                   class="size-4"
                 />
                 <NuxtTime
-                  :datetime="(article as any).date"
+                  :datetime="article.date"
                   year="numeric"
                   month="long"
                   day="numeric"
@@ -126,7 +100,7 @@ watchEffect(() => {
           <slot />
         </article>
 
-        <template v-if="surround?.filter(Boolean).length">
+        <template v-if="(surround as any[])?.filter(Boolean).length">
           <USeparator class="my-12" />
           <UContentSurround :surround="surround" />
         </template>

@@ -6,7 +6,8 @@
     "dev": "npx nuxi dev",
     "build": "npx nuxi build",
     "prepare": "npx nuxi prepare",
-    "test": "vitest"
+    "test": "vitest",
+    "test:e2e": "vitest --config vitest.e2e.config.ts"
   },
   "dependencies": {
     "@incubrain/foundry": "workspace:*"

@@ -1,27 +1,12 @@
 <script setup lang="ts">
-const route = useRoute()
+// Pure presentation. SEO + OG image are reactive to whatever the catch-all
+// publishes into the content context. Safe to mount on an app page that has
+// no content — page is just null and the head metadata stays empty.
+const { context } = useContentPage()
+const page = computed(
+  () => (context.value?.page ?? null) as Record<string, any> | null,
+)
 
-// Use unified content page composable
-const { getPage, setContext } = useContentPage()
-
-// Fetch page data
-const { data: page } = await getPage()
-
-if (!page.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: 'Page not found',
-    fatal: true,
-  })
-}
-
-// Publish context for components
-watchEffect(() => {
-  if (!page.value || page.value.path !== route.path) return
-  setContext(page.value as unknown as Record<string, unknown>)
-})
-
-// SEO
 watchEffect(() => {
   if (!page.value) return
   useSeoMeta({
@@ -32,19 +17,13 @@ watchEffect(() => {
   })
 })
 
-// OG Image generation
-watch(
-  page,
-  async (newPage) => {
-    if (newPage) {
-      defineOgImageComponent('Landing', {
-        title: newPage.title,
-        description: newPage.description,
-      })
-    }
-  },
-  { immediate: true },
-)
+watchEffect(() => {
+  if (!page.value) return
+  defineOgImageComponent('Landing', {
+    title: page.value.title,
+    description: page.value.description,
+  })
+})
 </script>
 
 <template>

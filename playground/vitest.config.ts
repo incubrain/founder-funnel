@@ -7,6 +7,7 @@ export default defineVitestConfig({
     environment: 'nuxt',
     globals: true,
     include: ['test/**/*.{test,spec}.ts'],
+    exclude: ['test/e2e/**', 'node_modules/**'],
     environmentOptions: {
       nuxt: {
         rootDir: resolve(__dirname, './'),

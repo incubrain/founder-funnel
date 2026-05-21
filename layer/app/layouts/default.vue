@@ -1,48 +1,18 @@
 <script setup lang="ts">
-const route = useRoute()
-
-// Use unified content page composable
-const { getPage, setContext } = useContentPage()
-
-// Fetch page data
-const { data: page } = await getPage()
-
-if (!page.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: 'Page not found',
-    fatal: true,
-  })
-}
-
-// Publish context for components
-watchEffect(() => {
-  if (!page.value || page.value.path !== route.path) return
-  setContext(page.value as unknown as Record<string, unknown>)
-})
-
-// RSS feed link
-watchEffect(() => {
-  if (page.value && (page.value as unknown as Record<string, unknown>).hasRss) {
-    useHead({
-      link: [
-        {
-          rel: 'alternate',
-          type: 'application/rss+xml',
-          title: `${page.value.title} Feed`,
-          href: `/rss${route.path}`,
-        },
-      ],
-    })
-  }
-})
+// Pure presentation. Reads page metadata from the shared content context if
+// the catch-all populated it; otherwise renders the slot bare. Does NOT
+// fetch and does NOT throw — that responsibility moved to `pages/[...slug].vue`.
+const { context } = useContentPage()
+const page = computed(
+  () => (context.value?.page ?? null) as Record<string, any> | null,
+)
 </script>
 
 <template>
   <UMain>
     <UPage class="pb-12 lg:pb-16">
       <UPageHero
-        v-if="(page as any)?.hero && (page?.title || page?.description)"
+        v-if="page?.hero && (page?.title || page?.description)"
         :title="page?.title"
         :description="page?.description"
       />
