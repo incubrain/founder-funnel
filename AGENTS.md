@@ -17,6 +17,15 @@ pnpm typecheck       # Nuxt typecheck (layer)
 pnpm verify          # dev:prepare + lint + typecheck
 ```
 
+## External consumer repos
+
+These consume the published `@incubrain/foundry` layer (separate git repos):
+
+- `astronera` → `/Users/mac/Development/astronera/astronera` (`@astronera/web`)
+- `incubrain` → check `/Users/mac/Development/incubrain/incubrain-founder` or similar before assuming
+
+When verifying a layer change against a consumer, see the verdaccio workflow below.
+
 ## Testing layer changes in external consumers (verdaccio)
 
 For external consumer repos like `astronera` or `incubrain` that don't share this workspace, use a **local verdaccio registry**. pnpm's `link:` protocol doesn't work cleanly cross-repo (cross-tree ESM resolution + isolation boundary issues — see the deep-dive in past bd issues).
