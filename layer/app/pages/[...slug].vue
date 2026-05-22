@@ -18,13 +18,14 @@ if (!page.value) {
   })
 }
 
+// Literal query values, not getters — see useContentPage.getPage() for why.
 const { data: surround } = await useFetch<Array<ContentNavigationItem | null>>(
   '/api/_foundry/content/surround',
   {
     key: `surround-${collection.value}-${route.path}`,
     query: {
-      collection: () => collection.value,
-      path: () => route.path,
+      collection: collection.value,
+      path: route.path,
       fields: 'title,description,label',
     },
     default: () => [],

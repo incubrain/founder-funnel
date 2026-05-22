@@ -67,20 +67,23 @@ export const useContentPage = () => {
 
   /**
    * Fetch page data for the current route via Foundry's content endpoint.
+   *
+   * Query params use LITERAL values, not getter functions. Getter functions
+   * (`{ collection: () => collection.value }`) trigger an SSR recursion in
+   * Nuxt 4 where the catch-all setup re-fires thousands of times until the
+   * server OOMs — confirmed by a minimal repro in astronera. Suspected
+   * cause: query getters defeat useFetch's payload-key dedup during the
+   * SSR Suspense pass. Use literal snapshots; route changes are handled by
+   * the `key` rebuild + the `watch` array.
    */
   const getPage = () => {
     // Preserve root '/' (don't strip its trailing slash into an empty path).
-    const path = computed(() => {
-      if (route.path === '/') return '/'
-      return route.path.endsWith('/')
-        ? route.path.slice(0, -1)
-        : route.path
-    })
+    const path = route.path === '/'
+      ? '/'
+      : (route.path.endsWith('/') ? route.path.slice(0, -1) : route.path)
     return useFetch<ContentDoc | null>('/api/_foundry/content/page', {
-      key: `page-${collection.value}-${path.value}`,
-      // Getters keep the query reactive without an unsafe cast through the
-      // useFetch query type.
-      query: { collection: () => collection.value, path },
+      key: `page-${collection.value}-${path}`,
+      query: { collection: collection.value, path },
       watch: [() => route.path, collection],
     })
   }
