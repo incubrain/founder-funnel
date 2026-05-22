@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.2](https://github.com/incubrain/foundry/compare/v0.7.1...v0.7.2) (2026-05-22)
+
+### Bug Fixes
+
+* **layer:** use literal query values in useFetch to stop SSR recursion ([0c8dd4f](https://github.com/incubrain/foundry/commit/0c8dd4f32648b51c8eafc938576848d9412e8a89))
+
 All notable changes to this project will be documented in this file.
 
 ## [0.7.1] - 2026-05-21
