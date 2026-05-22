@@ -21,7 +21,9 @@ interface NavItem {
  * so it works with custom prefixes like /darksky.
  */
 export default defineEventHandler(async (event) => {
-  const path = event.node.req.url
+  // event.node is typed optional under h3@2; for the dual-install we touch it
+  // defensively. Same access pattern as the rest of the layer.
+  const path = event.node?.req?.url
 
   // Resolve docs prefix from routeMap (find which prefix maps to 'docs')
   const appConfig = useAppConfig()

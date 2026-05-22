@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ContentNavigationItem } from '@nuxt/content'
+import type { ContentNavigationItem, TocLink } from '@nuxt/content'
 
 const appConfig = useAppConfig()
 const route = useRoute()
@@ -183,14 +183,14 @@ watch(
 
         <!-- RIGHT: Dynamic TOC -->
         <template
-          v-if="page?.body?.toc?.links?.length"
+          v-if="(page?.body as { toc?: { links?: TocLink[] } } | undefined)?.toc?.links?.length"
           #right
         >
           <UContentToc
             :key="`toc-${route.path}`"
             highlight
-            :title="appConfig.toc?.title || 'Table of Contents'"
-            :links="page.body.toc.links"
+            :title="(appConfig as { toc?: { title?: string } }).toc?.title || 'Table of Contents'"
+            :links="(page.body as { toc: { links: TocLink[] } }).toc.links"
           >
             <template #bottom>
               <DocsAsideRightBottom />

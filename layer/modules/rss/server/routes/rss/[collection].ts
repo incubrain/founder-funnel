@@ -27,6 +27,11 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    // @ts-expect-error h3@1↔@2 H3Event shape mismatch in the dual-version
+    // install (Nuxt 4 transitively pulls both). Handler signatures were
+    // generated against h3@2; this route's event resolves to h3@1. Runtime
+    // is identical — the surfaces we use (`event` opaque, `event.node`,
+    // `event.context`) exist in both. Fix when Nuxt 4 unifies on h3@2.
     const feed = await handler(event)
 
     setHeader(event, 'Content-Type', 'application/xml; charset=utf-8')
