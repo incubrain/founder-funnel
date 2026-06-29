@@ -7,7 +7,7 @@
       {
         "hooks": [
           {
-            "command": "filepath=$(jq -r '.tool_input.file_path // .tool_input.filePath // empty'); if [ -n \"$filepath\" ]; then case \"$filepath\" in *.vue|*.ts|*.js) npx eslint --fix \"$filepath\" 2\u003e/dev/null || true;; esac; fi",
+            "command": "filepath=$(jq -r '.tool_input.file_path // .tool_input.filePath // empty'); if [ -n \"$filepath\" ]; then case \"$filepath\" in *.vue|*.ts|*.js) npx eslint --fix \"$filepath\" 2>/dev/null || true;; esac; fi",
             "timeout": 30,
             "type": "command"
           }
@@ -17,23 +17,12 @@
       {
         "hooks": [
           {
-            "command": "cmd=$(jq -r '.tool_input.command // empty'); if echo \"$cmd\" | grep -q 'agent-browser'; then echo \"[$(date +%Y-%m-%dT%H:%M:%S)] $cmd\" \u003e\u003e \"$CLAUDE_PROJECT_DIR\"/.claude/visual-test-log.md; fi",
+            "command": "cmd=$(jq -r '.tool_input.command // empty'); if echo \"$cmd\" | grep -q 'agent-browser'; then echo \"[$(date +%Y-%m-%dT%H:%M:%S)] $cmd\" >> \"$CLAUDE_PROJECT_DIR\"/.claude/visual-test-log.md; fi",
             "timeout": 5,
             "type": "command"
           }
         ],
         "matcher": "Bash"
-      }
-    ],
-    "PreCompact": [
-      {
-        "hooks": [
-          {
-            "command": "bd prime",
-            "type": "command"
-          }
-        ],
-        "matcher": ""
       }
     ],
     "SessionStart": [
@@ -45,15 +34,6 @@
           }
         ],
         "matcher": "compact"
-      },
-      {
-        "hooks": [
-          {
-            "command": "bd prime",
-            "type": "command"
-          }
-        ],
-        "matcher": ""
       }
     ]
   },
