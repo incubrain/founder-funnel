@@ -1,66 +1,55 @@
-# context-mode — MANDATORY routing rules
+# CLAUDE.md
 
-You have context-mode MCP tools available. These rules are NOT optional — they protect your context window from flooding. A single unrouted command can dump 56 KB into context and waste the entire session.
+Guidance for Claude Code in this repository. Reference detail — architecture, file
+locations, workflows, and the full context-mode tool-routing rules (redirected tools, the
+tool-selection hierarchy, the `ctx` command reference) — lives in `CONTEXT.md`. Canonical
+terms are in `GLOSSARY.md`.
 
-## BLOCKED commands — do NOT attempt these
+## Project
 
-### curl / wget — BLOCKED
-Any Bash command containing `curl` or `wget` is intercepted and replaced with an error message. Do NOT retry.
-Instead use:
-- `ctx_fetch_and_index(url, source)` to fetch and index web pages
-- `ctx_execute(language: "javascript", code: "const r = await fetch(...)")` to run HTTP calls in sandbox
+**Foundry** (`@incubrain/foundry`) is a Nuxt 4 validation layer for technical founders —
+captures signal (email, presales, bookings) to prove demand before building product. See
+`GLOSSARY.md` for domain terms and `CONTEXT.md` for architecture, file locations, and
+day-to-day workflow (verdaccio cross-repo testing, module guides, visual testing).
 
-### Inline HTTP — BLOCKED
-Any Bash command containing `fetch('http`, `requests.get(`, `requests.post(`, `http.get(`, or `http.request(` is intercepted and replaced with an error message. Do NOT retry with Bash.
-Instead use:
-- `ctx_execute(language, code)` to run HTTP calls in sandbox — only stdout enters context
+## Critical rules
 
-### WebFetch — BLOCKED
-WebFetch calls are denied entirely. The URL is extracted and you are told to use `ctx_fetch_and_index` instead.
-Instead use:
-- `ctx_fetch_and_index(url, source)` then `ctx_search(queries)` to query the indexed content
+1. **Never add features that don't capture signal.** If it doesn't help founders validate faster, reject it.
+2. **Never build custom when VueUse/library exists.** Priority: VueUse → library → custom (last resort). Check composables.vueuse.org first.
+3. **Validation ≠ Product.** Email sequences, auth, payment processing, gated content are product features — out of scope.
+4. **Complexity budget:** max 50 lines per layer component (reusable); example-app components can run longer but extract composables at ~150 lines. Max 5 props, max 2 abstraction layers, max 3 nesting levels.
+5. **Content in YAML/Markdown, not hardcoded.** Customers edit content files, not code.
+6. **Ship first, optimize later.** Ship working → measure → optimize what data proves necessary.
 
-## REDIRECTED tools — use sandbox equivalents
+Before building: does VueUse solve this? does an existing component handle it? is this a
+real (not imagined) problem? will it capture signal faster? If all four are "no," don't
+build it.
 
-### Bash (>20 lines output)
-Bash is ONLY for: `git`, `mkdir`, `rm`, `mv`, `cd`, `ls`, `npm install`, `pip install`, and other short-output commands.
-For everything else, use:
-- `ctx_batch_execute(commands, queries)` — run multiple commands + search in ONE call
-- `ctx_execute(language: "shell", code: "...")` — run in sandbox, only stdout enters context
+## Rule files
 
-### Read (for analysis)
-If you are reading a file to **Edit** it → Read is correct (Edit needs content in context).
-If you are reading to **analyze, explore, or summarize** → use `ctx_execute_file(path, language, code)` instead. Only your printed summary enters context. The raw file content stays in the sandbox.
+Detailed rules live in `.agents/rules/` (symlinked at `.claude/rules/`) — read on demand,
+not autoloaded every session: [architecture.md](.agents/rules/architecture.md),
+[conventions.md](.agents/rules/conventions.md), [decisions.md](.agents/rules/decisions.md),
+[anti-patterns.md](.agents/rules/anti-patterns.md). Per-module guides are listed in
+`CONTEXT.md`.
 
-### Grep (large results)
-Grep results can flood context. Use `ctx_execute(language: "shell", code: "grep ...")` to run searches in sandbox. Only your printed summary enters context.
+## Hard-blocked commands — do NOT retry
 
-## Tool selection hierarchy
+`curl`, `wget`, inline HTTP (`fetch('http`, `requests.get(`, `requests.post(`,
+`http.get(`, `http.request(`), and `WebFetch` are intercepted by a PreToolUse hook and
+replaced with an error message. Do not retry them in Bash. Use
+`ctx_fetch_and_index(url, source)` then `ctx_search(queries)` for web pages, or
+`ctx_execute(language, code)` to run HTTP calls in the sandbox — only stdout enters context.
 
-1. **GATHER**: `ctx_batch_execute(commands, queries)` — Primary tool. Runs all commands, auto-indexes output, returns search results. ONE call replaces 30+ individual calls.
-2. **FOLLOW-UP**: `ctx_search(queries: ["q1", "q2", ...])` — Query indexed content. Pass ALL questions as array in ONE call.
-3. **PROCESSING**: `ctx_execute(language, code)` | `ctx_execute_file(path, language, code)` — Sandbox execution. Only stdout enters context.
-4. **WEB**: `ctx_fetch_and_index(url, source)` then `ctx_search(queries)` — Fetch, chunk, index, query. Raw HTML never enters context.
-5. **INDEX**: `ctx_index(content, source)` — Store content in FTS5 knowledge base for later search.
+## Bash — short output only
 
-## Subagent routing
+Bash is for short-output commands and mutations only (`git`, `mkdir`, `rm`, `mv`, `cd`,
+`ls`, `pnpm install`). Anything printing more than ~20 lines — including `grep` over a large
+tree — floods context if run directly; route it through `ctx_batch_execute(commands,
+queries)` or `ctx_execute(language: "shell", …)` instead, so only the derived answer enters
+context. Full tool-selection hierarchy and the `ctx` command table are in `CONTEXT.md`.
 
-When spawning subagents (Agent/Task tool), the routing block is automatically injected into their prompt. Bash-type subagents are upgraded to general-purpose so they have access to MCP tools. You do NOT need to manually instruct subagents about context-mode.
-
-## Output constraints
-
-- Keep responses under 500 words.
-- Write artifacts (code, configs, PRDs) to FILES — never return them as inline text. Return only: file path + 1-line description.
-- When indexing content, use descriptive source labels so others can `ctx_search(source: "label")` later.
-
-## ctx commands
-
-| Command | Action |
-|---------|--------|
-| `ctx stats` | Call the `ctx_stats` MCP tool and display the full output verbatim |
-| `ctx doctor` | Call the `ctx_doctor` MCP tool, run the returned shell command, display as checklist |
-| `ctx upgrade` | Call the `ctx_upgrade` MCP tool, run the returned shell command, display as checklist |
-
+## Issue tracking — beads (`bd`)
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:7510c1e2 -->
 ## Beads Issue Tracker

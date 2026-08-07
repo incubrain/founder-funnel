@@ -1,0 +1,313 @@
+# CONTEXT.md
+
+Reference detail for this repository — project architecture, file locations, workflows,
+and the context-mode tooling substrate. `CLAUDE.md` holds the operating rules (critical
+rules, hard-blocked commands, the short-output-only rule for Bash) and links here for
+anything reached only for deep work. Canonical terms are in `GLOSSARY.md`.
+
+## Quick Start
+
+```bash
+pnpm dev:ff          # Founder Funnel dev server
+pnpm dev:starter     # Starter template dev server
+pnpm dev:ib          # Incubrain dev server
+
+pnpm lint            # ESLint check
+pnpm lint:fix        # ESLint autofix
+pnpm test            # Run tests
+pnpm typecheck       # Nuxt typecheck (layer)
+pnpm verify          # dev:prepare + lint + typecheck
+```
+
+## External consumer repos
+
+These consume the published `@incubrain/foundry` layer (separate git repos):
+
+- `astronera` → `/Users/mac/Development/astronera/astronera` (`@astronera/web`)
+- `incubrain` → check `/Users/mac/Development/incubrain/incubrain-founder` or similar before assuming
+
+When verifying a layer change against a consumer, see the verdaccio workflow below.
+
+## Testing layer changes in external consumers (verdaccio)
+
+For external consumer repos like `astronera` or `incubrain` that don't share this
+workspace, use a **local verdaccio registry**. pnpm's `link:` protocol doesn't work
+cleanly cross-repo (cross-tree ESM resolution + isolation boundary issues — see the
+deep-dive in past bd issues).
+
+### One-time setup
+
+```bash
+pnpm i -g verdaccio          # global install, ~30s
+pnpm verdaccio:start         # in a dedicated terminal — keep it running
+```
+
+The config at `.verdaccio/config.yaml` allows the local `foundry-local` user to publish
+`@incubrain/*` packages. The user gets registered automatically on the first
+`publish:local` run; the token is cached in `.verdaccio/auth-token` (gitignored).
+
+### Publishing the local layer
+
+```bash
+pnpm layer:publish:local
+```
+
+Each publish gets a unique prerelease version (`0.7.0-local.<epoch>`) tagged `local` in
+verdaccio. The `latest` tag stays untouched, so consumers never accidentally pick up a
+local build via `^X.Y.Z`. Your `layer/package.json` is restored after the publish —
+uncommitted changes are preserved.
+
+### Consumer-side setup
+
+In each consumer repo (astronera, incubrain), add four scripts + the pre-commit guard:
+
+```json
+"scripts": {
+  "postinstall":        "nuxt prepare && simple-git-hooks",
+  "foundry:local":      "pnpm add @incubrain/foundry@local --registry http://localhost:4873",
+  "foundry:remote":     "pnpm add @incubrain/foundry@^0.7.0",
+  "dev:foundry-local":  "pnpm foundry:local && pnpm dev",
+  "build:foundry-local":"pnpm foundry:local && pnpm build"
+},
+"devDependencies": {
+  "simple-git-hooks": "^2.11.1"
+},
+"simple-git-hooks": {
+  "pre-commit": "bash scripts/foundry-guard.sh"
+}
+```
+
+And `scripts/foundry-guard.sh` (the pre-commit hook):
+
+```bash
+#!/usr/bin/env bash
+set -e
+if git diff --cached --name-only | grep -qx 'package.json'; then
+  if git diff --cached package.json | grep -E '^\+.*"@incubrain/foundry"\s*:\s*"(link:|file:|[0-9]+\.[0-9]+\.[0-9]+-local\.)' >/dev/null; then
+    echo "❌ package.json has @incubrain/foundry pointing at a local-only version."
+    echo "   Run 'pnpm foundry:remote' before committing."
+    exit 1
+  fi
+fi
+```
+
+### Iteration loop
+
+```bash
+# foundry: make changes in layer/, then:
+pnpm layer:publish:local
+
+# consumer (in a separate terminal):
+pnpm foundry:local && pnpm dev
+# or: pnpm dev:foundry-local
+```
+
+Each cycle takes ~3-5 seconds for publish, ~3-5 seconds for the consumer install. Total
+round-trip ~10 seconds.
+
+### Before committing in the consumer
+
+```bash
+pnpm foundry:remote
+```
+
+The pre-commit guard blocks accidental commits of `@local` versions. If you somehow get
+past it, CI will fail because the `0.7.0-local.<epoch>` version doesn't exist on public npm.
+
+### Adding any new layer file to the published package
+
+If you add a file to `layer/` that should ship with the package — a new module, a server
+util, etc. — add it to the `files:` array in `layer/package.json`. Otherwise it's stripped
+at publish time and consumers will see "module not found" errors.
+
+## Local layer vs published npm package
+
+**By default, `examples/foundry` and other examples consume the local `layer/` workspace**
+— `examples/foundry/package.json` declares `"@incubrain/foundry": "workspace:^"`, and
+`.npmrc` has `link-workspace-packages=true`. Any change you make in `layer/` is immediately
+picked up by `pnpm dev:foundry` / `pnpm build:foundry` without needing to publish.
+
+**To verify the published npm package (`@incubrain/foundry@<version>`) builds cleanly** —
+useful before cutting a release — temporarily swap the spec:
+
+```bash
+# Switch examples back to the published package
+(cd examples/foundry && pnpm add '@incubrain/foundry@^0.7.0')
+pnpm build:foundry
+
+# Switch back to local
+(cd examples/foundry && pnpm add '@incubrain/foundry@workspace:^')
+```
+
+**`playground/` always uses local layer** (`workspace:*`) — it's the canonical target for
+`pnpm --filter playground build` regression checks.
+
+If `pnpm build:foundry` fails with errors that reference
+`node_modules/.pnpm/@incubrain+foundry@<version>/...`, examples is on the published
+package and the error is in that release, not your local work.
+
+## Architecture
+
+**In scope:** Landing pages (section-driven), signal capture (email/presales/bookings),
+event tracking (analytics-agnostic), webhook streaming.
+
+**Out of scope:** Email sequences, authentication, payment processing, databases. Use
+external tools for these.
+
+**Key patterns:**
+- Event-driven: action → `useEvents()` → handler → provider. Swap analytics without
+  changing event code. See `modules/events/*`.
+- Webhook streaming: capture → encrypt → webhook → destination. No storage needed. See
+  `modules/events/server/handlers/webhook.ts`.
+- SSR: Nuxt 4, use `import.meta.client` guards for client-only APIs or
+  `.client.ts|.server.ts` file naming.
+
+## File Locations
+
+```bash
+layer/                         → Nuxt layer (core reusable code)
+layer/modules/                 → Feature modules (events, rss, changelog, docs)
+examples/foundry/              → Founder Funnel example app
+.starters/default/             → Starter template (used by CLI)
+shared/config/                 → Configuration files
+shared/types/                  → TypeScript types
+deploy/                        → Dockerfiles and deployment configs
+.agents/rules/                 → Agent rule files (symlinked from .claude/rules/)
+.agents/skills/                → External skills (gitignored, install with scripts/install-skills.sh)
+.claude/agents/                → Claude Code sub-agent definitions
+.claude/scripts/                → Utility scripts for agents
+skills/                        → Custom skills (committed to git)
+```
+
+## Common Tasks
+
+- **Add new section:** Copy existing section component, edit `content/*.yml`
+- **Change validation path:** Edit `app/components/convert/*`
+- **Add event tracking:** Use `useEvents()` composable
+- **Deploy:** Standard Node.js/Docker — Dockerfile + `vercel.json` included
+- **Visual UI review:** Use the `visual-tester` skill or `browser-tester` sub-agent — see Visual Testing below
+
+## Module Guides
+
+Each module has its own AGENTS.md with detailed architecture, file maps, and modification
+guides. Read the relevant guide when working on that module (not autoloaded):
+
+- [layer/modules/events/AGENTS.md](layer/modules/events/AGENTS.md) — Event tracking and webhook streaming
+- [layer/modules/rss/AGENTS.md](layer/modules/rss/AGENTS.md) — RSS feed generation
+- [layer/modules/changelog/AGENTS.md](layer/modules/changelog/AGENTS.md) — Changelog generation
+- [layer/modules/docs/AGENTS.md](layer/modules/docs/AGENTS.md) — Documentation utilities
+
+## Skills
+
+External agent skills extend capabilities for specialized tasks. Skills are installed to
+`.agents/skills/` (gitignored). After cloning, run `bash scripts/install-skills.sh` to
+install them.
+
+**When to use skills:**
+- **Development**: nuxt, nuxt-ui, nuxt-content, vue-best-practices, vitest, vueuse-functions, pinia
+- **Design**: frontend-design, theme-factory, web-design-guidelines
+- **Marketing**: copywriting, marketing-psychology
+- **Strategy**: brainstorming, systematic-debugging
+- **Tools**: agent-browser, manage-mcp
+- **Visual Testing**: visual-tester (uses agent-browser for UI/UX bug detection)
+- **Custom** (in `skills/`): docs-writer, visual-tester
+
+**Skill priority:** Check skills first → VueUse → Library → Custom (last resort)
+
+**Commands:**
+```bash
+bash scripts/install-skills.sh          # Install or update all skills
+npx skills list --agent claude-code     # List installed skills
+npx skills update skill-name            # Update a specific skill
+```
+
+## Visual Testing
+
+Use the `browser-tester` sub-agent or `visual-tester` skill to detect UI/UX bugs via
+annotated screenshots. The dev server must be running first (`pnpm dev:ff`, `pnpm dev:ib`,
+etc.).
+
+**When to use:**
+- After implementing UI changes — verify layout, spacing, and styling
+- Before merging — catch visual regressions
+- When investigating reported visual bugs — capture evidence with screenshots
+
+**Quick start:**
+```bash
+# One-command review (wrapper script)
+bash .claude/scripts/visual-review.sh http://localhost:3000 [optional-selector]
+
+# Manual workflow
+npx agent-browser open http://localhost:3000
+npx agent-browser wait --load networkidle
+npx agent-browser screenshot --annotate --full
+npx agent-browser close
+```
+
+**Sub-agents:** `.claude/agents/browser-tester.md` defines the Browser Visual Tester — use
+as a Claude Code sub-agent for visual review tasks.
+
+**Observability:** Every `agent-browser` command is logged to `.claude/visual-test-log.md`
+(gitignored) via a PostToolUse hook. Check this file to audit what commands were run
+during a visual review session.
+
+**`data-testid` selectors** for scoped reviews:
+```bash
+npx agent-browser snapshot -i -s "[data-testid='section-hero']"
+npx agent-browser snapshot -i -s "[data-testid='convert-form']"
+```
+
+## Context-mode tooling
+
+### REDIRECTED tools — use sandbox equivalents
+
+### Bash (>20 lines output)
+Bash is ONLY for: `git`, `mkdir`, `rm`, `mv`, `cd`, `ls`, `pnpm install`, and other
+short-output commands. For everything else, use:
+- `ctx_batch_execute(commands, queries)` — run multiple commands + search in ONE call
+- `ctx_execute(language: "shell", code: "...")` — run in sandbox, only stdout enters context
+
+### Read (for analysis)
+If you are reading a file to **Edit** it → Read is correct (Edit needs content in context).
+If you are reading to **analyze, explore, or summarize** → use `ctx_execute_file(path,
+language, code)` instead. Only your printed summary enters context. The raw file content
+stays in the sandbox.
+
+### Grep (large results)
+Grep results can flood context. Use `ctx_execute(language: "shell", code: "grep ...")` to
+run searches in sandbox. Only your printed summary enters context.
+
+## Tool selection hierarchy
+
+1. **GATHER**: `ctx_batch_execute(commands, queries)` — Primary tool. Runs all commands,
+   auto-indexes output, returns search results. ONE call replaces 30+ individual calls.
+2. **FOLLOW-UP**: `ctx_search(queries: ["q1", "q2", ...])` — Query indexed content. Pass ALL
+   questions as an array in ONE call.
+3. **PROCESSING**: `ctx_execute(language, code)` | `ctx_execute_file(path, language, code)` —
+   Sandbox execution. Only stdout enters context.
+4. **WEB**: `ctx_fetch_and_index(url, source)` then `ctx_search(queries)` — Fetch, chunk,
+   index, query. Raw HTML never enters context.
+5. **INDEX**: `ctx_index(content, source)` — Store content in the FTS5 knowledge base for
+   later search.
+
+## Subagent routing
+
+When spawning subagents (Agent/Task tool), the routing block is automatically injected into
+their prompt. Bash-type subagents are upgraded to general-purpose so they have access to MCP
+tools. You do NOT need to manually instruct subagents about context-mode.
+
+## Output constraints
+
+- Keep responses under 500 words.
+- Write artifacts (code, configs, PRDs) to FILES — never return them as inline text. Return
+  only: file path + 1-line description.
+- When indexing content, use descriptive source labels so others can
+  `ctx_search(source: "label")` later.
+
+## ctx commands
+
+| Command | Action |
+|---------|--------|
+| `ctx stats` | Call the `ctx_stats` MCP tool and display the full output verbatim |
+| `ctx doctor` | Call the `ctx_doctor` MCP tool, run the returned shell command, display as checklist |
+| `ctx upgrade` | Call the `ctx_upgrade` MCP tool, run the returned shell command, display as checklist |

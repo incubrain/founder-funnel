@@ -18,3 +18,4 @@
 | Validation Path | validation-route, check | Procedural steps for validating configuration, content schemas, or deployment readiness. |
 | Documentation | docs, reference | Markdown guides and examples for using Foundry in a Nuxt 4 project. |
 | MCP | tool-integration, model-context-protocol | Tools exposing Foundry capabilities to Claude for AI-assisted site building. |
+| Verdaccio | local registry, publish:local | Local private npm registry used to publish `@incubrain/foundry` prerelease builds so external consumer repos (astronera, incubrain) can test layer changes without a real npm release. |
