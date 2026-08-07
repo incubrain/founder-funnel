@@ -17,6 +17,9 @@ node-compile-cache/
 logs
 *.log
 
+# Stale dev-server sockets (nuxt-vite-node / nitro-worker)
+*.sock
+
 # Misc
 .DS_Store
 .fleet
