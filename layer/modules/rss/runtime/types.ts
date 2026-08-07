@@ -65,7 +65,7 @@ export interface RSSModuleOptions {
   enabled?: boolean
   /**
    * Named feed configurations.
-   * Key = collection route slug (e.g. 'decisions' → /rss/decisions)
+   * Key = collection route slug (e.g. 'blog' → /rss/blog)
    */
   feeds?: Record<string, RSSFeedConfig>
   /** Cache-Control max-age in seconds (default: 3600) */

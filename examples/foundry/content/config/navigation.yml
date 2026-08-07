@@ -24,9 +24,6 @@ header:
     - label: About
       icon: i-lucide-info
       to: /about
-    - label: Decisions
-      icon: i-lucide-lightbulb
-      to: /decisions
     - label: Mentorship
       icon: i-lucide-users
       to: /offers/mentorship
@@ -42,9 +39,6 @@ footer:
         - label: Our Story
           icon: i-lucide-book-open
           to: /about
-        - label: Decisions
-          icon: i-lucide-lightbulb
-          to: /decisions
         - label: Roadmap
           icon: i-lucide-map
           to: https://github.com/incubrain/foundry/discussions/133

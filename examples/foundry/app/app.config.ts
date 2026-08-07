@@ -17,10 +17,8 @@ export default defineAppConfig({
   },
 
   content: {
-    routeMap: {
-      '/decisions': 'decisions',
-    },
-    searchable: ['pages', 'decisions'],
+    routeMap: {},
+    searchable: ['pages'],
     pagesBackLabel: 'Back',
     defaultAuthor: 'drew-macgibbon',
     routing: {

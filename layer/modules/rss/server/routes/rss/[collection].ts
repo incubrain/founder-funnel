@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
       status: 404,
       message: 'Collection not specified',
       why: 'No collection parameter in the URL',
-      fix: 'Use /rss/{collection} — e.g. /rss/decisions',
+      fix: 'Use /rss/{collection} — e.g. /rss/blog',
     })
   }
 

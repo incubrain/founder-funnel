@@ -24,22 +24,8 @@ export default defineNuxtConfig({
     '/success': { appLayout: 'landing' },
     '/success/**': { appLayout: 'landing' },
 
-    // Founder Decision Log
-    '/decisions': { appLayout: 'default' },
-    '/decisions/**': { appLayout: 'article' },
-
     // RSS Feeds
     '/rss-feeds': { appLayout: 'default' },
-  },
-
-  nitro: {
-    prerender: {
-      ignore: [/^\/decisions\/.+/],
-    },
-  },
-
-  linkChecker: {
-    excludeLinks: ['/decisions/**'],
   },
 
   llms: {
@@ -65,15 +51,6 @@ export default defineNuxtConfig({
         contentCollection: 'pages',
         contentFilters: [{ field: 'path', operator: '=', value: '/about' }],
       },
-      // {
-      //   title: 'Decisions',
-      //   description: 'Founders strategic decisions',
-      //   contentCollection: 'changelog',
-      //   contentFilters: [
-      //     { field: 'path', operator: 'LIKE', value: '/decisions/%' },
-      //     { field: 'label', operator: 'IS NOT NULL' },
-      //   ],
-      // },
       {
         title: 'Overview',
         description: 'Product overview and value proposition',
@@ -89,16 +66,10 @@ export default defineNuxtConfig({
     ],
   },
 
-  // RSS feeds — each key becomes /rss/{key}
+  // RSS feeds — each key becomes /rss/{key}. Add a feed here when there's a
+  // content collection to syndicate (e.g. a blog).
   rss: {
-    feeds: {
-      decisions: {
-        collection: 'changelog',
-        title: 'IncuBrain Foundry Changelog',
-        description: 'Latest decisions and changelogs from IncuBrain Foundry',
-        basePath: '/changelog',
-      },
-    },
+    feeds: {},
   },
 
   studio: {

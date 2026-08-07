@@ -4,7 +4,6 @@ import {
   baseConfigSchema,
   baseFaqSchema,
   basePageSchema,
-  baseChangelogSchema,
   baseNavigationSchema,
 } from '@incubrain/foundry/schemas'
 
@@ -18,15 +17,6 @@ export default defineContentConfig({
         prefix: '/',
       },
       schema: basePageSchema,
-    }),
-
-    decisions: defineCollection({
-      type: 'page',
-      source: {
-        include: 'decisions/**/*.md',
-        prefix: '/decisions',
-      },
-      schema: baseChangelogSchema,
     }),
 
     // FAQ data
