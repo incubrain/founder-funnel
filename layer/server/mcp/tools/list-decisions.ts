@@ -21,7 +21,7 @@ OUTPUT: Returns title, path, date, label (version), description, contentHash (SH
     log.set({ mcp: { tool: 'list-decisions' } })
 
     try {
-      const entries = await queryCollection(event, 'changelog' as keyof Collections)
+      const entries = await queryCollection(event, 'pages' as keyof Collections)
         .select('title' as 'id', 'path' as 'id', 'description' as 'id', 'date' as 'id', 'label' as 'id')
         .order('date' as 'id', 'DESC' as never)
         .all()

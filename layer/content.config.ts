@@ -6,7 +6,6 @@ import {
   baseNavigationSchema,
   baseConfigSchema,
   baseFaqSchema,
-  baseChangelogSchema,
   baseTeamSchema,
 } from './content.collections'
 
@@ -25,15 +24,6 @@ export default defineContentConfig({
         },
       ],
       schema: basePageSchema,
-    }),
-
-    changelog: defineCollection({
-      type: 'page',
-      source: {
-        include: 'changelog/*.md',
-        cwd,
-      },
-      schema: baseChangelogSchema,
     }),
 
     // FAQ data

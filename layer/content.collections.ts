@@ -1,9 +1,6 @@
 import { z, property } from '@nuxt/content'
 import { ICON_LIBRARIES } from './shared/constants'
 
-// Re-export schemas from modules (source of truth lives in each module)
-export { baseChangelogSchema } from './modules/changelog/runtime/types'
-
 export const baseConfigSchema = z.object({
   business: z.object({
     name: z.string(),

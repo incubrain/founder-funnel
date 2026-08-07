@@ -23,11 +23,7 @@ declare module 'nuxt/schema' {
   interface AppConfig {
     content: {
       collections: {
-        docs: CollectionConfig
         pages: CollectionConfig
-        glossary: CollectionConfig
-        references: CollectionConfig
-        changelog: CollectionConfig
         team: CollectionConfig
         faq: CollectionConfig
         config: CollectionConfig
@@ -43,7 +39,6 @@ declare module 'nuxt/schema' {
         sources?: string
         offers?: string
         success?: string
-        glossary?: string
       }
     }
     seo: {
@@ -97,11 +92,6 @@ declare module 'nuxt/schema' {
       routing?: Record<string, string>
     }
     ui?: {
-      docs?: {
-        affiliation?: {
-          colors?: Record<string, string>
-        }
-      }
       [key: string]: unknown
     }
     foundry?: {

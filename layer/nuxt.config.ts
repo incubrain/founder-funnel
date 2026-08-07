@@ -14,7 +14,6 @@ export default defineNuxtConfig({
     resolve('./modules/css'),
     resolve('./modules/events'),
     resolve('./modules/rss'),
-    resolve('./modules/changelog'),
     resolve('./modules/markdown-rewrite'),
     () => {
       // Auto-register the consumer's app/assets/icons/ SVGs under the `custom:` prefix.
@@ -126,15 +125,11 @@ export default defineNuxtConfig({
           ],
         },
         remarkPlugins: {
-          'remark-math': {},
           'remark-mdc': {
             options: {
               autoUnwrap: true,
             },
           },
-        },
-        rehypePlugins: {
-          'rehype-katex': {},
         },
       },
     },

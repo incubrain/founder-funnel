@@ -22,7 +22,7 @@ OUTPUT: Returns title, path, date, label, description, full markdown content, co
     log.set({ mcp: { tool: 'get-decision', path } })
 
     try {
-      const entry = await queryCollection(event, 'changelog' as keyof Collections)
+      const entry = await queryCollection(event, 'pages' as keyof Collections)
         .where('path', '=', path)
         .select('title' as 'id', 'path' as 'id', 'description' as 'id', 'date' as 'id', 'label' as 'id')
         .first()
