@@ -6,11 +6,9 @@ export default defineAppConfig({
   content: {
     // Route prefix → collection name mapping
     // Used by useContentConfig to resolve which collection serves a URL
-    routeMap: {
-      '/docs': 'docs',
-    },
+    routeMap: {},
     // Collections to include in search
-    searchable: ['docs'],
+    searchable: ['pages'],
     // Back button label for article layout
     pagesBackLabel: 'Back',
     // Additional routing paths

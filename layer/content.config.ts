@@ -3,8 +3,6 @@ import { useNuxt } from '@nuxt/kit'
 import { joinURL } from 'ufo'
 import {
   basePageSchema,
-  baseGlossarySchema,
-  baseReferencesSchema,
   baseNavigationSchema,
   baseConfigSchema,
   baseFaqSchema,
@@ -29,15 +27,6 @@ export default defineContentConfig({
       schema: basePageSchema,
     }),
 
-    docs: defineCollection({
-      type: 'page',
-      source: {
-        include: 'docs/**/*.md',
-        prefix: '/docs',
-      },
-      schema: basePageSchema,
-    }),
-
     changelog: defineCollection({
       type: 'page',
       source: {
@@ -45,24 +34,6 @@ export default defineContentConfig({
         cwd,
       },
       schema: baseChangelogSchema,
-    }),
-
-    references: defineCollection({
-      type: 'data',
-      source: {
-        include: 'references/*.yml',
-        cwd,
-      },
-      schema: baseReferencesSchema,
-    }),
-
-    glossary: defineCollection({
-      type: 'data',
-      source: {
-        include: 'glossary/*.yml',
-        cwd,
-      },
-      schema: baseGlossarySchema,
     }),
 
     // FAQ data

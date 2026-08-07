@@ -5,10 +5,16 @@ import {
   queryCollectionSearchSections,
 } from '#imports'
 
+/**
+ * App-wide content search backing the `UContentSearch` command palette in app.vue.
+ * Collections to index are driven by `appConfig.content.searchable`.
+ */
 export const useSearch = async () => {
   const appConfig = useAppConfig()
   const searchableCollections
-    = appConfig.content?.collections?.searchable || ['docs']
+    = appConfig.content?.collections?.searchable
+      || appConfig.content?.searchable
+      || ['pages']
 
   const { data: searchFiles } = useLazyAsyncData(
     'search_files',

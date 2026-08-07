@@ -35,7 +35,7 @@ WORKFLOW: This tool returns the complete page content including title, descripti
     try {
       const page = await queryCollection(
         event,
-        'docs' as keyof Collections,
+        'pages' as keyof Collections,
       )
         .where('path', '=', path)
         .select('title' as 'id', 'path' as 'id', 'description' as 'id')

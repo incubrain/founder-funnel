@@ -24,10 +24,6 @@ export default defineNuxtConfig({
     '/success': { appLayout: 'landing' },
     '/success/**': { appLayout: 'landing' },
 
-    // Documentation
-    '/docs': { appLayout: 'docs' },
-    '/docs/**': { appLayout: 'docs' },
-
     // Founder Decision Log
     '/decisions': { appLayout: 'default' },
     '/decisions/**': { appLayout: 'article' },
@@ -53,12 +49,6 @@ export default defineNuxtConfig({
       'Open-source product validator for technical founders validating product ideas',
 
     sections: [
-      {
-        title: 'Documentation',
-        description:
-          'How to use the Foundry layer and CLI — setup, content, signal capture, events, theming, deployment',
-        contentCollection: 'docs',
-      },
       {
         title: 'Product Offers',
         description:

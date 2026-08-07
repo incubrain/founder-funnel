@@ -3,7 +3,6 @@ import { ICON_LIBRARIES } from './shared/constants'
 
 // Re-export schemas from modules (source of truth lives in each module)
 export { baseChangelogSchema } from './modules/changelog/runtime/types'
-export { baseReferencesSchema, baseGlossarySchema } from './modules/docs/runtime/types'
 
 export const baseConfigSchema = z.object({
   business: z.object({

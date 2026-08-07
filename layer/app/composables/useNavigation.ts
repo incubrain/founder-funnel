@@ -48,9 +48,9 @@ export interface NavigationConfig {
 
 export const useNavigation = async () => {
   const appConfig = useAppConfig()
-  const searchableCollections = appConfig.content?.collections?.searchable || [
-    'docs',
-  ]
+  const searchableCollections = appConfig.content?.collections?.searchable
+    || appConfig.content?.searchable
+    || ['pages']
 
   /* -------------------------------- config -------------------------------- */
 

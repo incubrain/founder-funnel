@@ -21,9 +21,6 @@ header:
     x: https://x.com/DrewMacGibbon
     github: https://github.com/Drew-Macgibbon
   navigation:
-    - label: Docs
-      icon: i-lucide-book-open
-      to: /docs/getting-started
     - label: About
       icon: i-lucide-info
       to: /about
@@ -38,22 +35,6 @@ header:
 
 footer:
   columns:
-    - label: Documentation
-      icon: i-lucide-book-open
-      to: /docs/getting-started
-      children:
-        - label: Getting Started
-          icon: i-lucide-rocket
-          to: /docs/getting-started
-        - label: Content
-          icon: i-lucide-file-text
-          to: /docs/content
-        - label: Signal Capture
-          icon: i-lucide-target
-          to: /docs/signal-capture
-        - label: Events & Tracking
-          icon: i-lucide-activity
-          to: /docs/modules/events
     - label: About
       icon: i-lucide-info
       to: /about

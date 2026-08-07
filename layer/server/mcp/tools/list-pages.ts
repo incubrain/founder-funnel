@@ -31,7 +31,7 @@ OUTPUT: Returns a structured list with:
       ? 'http://localhost:3000'
       // @ts-expect-error h3@1↔@2 H3Event mismatch in dual-version install
       : getRequestURL(event).origin
-    const collections = ['docs']
+    const collections = ['pages']
 
     log.set({ mcp: { tool: 'list-pages', collections } })
 

@@ -195,7 +195,9 @@ guides. Read the relevant guide when working on that module (not autoloaded):
 - [layer/modules/events/AGENTS.md](layer/modules/events/AGENTS.md) — Event tracking and webhook streaming
 - [layer/modules/rss/AGENTS.md](layer/modules/rss/AGENTS.md) — RSS feed generation
 - [layer/modules/changelog/AGENTS.md](layer/modules/changelog/AGENTS.md) — Changelog generation
-- [layer/modules/docs/AGENTS.md](layer/modules/docs/AGENTS.md) — Documentation utilities
+
+> The `docs` module (docs-site engine + scholarly toolkit) was extracted to the
+> `@incubrain/foundry-docs` repo. Foundry no longer ships a documentation site.
 
 ## Skills
 

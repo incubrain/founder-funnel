@@ -15,7 +15,6 @@ export default defineNuxtConfig({
     resolve('./modules/events'),
     resolve('./modules/rss'),
     resolve('./modules/changelog'),
-    resolve('./modules/docs'),
     resolve('./modules/markdown-rewrite'),
     () => {
       // Auto-register the consumer's app/assets/icons/ SVGs under the `custom:` prefix.
@@ -180,7 +179,7 @@ export default defineNuxtConfig({
   alias: {
     '#constants': resolve('./shared/constants.ts'),
     '#navigation': resolve('./app/composables/useNavigation.ts'),
-    '#search': resolve('./modules/docs/runtime/composables/useSearchStub.ts'),
+    '#search': resolve('./app/composables/useSearch.ts'),
   },
 
   experimental: {

@@ -81,7 +81,7 @@ export const useContentConfig = () => {
    */
   const resolveInternalPath = (
     path: string,
-    collection: keyof Collections = 'docs',
+    collection: keyof Collections = 'pages',
   ): string => {
     if (!path) return '/'
 

@@ -13,33 +13,6 @@ export default defineNuxtSchema({
             'Content collections. Each can be a string (name) or object { name, type, prefix?, backLabel? }.',
           icon: 'i-lucide-database',
           fields: {
-            docs: group({
-              title: 'Docs',
-              description: 'Documentation collection configuration (page type).',
-              icon: 'i-lucide-book',
-              fields: {
-                name: field({
-                  type: 'string',
-                  title: 'Collection Name',
-                  description: 'Name of the docs collection.',
-                  default: 'docs',
-                }),
-                type: field({
-                  type: 'string',
-                  title: 'Collection Type',
-                  description: 'Type of collection: "page" (routable) or "data" (not routable).',
-                  default: 'page',
-                  required: ['page', 'data'],
-                }),
-                prefix: field({
-                  type: 'string',
-                  title: 'URL Prefix',
-                  description:
-                    'URL prefix for docs (e.g., "/docs", "/darksky").',
-                  default: '/docs',
-                }),
-              },
-            }),
             pages: group({
               title: 'Pages',
               description: 'Pages collection configuration (page type).',
@@ -177,7 +150,7 @@ export default defineNuxtSchema({
               title: 'Searchable Collections',
               description: 'Collections to include in search results.',
               icon: 'i-lucide-search',
-              default: ['docs'],
+              default: ['pages'],
             }),
           },
         }),

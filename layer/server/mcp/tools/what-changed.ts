@@ -25,7 +25,7 @@ OUTPUT: Returns path, collection name, contentHash (SHA-256), and modifiedAt for
     log.set({ mcp: { tool: 'what-changed', since } })
 
     try {
-      const collections = ['docs', 'changelog'] as const
+      const collections = ['pages', 'changelog'] as const
 
       const allItems = await Promise.all(
         collections.map(async (col) => {
