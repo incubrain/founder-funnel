@@ -2,7 +2,7 @@
 type: vision
 title: Serial solo founders reach a defensible go/no-go on an idea in under two weeks instead of six months of building — and incubrain, with their consent, sees enough of that decision to know who to back.
 created: 2026-06-02
-updated: 2026-08-09
+updated: 2026-08-10
 status: active
 tags: [vision, project]
 applies-to: incubrain/foundry
@@ -28,7 +28,7 @@ None of this is true yet. As of August 2026 nobody outside Drew has run the loop
 the whole founder-loop epic tree under `product-validator-ufs` is open, and the shipped
 artefact is a Nuxt layer that runs two of our own websites.
 
-## How I'd know
+## KPIs
 
 - **Founders reaching a recorded decision.** The count of founders who completed
   grill → page → go/no-go via foundry rises off zero and keeps rising, and a healthy share of
@@ -45,7 +45,7 @@ artefact is a Nuxt layer that runs two of our own websites.
   than the person holding them, and it is observable in a single transcript — long before any
   of the above have numbers.
 
-## What would stop it
+## Blockers
 
 - **Usage without deal flow.** Pages shipped climbs into the thousands while opt-ins and
   surfaced fundable founders stay at zero — foundry has become a free Carrd. Stop developing
@@ -64,7 +64,7 @@ artefact is a Nuxt layer that runs two of our own websites.
   haven't freed attention, stop holding a slot for the founder loop: foundry is a website
   layer, and the grilling heuristics stay an internal diligence asset.
 
-## The user and the moment
+## Value
 
 A serial-attempt solo technical founder in Pune. Idea-rich and completion-poor — two side
 projects already shipped and abandoned, so they know what sinking months into the wrong thing
