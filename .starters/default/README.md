@@ -40,8 +40,6 @@ app/
 
 nuxt.config.ts            Route rules, site metadata, modules
 content.config.ts         Content collection definitions + schemas
-server/plugins/
-└── evlog-drain.ts        Logging drain (Sentry/Axiom/PostHog — uncomment to enable)
 public/                   Favicons and static assets
 .env.example              All available environment variables
 ```

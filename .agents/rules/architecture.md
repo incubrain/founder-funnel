@@ -62,25 +62,29 @@ Max nesting: 3 levels
 - `createEvlogError()` with `why`/`fix` fields for AI-readable errors
 - See: `layer/modules/events/server/handlers/webhook.post.ts`
 
-**Layer Plugins (automatic):**
-- `evlog-enrich.ts` — Adds user agent + geo context to every request
-- `evlog-sampling.ts` — Always keeps signal capture events (leads, webhook deliveries)
+**No drain pipeline:**
+- evlog is the structured-logging *library* only — console output, one wide event per request
+- No drain adapters, no sampling plugin, no enrichers, no browser transport
+- Errors and warnings reach external consumers through the signal buffer instead (below)
 
-**App-Level Drain (your responsibility):**
-- Create `server/plugins/evlog-drain.ts` in your app to send logs externally
-- Supports: Sentry, Axiom, PostHog, Better Stack, OTLP, or custom
-- Use `createDrainPipeline()` for batching + retry in production
-- See: `examples/foundry/server/plugins/evlog-drain.ts`
+## Signal Capture (capture → buffer → pull)
 
-**Browser Transport:**
-- Client-side `log.info()`/`log.error()` auto-sent to server via `/api/_evlog/ingest`
-- Enabled by default in layer config
-- Flows through same drain pipeline as server logs
+**One envelope for everything:**
+- `SignalRow { id, seq, ts, site, kind: 'event'|'log', name, severity?, visitor?, page?, referrer?, utm?, data? }`
+- Analytics events (`kind: 'event'`) and error/warning logs (`kind: 'log'`) share the stream
+
+**Flow:**
+- Client events → signal provider → `POST /api/_signals/ingest` (debounced batch, beacon on pagehide)
+- Client errors (`window.onerror`, `unhandledrejection`, Vue `errorHandler`) → same ingest
+- Server: form captures and request errors → `appendSignal()` directly
+- All rows → capped ring buffer over `useStorage('signals')` (default 10 000 rows, oldest evicted)
+- External consumer (Polaris) pulls `GET /api/_signals/export?since=<seq>&limit=<n≤1000>`
+  → `{ rows, cursor, site }`, `Authorization: Bearer <token>` required
+- See: `layer/modules/events/server/utils/signal-buffer.ts`, `layer/modules/events/AGENTS.md`
 
 **Key env vars:**
-- `NUXT_SENTRY_DSN` — Sentry log drain
-- `NUXT_AXIOM_TOKEN` + `NUXT_AXIOM_DATASET` — Axiom drain
-- `NUXT_POSTHOG_API_KEY` — PostHog drain
+- `NUXT_SIGNAL_EXPORT_TOKEN` — bearer token for the export endpoint (unset → 503, never open)
+- `NUXT_PUBLIC_SITE_ID` — site identifier on every row (falls back to the request host)
 
 ## Integration Points
 
@@ -91,7 +95,7 @@ Max nesting: 3 levels
 
 **Webhooks:**
 - `NUXT_WEBHOOK_URL` — single webhook URL, best-effort JSON POST on form capture
-- No per-platform formatting/retry (being replaced by a unified signal-export channel)
+- No per-platform formatting/retry — the durable copy lives in the signal buffer
 
 **Deployment:**
 - Railway: Dockerfile included

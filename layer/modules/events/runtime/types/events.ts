@@ -72,6 +72,14 @@ export interface ModuleOptions {
   webhook: {
     enabled: boolean
   }
+  /** Signal capture: ring buffer + `/api/_signals/*` endpoints. */
+  signals: {
+    enabled: boolean
+    /** Max rows held in the ring buffer before the oldest are evicted. */
+    capacity: number
+    /** Capture client + server errors as `kind: 'log'` rows. */
+    captureErrors: boolean
+  }
   debug: boolean
 }
 

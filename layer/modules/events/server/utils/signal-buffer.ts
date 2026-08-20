@@ -1,0 +1,131 @@
+import type { Storage } from 'unstorage'
+import type { H3Event } from 'h3'
+import type { SignalInput, SignalRow } from '../../runtime/types/signal'
+
+export const DEFAULT_SIGNAL_CAPACITY = 10_000
+export const MAX_EXPORT_LIMIT = 1000
+
+const META_KEY = 'meta'
+const rowKey = (seq: number) => `row:${seq}`
+
+export interface SignalBufferOptions {
+  capacity?: number
+}
+
+export interface SignalReadResult {
+  rows: SignalRow[]
+  cursor: number
+}
+
+export interface SignalBuffer {
+  append: (input: SignalInput) => Promise<SignalRow>
+  read: (sinceSeq?: number, limit?: number) => Promise<SignalReadResult>
+  capacity: number
+}
+
+/**
+ * Capped ring buffer over an unstorage driver (memory by default — mount
+ * `signals` to fs/KV in nuxt.config to survive restarts). `seq` is the cursor.
+ */
+export function createSignalBuffer(
+  storage: Storage,
+  options: SignalBufferOptions = {},
+): SignalBuffer {
+  const capacity = Math.max(1, options.capacity ?? DEFAULT_SIGNAL_CAPACITY)
+
+  let head: number | null = null
+  // Serialises appends so `seq` stays monotonic under concurrent requests.
+  let tail: Promise<unknown> = Promise.resolve()
+
+  const loadHead = async () => {
+    if (head === null) {
+      const meta = await storage.getItem<{ head?: number }>(META_KEY)
+      head = Number(meta?.head) || 0
+    }
+    return head
+  }
+
+  const oldestSeq = (current: number) => Math.max(1, current - capacity + 1)
+
+  const append = async (input: SignalInput): Promise<SignalRow> => {
+    const seq = (await loadHead()) + 1
+    head = seq
+
+    const row: SignalRow = {
+      ...input,
+      id: input.id || crypto.randomUUID(),
+      ts: input.ts ?? Date.now(),
+      site: input.site ?? '',
+      seq,
+    }
+
+    await storage.setItem(rowKey(seq), row)
+    if (seq - capacity >= 1) await storage.removeItem(rowKey(seq - capacity))
+    await storage.setItem(META_KEY, { head: seq })
+
+    return row
+  }
+
+  const read = async (sinceSeq = 0, limit = 100): Promise<SignalReadResult> => {
+    const current = await loadHead()
+    const max = Math.min(Math.max(1, Math.trunc(limit) || 1), MAX_EXPORT_LIMIT)
+    const from = Math.max(Math.trunc(sinceSeq) + 1, oldestSeq(current))
+
+    const rows: SignalRow[] = []
+    for (let seq = from; seq <= current && rows.length < max; seq++) {
+      const row = await storage.getItem<SignalRow>(rowKey(seq))
+      if (row) rows.push(row)
+    }
+
+    const last = rows.at(-1)
+    return {
+      rows,
+      cursor: last ? last.seq : Math.min(Math.max(0, Math.trunc(sinceSeq)), current),
+    }
+  }
+
+  return {
+    // Chain every append onto the queue so callers can fire-and-forget.
+    append: (input) => {
+      const next = tail.then(() => append(input))
+      tail = next.catch(() => {})
+      return next
+    },
+    read,
+    capacity,
+  }
+}
+
+// === Nitro-bound singleton ===
+
+let buffer: SignalBuffer | null = null
+
+function getSignalBuffer(): SignalBuffer {
+  if (!buffer) {
+    const capacity = Number(
+      (useRuntimeConfig().signals as { capacity?: number } | undefined)?.capacity,
+    )
+    buffer = createSignalBuffer(useStorage('signals'), {
+      capacity: capacity || DEFAULT_SIGNAL_CAPACITY,
+    })
+  }
+  return buffer
+}
+
+/** `runtimeConfig.public.siteId`, falling back to the request host. */
+export function resolveSite(event?: H3Event): string {
+  const configured = useRuntimeConfig(event).public.siteId as string | undefined
+  if (configured) return configured
+  return (event && getRequestHost(event)) || 'unknown'
+}
+
+export function appendSignal(input: SignalInput, event?: H3Event): Promise<SignalRow> {
+  return getSignalBuffer().append({
+    ...input,
+    site: input.site || resolveSite(event),
+  })
+}
+
+export function readSignals(sinceSeq = 0, limit = 100): Promise<SignalReadResult> {
+  return getSignalBuffer().read(sinceSeq, limit)
+}

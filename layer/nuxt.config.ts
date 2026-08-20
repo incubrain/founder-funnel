@@ -69,15 +69,6 @@ export default defineNuxtConfig({
       },
     },
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore — module-contributed config not typed in $production override
-    evlog: {
-      sampling: {
-        rates: { info: 10, warn: 50, debug: 0 },
-        keep: [{ status: 400 }, { duration: 1000 }],
-      },
-    },
-
     scripts: {
       registry: {
         umamiAnalytics: true,
@@ -154,6 +145,7 @@ export default defineNuxtConfig({
     public: {
       debug: true,
       siteUrl: '',
+      siteId: '', // NUXT_PUBLIC_SITE_ID — stamped on every signal row (falls back to request host)
       scripts: {
         umamiAnalytics: {
           websiteId: '',
@@ -164,6 +156,7 @@ export default defineNuxtConfig({
       },
     },
     webhookUrl: '',
+    signalExportToken: '', // NUXT_SIGNAL_EXPORT_TOKEN — bearer token for GET /api/_signals/export
   },
 
   dir: {
@@ -220,24 +213,28 @@ export default defineNuxtConfig({
     },
   },
 
-  // Events module for conversion tracking
+  // Events module for conversion tracking + signal capture
   events: {
     providers: ['umami', 'console', 'webhook'],
     webhook: {
       enabled: true,
     },
+    signals: {
+      enabled: true,
+      capacity: 10_000,
+      captureErrors: true,
+    },
     debug: true,
   },
 
-  // Structured logging (evlog) - one wide event per request
+  // Structured logging (evlog) — one wide event per request, console only.
+  // No drain/sampling/enrichment pipeline: errors reach consumers through the
+  // signal buffer (`/api/_signals/export`), not through evlog adapters.
   evlog: {
     env: {
       service: 'foundry',
     },
     include: ['/api/**', '/rss/**'],
-    transport: {
-      enabled: true,
-    },
   },
 
   icon: {

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { appendSignal } from '../utils/signal-buffer'
 
 // Strict schema matching FieldDef types from useFormCapture
 const captureSchema = z.object({
@@ -52,7 +53,13 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // TODO(signal-buffer): append signal row here (product-validator-a4r.8)
+  // === SIGNAL BUFFER (what Polaris pulls) ===
+
+  await appendSignal({
+    kind: 'event',
+    name: 'form_submitted',
+    data: { formData: parsed.data.formData },
+  }, event)
 
   // === WEBHOOK FORWARD (best-effort notification, doesn't block the response) ===
 

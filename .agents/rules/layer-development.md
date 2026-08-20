@@ -21,7 +21,7 @@ This is the core Nuxt layer. Everything here is reusable across example apps.
 
 **Component locations:**
 - `layer/app/components/convert/` — Signal capture (Email, Booking, Pricing)
-- `layer/app/components/section/` — Landing sections (Hero, Benefits, FAQ)
+- `layer/app/components/section/` — `SectionWrapper` (a11y + `section_view` signal); concrete sections (Hero, Offer) are per-app files in `examples/*` and `.starters/*`
 - `layer/app/components/nav/` — Navigation (Header, Footer)
 
 **Module development:**

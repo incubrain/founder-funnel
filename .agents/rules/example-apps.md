@@ -17,10 +17,10 @@ Example apps extend the core layer. They demonstrate usage patterns and serve as
 - Each example has its own `nuxt.config.ts` extending the layer
 - App-specific config in `app.config.ts`
 
-**Server plugins:**
-- Create evlog drain plugins in `server/plugins/evlog-drain.ts`
-- Use `createDrainPipeline()` for production batching + retry
-- See `examples/foundry/server/plugins/evlog-drain.ts` for reference
+**Observability:**
+- No app-level log drains — events and errors land in the layer's signal buffer
+- Set `NUXT_SIGNAL_EXPORT_TOKEN` and let the consumer pull `GET /api/_signals/export`
+- Mount `nitro.storage.signals` (fs/KV) if rows must survive restarts
 
 **Environment variables:**
 - App-specific env vars in `.env` (gitignored)

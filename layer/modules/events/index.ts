@@ -4,9 +4,11 @@ import {
   addImports,
   createResolver,
   addServerHandler,
+  addServerPlugin,
   addComponentsDir,
 } from '@nuxt/kit'
 import type { ModuleOptions } from './runtime/types/events'
+import { DEFAULT_SIGNAL_CAPACITY } from './server/utils/signal-buffer'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -21,6 +23,11 @@ export default defineNuxtModule<ModuleOptions>({
     providers: ['console'], // Dev default
     webhook: {
       enabled: false,
+    },
+    signals: {
+      enabled: true,
+      capacity: DEFAULT_SIGNAL_CAPACITY,
+      captureErrors: true,
     },
     debug: false,
   },
@@ -77,6 +84,39 @@ export default defineNuxtModule<ModuleOptions>({
         handler: resolver.resolve('./server/handlers/webhook.post'),
       })
     }
+
+    // === Signal capture (buffer + cursor export for external consumers) ===
+    if (options.signals.enabled) {
+      nuxt.options.runtimeConfig.signals = {
+        capacity: options.signals.capacity,
+      }
+
+      addServerHandler({
+        route: '/api/_signals/ingest',
+        method: 'post',
+        handler: resolver.resolve('./server/handlers/signals-ingest.post'),
+      })
+
+      addServerHandler({
+        route: '/api/_signals/export',
+        method: 'get',
+        handler: resolver.resolve('./server/handlers/signals-export.get'),
+      })
+
+      // Client provider: every tracked event also becomes a signal row
+      addPlugin({
+        src: resolver.resolve('./runtime/providers/signal.ts'),
+        mode: 'client',
+      })
+
+      if (options.signals.captureErrors) {
+        addPlugin({
+          src: resolver.resolve('./runtime/plugins/errors.client.ts'),
+          mode: 'client',
+        })
+        addServerPlugin(resolver.resolve('./server/plugins/signal-errors'))
+      }
+    }
   },
 })
 
@@ -87,3 +127,11 @@ export type {
   TrackEventInput,
   AnalyticsProvider,
 } from './runtime/types/events'
+
+export type {
+  SignalRow,
+  SignalInput,
+  SignalKind,
+  SignalSeverity,
+  SignalExportResponse,
+} from './runtime/types/signal'

@@ -7,27 +7,27 @@ describe('SectionWrapper: Landmark Attributes', () => {
   it('renders section with aria-labelledby and data-testid when sectionId provided', async () => {
     const wrapper = await mountSuspended(SectionWrapper, {
       props: {
-        sectionId: 'benefits',
+        sectionId: 'offer',
         title: 'Stop Building in the Dark',
       },
     })
 
     const section = wrapper.find('section')
     expect(section.exists()).toBe(true)
-    expect(section.attributes('id')).toBe('benefits')
-    expect(section.attributes('aria-labelledby')).toBe('heading-benefits')
-    expect(section.attributes('data-testid')).toBe('section-benefits')
+    expect(section.attributes('id')).toBe('offer')
+    expect(section.attributes('aria-labelledby')).toBe('heading-offer')
+    expect(section.attributes('data-testid')).toBe('section-offer')
   })
 
   it('renders heading with correct id for aria-labelledby', async () => {
     const wrapper = await mountSuspended(SectionWrapper, {
       props: {
-        sectionId: 'faq',
+        sectionId: 'hero',
         title: 'Common Questions',
       },
     })
 
-    const heading = wrapper.find('#heading-faq')
+    const heading = wrapper.find('#heading-hero')
     expect(heading.exists()).toBe(true)
     expect(heading.text()).toContain('Common Questions')
   })

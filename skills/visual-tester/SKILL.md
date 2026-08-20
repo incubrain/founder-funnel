@@ -80,8 +80,7 @@ Use the project's `data-testid` convention to scope reviews:
 | Section | Selector |
 |---------|----------|
 | Hero | `[data-testid="section-hero"]` |
-| Benefits | `[data-testid="section-benefits"]` |
-| FAQ | `[data-testid="section-faq"]` |
+| Offer | `[data-testid="section-offer"]` |
 | Convert Form | `[data-testid="convert-form"]` |
 | Pricing | `[data-testid="convert-pricing"]` |
 

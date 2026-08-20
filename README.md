@@ -72,6 +72,23 @@ cp .env.example .env
 NUXT_WEBHOOK_URL=https://discord.com/api/webhooks/...
 ```
 
+## Signal Export
+
+Every analytics event and every error/warning lands in a capped in-process ring buffer as a
+single `SignalRow` envelope. An external consumer pulls them with a cursor:
+
+```bash
+NUXT_SIGNAL_EXPORT_TOKEN=<random-secret>   # required — unset means the endpoint returns 503
+NUXT_PUBLIC_SITE_ID=my-site                # optional — defaults to the request host
+
+curl -H "Authorization: Bearer $NUXT_SIGNAL_EXPORT_TOKEN" \
+  "https://your-site.com/api/_signals/export?since=0&limit=500"
+# → { rows: [...], cursor: 512, site: "my-site" }
+```
+
+Rows are held in memory by default (10 000, oldest evicted). Mount `nitro.storage.signals` to
+an fs/KV driver if they must survive a restart.
+
 ## MCP Tools
 
 AI agents can query your site via the [Model Context Protocol](https://modelcontextprotocol.io):
