@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "foundry-example",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["dev:foundry"],
+      "port": 3000
+    }
+  ]
+}

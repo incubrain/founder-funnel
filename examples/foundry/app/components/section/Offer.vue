@@ -19,8 +19,10 @@ const { data: founder } = await useAsyncData('app-founder', () =>
 const transformedFeatures = computed(() => {
   return (props.features || []).map(feature => ({
     label: feature.title,
+    // STATUS_ICONS values are {name, class} objects — UIcon's `name` prop needs the string
     icon:
-      STATUS_ICONS[feature.icon as keyof typeof STATUS_ICONS] || feature.icon,
+      STATUS_ICONS[feature.icon as keyof typeof STATUS_ICONS]?.name
+      ?? feature.icon,
   }))
 })
 
