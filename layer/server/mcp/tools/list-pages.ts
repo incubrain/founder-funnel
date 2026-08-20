@@ -29,7 +29,6 @@ OUTPUT: Returns a structured list with:
 
     const siteUrl = import.meta.dev
       ? 'http://localhost:3000'
-      // @ts-expect-error h3@1↔@2 H3Event mismatch in dual-version install
       : getRequestURL(event).origin
 
     log.set({ mcp: { tool: 'list-pages' } })

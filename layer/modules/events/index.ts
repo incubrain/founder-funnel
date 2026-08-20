@@ -8,7 +8,12 @@ import {
   addComponentsDir,
 } from '@nuxt/kit'
 import type { ModuleOptions } from './runtime/types/events'
-import { DEFAULT_SIGNAL_CAPACITY } from './server/utils/signal-buffer'
+
+// Kept in sync with `DEFAULT_SIGNAL_CAPACITY` in ./server/utils/signal-buffer.ts.
+// Not imported directly: that file is nitro-server-only (relies on h3/nitro
+// auto-imports) and pulling it into this module-setup file drags it into the
+// Nuxt "node" typecheck project, which doesn't have those globals.
+const DEFAULT_SIGNAL_CAPACITY = 10_000
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {

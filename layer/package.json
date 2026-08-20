@@ -70,6 +70,7 @@
     "@nuxt/eslint": "^1.15.2",
     "@nuxt/hints": "1.0.3",
     "@types/node": "^25.7.0",
+    "h3": "1.15.11",
     "vue-tsc": "^3.2.8"
   },
   "peerDependencies": {
