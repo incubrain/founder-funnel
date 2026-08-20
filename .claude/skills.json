@@ -1,5 +1,5 @@
 {
-  "description": "External skills manifest. Run scripts/install-skills.sh to install.",
+  "description": "External skills manifest.",
   "skills": [
     {
       "name": "manage-mcp",
@@ -39,21 +39,6 @@
     {
       "name": "nuxt-content",
       "source": "https://github.com/nuxt-content/nuxt-studio",
-      "agent": "claude-code"
-    },
-    {
-      "name": "review-logging-patterns",
-      "source": "https://github.com/HugoRCD/evlog",
-      "agent": "claude-code"
-    },
-    {
-      "name": "create-evlog-adapter",
-      "source": "https://github.com/HugoRCD/evlog",
-      "agent": "claude-code"
-    },
-    {
-      "name": "create-evlog-enricher",
-      "source": "https://github.com/HugoRCD/evlog",
       "agent": "claude-code"
     },
     {

@@ -7,8 +7,8 @@
     }
   ],
   "env": {
-    "NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC": "https://your-umami-instance.com/script.js",
-    "NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID": "your-website-id-here",
+    "NUXT_SIGNAL_EXPORT_TOKEN": "your-signal-export-bearer-token",
+    "NUXT_PUBLIC_SITE_ID": "your-site-id",
     "PROVIDER": "node_server",
     "PORT": "3000",
     "HOST": "0.0.0.0"

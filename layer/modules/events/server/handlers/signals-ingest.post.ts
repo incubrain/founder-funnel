@@ -31,26 +31,20 @@ const ingestSchema = z.object({
  * Size-capped, zod-validated, appended to the signal buffer.
  */
 export default defineEventHandler(async (event) => {
-  const log = useLogger(event)
-
   const raw = await readRawBody(event)
   if (raw && raw.length > MAX_BODY_BYTES) {
-    throw createEvlogError({
-      status: 413,
-      message: 'Signal payload too large',
-      why: `Body was ${raw.length} bytes, limit is ${MAX_BODY_BYTES}`,
-      fix: 'Send fewer rows per batch or trim the data payload',
+    throw createError({
+      statusCode: 413,
+      statusMessage: `Signal payload too large: ${raw.length} bytes, limit is ${MAX_BODY_BYTES}`,
     })
   }
 
   const parsed = ingestSchema.safeParse(raw ? JSON.parse(raw.toString()) : {})
 
   if (!parsed.success) {
-    throw createEvlogError({
-      status: 400,
-      message: 'Signal ingest validation failed',
-      why: parsed.error.issues.map((issue: { message: string }) => issue.message).join(', '),
-      fix: 'POST { rows: SignalRow[] } matching the signal envelope',
+    throw createError({
+      statusCode: 400,
+      statusMessage: `Signal ingest validation failed: ${parsed.error.issues.map((issue: { message: string }) => issue.message).join(', ')}`,
     })
   }
 
@@ -63,8 +57,6 @@ export default defineEventHandler(async (event) => {
       visitor: { ...row.visitor, class: visitorClass },
     }, event)
   }
-
-  log.set({ ingest: { rows: parsed.data.rows.length } })
 
   return { accepted: parsed.data.rows.length }
 })

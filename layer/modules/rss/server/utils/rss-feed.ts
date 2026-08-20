@@ -64,8 +64,6 @@ export function buildRSSFeed(channel: RSSChannel, siteUrl: string): string {
 }
 
 export async function getAuthorName(event: H3Event): Promise<string> {
-  const log = useLogger(event)
-
   try {
     const founder = await queryCollection(event, 'team' as keyof Collections)
       .where('isFounder' as 'id', '=' as never, true as never)
@@ -76,10 +74,8 @@ export async function getAuthorName(event: H3Event): Promise<string> {
       return `${founderData.givenName} ${founderData.surname}`
     }
   }
-  catch (error: unknown) {
-    log.error(error instanceof Error ? error : new Error(String(error)), {
-      step: 'rss-author-lookup',
-    })
+  catch {
+    // No `team` collection (or no founder in it) — fall back to the site name.
   }
 
   const siteConfig = await queryCollection(event, 'config' as keyof Collections)

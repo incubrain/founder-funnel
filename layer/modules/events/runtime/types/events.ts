@@ -62,16 +62,7 @@ export type EventPayload
     | FormSubmittedPayload
     | FormErrorPayload
 
-export interface AnalyticsProvider {
-  name: string
-  track: (payload: EventPayload) => void | Promise<void>
-}
-
 export interface ModuleOptions {
-  providers: ('umami' | 'console' | 'webhook')[]
-  webhook: {
-    enabled: boolean
-  }
   /** Signal capture: ring buffer + `/api/_signals/*` endpoints. */
   signals: {
     enabled: boolean
@@ -80,6 +71,7 @@ export interface ModuleOptions {
     /** Capture client + server errors as `kind: 'log'` rows. */
     captureErrors: boolean
   }
+  /** Echo every tracked event to the browser console. */
   debug: boolean
 }
 
@@ -90,7 +82,6 @@ export type TrackEventInput = Pick<EventPayload, 'type'> & Partial<Omit<EventPay
 
 export interface EventsHooks {
   'events:track': (payload: EventPayload) => void | Promise<void>
-  'events:provider:register': (provider: AnalyticsProvider) => void
   'events:dev': (
     payload: EventPayload & {
       _devStatus: 'success' | 'error'

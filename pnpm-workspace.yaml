@@ -3,7 +3,6 @@ packages:
   # Core apps
   - './'
   - 'layer'
-  - 'cli'
   - 'playground'
   - 'examples/foundry'
 

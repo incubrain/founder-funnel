@@ -25,14 +25,6 @@ Before building: does VueUse solve this? does an existing component handle it? i
 real (not imagined) problem? will it capture signal faster? If all four are "no," don't
 build it.
 
-## Rule files
-
-Detailed rules live in `.agents/rules/` (symlinked at `.claude/rules/`) — read on demand,
-not autoloaded every session: [architecture.md](.agents/rules/architecture.md),
-[conventions.md](.agents/rules/conventions.md), [decisions.md](.agents/rules/decisions.md),
-[anti-patterns.md](.agents/rules/anti-patterns.md). Per-module guides are listed in
-`CONTEXT.md`.
-
 ## Hard-blocked commands — do NOT retry
 
 `curl`, `wget`, inline HTTP (`fetch('http`, `requests.get(`, `requests.post(`,

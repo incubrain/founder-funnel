@@ -6,7 +6,7 @@
 
 - **Landing pages** with email capture, presales, and booking flows
 - **Authority docs** with citations, cross-linking, and MCP integration
-- **Event tracking** that streams form captures to your webhook URL
+- **Signal capture** — form captures, events, and errors in one pull-based export
 - **MCP tools** for AI agents — query pages and detect content changes
 - **Auto-registration** with the Incubrain mentorship network (opt-in)
 - **Theme-aware backgrounds** — 12 pattern/gradient utilities that follow your brand
@@ -15,15 +15,6 @@
 **Stack:** Nuxt 4 · Tailwind v4 · TypeScript
 
 ## Quick Start
-
-```bash
-npx create-foundry my-project
-cd my-project
-npm install
-npm run dev
-```
-
-Or install the layer directly:
 
 ```bash
 npm install @incubrain/foundry
@@ -49,9 +40,6 @@ layer/              Nuxt layer (npm: @incubrain/foundry)
 examples/
   ├── foundry/      Demo site
   └── incubrain/    Incubation platform example
-.starters/
-  └── default/      Minimal template (used by CLI)
-cli/                create-foundry CLI
 ```
 
 ## Configuration
@@ -65,19 +53,15 @@ content/
 └── faq/            FAQ entries (YAML)
 ```
 
-Set up webhooks:
+## Signal Export
+
+Every event, form capture, and error/warning lands in a capped in-process ring buffer as a
+single `SignalRow` envelope. Nothing is pushed anywhere — an external consumer pulls with a
+cursor. Two environment variables, and that's the whole surface:
 
 ```bash
 cp .env.example .env
-NUXT_WEBHOOK_URL=https://discord.com/api/webhooks/...
-```
 
-## Signal Export
-
-Every analytics event and every error/warning lands in a capped in-process ring buffer as a
-single `SignalRow` envelope. An external consumer pulls them with a cursor:
-
-```bash
 NUXT_SIGNAL_EXPORT_TOKEN=<random-secret>   # required — unset means the endpoint returns 503
 NUXT_PUBLIC_SITE_ID=my-site                # optional — defaults to the request host
 
@@ -110,7 +94,8 @@ Set `NUXT_FOUNDRY_REGISTER=true` in production to auto-register with the Incubra
 - Email sequences (use ConvertKit/Mailchimp)
 - Authentication (validation ≠ product)
 - Payment processing (external links only)
-- Databases (webhooks stream to your destination)
+- Databases (signals stream out via the export endpoint)
+- Analytics vendors (no Umami/GA integration — pull the signal buffer instead)
 
 These belong in your product, not your validation tool.
 

@@ -20,11 +20,8 @@ const captureSchema = z.object({
 const MIN_FORM_TIME_MS = 2000
 
 export default defineEventHandler(async (event) => {
-  const log = useLogger(event)
   const body = await readBody(event)
   const { formData, antiSpam } = body
-
-  log.set({ lead: { email: formData?.email } })
 
   // === MINIMAL ANTI-SPAM CHECK ===
   // Honeypot filled in, or submitted faster than a human could type => bot.
@@ -32,7 +29,6 @@ export default defineEventHandler(async (event) => {
   const isTooFast = typeof antiSpam?.timeOnForm === 'number' && antiSpam.timeOnForm < MIN_FORM_TIME_MS
 
   if (isHoneypot || isTooFast) {
-    log.set({ rejected: isHoneypot ? 'honeypot' : 'too-fast' })
     // Pretend success so bots don't learn they were caught
     return {
       success: true,
@@ -45,12 +41,11 @@ export default defineEventHandler(async (event) => {
   const parsed = captureSchema.safeParse({ formData })
 
   if (!parsed.success) {
-    log.error(new Error('Validation failed'), { step: 'schema-validation' })
-    throw createEvlogError({
-      status: 400,
-      message: 'Email capture validation failed',
-      why: parsed.error.issues.map((e: { message: string }) => e.message).join(', '),
-      fix: 'Check the submitted form data matches the expected schema',
+    // Thrown errors are picked up by the Nitro error hook and land in the
+    // signal buffer as a `kind: 'log'` row — don't append one here too.
+    throw createError({
+      statusCode: 400,
+      statusMessage: `Form capture validation failed: ${parsed.error.issues.map((e: { message: string }) => e.message).join(', ')}`,
     })
   }
 
@@ -62,25 +57,6 @@ export default defineEventHandler(async (event) => {
     visitor: { class: classifyVisitor(getHeader(event, 'user-agent')) },
     data: { formData: parsed.data.formData },
   }, event)
-
-  // === WEBHOOK FORWARD (best-effort notification, doesn't block the response) ===
-
-  const config = useRuntimeConfig()
-  const webhookUrl = config.webhookUrl
-
-  if (webhookUrl) {
-    void (async () => {
-      try {
-        await $fetch(webhookUrl, {
-          method: 'POST',
-          body: parsed.data.formData,
-        })
-      }
-      catch (error) {
-        log.error(error instanceof Error ? error : new Error(String(error)), { step: 'webhook-forward' })
-      }
-    })()
-  }
 
   return {
     success: true,

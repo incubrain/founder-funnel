@@ -29,7 +29,7 @@
       {
         "hooks": [
           {
-            "command": "echo 'POST-COMPACTION: Use pnpm (not npm). Validation != Product. Max 50 lines/component. Check VueUse before custom. Event tracking via useEvents(). Content in YAML not code. Check .agents/rules/ for detailed guidelines. Read module AGENTS.md when working on a specific module.'",
+            "command": "echo 'POST-COMPACTION: Use pnpm (not npm). Validation != Product. Max 50 lines/component. Check VueUse before custom. Event tracking via useEvents(). Content in YAML not code. Read module AGENTS.md when working on a specific module.'",
             "type": "command"
           }
         ],
@@ -56,8 +56,6 @@
       "Bash(git commit *)",
       "Bash(npx eslint *)",
       "Bash(npx prettier *)",
-      "Bash(bash scripts/install-skills.sh*)",
-      "Bash(npx skills *)",
       "Bash(bash .claude/scripts/visual-review.sh*)"
     ],
     "deny": [

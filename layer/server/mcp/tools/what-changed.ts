@@ -18,11 +18,8 @@ OUTPUT: Returns path, collection name, contentHash (SHA-256), and modifiedAt for
   cache: '5m',
   handler: async ({ since }) => {
     const event = useEvent()
-    const log = useLogger(event)
     const siteUrl = import.meta.dev ? 'http://localhost:3000' : inferSiteURL()
     const sinceDate = since ? new Date(since) : null
-
-    log.set({ mcp: { tool: 'what-changed', since } })
 
     try {
       const collections = ['pages'] as const
@@ -74,11 +71,7 @@ OUTPUT: Returns path, collection name, contentHash (SHA-256), and modifiedAt for
       })
     }
     catch (error: unknown) {
-      log.error(error instanceof Error ? error : new Error(String(error)), {
-        step: 'mcp-what-changed',
-        since,
-      })
-      return errorResult('Failed to check changes')
+      return errorResult(`Failed to check changes: ${error instanceof Error ? error.message : String(error)}`)
     }
   },
 })

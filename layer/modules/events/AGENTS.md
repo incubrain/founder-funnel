@@ -1,12 +1,15 @@
 # Events Module — AI Agent Instructions
 
-Event tracking and webhook streaming system. Analytics-agnostic, provider-swappable.
+Signal capture. One pipe: client event → `events:track` hook → signal provider →
+`/api/_signals/ingest` → capped ring buffer → external consumer pulls
+`/api/_signals/export`. There are no analytics providers, no outbound webhooks, and no
+logging library — anything that isn't the signal pipe was removed on purpose.
 
 ## File Map
 
 ```
 layer/modules/events/
-├── index.ts                          # Module setup (auto-imports, provider registration)
+├── index.ts                          # Module setup (auto-imports, routes, plugins)
 ├── runtime/
 │   ├── types/
 │   │   ├── events.ts                 # Event types, interfaces, module options
@@ -16,13 +19,10 @@ layer/modules/events/
 │   │   ├── useSignalQueue.ts         # Client batch queue → /api/_signals/ingest
 │   │   └── useUserIdentity.ts        # Anonymous UUID generation/persistence
 │   ├── plugins/
-│   │   ├── events.client.ts          # Core plugin (hook infrastructure)
+│   │   ├── events.client.ts          # Core plugin (hook infra + `debug` console echo)
 │   │   └── errors.client.ts          # window.onerror / rejections / Vue errors → signals
 │   ├── providers/
-│   │   ├── console.ts                # Dev provider (logs to console)
-│   │   ├── umami.ts                  # Analytics provider (Umami)
-│   │   ├── signal.ts                 # Signal buffer provider (all events)
-│   │   └── webhook.ts                # Client-side webhook trigger
+│   │   └── signal.ts                 # The only provider: events → signal queue
 │   ├── components/
 │   │   └── DevEvents.vue             # Dev tools modal for manual testing
 │   └── utils/
@@ -30,7 +30,7 @@ layer/modules/events/
 │       └── signal.ts                 # EventPayload → SignalRow, page/utm context
 └── server/
     ├── handlers/
-    │   ├── webhook.post.ts           # POST /api/v1/webhook (form submissions)
+    │   ├── webhook.post.ts           # POST /api/v1/webhook (form capture)
     │   ├── signals-ingest.post.ts    # POST /api/_signals/ingest (client rows)
     │   └── signals-export.get.ts     # GET  /api/_signals/export (cursor pull)
     ├── plugins/
@@ -43,18 +43,16 @@ layer/modules/events/
 
 ## Key Architecture
 
-### Hook-Based Provider System
+### Hook-Based Tracking
 ```
 useEvents.trackEvent() → nuxtApp.callHook('events:track', payload)
                     ↓
-              Providers listen independently:
-              - Console (dev)
-              - Umami (analytics)
-              - Signal (buffer, always on)
-              - Webhook (form submission)
+              signal.ts → useSignalQueue().enqueue() → POST /api/_signals/ingest
 ```
 
-Swap providers without changing event code. Multiple providers fire simultaneously.
+The hook stays because it decouples components from transport and gives DevEvents.vue a
+read point. It is not a plugin system: `signal.ts` is the only listener, plus a
+`console.info` echo in `events.client.ts` when `events.debug` is on.
 
 ### Signal Flow (the important one)
 Everything a site captures — analytics events AND error/warning logs — becomes one
@@ -90,15 +88,21 @@ server errors  → server/plugins/signal-errors.ts ─────────�
   with `navigator.sendBeacon` on pagehide.
 
 ### Form Submission Flow
-Client triggers `form_submitted` → webhook provider → server POST → inline honeypot/timing
-check → zod payload validation → `appendSignal({ kind: 'event', name: 'form_submitted' })` →
-best-effort, fire-and-forget JSON POST to `NUXT_WEBHOOK_URL` if configured. No platform
-detection, formatting, or retry — the durable copy lives in the signal buffer.
+`useFormCapture()` validates client-side, then POSTs straight to `/api/v1/webhook` →
+inline honeypot/timing check → zod payload validation →
+`appendSignal({ kind: 'event', name: 'form_submitted' })`. The server is the durable
+capture point (it also stamps `visitor.class`); a `$fetch` failure surfaces a toast and a
+`form_error` event. There is no outbound forward to a third-party webhook — Polaris pulls
+the buffer instead.
+
+Route name is historical: `/api/v1/webhook` is the form-capture endpoint, not a webhook
+sender. It's kept stable so existing deployments don't break.
 
 ### Logging
-`useLogger(event)` / `createEvlogError()` (evlog) stay as the structured-logging library for
-server handlers — console output, one wide event per request. There is **no** drain, sampling,
-or enrichment pipeline: errors reach external consumers through the signal buffer instead.
+There is no logging library. Server handlers `throw createError({ statusCode,
+statusMessage })` (h3 native) and the Nitro error hook (`server/plugins/signal-errors.ts`)
+turns thrown request errors into `kind: 'log'` rows. **Do not** `appendSignal` an error in
+a handler *and* throw it — that double-records. Pure info logging is gone.
 
 ### Anti-Spam Layers
 Honeypot filled in, or `timeOnForm` under 2s → treated as a bot and silently accepted
@@ -115,11 +119,6 @@ Honeypot filled in, or `timeOnForm` under 2s → treated as a bot and silently a
 2. Add metadata in `runtime/utils/locations.ts`
 3. Use in component: `trackEvent({ id: 'x', type: 'new_type', location: 'hero' })`
 
-### Add new analytics provider
-1. Create `runtime/providers/my-provider.ts`
-2. Listen to `nuxtApp.hook('events:track', handler)` in a plugin with `dependsOn: ['events-core']`
-3. Enable in `nuxt.config.ts` events config
-
 ### Emit a signal from server code
 ```ts
 import { appendSignal } from '../utils/signal-buffer'
@@ -128,20 +127,28 @@ await appendSignal({ kind: 'log', severity: 'warning', name: 'quota_low', data: 
 ```
 `site`, `id`, `ts`, and `seq` are filled in for you.
 
-### Change the webhook destination
-Set `NUXT_WEBHOOK_URL` to a single endpoint. `webhook.post.ts` forwards the raw form data
-as one plain JSON POST — no per-platform formatting. Per-platform notification formatting
-is being replaced by a unified signal-export channel (next wave).
+## Module Options (`events:` in nuxt.config)
+
+```ts
+events: {
+  signals: { enabled: true, capacity: 10_000, captureErrors: true },
+  debug: true,   // console.info every tracked event (client)
+}
+```
+
+That's the whole surface. There is no `providers` and no `webhook` option.
 
 ## Environment Variables
 
-- `NUXT_WEBHOOK_URL` — Single webhook URL (best-effort notification target)
 - `NUXT_SIGNAL_EXPORT_TOKEN` — Bearer token for `GET /api/_signals/export` (unset → 503)
 - `NUXT_PUBLIC_SITE_ID` — Site identifier stamped on every row (defaults to request host)
 
+Nothing else. If you're adding a third env var to this module, you're probably adding a
+feature that doesn't capture signal.
+
 ## Design Principles
 
-1. No database — events stream directly to destinations (buffer is a transient ring, not storage)
+1. No database — the buffer is a transient ring consumers pull from, not storage
 2. No auth — anonymous UUID sufficient for signal capture
-3. No sequences — immediate webhook, use external tools for drip campaigns
-4. Provider-agnostic — swap analytics without component changes
+3. No analytics vendors — one pipe out, the consumer decides what to do with it
+4. No second destination — adding a fan-out target means two sources of truth

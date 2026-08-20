@@ -7,7 +7,7 @@ items:
     content: Nuxt 4, Tailwind 4, TypeScript.
 
   - label: Where do leads go?
-    content: Leads are sent via webhook to your `NUXT_WEBHOOK_URL` (Telegram/Discord/Slack etc).
+    content: Into a signal buffer on your own server. You pull them from `GET /api/_signals/export` with a bearer token — no third-party service sees them first.
 
   - label: How hard is it to customize?
     content: It's standard Vue/Nuxt. If you know the stack, you're good to go.

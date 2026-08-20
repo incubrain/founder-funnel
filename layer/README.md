@@ -20,7 +20,7 @@ export default defineNuxtConfig({
 
 - **Landing Pages** — Section-driven pages with signal capture (email, presales, bookings)
 - **Documentation** — Authority docs with citations, glossary, bibliography, and MCP integration
-- **Event Tracking** — Analytics-agnostic event system with webhook streaming and retry
+- **Signal Capture** — Events, form captures, and errors in one pull-based export endpoint
 - **RSS Feeds** — Config-driven feed generation from Nuxt Content collections
 - **Comments** — Dev-only documentation review system with text selection and element selection
 - **Nuxt Content** — Markdown-first content with MDC component support
@@ -29,11 +29,14 @@ export default defineNuxtConfig({
 ## Quick Start
 
 ```bash
-# Create a new project
-npx create-foundry my-project
-cd my-project
-npm install
-npm run dev
+npm install @incubrain/foundry
+```
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  extends: ['@incubrain/foundry']
+})
 ```
 
 ## Requirements
@@ -47,7 +50,7 @@ Full documentation: [foundry.incubrain.org](https://foundry.incubrain.org)
 
 ## Credits
 
-Foundry's docs module is heavily inspired by [Docus](https://docus.dev) ([GitHub](https://github.com/nuxt-content/docus)), the documentation template by the Nuxt Content team. Docus provides a fully integrated documentation solution with Nuxt UI, MDC components, full-text search, and theming. Foundry builds on this foundation and adds signal capture, event tracking, and webhook streaming for demand validation.
+Foundry's docs module is heavily inspired by [Docus](https://docus.dev) ([GitHub](https://github.com/nuxt-content/docus)), the documentation template by the Nuxt Content team. Docus provides a fully integrated documentation solution with Nuxt UI, MDC components, full-text search, and theming. Foundry builds on this foundation and adds signal capture and event tracking for demand validation.
 
 **What changed from Docus:**
 - Removed i18n — browser-native translation is improving rapidly with AI, and maintaining translations slows down shipping. Focus on writing great content in one language.

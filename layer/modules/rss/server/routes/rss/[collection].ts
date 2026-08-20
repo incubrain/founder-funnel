@@ -1,28 +1,21 @@
 import { getRSSHandler } from '../../utils/rss-registry'
 
 export default defineEventHandler(async (event) => {
-  const log = useLogger(event)
   const collection = getRouterParam(event, 'collection')
 
-  log.set({ rss: { collection } })
-
   if (!collection) {
-    throw createEvlogError({
-      status: 404,
-      message: 'Collection not specified',
-      why: 'No collection parameter in the URL',
-      fix: 'Use /rss/{collection} — e.g. /rss/blog',
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Collection not specified — use /rss/{collection}, e.g. /rss/blog',
     })
   }
 
   const handler = getRSSHandler(collection)
 
   if (!handler) {
-    throw createEvlogError({
-      status: 404,
-      message: `RSS feed not available for: ${collection}`,
-      why: `No RSS handler registered for collection "${collection}"`,
-      fix: 'Add the feed to the rss.feeds config in nuxt.config.ts',
+    throw createError({
+      statusCode: 404,
+      statusMessage: `RSS feed not available for "${collection}" — add it to rss.feeds in nuxt.config.ts`,
     })
   }
 
@@ -35,12 +28,10 @@ export default defineEventHandler(async (event) => {
     return feed
   }
   catch (error: unknown) {
-    log.error(error instanceof Error ? error : new Error(String(error)), { step: 'rss-generation' })
-    throw createEvlogError({
-      status: 500,
-      message: 'RSS generation failed',
-      why: error instanceof Error ? error.message : 'Unknown error during feed generation',
-      fix: `Check the RSS handler for "${collection}" and ensure content is available`,
+    // Thrown here, captured by the Nitro error hook into the signal buffer.
+    throw createError({
+      statusCode: 500,
+      statusMessage: `RSS generation failed for "${collection}": ${error instanceof Error ? error.message : 'unknown error'}`,
     })
   }
 })

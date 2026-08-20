@@ -25,10 +25,6 @@ export default defineNuxtModule<ModuleOptions>({
   },
 
   defaults: {
-    providers: ['console'], // Dev default
-    webhook: {
-      enabled: false,
-    },
     signals: {
       enabled: true,
       capacity: DEFAULT_SIGNAL_CAPACITY,
@@ -63,32 +59,17 @@ export default defineNuxtModule<ModuleOptions>({
       from: resolver.resolve('./runtime/composables/useUserIdentity.ts'),
     })
 
-    // Add selected provider plugins
-    options.providers.forEach((provider) => {
-      addPlugin({
-        src: resolver.resolve(`./runtime/providers/${provider}.ts`),
-        mode: 'client',
-      })
-    })
-
-    // Always add webhook provider if webhook is enabled (client-side)
-    // Actually, user should add 'webhook' to providers list if they want client-side triggering
-    // But let's support it explicitly or implicit?
-    // The previous logic had webhook handler specific for form_submitted.
-    // Let's assume 'webhook' provider checks types internally.
-
     // Expose to runtime config
     nuxt.options.runtimeConfig.public.events = {
       debug: options.debug,
     }
 
-    if (options.webhook.enabled) {
-      addServerHandler({
-        route: '/api/v1/webhook',
-        method: 'post',
-        handler: resolver.resolve('./server/handlers/webhook.post'),
-      })
-    }
+    // Form capture route — zod validation + anti-spam, then into the buffer.
+    addServerHandler({
+      route: '/api/v1/webhook',
+      method: 'post',
+      handler: resolver.resolve('./server/handlers/webhook.post'),
+    })
 
     // === Signal capture (buffer + cursor export for external consumers) ===
     if (options.signals.enabled) {
@@ -108,7 +89,7 @@ export default defineNuxtModule<ModuleOptions>({
         handler: resolver.resolve('./server/handlers/signals-export.get'),
       })
 
-      // Client provider: every tracked event also becomes a signal row
+      // The only provider: every tracked event becomes a signal row
       addPlugin({
         src: resolver.resolve('./runtime/providers/signal.ts'),
         mode: 'client',
@@ -130,7 +111,6 @@ export type {
   ModuleOptions,
   EventPayload,
   TrackEventInput,
-  AnalyticsProvider,
 } from './runtime/types/events'
 
 export type {

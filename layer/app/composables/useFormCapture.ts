@@ -93,12 +93,16 @@ export function useFormCapture(options: FormCaptureOptions) {
         return
       }
 
-      await trackEvent({
-        id: `form_submit_${location}`,
-        type: 'form_submitted',
-        target: `${offerSlug}_internal`,
-        data: {
-          formData: { ...validated, formId: location },
+      // Straight to the server — it runs the anti-spam checks and writes the
+      // durable `form_submitted` row into the signal buffer (with visitor class).
+      await $fetch('/api/v1/webhook', {
+        method: 'POST',
+        body: {
+          formData: {
+            ...validated,
+            formId: location,
+            offer: `${offerSlug}_internal`,
+          },
           antiSpam: {
             honeypot: honeypot.value,
             timeOnForm: Date.now() - formRenderedAt.value,
@@ -106,6 +110,7 @@ export function useFormCapture(options: FormCaptureOptions) {
           },
         },
       })
+
       if (shouldRedirect) {
         navigateTo(redirectPath)
       }

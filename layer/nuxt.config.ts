@@ -27,14 +27,12 @@ export default defineNuxtConfig({
         dir: join(nuxt.options.srcDir, 'assets/icons'),
       })
     },
-    'evlog/nuxt',
     '@nuxt/ui',
     '@nuxtjs/seo',
     '@nuxt/content',
     '@nuxt/image',
     '@nuxtjs/mcp-toolkit',
     '@vueuse/nuxt',
-    '@nuxt/scripts',
     '@nuxt/test-utils/module',
   ],
 
@@ -45,14 +43,6 @@ export default defineNuxtConfig({
 
     nitro: {
       debug: true,
-    },
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore — module-contributed config not typed in $development override
-    scripts: {
-      registry: {
-        umamiAnalytics: 'mock',
-      },
     },
   },
 
@@ -66,12 +56,6 @@ export default defineNuxtConfig({
       prerender: {
         routes: ciPrerender ? ['/'] : [],
         crawlLinks: ciPrerender,
-      },
-    },
-
-    scripts: {
-      registry: {
-        umamiAnalytics: true,
       },
     },
   },
@@ -146,16 +130,7 @@ export default defineNuxtConfig({
       debug: true,
       siteUrl: '',
       siteId: '', // NUXT_PUBLIC_SITE_ID — stamped on every signal row (falls back to request host)
-      scripts: {
-        umamiAnalytics: {
-          websiteId: '',
-          scriptInput: {
-            src: '',
-          },
-        },
-      },
     },
-    webhookUrl: '',
     signalExportToken: '', // NUXT_SIGNAL_EXPORT_TOKEN — bearer token for GET /api/_signals/export
   },
 
@@ -213,28 +188,14 @@ export default defineNuxtConfig({
     },
   },
 
-  // Events module for conversion tracking + signal capture
+  // Signal capture — client events + errors → ring buffer → /api/_signals/export
   events: {
-    providers: ['umami', 'console', 'webhook'],
-    webhook: {
-      enabled: true,
-    },
     signals: {
       enabled: true,
       capacity: 10_000,
       captureErrors: true,
     },
     debug: true,
-  },
-
-  // Structured logging (evlog) — one wide event per request, console only.
-  // No drain/sampling/enrichment pipeline: errors reach consumers through the
-  // signal buffer (`/api/_signals/export`), not through evlog adapters.
-  evlog: {
-    env: {
-      service: 'foundry',
-    },
-    include: ['/api/**', '/rss/**'],
   },
 
   icon: {

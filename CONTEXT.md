@@ -9,7 +9,6 @@ anything reached only for deep work. Canonical terms are in `GLOSSARY.md`.
 
 ```bash
 pnpm dev:ff          # Founder Funnel dev server
-pnpm dev:starter     # Starter template dev server
 pnpm dev:ib          # Incubrain dev server
 
 pnpm lint            # ESLint check
@@ -168,15 +167,11 @@ external tools for these.
 layer/                         → Nuxt layer (core reusable code)
 layer/modules/                 → Feature modules (events, rss)
 examples/foundry/              → Founder Funnel example app
-.starters/default/             → Starter template (used by CLI)
 shared/config/                 → Configuration files
 shared/types/                  → TypeScript types
 deploy/                        → Dockerfiles and deployment configs
-.agents/rules/                 → Agent rule files (symlinked from .claude/rules/)
-.agents/skills/                → External skills (gitignored, install with scripts/install-skills.sh)
 .claude/agents/                → Claude Code sub-agent definitions
 .claude/scripts/                → Utility scripts for agents
-skills/                        → Custom skills (committed to git)
 ```
 
 ## Common Tasks
@@ -185,7 +180,7 @@ skills/                        → Custom skills (committed to git)
 - **Change validation path:** Edit `app/components/convert/*`
 - **Add event tracking:** Use `useEvents()` composable
 - **Deploy:** Standard Node.js/Docker — Dockerfile + `vercel.json` included
-- **Visual UI review:** Use the `visual-tester` skill or `browser-tester` sub-agent — see Visual Testing below
+- **Visual UI review:** Use the `browser-tester` sub-agent — see Visual Testing below
 
 ## Module Guides
 
@@ -203,9 +198,8 @@ guides. Read the relevant guide when working on that module (not autoloaded):
 
 ## Skills
 
-External agent skills extend capabilities for specialized tasks. Skills are installed to
-`.agents/skills/` (gitignored). After cloning, run `bash scripts/install-skills.sh` to
-install them.
+Agent skills extend capabilities for specialized tasks; the manifest of external skills
+used by this project is `.claude/skills.json`.
 
 **When to use skills:**
 - **Development**: nuxt, nuxt-ui, nuxt-content, vue-best-practices, vitest, vueuse-functions, pinia
@@ -213,23 +207,14 @@ install them.
 - **Marketing**: copywriting, marketing-psychology
 - **Strategy**: brainstorming, systematic-debugging
 - **Tools**: agent-browser, manage-mcp
-- **Visual Testing**: visual-tester (uses agent-browser for UI/UX bug detection)
-- **Custom** (in `skills/`): docs-writer, visual-tester
 
 **Skill priority:** Check skills first → VueUse → Library → Custom (last resort)
 
-**Commands:**
-```bash
-bash scripts/install-skills.sh          # Install or update all skills
-npx skills list --agent claude-code     # List installed skills
-npx skills update skill-name            # Update a specific skill
-```
-
 ## Visual Testing
 
-Use the `browser-tester` sub-agent or `visual-tester` skill to detect UI/UX bugs via
-annotated screenshots. The dev server must be running first (`pnpm dev:ff`, `pnpm dev:ib`,
-etc.).
+Use the `browser-tester` sub-agent (or the `agent-browser` skill directly) to detect UI/UX
+bugs via annotated screenshots. The dev server must be running first (`pnpm dev:ff`, `pnpm
+dev:ib`, etc.).
 
 **When to use:**
 - After implementing UI changes — verify layout, spacing, and styling

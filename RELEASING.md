@@ -43,36 +43,11 @@ Update example apps to use the new version:
 
 ---
 
-## CLI (`create-foundry`)
-
-Only release when CLI code changes. The CLI is independent of the layer version.
-
-### Pre-release checklist
-
-```bash
-pnpm cli:build               # Build CLI
-pnpm cli:check               # npm pack dry run
-pnpm cli:release:dry          # release-it dry run
-```
-
-### Release
-
-```bash
-pnpm cli:release             # Bumps cli/package.json, commits, tags (cli-v*), GitHub release
-pnpm cli:publish             # Publishes to npm
-```
-
-CLI tags use the `cli-v` prefix (e.g., `cli-v0.7.0`) to distinguish from layer tags.
-
----
-
 ## Version Strategy
 
 - **Patch** (0.6.x → 0.6.y): Bug fixes, no new features
 - **Minor** (0.6.x → 0.7.0): New features, backward compatible
 - **Major** (0.x → 1.0): Breaking changes to public API
-
-The layer and CLI are versioned independently. They don't need to match.
 
 ## Changelog
 
@@ -83,4 +58,3 @@ The `CHANGELOG.md` is updated automatically by release-it using conventional com
 | Package | Tag format | Example |
 |---|---|---|
 | `@incubrain/foundry` | `v{version}` | `v0.7.0` |
-| `create-foundry` | `cli-v{version}` | `cli-v0.7.0` |

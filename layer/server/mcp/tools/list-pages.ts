@@ -25,13 +25,10 @@ OUTPUT: Returns a structured list with:
   cache: '1h',
   handler: async () => {
     const event = useEvent()
-    const log = useLogger(event)
 
     const siteUrl = import.meta.dev
       ? 'http://localhost:3000'
       : getRequestURL(event).origin
-
-    log.set({ mcp: { tool: 'list-pages' } })
 
     try {
       const pages = await queryCollection(event, 'pages' as keyof Collections)
@@ -60,10 +57,7 @@ OUTPUT: Returns a structured list with:
       return jsonResult(results)
     }
     catch (error: unknown) {
-      log.error(error instanceof Error ? error : new Error(String(error)), {
-        step: 'mcp-list-pages',
-      })
-      return errorResult('Failed to list pages')
+      return errorResult(`Failed to list pages: ${error instanceof Error ? error.message : String(error)}`)
     }
   },
 })

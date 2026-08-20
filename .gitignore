@@ -39,11 +39,7 @@ CLAUDE.local.md
 .claude/settings.local.json
 .claude/visual-test-log.md
 
-# Agent skills
-# Custom skills live in /skills/ (committed to git)
-# External skills installed to .agents/skills/ (gitignored, manifest in .claude/skills.json)
-# Agent directories (.claude, .cursor, etc.) symlink to .agents/skills/
-.agents/skills
+# Agent directories
 .cursor/
 .trae/
 .windsurf/
