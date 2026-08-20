@@ -1,32 +1,14 @@
 # @incubrain/foundry
 
-A Nuxt layer for building validation landing pages and authority documentation sites. Forked from [Docus](https://docus.dev) by the Nuxt Content team.
+A Nuxt 4 layer for marketing and validation sites that stream the full signal of whether
+they are working — visitor events and site errors alike — to an external consumer over an
+authenticated cursor endpoint.
+
+Extending this layer gives you a content-driven site, the signal pipeline that feeds it,
+and an agent-readable surface. It does not give you a design system: the layer ships
+structure and signal, and your app supplies the taste.
 
 ## Installation
-
-```bash
-npm install @incubrain/foundry
-```
-
-Add to your `nuxt.config.ts`:
-
-```ts
-export default defineNuxtConfig({
-  extends: ['@incubrain/foundry']
-})
-```
-
-## Features
-
-- **Landing Pages** — Section-driven pages with signal capture (email, presales, bookings)
-- **Documentation** — Authority docs with citations, glossary, bibliography, and MCP integration
-- **Signal Capture** — Events, form captures, and errors in one pull-based export endpoint
-- **RSS Feeds** — Config-driven feed generation from Nuxt Content collections
-- **Comments** — Dev-only documentation review system with text selection and element selection
-- **Nuxt Content** — Markdown-first content with MDC component support
-- **Nuxt UI** — Pre-styled components with Tailwind v4
-
-## Quick Start
 
 ```bash
 npm install @incubrain/foundry
@@ -35,28 +17,83 @@ npm install @incubrain/foundry
 ```ts
 // nuxt.config.ts
 export default defineNuxtConfig({
-  extends: ['@incubrain/foundry']
+  extends: ['@incubrain/foundry'],
 })
 ```
 
-## Requirements
+**Requirements:** Nuxt 4.x, Node 22+.
 
-- Nuxt 4.x
-- Node.js 22+
+Optional peer dependencies, added in your own app when you want them: `nuxt-llms`
+(`llms.txt` generation), `nuxt-studio` (visual content editing),
+`@iconify-json/lucide` and `@iconify-json/simple-icons` (icon sets), `better-sqlite3`.
 
-## Documentation
+## What you get
 
-Full documentation: [foundry.incubrain.org](https://foundry.incubrain.org)
+**Signal capture.** Client events (`useEvents()`) and client errors are batched to
+`POST /api/_signals/ingest`; form captures and Nitro request errors are appended
+server-side. All of it becomes one `SignalRow` envelope in a capped ring buffer, pulled by
+a consumer at `GET /api/_signals/export?since=<seq>&limit=<n≤1000>` behind a bearer token.
+Every row carries a server-derived `visitor.class` of `human`, `agent`, or `bot`. Nothing
+is pushed out — no webhook forwarders, no analytics vendors, no second destination.
+
+**Convert components** — the intent-capture surface, each wired to the event stream:
+`ConvertForm`, `ConvertExternal`, `ConvertInternal`, `ConvertPricing`, `ConvertSocial`,
+`ConvertSocialShare`, and `ConvertRss`.
+
+**Content collections.** Zod schemas — `basePageSchema`, `baseFaqSchema`,
+`baseConfigSchema`, `baseNavigationSchema`, `baseTeamSchema`, `bannerSchema` — exported
+from `@incubrain/foundry/schemas` and composed in your own `content.config.ts`. Content
+lives in markdown and YAML, edited without touching code.
+
+**Page structure.** `default`, `article`, and `landing` layouts selected per route with an
+`appLayout` route rule, a catch-all content page, header/footer/banner components, MDC
+content components, and `SectionWrapper` — an accessible section primitive that fires a
+`section_view_<id>` event on intersection.
+
+**Agent-readiness.** MCP tools (`list-pages`, `get-page`, `what-changed`) served by
+`@nuxtjs/mcp-toolkit`; the `markdown-rewrite` module, which writes Vercel edge redirects so
+`Accept: text/markdown` requests get raw markdown and `/` serves `llms.txt`; `@nuxtjs/seo`
+for sitemap, robots, schema.org, link checking, and canonical redirects; a Satori OG image
+component for landing pages.
+
+**RSS.** Config-driven feeds from any content collection — declare `rss: { feeds: {} }` in
+your app config and they are served at `/rss/{key}`.
+
+## Configuration
+
+```bash
+NUXT_SIGNAL_EXPORT_TOKEN=<random-secret>   # bearer token for the export endpoint (unset → 503)
+NUXT_PUBLIC_SITE_ID=my-site                # stamped on every signal row (defaults to request host)
+NUXT_PUBLIC_SITE_URL=https://example.com   # canonical URL, consumed by @nuxtjs/seo
+```
+
+```ts
+// nuxt.config.ts
+events: {
+  signals: { enabled: true, capacity: 10_000, captureErrors: true },
+  debug: true,
+}
+```
+
+Signal rows are held in `useStorage('signals')` — memory by default. Mount
+`nitro.storage.signals` to an fs or KV driver to survive restarts.
+
+## Not included
+
+Email sequences, authentication, payment processing, in-product dashboards or charts,
+analytics vendor integrations, per-platform webhook notifiers, and an opinionated design
+system. Validation captures intent; products deliver value — mixing them creates scope
+creep.
 
 ## Credits
 
-Foundry's docs module is heavily inspired by [Docus](https://docus.dev) ([GitHub](https://github.com/nuxt-content/docus)), the documentation template by the Nuxt Content team. Docus provides a fully integrated documentation solution with Nuxt UI, MDC components, full-text search, and theming. Foundry builds on this foundation and adds signal capture and event tracking for demand validation.
-
-**What changed from Docus:**
-- Removed i18n — browser-native translation is improving rapidly with AI, and maintaining translations slows down shipping. Focus on writing great content in one language.
-- Added glossary and citation system
-
-For Docus-inherited features (MDC components, content collections, search, theming), the [Docus documentation](https://docus.dev/en) is an excellent reference alongside these docs.
+Foundry's content and layout foundation is adapted from
+[Docus](https://docus.dev) ([GitHub](https://github.com/nuxt-content/docus)) by the Nuxt
+Content team. i18n was removed — browser-native translation is improving fast and
+maintaining translations slows shipping — and signal capture, agent-readiness, and the
+export endpoint were added. For Docus-inherited behaviour (MDC components, content
+collections, search, theming), the [Docus documentation](https://docus.dev/en) remains a
+good reference.
 
 ## License
 

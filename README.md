@@ -1,20 +1,23 @@
 # Foundry
 
-> Validation landing pages for technical founders. Capture signal before you build.
+> A Nuxt 4 layer for standing up a marketing site that streams the full signal of whether
+> it is working.
 
-## What It Does
+Foundry is the wireframe. You write content, deploy, and wire nothing — the site captures
+what visitors do (visits, and intent through the convert components) and what the site
+itself reports (errors, warnings), buffers it server-side in one envelope, and hands it to
+an external consumer over an authenticated cursor endpoint. We pull it into Polaris; you
+can point a Grafana-class puller at the same endpoint. Foundry ends at the stream — no
+charts, no dashboards, no anomaly detection inside the site.
 
-- **Landing pages** with email capture, presales, and booking flows
-- **Authority docs** with citations, cross-linking, and MCP integration
-- **Signal capture** — form captures, events, and errors in one pull-based export
-- **MCP tools** for AI agents — query pages and detect content changes
-- **Auto-registration** with the Incubrain mentorship network (opt-in)
-- **Theme-aware backgrounds** — 12 pattern/gradient utilities that follow your brand
-- **Zero lock-in** — standard Nuxt app, swap any tool anytime
+The second pillar is **agent-readiness**. Agentic traffic is expected to dwarf human
+traffic, so Foundry sites ship MCP tools, `llms.txt`, raw-markdown redirects, and a strong
+SEO/OG stack — and every signal row is classified `human | agent | bot` server-side, because
+that split is itself signal.
 
-**Stack:** Nuxt 4 · Tailwind v4 · TypeScript
+**Stack:** Nuxt 4 · Nuxt Content · Nuxt UI · Tailwind v4 · TypeScript
 
-## Quick Start
+## Quick start
 
 ```bash
 npm install @incubrain/foundry
@@ -23,85 +26,191 @@ npm install @incubrain/foundry
 ```ts
 // nuxt.config.ts
 export default defineNuxtConfig({
-  extends: ['@incubrain/foundry']
+  extends: ['@incubrain/foundry'],
 })
 ```
 
-## Validation Paths
-
-**Email Capture** — Test interest before creating content
-**Presales** — Collect payment before building (external links to Stripe/LemonSqueezy)
-**Service Bookings** — Sell calls via Cal.com/Calendly, learn from delivery
-
-## Project Structure
-
-```
-layer/              Nuxt layer (npm: @incubrain/foundry)
-examples/
-  ├── foundry/      Demo site
-  └── incubrain/    Incubation platform example
+```bash
+# .env — this is the entire required surface
+NUXT_SIGNAL_EXPORT_TOKEN=<random-secret>   # bearer token for the export endpoint
+NUXT_PUBLIC_SITE_ID=my-site                # optional — defaults to the request host
 ```
 
-## Configuration
+Write content under `content/`, deploy, point your consumer at
+`/api/_signals/export`. See `examples/foundry` for a complete app.
 
-Edit content files, not code:
+## Signal architecture
+
+Everything the site captures — analytics events *and* error/warning logs — becomes one
+`SignalRow` in a capped server-side ring buffer. Nothing is pushed anywhere. An external
+consumer pulls with a cursor.
 
 ```
-content/
-├── config/         Site config (YAML)
-├── pages/          Landing pages (Markdown)
-└── faq/            FAQ entries (YAML)
+client events  → signal provider ─┐
+client errors  → errors.client ───┼→ POST /api/_signals/ingest ─┐
+                                  │                             ├→ ring buffer (unstorage)
+form captures  → /api/v1/webhook ─┘                             │        ↓
+server errors  → signal-errors plugin ──────────────────────────┘   GET /api/_signals/export
+                                                                    ?since=<seq>&limit=<n≤1000>
+                                                                    → { rows, cursor, site }
 ```
 
-## Signal Export
+**The envelope** — one shape for both kinds:
 
-Every event, form capture, and error/warning lands in a capped in-process ring buffer as a
-single `SignalRow` envelope. Nothing is pushed anywhere — an external consumer pulls with a
-cursor. Two environment variables, and that's the whole surface:
+```ts
+SignalRow {
+  id, seq, ts, site,
+  kind: 'event' | 'log',
+  name,
+  severity?,   // logs
+  visitor?,    // { class: 'human' | 'agent' | 'bot', ... } — stamped server-side
+  page?, referrer?, utm?, data?
+}
+```
+
+- **Client events** go through `useEvents()` → the signal provider → a debounced batch
+  queue, flushed with `sendBeacon` on `pagehide`.
+- **Client errors** (`window.onerror`, `unhandledrejection`, Vue `errorHandler`) land in the
+  same stream as `kind: 'log'` rows. So do Nitro request errors, server-side.
+- **Form captures** POST to `/api/v1/webhook` (historical route name — it is the
+  form-capture endpoint, not a webhook sender), pass honeypot/timing and zod validation, and
+  land as a `form_submitted` row. The server is the durable capture point.
+- **Visitor class** is derived from the request `User-Agent` on every ingest path. A
+  client-supplied value is always overwritten, never trusted.
+- **Cursor:** `seq` is monotonic; consumers send back the last `cursor` they saw.
+
+Pulling the stream:
 
 ```bash
-cp .env.example .env
-
-NUXT_SIGNAL_EXPORT_TOKEN=<random-secret>   # required — unset means the endpoint returns 503
-NUXT_PUBLIC_SITE_ID=my-site                # optional — defaults to the request host
-
 curl -H "Authorization: Bearer $NUXT_SIGNAL_EXPORT_TOKEN" \
   "https://your-site.com/api/_signals/export?since=0&limit=500"
 # → { rows: [...], cursor: 512, site: "my-site" }
 ```
 
-Rows are held in memory by default (10 000, oldest evicted). Mount `nitro.storage.signals` to
-an fs/KV driver if they must survive a restart.
+The endpoint fails closed: with `NUXT_SIGNAL_EXPORT_TOKEN` unset it returns 503, never open
+data. Rows live in `useStorage('signals')` — memory by default, 10 000 rows, oldest
+evicted. Mount `nitro.storage.signals` to an fs/KV driver if they must survive a restart.
 
-## MCP Tools
+## Agent-readiness
 
-AI agents can query your site via the [Model Context Protocol](https://modelcontextprotocol.io):
-
-| Tool | Purpose |
+| Surface | What ships |
 |---|---|
-| `list-pages` | Browse pages with content hashes |
-| `get-page` | Retrieve full markdown + hash |
-| `what-changed` | Lightweight polling — paths + SHA-256 hashes with `since` filter |
+| MCP tools | `list-pages`, `get-page`, `what-changed` — auto-registered from `server/mcp/tools/`, served by `@nuxtjs/mcp-toolkit`. Visit `/_mcp/tools` in dev to verify. |
+| `llms.txt` | Via `nuxt-llms` (optional peer dep — add the module and an `llms:` config in your app; see `examples/foundry/nuxt.config.ts`). |
+| Raw markdown | The `markdown-rewrite` module writes Vercel edge redirects so `Accept: text/markdown` or a `curl/*` UA on a page URL serves `/raw/<path>.md`, and `/` serves `llms.txt`. No-op off Vercel and in dev. |
+| SEO / OG | `@nuxtjs/seo` (sitemap, robots, schema.org, link checker, canonical redirects) plus a Satori OG image component for landing pages. |
+| RSS | Config-driven feeds from any content collection — `rss: { feeds: {} }` in your app config, served at `/rss/{key}`. |
 
-Tools are auto-registered from `server/mcp/tools/`. Visit `/_mcp/tools` in dev to verify.
+## Content and components
 
-## Mentorship Network
+Content is YAML and markdown, edited by whoever owns the site — not code. The layer exports
+zod schemas you compose in your own `content.config.ts`:
 
-Set `NUXT_FOUNDRY_REGISTER=true` in production to auto-register with the Incubrain mentorship network. Your site's MCP endpoint and RSS feeds are shared so mentors can track your progress.
+```ts
+import { basePageSchema, baseFaqSchema, baseConfigSchema, baseNavigationSchema }
+  from '@incubrain/foundry/schemas'
+```
 
-## What's Not Included
+```
+content/
+├── pages/          Markdown pages (basePageSchema)
+├── faq/            FAQ entries (baseFaqSchema)
+└── config/
+    ├── site.yml    Site config (baseConfigSchema)
+    └── navigation.yml
+```
 
-- Email sequences (use ConvertKit/Mailchimp)
-- Authentication (validation ≠ product)
-- Payment processing (external links only)
-- Databases (signals stream out via the export endpoint)
-- Analytics vendors (no Umami/GA integration — pull the signal buffer instead)
+`baseTeamSchema` and `bannerSchema` are exported too.
 
-These belong in your product, not your validation tool.
+**Sections are deliberately minimal.** The layer ships `SectionWrapper` — an accessible
+`UPageSection` wrapper that emits a `section_view_<id>` event on intersection and sets
+`data-testid`. Concrete sections (Hero, Offer, …) live in your app, not the layer: an
+opinionated design system is out of scope on principle.
+
+**Convert components are the intent-capture surface** — the place where a visit becomes a
+signal worth acting on:
+
+| Component | Captures |
+|---|---|
+| `ConvertForm` | Email / lead capture → `/api/v1/webhook` |
+| `ConvertExternal` | Outbound clicks (Stripe, LemonSqueezy, Cal.com) |
+| `ConvertInternal` | Internal CTA clicks |
+| `ConvertPricing` | Pricing interaction |
+| `ConvertSocial` | Social profile clicks |
+| `ConvertSocialShare` | Share actions |
+| `ConvertRss` | Feed subscriptions (rss module) |
+
+Three layouts ship: `default`, `article`, `landing` — selected per route with an
+`appLayout` route rule.
+
+## Configuration reference
+
+**Environment**
+
+| Variable | Purpose |
+|---|---|
+| `NUXT_SIGNAL_EXPORT_TOKEN` | Bearer token for `GET /api/_signals/export`. Unset → 503. |
+| `NUXT_PUBLIC_SITE_ID` | Site identifier stamped on every row. Defaults to the request host. |
+| `NUXT_PUBLIC_SITE_URL` | Canonical site URL, consumed by `@nuxtjs/seo`. |
+
+That is the signal surface in full. A third signal env var means a feature that does not
+capture signal.
+
+**Module options** (`nuxt.config.ts`)
+
+```ts
+events: {
+  signals: {
+    enabled: true,        // signal capture on/off
+    capacity: 10_000,     // ring buffer size
+    captureErrors: true,  // client errors → the stream
+  },
+  debug: true,            // echo events to the console in dev
+}
+```
+
+## Repo map
+
+```
+layer/              The Nuxt layer — published as @incubrain/foundry
+  app/              Components, composables, layouts, pages
+  modules/          events (signal capture), rss, markdown-rewrite, config, css
+  server/           MCP tools, content API, caching
+examples/foundry/   Reference app — the one to copy
+playground/         Test harness (unit + nuxt + e2e specs)
+deploy/             vercel.website.json (Dockerfile in examples/foundry)
+```
+
+## Development
+
+```bash
+pnpm dev             # layer dev server
+pnpm dev:foundry     # example app
+pnpm test            # vitest (specs live in playground/test)
+pnpm verify          # lint + typecheck
+pnpm build           # build the layer
+```
+
+Releasing is documented in [RELEASING.md](RELEASING.md).
+
+## Not included
+
+Validation is not product. These are out, and staying out:
+
+- **Email sequences** — capture intent here, deliver with ConvertKit/Mailchimp
+- **Authentication** — an anonymous ID is enough to capture signal
+- **Payment processing** — external links prove payment intent
+- **Dashboards and charts** — the consumer owns interpretation; Foundry ends at the stream
+- **Analytics vendors** — no Umami/GA integration; pull the buffer instead
+- **Outbound webhook notifiers** — no per-platform Slack/Discord/Telegram formatters; a
+  second destination means a second source of truth
+- **Drain-adapter observability pipelines** — errors ride the signal stream, not a parallel
+  log pipe
+- **An opinionated design system** — AI makes design cheap; hard-coding taste into a
+  wireframe is a liability
 
 ## Links
 
-- [Documentation](https://foundry.incubrain.org)
 - [GitHub Issues](https://github.com/incubrain/foundry/issues)
 - [Discussions](https://github.com/incubrain/foundry/discussions)
 
