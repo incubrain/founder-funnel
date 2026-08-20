@@ -1,9 +1,4 @@
 import { z } from 'zod'
-import { formatDiscordMessage } from '../formatters/discord'
-import { formatSlackMessage } from '../formatters/slack'
-import { formatTelegramMessage } from '../formatters/telegram'
-import { RateLimiter, validateAntiSpam } from '../utils/anti-spam'
-import { retryWithBackoff, validateWebhookUrl } from '../utils/webhook-retry'
 
 // Strict schema matching FieldDef types from useFormCapture
 const captureSchema = z.object({
@@ -19,67 +14,31 @@ const captureSchema = z.object({
   }).optional(),
 })
 
-// Global rate limiter instance
-const rateLimiter = new RateLimiter()
-
-type WebhookPlatform = 'telegram' | 'slack' | 'discord' | 'unknown'
-
-interface WebhookResult {
-  platform: string
-  url: string
-  success: boolean
-}
-
-function detectPlatform(url: string): WebhookPlatform {
-  const lowerUrl = url.toLowerCase()
-
-  if (lowerUrl.includes('api.telegram.org')) return 'telegram'
-  if (lowerUrl.includes('hooks.slack.com')) return 'slack'
-  if (
-    lowerUrl.includes('discord.com/api/webhooks')
-    || lowerUrl.includes('discordapp.com/api/webhooks')
-  )
-    return 'discord'
-
-  return 'unknown'
-}
+// Minimum time (ms) a real human takes to fill the form
+const MIN_FORM_TIME_MS = 2000
 
 export default defineEventHandler(async (event) => {
   const log = useLogger(event)
   const body = await readBody(event)
   const { formData, antiSpam } = body
 
-  // Get IP for rate limiting
-  const ip = getRequestIP(event, { xForwardedFor: true }) || 'unknown'
+  log.set({ lead: { email: formData?.email } })
 
-  log.set({ lead: { email: formData?.email }, ip: ip.substring(0, 10) + '...' })
+  // === MINIMAL ANTI-SPAM CHECK ===
+  // Honeypot filled in, or submitted faster than a human could type => bot.
+  const isHoneypot = Boolean(antiSpam?.honeypot?.trim())
+  const isTooFast = typeof antiSpam?.timeOnForm === 'number' && antiSpam.timeOnForm < MIN_FORM_TIME_MS
 
-  // === ANTI-SPAM VALIDATION ===
-
-  const flags = validateAntiSpam(antiSpam || {})
-  log.set({ antiSpam: { score: flags.score, honeypot: flags.honeypot, fast: flags.fast, noJs: flags.noJs } })
-
-  // HARD REJECT: Honeypot triggered
-  if (flags.honeypot) {
-    log.set({ rejected: 'honeypot' })
+  if (isHoneypot || isTooFast) {
+    log.set({ rejected: isHoneypot ? 'honeypot' : 'too-fast' })
+    // Pretend success so bots don't learn they were caught
     return {
       success: true,
       message: 'Thanks! Check your email.',
     }
   }
 
-  // HARD REJECT: Rate limit exceeded
-  if (rateLimiter.check(ip)) {
-    log.set({ rejected: 'rate-limit' })
-    throw createEvlogError({
-      status: 429,
-      message: 'Too many submissions. Please try again in a few minutes.',
-      why: `IP ${ip.substring(0, 10)}... exceeded rate limit`,
-      fix: 'Wait 15 minutes before submitting again',
-    })
-  }
-
-  // === EMAIL VALIDATION ===
+  // === PAYLOAD VALIDATION ===
 
   const parsed = captureSchema.safeParse({ formData })
 
@@ -93,156 +52,29 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  // TODO(signal-buffer): append signal row here (product-validator-a4r.8)
+
+  // === WEBHOOK FORWARD (best-effort notification, doesn't block the response) ===
+
   const config = useRuntimeConfig()
   const webhookUrl = config.webhookUrl
 
-  if (!webhookUrl) {
-    throw createEvlogError({
-      status: 500,
-      message: 'Webhook URL is missing',
-      why: 'NUXT_WEBHOOK_URL environment variable is not set',
-      fix: 'Add NUXT_WEBHOOK_URL to your .env file. Supports Telegram, Slack, or Discord webhook URLs.',
-    })
-  }
-
-  // Parse multiple webhook URLs (comma-separated)
-  const webhookUrls = webhookUrl
-    .split(',')
-    .map(url => url.trim())
-    .filter(Boolean)
-
-  if (webhookUrls.length === 0) {
-    throw createEvlogError({
-      status: 500,
-      message: 'No valid webhook URLs found',
-      why: 'NUXT_WEBHOOK_URL is set but contains no valid URLs after parsing',
-      fix: 'Check NUXT_WEBHOOK_URL format — use comma-separated URLs for multiple destinations',
-    })
-  }
-
-  // Validate all webhook URLs for security
-  for (const url of webhookUrls) {
-    const validation = validateWebhookUrl(url)
-    if (!validation.valid) {
-      throw createEvlogError({
-        status: 500,
-        message: 'Invalid webhook URL detected',
-        why: `${url.substring(0, 30)}...: ${validation.reason}`,
-        fix: 'Only HTTPS URLs from allowed providers (Telegram, Slack, Discord, Zapier, IFTTT) are permitted',
-      })
-    }
-  }
-
-  const telegramChatId = config.telegramChatId
-
-  log.set({ webhooks: { count: webhookUrls.length } })
-
-  // Send to all webhooks in parallel
-  const results = await Promise.allSettled(
-    webhookUrls.map(async (url) => {
-      const platform = detectPlatform(url)
-
-      let message
+  if (webhookUrl) {
+    void (async () => {
       try {
-        if (platform === 'discord') {
-          message = formatDiscordMessage({
-            formData: parsed.data.formData,
-            flags,
-          })
-        }
-        else if (platform === 'slack') {
-          message = formatSlackMessage({
-            formData: parsed.data.formData,
-            flags,
-          })
-        }
-        else if (platform === 'telegram') {
-          message = formatTelegramMessage(
-            { formData: parsed.data.formData, flags },
-            telegramChatId,
-          )
-        }
-        else {
-          message = {
-            text: `New Lead: ${parsed.data.formData?.email} - ${JSON.stringify(parsed.data.formData)}`,
-          }
-        }
+        await $fetch(webhookUrl, {
+          method: 'POST',
+          body: parsed.data.formData,
+        })
       }
       catch (error) {
-        log.error(error instanceof Error ? error : new Error(String(error)), { step: `format-${platform}` })
-        throw error
+        log.error(error instanceof Error ? error : new Error(String(error)), { step: 'webhook-forward' })
       }
-
-      // Retry webhook delivery with exponential backoff
-      await retryWithBackoff(
-        async () => {
-          const result = await $fetch(url, {
-            method: 'POST',
-            body: message,
-          })
-
-          // Validate Telegram response
-          if (
-            platform === 'telegram'
-            && result
-            && typeof result === 'object'
-          ) {
-            const telegramResponse = result as {
-              ok: boolean
-              description?: string
-              error_code?: number
-            }
-
-            if (!telegramResponse.ok) {
-              throw new Error(
-                telegramResponse.description || 'Telegram API returned ok: false',
-              )
-            }
-          }
-
-          return result
-        },
-        {
-          maxAttempts: 3,
-          baseDelay: 1000,
-          logger: log,
-        },
-      )
-
-      return { platform, url: url.substring(0, 30) + '...', success: true }
-    }),
-  )
-
-  // Analyze results
-  const successful = results.filter(r => r.status === 'fulfilled')
-  const failed = results.filter(r => r.status === 'rejected')
-
-  log.set({
-    delivery: {
-      total: webhookUrls.length,
-      successful: successful.length,
-      failed: failed.length,
-      platforms: successful.map(r => (r as PromiseFulfilledResult<WebhookResult>).value.platform),
-    },
-  })
-
-  // Return success if at least one webhook succeeded
-  if (successful.length > 0) {
-    return {
-      success: true,
-      delivered: successful.length,
-      failed: failed.length,
-      platforms: successful.map(
-        r => (r as PromiseFulfilledResult<WebhookResult>).value,
-      ),
-    }
+    })()
   }
 
-  // All failed - throw error
-  throw createEvlogError({
-    status: 500,
-    message: `Failed to deliver to all ${webhookUrls.length} configured webhook(s)`,
-    why: failed.map((r, i) => `${webhookUrls[i]?.substring(0, 30)}...: ${(r as PromiseRejectedResult).reason?.message || 'Unknown error'}`).join('; '),
-    fix: 'Check webhook URLs are valid and the destination services are reachable',
-  })
+  return {
+    success: true,
+    message: 'Thanks! Check your email.',
+  }
 })

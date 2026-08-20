@@ -31,48 +31,38 @@ OUTPUT: Returns a structured list with:
       ? 'http://localhost:3000'
       // @ts-expect-error h3@1↔@2 H3Event mismatch in dual-version install
       : getRequestURL(event).origin
-    const collections = ['pages']
 
-    log.set({ mcp: { tool: 'list-pages', collections } })
+    log.set({ mcp: { tool: 'list-pages' } })
 
     try {
-      const allPages = await Promise.all(
-        collections.map(async (collectionName) => {
-          const pages = await queryCollection(
-            event,
-            collectionName as keyof Collections,
-          )
-            .select('title' as 'id', 'path' as 'id', 'description' as 'id')
-            .all()
+      const pages = await queryCollection(event, 'pages' as keyof Collections)
+        .select('title' as 'id', 'path' as 'id', 'description' as 'id')
+        .all()
 
-          return Promise.all(
-            (pages as unknown as Record<string, string>[]).map(async (page) => {
-              let contentHash: string | null = null
-              try {
-                const raw = await $fetch<string>(`/raw${page.path}.md`, { baseURL: siteUrl! })
-                contentHash = computeContentHash(raw)
-              }
-              catch { /* hash unavailable */ }
+      const results = await Promise.all(
+        (pages as unknown as Record<string, string>[]).map(async (page) => {
+          let contentHash: string | null = null
+          try {
+            const raw = await $fetch<string>(`/raw${page.path}.md`, { baseURL: siteUrl! })
+            contentHash = computeContentHash(raw)
+          }
+          catch { /* hash unavailable */ }
 
-              return {
-                title: page.title,
-                path: page.path,
-                description: page.description,
-                locale: collectionName.replace('docs_', ''),
-                contentHash,
-                url: `${siteUrl}${page.path}`,
-              }
-            }),
-          )
+          return {
+            title: page.title,
+            path: page.path,
+            description: page.description,
+            contentHash,
+            url: `${siteUrl}${page.path}`,
+          }
         }),
       )
 
-      return jsonResult(allPages.flat())
+      return jsonResult(results)
     }
     catch (error: unknown) {
       log.error(error instanceof Error ? error : new Error(String(error)), {
         step: 'mcp-list-pages',
-        collections,
       })
       return errorResult('Failed to list pages')
     }

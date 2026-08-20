@@ -25,9 +25,10 @@ await setup({
   rootDir: fileURLToPath(new URL('../..', import.meta.url)),
   server: true,
   browser: false,
-  // dev:true uses the dev server (avoids a fixture build).
-  // Production build currently hits a Rollup sourcemap conflict on
-  // OgImageDocs.satori.vue when @nuxt/test-utils boots the fixture.
+  // dev:true uses the dev server (avoids a fixture build) — a production
+  // build previously hit a Rollup sourcemap conflict in a satori OG-image
+  // component when @nuxt/test-utils boots the fixture. Worth re-verifying
+  // with dev:false now that OgImageDocs.satori.vue is gone.
   dev: true,
 })
 

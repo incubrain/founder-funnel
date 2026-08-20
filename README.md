@@ -6,8 +6,8 @@
 
 - **Landing pages** with email capture, presales, and booking flows
 - **Authority docs** with citations, cross-linking, and MCP integration
-- **Event tracking** that streams to your webhooks (Telegram, Slack, Discord)
-- **MCP tools** for AI agents — query docs, decisions, and detect content changes
+- **Event tracking** that streams form captures to your webhook URL
+- **MCP tools** for AI agents — query pages and detect content changes
 - **Auto-registration** with the Incubrain mentorship network (opt-in)
 - **Theme-aware backgrounds** — 12 pattern/gradient utilities that follow your brand
 - **Zero lock-in** — standard Nuxt app, swap any tool anytime
@@ -78,10 +78,8 @@ AI agents can query your site via the [Model Context Protocol](https://modelcont
 
 | Tool | Purpose |
 |---|---|
-| `list-pages` | Browse docs with content hashes |
+| `list-pages` | Browse pages with content hashes |
 | `get-page` | Retrieve full markdown + hash |
-| `list-decisions` | Browse decision log entries |
-| `get-decision` | Retrieve full decision markdown |
 | `what-changed` | Lightweight polling — paths + SHA-256 hashes with `since` filter |
 
 Tools are auto-registered from `server/mcp/tools/`. Visit `/_mcp/tools` in dev to verify.

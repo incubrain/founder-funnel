@@ -90,10 +90,8 @@ Max nesting: 3 levels
 - Events flow through same system
 
 **Webhooks:**
-- Telegram: `NUXT_WEBHOOK_URL` + `NUXT_TELEGRAM_CHAT_ID`
-- Discord: `NUXT_WEBHOOK_URL`
-- Slack: `NUXT_WEBHOOK_URL`
-- Multiple: Comma-separated URLs
+- `NUXT_WEBHOOK_URL` — single webhook URL, best-effort JSON POST on form capture
+- No per-platform formatting/retry (being replaced by a unified signal-export channel)
 
 **Deployment:**
 - Railway: Dockerfile included

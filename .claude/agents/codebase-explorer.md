@@ -10,7 +10,7 @@ Use this agent when you need to understand how a feature works across the layer,
 
 ```
 layer/                    → Nuxt layer (core reusable code)
-layer/modules/            → Feature modules (events, rss, changelog, docs)
+layer/modules/            → Feature modules (events, rss)
 examples/foundry/         → Founder Funnel example app
 .starters/default/        → Starter template (used by CLI)
 shared/config/            → Shared configuration

@@ -164,7 +164,6 @@ export default defineNuxtConfig({
       },
     },
     webhookUrl: '',
-    telegramChatId: '',
   },
 
   dir: {
@@ -226,7 +225,6 @@ export default defineNuxtConfig({
     providers: ['umami', 'console', 'webhook'],
     webhook: {
       enabled: true,
-      platforms: ['discord'],
     },
     debug: true,
   },

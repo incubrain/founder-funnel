@@ -5,9 +5,9 @@ import { computeContentHash } from '../../utils/content-hash'
 import { inferSiteURL } from '../../../shared/utils/meta'
 
 export default defineMcpTool({
-  description: `Lightweight change detection tool for efficient polling. Returns content hashes for all docs and decision entries so a remote system can detect what changed without fetching full content.
+  description: `Lightweight change detection tool for efficient polling. Returns content hashes for all pages so a remote system can detect what changed without fetching full content.
 
-WHEN TO USE: Use this tool to check which content has been modified. Compare returned contentHash values against previously stored hashes to identify changed documents. Then use get-page or get-decision to fetch only the changed items.
+WHEN TO USE: Use this tool to check which content has been modified. Compare returned contentHash values against previously stored hashes to identify changed documents. Then use get-page to fetch only the changed items.
 
 INPUT: Optional 'since' ISO timestamp to filter to recently modified items only.
 

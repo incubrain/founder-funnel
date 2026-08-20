@@ -71,7 +71,6 @@ export interface ModuleOptions {
   providers: ('umami' | 'console' | 'webhook')[]
   webhook: {
     enabled: boolean
-    platforms: ('discord' | 'slack' | 'telegram')[]
   }
   debug: boolean
 }

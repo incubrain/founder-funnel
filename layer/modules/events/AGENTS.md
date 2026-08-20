@@ -24,15 +24,8 @@ layer/modules/events/
 │   └── utils/
 │       └── locations.ts              # Event metadata and categorization
 └── server/
-    ├── handlers/
-    │   └── webhook.post.ts           # POST /api/v1/webhook (form submissions)
-    ├── formatters/
-    │   ├── discord.ts                # Discord message formatter
-    │   ├── slack.ts                  # Slack message formatter
-    │   └── telegram.ts              # Telegram message formatter
-    └── utils/
-        ├── anti-spam.ts              # Rate limiting + honeypot + scoring
-        └── webhook-retry.ts          # Retry with exponential backoff
+    └── handlers/
+        └── webhook.post.ts           # POST /api/v1/webhook (form submissions)
 ```
 
 ## Key Architecture
@@ -50,10 +43,15 @@ useEvents.trackEvent() → nuxtApp.callHook('events:track', payload)
 Swap providers without changing event code. Multiple providers fire simultaneously.
 
 ### Form Submission Flow
-Client triggers `form_submitted` → webhook provider → server POST → anti-spam validation → format per platform → deliver to destinations (Slack/Discord/Telegram).
+Client triggers `form_submitted` → webhook provider → server POST → inline honeypot/timing
+check → zod payload validation → (TODO: signal-buffer persistence) → best-effort, fire-and-forget
+JSON POST to `NUXT_WEBHOOK_URL` if configured. No platform detection, formatting, or retry —
+that lives in the upcoming unified signal-export channel.
 
 ### Anti-Spam Layers
-Honeypot → instant reject. Rate limit (5/15min per IP) → 429. Form time + JS detection → risk score (0-100).
+Honeypot filled in, or `timeOnForm` under 2s → treated as a bot and silently accepted
+(no error surfaced, so bots don't learn they were caught). Checked inline in
+`webhook.post.ts` — no dedicated util or rate limiter.
 
 ### Anonymous Identity
 `useUserIdentity().getUserId()` returns `user_<uuid>`. Persists to localStorage via `useAppStorage()`. SSR-safe (empty string on server).
@@ -70,15 +68,14 @@ Honeypot → instant reject. Rate limit (5/15min per IP) → 429. Form time + JS
 2. Listen to `nuxtApp.hook('events:track', handler)` in a plugin with `dependsOn: ['events-core']`
 3. Enable in `nuxt.config.ts` events config
 
-### Add new webhook destination format
-1. Create formatter in `server/formatters/my-service.ts`
-2. Add URL detection in `webhook.post.ts` `detectPlatform()`
-3. Add domain to whitelist in `server/utils/webhook-retry.ts`
+### Change the webhook destination
+Set `NUXT_WEBHOOK_URL` to a single endpoint. `webhook.post.ts` forwards the raw form data
+as one plain JSON POST — no per-platform formatting. Per-platform notification formatting
+is being replaced by a unified signal-export channel (next wave).
 
 ## Environment Variables
 
-- `NUXT_WEBHOOK_URL` — Comma-separated webhook URLs
-- `NUXT_TELEGRAM_CHAT_ID` — Telegram chat/group ID
+- `NUXT_WEBHOOK_URL` — Single webhook URL (best-effort notification target)
 
 ## Design Principles
 

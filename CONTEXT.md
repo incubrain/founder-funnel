@@ -166,7 +166,7 @@ external tools for these.
 
 ```bash
 layer/                         → Nuxt layer (core reusable code)
-layer/modules/                 → Feature modules (events, rss, changelog, docs)
+layer/modules/                 → Feature modules (events, rss)
 examples/foundry/              → Founder Funnel example app
 .starters/default/             → Starter template (used by CLI)
 shared/config/                 → Configuration files
@@ -194,7 +194,9 @@ guides. Read the relevant guide when working on that module (not autoloaded):
 
 - [layer/modules/events/AGENTS.md](layer/modules/events/AGENTS.md) — Event tracking and webhook streaming
 - [layer/modules/rss/AGENTS.md](layer/modules/rss/AGENTS.md) — RSS feed generation
-- [layer/modules/changelog/AGENTS.md](layer/modules/changelog/AGENTS.md) — Changelog generation
+
+> The `changelog` module (`Changelog.vue`, `useChangelog`, `changelog` collection) was removed —
+> a validation page has no need for a changelog.
 
 > The `docs` module (docs-site engine + scholarly toolkit) was extracted to the
 > `@incubrain/foundry-docs` repo. Foundry no longer ships a documentation site.

@@ -27,11 +27,6 @@ export default defineNuxtConfig({
         title: 'My Blog',
         description: 'Latest posts',
         basePath: '/blog',
-      },
-      changelog: {
-        collection: 'changelog',
-        title: 'Changelog',
-        basePath: '/changelog',
         limit: 25,
         fields: {
           title: 'title',

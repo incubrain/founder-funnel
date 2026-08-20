@@ -21,7 +21,6 @@ export default defineNuxtModule<ModuleOptions>({
     providers: ['console'], // Dev default
     webhook: {
       enabled: false,
-      platforms: [],
     },
     debug: false,
   },
