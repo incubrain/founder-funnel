@@ -125,7 +125,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    foundryRegister: false, // NUXT_FOUNDRY_REGISTER — auto-register with Incubrain network in production
     public: {
       debug: true,
       siteUrl: '',
