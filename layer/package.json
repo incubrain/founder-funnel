@@ -1,7 +1,7 @@
 {
   "name": "@incubrain/foundry",
   "description": "Nuxt layer for IncuBrain Foundry",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "type": "module",
   "main": "./nuxt.config.ts",
   "exports": {

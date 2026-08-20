@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.0](https://github.com/incubrain/foundry/compare/v0.7.2...v0.8.0) (2026-08-20)
+
+### Features
+
+* add VISION.md — project vision relocated from _knowledge/visions (schema v2) ([726c9f1](https://github.com/incubrain/foundry/commit/726c9f137d5d994aea626479a241ecf5d3282d30))
+* unified signal buffer + authenticated export endpoint; errors into signal stream; minimal section set (product-validator-a4r.8/.9/.16) ([1a9df90](https://github.com/incubrain/foundry/commit/1a9df901a0277d92c7d258293fbb85e12aeff858))
+* visitor classification (human/agent/bot) on signal rows; starter Offer section (product-validator-a4r.10) ([28646bd](https://github.com/incubrain/foundry/commit/28646bdf52d27510eb06e9f50a893e613a41600c))
+
+### Bug Fixes
+
+* **example:** pass STATUS_ICONS .name string to UIcon (icons failed to render); add browser launch config ([8b57342](https://github.com/incubrain/foundry/commit/8b573422335f5ee5abc0d82c6064dfbf4a1c01d4))
+* pin h3@1.15.11 in layer to resolve dual-h3 type mismatch; verification pass green (lint 0, typecheck 0, 81/81 tests, build ok) ([ba94e81](https://github.com/incubrain/foundry/commit/ba94e81c92a92a8d30a0de66cc4d8c335980434a))
+
 ## [0.7.2](https://github.com/incubrain/foundry/compare/v0.7.1...v0.7.2) (2026-05-22)
 
 ### Bug Fixes
