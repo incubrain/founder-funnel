@@ -1,6 +1,6 @@
 ---
 type: vision
-title: Every website built on Foundry streams the full signal of whether it is working — visits, intent, errors, and whether the visitor was human or agent — raw to an external consumer, so the call to double down or kill is made on evidence.
+title: Every Foundry site streams the full signal of whether it is working — raw — to the consumer where the double-down-or-kill call is made.
 created: 2026-06-02
 updated: 2026-08-20
 status: active
