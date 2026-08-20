@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { appendSignal } from '../utils/signal-buffer'
+import { classifyVisitor } from '../utils/visitor-class'
 
 const MAX_BODY_BYTES = 64 * 1024
 const MAX_ROWS = 50
@@ -12,6 +13,7 @@ const rowSchema = z.object({
   severity: z.enum(['error', 'warning']).optional(),
   visitor: z.object({
     anonId: z.string().max(128).optional(),
+    // Accepted but ignored — `class` is always overwritten server-side below.
     class: z.enum(['human', 'agent', 'bot']).optional(),
   }).optional(),
   page: z.string().max(512).optional(),
@@ -52,8 +54,14 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  // Classify once per request — client-supplied `visitor.class` is never trusted.
+  const visitorClass = classifyVisitor(getHeader(event, 'user-agent'))
+
   for (const row of parsed.data.rows) {
-    await appendSignal(row, event)
+    await appendSignal({
+      ...row,
+      visitor: { ...row.visitor, class: visitorClass },
+    }, event)
   }
 
   log.set({ ingest: { rows: parsed.data.rows.length } })

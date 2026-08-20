@@ -12,7 +12,12 @@ export type VisitorClass = 'human' | 'agent' | 'bot'
 
 export interface SignalVisitor {
   anonId?: string
-  /** Classification is a later task — left unset by capture. */
+  /**
+   * Stamped server-side from the request User-Agent at ingest/append time
+   * (see `server/utils/visitor-class.ts`). Client-supplied values are never
+   * trusted. Left unset only when no User-Agent was available to classify
+   * (e.g. a Nitro error hook with no request context).
+   */
   class?: VisitorClass
 }
 

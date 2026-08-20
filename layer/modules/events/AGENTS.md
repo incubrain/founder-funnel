@@ -37,7 +37,8 @@ layer/modules/events/
     │   └── signal-errors.ts          # Nitro request errors → signal buffer
     └── utils/
         ├── signal-buffer.ts          # Capped ring buffer (unstorage) + appendSignal
-        └── signal-export.ts          # Bearer auth check + query parsing
+        ├── signal-export.ts          # Bearer auth check + query parsing
+        └── visitor-class.ts          # UA → human/agent/bot classification
 ```
 
 ## Key Architecture
@@ -71,7 +72,15 @@ server errors  → server/plugins/signal-errors.ts ─────────�
 ```
 
 - **Envelope:** `{ id, seq, ts, site, kind: 'event'|'log', name, severity?, visitor?, page?, referrer?, utm?, data? }`.
-  `visitor.class` is left unset — classification is a later task.
+- **Visitor classification:** every ingest/append path stamps `visitor.class:
+  'human' | 'agent' | 'bot'` server-side from the request's `User-Agent`
+  (`server/utils/visitor-class.ts`) — a hand-rolled matcher, checked against
+  `isbot` first but skipped since it can't separate AI agents from classic
+  crawlers and isn't in this monorepo's lockfile. Client-supplied `visitor.class`
+  is always overwritten, never trusted. Left unset only when a path has no
+  request context to read a UA from (e.g. the Nitro error hook on a crash with
+  no event). Agentic vs human traffic split is a core KPI (VISION.md) — this is
+  itself signal, not metadata.
 - **Cursor:** `seq` is monotonic. Consumers send back the last `cursor` they saw.
 - **Buffer:** `useStorage('signals')` (memory by default — mount fs/KV in `nitro.storage`
   to survive restarts). Capacity `events.signals.capacity`, default 10 000 rows; oldest evicted.
