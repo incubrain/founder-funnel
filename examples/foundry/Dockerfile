@@ -15,7 +15,7 @@ ENV NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID=$NUXT_PUBLIC_SCRIPTS_UMAMI_AN
 ENV NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC=$NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC
 ENV NUXT_PUBLIC_SITE_URL=$NUXT_PUBLIC_SITE_URL
 
-RUN corepack enable && corepack prepare pnpm@10.12.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.28.2 --activate
 
 WORKDIR /app
 
@@ -26,29 +26,41 @@ COPY pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # ------------------------------------------------
 # 2. Copy only package manifests needed for install
+#    (layer/package.json is REQUIRED: the example depends on
+#    @incubrain/foundry via workspace:^ — without it pnpm silently
+#    installs nothing for the layer and the build fails at
+#    auto-import time)
 # ------------------------------------------------
 COPY package.json .npmrc* ./
+COPY layer/package.json layer/
 COPY examples/foundry/package.json examples/foundry/
 
 # ------------------------------------------------
-# 3. Install ONLY foundry (uses root lockfile)
+# 3. Install ONLY foundry + its workspace deps (uses root lockfile).
+#    --prod=false: install devDependencies too despite
+#    NODE_ENV=production — the build needs them, matching local.
 # ------------------------------------------------
 
 RUN --mount=type=cache,id=s/705172d8-adee-407c-bc8c-5c02d4da348c-pnpm-store,target=/root/.local/share/pnpm/store \
     pnpm install \
-    --filter ./examples/foundry... \
+    --filter '{./examples/foundry}...' \
     --frozen-lockfile \
+    --prod=false \
     --reporter=append-only
 
 # ------------------------------------------------
 # 4. Copy source code AFTER install (cache-friendly)
 # ------------------------------------------------
+COPY layer layer
 COPY examples/foundry examples/foundry
 
 # ------------------------------------------------
-# 5. Build only foundry
+# 5. Prepare the layer's typegen (fresh checkouts have no layer/.nuxt,
+#    and the example's build resolves layer tsconfig references), then
+#    build only foundry
 # ------------------------------------------------
-RUN pnpm --filter ./examples/foundry... build
+RUN pnpm exec nuxt prepare layer \
+    && pnpm --filter '{./examples/foundry}' build
 
 # ============================================
 # STAGE 2: Production Runner
