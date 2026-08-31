@@ -1,53 +1,37 @@
 # Navigation Configuration
-# Full control over header/footer navigation - define all links manually
-
-banner:
-  id: 'mentorship-2026'
-  icon: i-lucide-users
-  title: '1-on-1 mentorship available. Limited spots for founders.'
-  actions:
-    - label: Learn More
-      to: /offers/mentorship
-      trailingIcon: i-lucide-arrow-right
-      color: primary
-      variant: solid
-      size: xs
-  close: true
-  color: primary
+# One-page station: anchors only, no banner, no legacy routes.
 
 header:
-  title: IncuBrain Foundry
+  title: Foundry
   socials:
     x: https://x.com/DrewMacGibbon
-    github: https://github.com/Drew-Macgibbon
+    github: https://github.com/incubrain/foundry
   navigation:
-    - label: About
-      icon: i-lucide-info
-      to: /about
-    - label: Mentorship
-      icon: i-lucide-users
-      to: /offers/mentorship
-  showSearch: true
-  showColorMode: true
+    - label: The Reading
+      to: /#reading
+    - label: The Loop
+      to: /#loop
+    - label: Station Log
+      to: /#ledger
+  showSearch: false
+  showColorMode: false
 
 footer:
   columns:
-    - label: About
-      icon: i-lucide-info
-      to: /about
+    - label: Station
       children:
-        - label: Our Story
-          icon: i-lucide-book-open
-          to: /about
-        - label: Roadmap
-          icon: i-lucide-map
-          to: https://github.com/incubrain/foundry/discussions/133
+        - label: Source (GitHub)
+          icon: i-simple-icons-github
+          to: https://github.com/incubrain/foundry
           target: _blank
-    - label: Offers
-      icon: i-lucide-gift
-      to: /offers/mentorship
+        - label: npm — @incubrain/foundry
+          icon: i-lucide-package
+          to: https://www.npmjs.com/package/@incubrain/foundry
+          target: _blank
+    - label: For agents
       children:
-        - label: Mentorship
-          icon: i-lucide-users
-          to: /offers/mentorship
+        - label: llms.txt
+          to: /llms.txt
+        - label: sitemap.xml
+          to: /sitemap.xml
   bottom: []

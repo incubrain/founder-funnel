@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-31T00:00:00Z",
+  "title": "Design System: Foundry — Signal Station",
+  "extensions": {
+    "colorMeta": {
+      "soot": { "role": "neutral", "displayName": "Soot Ground", "canonical": "#141110", "tonalRamp": ["#0b0908", "#141110", "#1b1714", "#26201b", "#3a322a", "#5a5044", "#8f887a", "#beb7a6"] },
+      "soot-raised": { "role": "neutral", "displayName": "Soot Raised", "canonical": "#1b1714" },
+      "soot-plate": { "role": "neutral", "displayName": "Soot Plate", "canonical": "#26201b" },
+      "scratch-light": { "role": "neutral", "displayName": "Scratch Light", "canonical": "#f2efe6", "tonalRamp": ["#26201b", "#5a5044", "#8f887a", "#98917f", "#beb7a6", "#d8d3c6", "#f2efe6", "#faf8f2"] },
+      "scratch-dim": { "role": "neutral", "displayName": "Scratch Dim", "canonical": "#beb7a6" },
+      "scratch-faint": { "role": "neutral", "displayName": "Scratch Faint", "canonical": "#8f887a" },
+      "vermilion": { "role": "primary", "displayName": "Vermilion Event Ink", "canonical": "#e33d24", "tonalRamp": ["#3c0f0a", "#661a13", "#832015", "#a62817", "#c93018", "#e33d24", "#ea6a4f", "#f6bcae"] },
+      "vermilion-bright": { "role": "primary", "displayName": "Vermilion Bright", "canonical": "#ff5a3c" },
+      "graticule": { "role": "neutral", "displayName": "Graticule Hairline", "canonical": "rgba(242, 239, 230, 0.13)" },
+      "graticule-label": { "role": "neutral", "displayName": "Graticule Label", "canonical": "#98917f" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Station Display", "purpose": "Hero and closing headlines; condensed uppercase caps at line-height 0.92." },
+      "headline": { "displayName": "Plate Headline", "purpose": "Section (plate) titles, always under a mono plate label." },
+      "body": { "displayName": "Log Prose", "purpose": "Narrative copy in Scratch Dim, max ~58-70ch." },
+      "readout": { "displayName": "Mono Readout", "purpose": "Captions, commands, dates, footer, event labels." },
+      "label": { "displayName": "Plate Label", "purpose": "Uppercase catalog labels: plate numbers, axis labels, button micro-labels." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "st-trace-draw", "value": "5.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both (stroke-dashoffset draw-on)", "purpose": "The hero drum trace drawing itself once on load; reduced-motion-guarded." },
+      { "name": "st-rec", "value": "1.6s steps(1) infinite (opacity 1 -> 0.25)", "purpose": "The masthead REC lamp blink; reduced-motion-guarded." },
+      { "name": "state-change", "value": "transition: none", "purpose": "All hover/focus states flip instantly (full inversion); no fades ever." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Install Tag (primary button)",
+      "kind": "button",
+      "refersTo": "button-install",
+      "description": "Bordered plate that copies the install command; vermilion micro-label over a mono command line.",
+      "html": "<button class=\"ds-btn-install\"><span class=\"ds-btn-install-label\">install · click to copy</span><code class=\"ds-btn-install-cmd\">$ npm i @incubrain/foundry</code></button>",
+      "css": ".ds-btn-install { display: block; text-align: left; background: transparent; color: var(--st-light, #f2efe6); border: 1px solid var(--st-light, #f2efe6); border-radius: 0; padding: 1rem 1.25rem; cursor: pointer; transition: none; } .ds-btn-install-label { display: block; font-family: 'Martian Mono', 'Courier New', monospace; font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--st-verm, #e33d24); } .ds-btn-install-cmd { display: block; margin-top: 0.25rem; font-family: 'Martian Mono', 'Courier New', monospace; font-size: 0.9rem; color: inherit; } .ds-btn-install:hover, .ds-btn-install:focus-visible { background: var(--st-verm, #e33d24); color: var(--st-soot, #141110); border-color: var(--st-verm, #e33d24); } .ds-btn-install:hover .ds-btn-install-label, .ds-btn-install:focus-visible .ds-btn-install-label { color: var(--st-soot, #141110); } .ds-btn-install:focus-visible { outline: 2px solid var(--st-verm, #e33d24); outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Plate (secondary button)",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Quiet graticule-bordered link plate; inverts to light-on-soot's opposite on hover.",
+      "html": "<a href=\"#\" class=\"ds-btn-ghost\">github.com/incubrain/foundry → MIT · open source</a>",
+      "css": ".ds-btn-ghost { display: inline-block; background: transparent; color: var(--st-dim, #beb7a6); border: 1px solid var(--st-grat, rgba(242,239,230,0.13)); border-radius: 0; padding: 0.75rem 1.25rem; font-family: 'Martian Mono', 'Courier New', monospace; font-size: 0.8rem; letter-spacing: 0.04em; text-decoration: none; transition: none; } .ds-btn-ghost:hover, .ds-btn-ghost:focus-visible { background: var(--st-light, #f2efe6); color: var(--st-soot, #141110); border-color: var(--st-light, #f2efe6); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--st-verm, #e33d24); outline-offset: 2px; }"
+    },
+    {
+      "name": "Masthead Nav Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Uppercase mono anchor link in the sticky station masthead; full-inversion hover.",
+      "html": "<nav class=\"ds-masthead-nav\"><a href=\"#reading\" class=\"ds-nav-link\">The Reading</a><a href=\"#loop\" class=\"ds-nav-link\">The Loop</a><a href=\"#questions\" class=\"ds-nav-link\">Questions</a></nav>",
+      "css": ".ds-masthead-nav { display: flex; gap: 0.25rem; background: var(--st-soot, #141110); padding: 0.5rem; } .ds-nav-link { font-family: 'Martian Mono', 'Courier New', monospace; font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--st-dim, #beb7a6); text-decoration: none; padding: 0.25rem 0.5rem; transition: none; } .ds-nav-link:hover, .ds-nav-link:focus-visible { background: var(--st-light, #f2efe6); color: var(--st-soot, #141110); }"
+    },
+    {
+      "name": "Plate Header",
+      "kind": "custom",
+      "description": "Recurring section opener: vermilion datum tick, mono plate label, condensed display headline.",
+      "html": "<div class=\"ds-plate\"><p class=\"ds-plate-label\">PLATE II — THE LOOP</p><h2 class=\"ds-plate-title\">Wrap. Stream. Decide.</h2></div>",
+      "css": ".ds-plate { position: relative; padding-left: 0; } .ds-plate::before { content: ''; position: absolute; left: -0.95rem; top: 0.5em; width: 0.95rem; height: 1px; background: var(--st-verm, #e33d24); } .ds-plate-label { margin: 0; font-family: 'Martian Mono', 'Courier New', monospace; font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--st-grat-label, #98917f); } .ds-plate-title { margin: 0.75rem 0 0; font-family: 'Big Shoulders', 'Archivo Narrow', sans-serif; font-weight: 700; font-size: clamp(1.9rem, 4vw, 3.2rem); line-height: 0.92; letter-spacing: 0.01em; text-transform: uppercase; color: var(--st-light, #f2efe6); }"
+    },
+    {
+      "name": "FAQ Row (native details)",
+      "kind": "custom",
+      "description": "Zero-JS disclosure row; the whole summary inverts when open, mono +/− mark.",
+      "html": "<details class=\"ds-faq\"><summary class=\"ds-faq-summary\"><span class=\"ds-faq-q\">Does it work without JavaScript?</span><span class=\"ds-faq-mark\" aria-hidden=\"true\"></span></summary><p class=\"ds-faq-a\">Yes — every answer is in the SSR markup, readable by crawlers that run zero JavaScript.</p></details>",
+      "css": ".ds-faq { border-top: 1px solid var(--st-grat, rgba(242,239,230,0.13)); } .ds-faq-summary { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 1rem 0.25rem; cursor: pointer; list-style: none; transition: none; } .ds-faq-summary::-webkit-details-marker { display: none; } .ds-faq-q { font-family: 'Big Shoulders', 'Archivo Narrow', sans-serif; font-weight: 700; font-size: 1.125rem; line-height: 0.92; text-transform: uppercase; color: var(--st-light, #f2efe6); } .ds-faq-mark::before { content: '+'; font-family: 'Martian Mono', monospace; font-size: 1rem; color: var(--st-dim, #beb7a6); } .ds-faq[open] .ds-faq-mark::before { content: '−'; } .ds-faq[open] .ds-faq-summary { background: var(--st-light, #f2efe6); } .ds-faq[open] .ds-faq-q { color: var(--st-soot, #141110); } .ds-faq-a { max-width: 70ch; padding: 0 0.25rem 1.25rem; font-family: 'Archivo', system-ui, sans-serif; font-size: 0.875rem; line-height: 1.625; color: var(--st-dim, #beb7a6); }"
+    },
+    {
+      "name": "Event Tag (drum label)",
+      "kind": "chip",
+      "description": "Stamped tag pinned to a drum event: vermilion date over light label, vermilion inversion on hover.",
+      "html": "<span class=\"ds-event-tag\"><span class=\"ds-event-date\">2026-08-31</span><span class=\"ds-event-label\">v0.8.0 on npm</span></span>",
+      "css": ".ds-event-tag { display: inline-block; text-align: center; background: var(--st-soot, #141110); border: 1px solid var(--st-grat, rgba(242,239,230,0.13)); border-radius: 0; padding: 0.25rem 0.375rem; transition: none; } .ds-event-date { display: block; font-family: 'Martian Mono', monospace; font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--st-verm, #e33d24); } .ds-event-label { display: block; font-family: 'Martian Mono', monospace; font-size: 0.62rem; letter-spacing: 0.04em; color: var(--st-light, #f2efe6); } .ds-event-tag:hover { background: var(--st-verm, #e33d24); border-color: var(--st-verm, #e33d24); } .ds-event-tag:hover .ds-event-date, .ds-event-tag:hover .ds-event-label { color: var(--st-soot, #141110); }"
+    },
+    {
+      "name": "Stat Entry",
+      "kind": "custom",
+      "description": "Vermilion-left-bordered statistic: display value over dim claim with bracketed mono source link.",
+      "html": "<div class=\"ds-stat\"><p class=\"ds-stat-value\">MAY 2026</p><p class=\"ds-stat-claim\">AI agents surpassed human activity on Cloudflare's network. <a href=\"#\" class=\"ds-stat-source\">[Cloudflare Q2 2026]</a></p></div>",
+      "css": ".ds-stat { border-left: 1px solid var(--st-verm, #e33d24); padding-left: 1rem; } .ds-stat-value { margin: 0; font-family: 'Big Shoulders', 'Archivo Narrow', sans-serif; font-weight: 700; font-size: 1.875rem; line-height: 0.92; text-transform: uppercase; color: var(--st-light, #f2efe6); } .ds-stat-claim { margin: 0.25rem 0 0; max-width: 52ch; font-family: 'Archivo', system-ui, sans-serif; font-size: 0.875rem; line-height: 1.625; color: var(--st-dim, #beb7a6); } .ds-stat-source { font-family: 'Martian Mono', monospace; font-size: 0.72rem; letter-spacing: 0.04em; color: var(--st-grat-label, #98917f); } .ds-stat-source:hover { color: var(--st-light, #f2efe6); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Smoked-Drum Seismogram",
+    "overview": "This site is an observatory strip-chart station recording the agent-traffic transition. The ground is soot — a smoked drum surface, textured, never a flat dark-mode gray. Everything drawn on it is one of exactly three inks: light scratched out of the deposit, a dim tint of that same light, and vermilion event ink reserved for alarm and action. The instrument is the interface: the sticky masthead carries the station name, a blinking REC lamp, and a live UTC clock; the hero is a full-bleed drum trace of real project events; sections are plates on a single ruled record, each hung off one governing datum rail. Density is archival: hairline graticule rules separate every section, monospace readouts annotate everything, and copy reads like a station log. Interaction is mechanical — states flip fully from ground to ink like a stamped plate, with no fades. Motion is rationed to two authored moments (the hero trace drawing on, the REC lamp blinking), both guarded by prefers-reduced-motion.",
+    "keyCharacteristics": [
+      "Two inks + one alarm color, total; zero gradients anywhere",
+      "Soot ground carries a real grain texture (inline SVG noise on body, produced soot-film raster on the drum)",
+      "Condensed uppercase display type at line-height 0.92; monospace readouts everywhere else",
+      "Full-inversion hover/active states — transition: none, ink and ground swap",
+      "One governing datum rail down the left of the whole record, with vermilion plate ticks",
+      "Square corners everywhere; the only circle on the page is the REC lamp"
+    ],
+    "rules": [
+      { "name": "The Two-Inks Rule", "body": "Every color on the page is soot, the scratch-light family (light → dim → faint → graticule), or vermilion. No third hue, no blue-grays, no green/success colors, no gradients of any kind.", "section": "colors" },
+      { "name": "The Event-Ink Rule", "body": "Vermilion marks events and actions only: a tick on the drum, a datum tick, an install command, a recording lamp. If it isn't an event or an action, it isn't vermilion.", "section": "colors" },
+      { "name": "The Plate-Label Rule", "body": "Every section opens with a mono plate label above its display headline — the section's catalog number in the record's own numbering voice, not a marketing kicker.", "section": "typography" },
+      { "name": "The Annotation Rule", "body": "Anything that reads as instrument metadata — dates, commands, sources, captions, the clock — is Martian Mono. Archivo is only for narrative prose.", "section": "typography" },
+      { "name": "The No-Lamp Rule", "body": "No box-shadows, no glows, no elevation blur on UI. The only 'light' on the page is ink scratched out of soot.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep every color inside the three-ink system: soot ground, scratch-light family, vermilion — and reserve vermilion for events and actions.",
+      "Do use full-inversion states (.st-invert / .st-invert-verm, transition: none) for every interactive element; the snap is the world's mechanics.",
+      "Do open every new section with a mono plate label on a .st-plate-tick hung off the datum rail, and close it with a graticule border-b.",
+      "Do draw data as SVG on a graticule grid: solid strokes for recorded values, dashed for projections, dashed vermilion verticals for events.",
+      "Do guard any new animation with prefers-reduced-motion: reduce; the budget is two moments (trace draw-on, REC blink) and additions need to earn it.",
+      "Do keep new sections legible without JavaScript (native <details>, SSR markup, selectable command text) — agents are half the readership."
+    ],
+    "donts": [
+      "Don't use gradients, box-shadows, glows, or blur on UI surfaces — depth comes from soot texture and ink weight only.",
+      "Don't round corners; the only circle is the REC lamp.",
+      "Don't introduce a third hue (no blue-grays, no success-green, no warning-yellow); tint everything from #f2efe6 or use vermilion.",
+      "Don't fade or ease state changes — no opacity hovers, no color transitions; states flip.",
+      "Don't present soot as flat hex on large surfaces: the body grain or the soot-film raster must carry the ground.",
+      "Don't reuse the legacy layer sections (section/Hero.vue, section/Offer.vue) on this surface — their gradients, rounded cards, and shadows are off-world."
+    ]
+  }
+}

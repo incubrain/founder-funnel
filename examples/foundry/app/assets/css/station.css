@@ -1,0 +1,245 @@
+/* ============================================================================
+   THE STATION RECORD — foundry.incubrain.org visual world
+   Observatory smoked-drum seismogram: soot ground, scratched-light traces,
+   vermilion event ink, ruled graticule. Two inks + one alarm color, total.
+   Plain CSS on purpose: this file sits outside the Tailwind graph, so tokens
+   live as custom properties and Nuxt UI is themed via its runtime --ui-* vars.
+   ============================================================================ */
+
+:root {
+  --st-soot: #141110;
+  --st-soot-2: #1b1714;
+  --st-soot-3: #26201b;
+  --st-light: #f2efe6;
+  --st-dim: #beb7a6; /* secondary ink, tinted from the light — never gray */
+  --st-faint: #8f887a;
+  --st-verm: #e33d24;
+  --st-verm-bright: #ff5a3c;
+  /* Graticule family tinted from the scratch-light ink — two inks + one
+     alarm color, total (finish-review fix: no third blue-gray ink). */
+  --st-grat: rgba(242, 239, 230, 0.13);
+  --st-grat-label: #98917f;
+
+  --font-display: 'Big Shoulders', 'Archivo Narrow', 'Arial Narrow', sans-serif;
+  --font-mono-station: 'Martian Mono', 'Courier New', monospace;
+}
+
+/* Nuxt UI runtime theme: vermilion primary, soot surfaces */
+:root, .dark {
+  --ui-color-primary-50: #fdf1ee;
+  --ui-color-primary-100: #fbdfd8;
+  --ui-color-primary-200: #f6bcae;
+  --ui-color-primary-300: #f09480;
+  --ui-color-primary-400: #ea6a4f;
+  --ui-color-primary-500: #e33d24;
+  --ui-color-primary-600: #c93018;
+  --ui-color-primary-700: #a62817;
+  --ui-color-primary-800: #832015;
+  --ui-color-primary-900: #661a13;
+  --ui-color-primary-950: #3c0f0a;
+}
+.dark {
+  --ui-bg: var(--st-soot);
+  --ui-bg-muted: var(--st-soot-2);
+  --ui-bg-elevated: var(--st-soot-3);
+  --ui-bg-accented: var(--st-soot-3);
+  --ui-border: rgba(242, 239, 230, 0.16);
+  --ui-border-muted: var(--st-grat);
+  --ui-border-accented: rgba(242, 239, 230, 0.24);
+  --ui-text: var(--st-light);
+  --ui-text-highlighted: var(--st-light);
+  --ui-text-toned: var(--st-dim);
+  --ui-text-muted: var(--st-dim);
+  --ui-text-dimmed: var(--st-faint);
+}
+
+body {
+  background-color: var(--st-soot);
+  color: var(--st-light);
+  font-family: 'Archivo', system-ui, sans-serif;
+  /* Soot grain — the smoked surface, tiled on the drum itself so it scrolls
+     with the record and never stacks above content. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.09 0 0 0 0 0.075 0 0 0 0.4 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* ── Browser surfaces carry the world ─────────────────────────────────── */
+::selection {
+  background: var(--st-verm);
+  color: var(--st-soot);
+}
+:focus-visible {
+  outline: 2px solid var(--st-verm);
+  outline-offset: 2px;
+}
+html {
+  scrollbar-color: var(--st-soot-3) var(--st-soot);
+  caret-color: var(--st-verm);
+  accent-color: var(--st-verm);
+  scroll-behavior: smooth;
+}
+a {
+  text-underline-offset: 0.2em;
+}
+
+/* ── Station vocabulary ────────────────────────────────────────────────── */
+.st-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.92;
+  color: var(--st-light);
+}
+
+.st-mono {
+  font-family: var(--font-mono-station);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--st-dim);
+}
+
+.st-mono-label {
+  font-family: var(--font-mono-station);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--st-grat-label);
+}
+
+/* Plate rule: hairline graticule */
+.st-rule {
+  border-color: var(--st-grat);
+}
+
+/* Full-inversion state (HyperCard raise): ink and ground flip, no fades */
+.st-invert {
+  transition: none;
+}
+.st-invert:hover,
+.st-invert:focus-visible {
+  background: var(--st-light) !important;
+  color: var(--st-soot) !important;
+  border-color: var(--st-light) !important;
+}
+.st-invert-verm:hover,
+.st-invert-verm:focus-visible {
+  background: var(--st-verm) !important;
+  color: var(--st-soot) !important;
+  border-color: var(--st-verm) !important;
+}
+
+/* The governing datum rail (curved-crease raise): one line, whole page */
+.st-datum {
+  position: relative;
+}
+.st-datum::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: max(1.25rem, calc(50vw - 40rem));
+  width: 1px;
+  background: var(--st-grat);
+}
+@media (max-width: 640px) {
+  .st-datum::before {
+    left: 1rem;
+  }
+}
+
+/* Plate tick sitting on the datum rail */
+.st-plate-tick {
+  position: relative;
+}
+.st-plate-tick::before {
+  content: '';
+  position: absolute;
+  left: -0.95rem;
+  top: 0.5em;
+  width: 0.95rem;
+  height: 1px;
+  background: var(--st-verm);
+}
+
+/* Hero trace draw-on (the page's one authored motion moment) */
+@keyframes st-trace-draw {
+  from {
+    stroke-dashoffset: var(--trace-len, 4000);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.st-trace-animate {
+  stroke-dasharray: var(--trace-len, 4000);
+  animation: st-trace-draw 5.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .st-trace-animate {
+    animation: none;
+    stroke-dasharray: none;
+  }
+}
+
+/* REC lamp */
+@keyframes st-rec {
+  0%, 74% { opacity: 1; }
+  75%, 100% { opacity: 0.25; }
+}
+.st-rec-lamp {
+  animation: st-rec 1.6s steps(1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .st-rec-lamp { animation: none; }
+}
+
+/* The hero drum band: produced soot-film raster — light scratched from
+   deposit, not flat hex (finish-review fix 4). */
+.st-drum {
+  background-color: var(--st-soot);
+  background-image: url('/textures/soot-film.jpg');
+  background-size: 1600px 400px;
+  background-repeat: repeat;
+}
+
+/* Instrument tables stack on narrow drums */
+@media (max-width: 640px) {
+  .st-table-stack tr {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.15rem 1rem;
+    padding: 0.9rem 0;
+  }
+  .st-table-stack th,
+  .st-table-stack td {
+    display: block;
+    padding: 0;
+    width: auto;
+  }
+  .st-table-stack td:last-child {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+}
+
+/* Native details FAQ — agent-readable, zero-JS */
+.st-details summary {
+  cursor: pointer;
+  list-style: none;
+}
+.st-details summary::-webkit-details-marker {
+  display: none;
+}
+.st-details summary .st-details-mark::before {
+  content: '+';
+}
+.st-details[open] summary .st-details-mark::before {
+  content: '−';
+}
+.st-details[open] summary {
+  background: var(--st-light);
+  color: var(--st-soot);
+}
+.st-details[open] summary .st-display {
+  color: var(--st-soot);
+}

@@ -10,64 +10,50 @@ export default defineNuxtConfig({
 
   modules: ['nuxt-studio', 'nuxt-llms'],
 
+  css: [resolve('./app/assets/css/station.css')],
+
   site: {
-    name: 'IncuBrain Foundry',
+    name: 'Foundry',
     url: SITE_URL,
-    description: 'Open-source product validator for technical founders',
+    description:
+      'A Nuxt 4 layer that wraps your website in a recording instrument — every visit, capture, and error, human or machine, streamed raw to where you decide.',
+  },
+
+  // The station is a dark instrument; the world commits to it.
+  colorMode: {
+    preference: 'dark',
+    fallback: 'dark',
   },
 
   routeRules: {
-    // Landing pages
     '/': { appLayout: 'landing' },
-    '/about': { appLayout: 'default' },
-    '/offers/**': { appLayout: 'article' },
-    '/success': { appLayout: 'landing' },
-    '/success/**': { appLayout: 'landing' },
-
-    // RSS Feeds
-    '/rss-feeds': { appLayout: 'default' },
   },
 
   llms: {
     domain: SITE_URL,
-    title: 'IncuBrain Foundry',
+    title: 'Foundry — Signal Station',
     description:
-      'Open-source product validator for technical founders validating product ideas',
+      'Open-source Nuxt 4 validation layer: wraps a website in a signal-recording instrument (captures, events, errors, visitor classification human|agent|bot) with a pull-based export, MCP tools, and an agent-first surface. MIT licensed.',
 
     sections: [
       {
-        title: 'Product Offers',
-        description:
-          'Ways to work with us - mentorship, templates, and opportunities',
-        contentCollection: 'pages',
-        contentFilters: [
-          { field: 'path', operator: 'LIKE', value: '/offers/%' },
-          { field: 'path', operator: 'NOT LIKE', value: '%-success' },
-        ],
-      },
-      {
-        title: 'About',
-        description: 'Our story and mission',
-        contentCollection: 'pages',
-        contentFilters: [{ field: 'path', operator: '=', value: '/about' }],
-      },
-      {
         title: 'Overview',
-        description: 'Product overview and value proposition',
+        description:
+          'The full system on one page: the agent-traffic reading, the wrap/stream/decide loop, signal channels, agent-first surfaces, and the honest station log.',
         contentCollection: 'pages',
         contentFilters: [{ field: 'path', operator: '=', value: '/' }],
       },
     ],
 
     notes: [
-      'This is an open-source project (MIT License)',
-      'Template designed for technical founders validating ideas',
-      'Built with Nuxt 4, Tailwind v4, TypeScript',
+      'Open source, MIT license: https://github.com/incubrain/foundry',
+      'Install: npm i @incubrain/foundry (Nuxt 4 layer)',
+      'MCP tools available on Foundry sites: list-pages, get-page, what-changed',
+      'Signal export: GET /api/_signals/export (bearer token, pull-based)',
+      'Every signal row is classified human | agent | bot',
     ],
   },
 
-  // RSS feeds — each key becomes /rss/{key}. Add a feed here when there's a
-  // content collection to syndicate (e.g. a blog).
   rss: {
     feeds: {},
   },

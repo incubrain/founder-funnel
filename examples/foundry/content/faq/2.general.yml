@@ -4,29 +4,13 @@ icon: i-lucide-info
 color: info
 items:
   - label: Is this really free?
-    content:
-      Yes. MIT licensed. You own the code. Use it for personal or commercial
-      projects.
+    content: Yes. MIT licensed. You own the code and the data. Use it for personal or commercial projects.
 
-  - label: Where can I host this?
-    content:
-      Anywhere that runs Node.js or Docker. Cloud platforms, VPS providers,
-      self-hosted servers, etc.
+  - label: What is Foundry NOT?
+    content: Not a dashboard, not an analytics product, not an email-sequence tool, not a payment processor. Foundry ends at the stream — interpretation belongs to whatever consumes your signal export. Anything that doesn't help you validate demand faster is out of scope on purpose.
 
-  - label: Do I need to be a developer?
-    content:
-      Yes. This is a code template, not a no-code builder. You need to know how
-      to use a terminal and edit text files.
+  - label: Why should I trust the agent-traffic thesis?
+    content: Don't trust it — check it. Cloudflare reported agents passing human traffic on its network in May 2026 and projects 1,000× within five years; the sources are linked in the reading above. And because every Foundry site classifies its visitors, you'll see the shift (or its absence) in your own export, not in anyone's keynote.
 
-  - label: How do I style it?
-    content:
-      Tailwind v4. Change tokens in `app.config.ts` or edit the CSS directly.
-
-  - label: How does the gating work?
-    content:
-      Local storage + email capture. No backend database required to start.
-
-  - label: Can I add payments?
-    content:
-      Yes. It's just a Nuxt app. Add Stripe, LemonSqueezy, Razorpay or whatever
-      you want.
+  - label: Who runs this in production?
+    content: Two of our own sites today — astronera.org and incubrain.org. Nobody else yet; that's an open entry in the station log, not a secret.

@@ -1,10 +1,10 @@
 business:
-  name: IncuBrain Foundry
+  name: Foundry
   legalName: Incubrain Pvt. Ltd.
   foundingYear: 2023
   logo: /favicon-96x96.png
-  mission: We help technical founders reach inner peace and financial freedom.
+  mission: Wrap every website in an instrument that streams the full signal of whether it is working — to the one place the double-down-or-kill call is made.
 socials:
   x: https://x.com/DrewMacGibbon
   youtube: https://www.youtube.com/@DrewMacGibbon
-  github: https://github.com/Drew-Macgibbon
+  github: https://github.com/incubrain/foundry

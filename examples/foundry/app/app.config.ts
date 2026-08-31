@@ -1,19 +1,14 @@
 export default defineAppConfig({
-  title: 'IncuBrain Foundry',
+  title: 'Foundry — Signal Station',
   description:
-    'Open-source product validator for technical founders validating product ideas',
+    'A Nuxt 4 layer that wraps your website in a recording instrument for the agent-first web.',
 
   url: 'https://foundry.incubrain.org',
-
-  aside: {
-    level: 1,
-    collapsed: false,
-  },
 
   logo: {
     light: '/favicon-96x96.png',
     dark: '/favicon-96x96.png',
-    alt: 'IncuBrain Foundry Logo',
+    alt: 'Foundry logo',
   },
 
   content: {
@@ -21,9 +16,6 @@ export default defineAppConfig({
     searchable: ['pages'],
     pagesBackLabel: 'Back',
     defaultAuthor: 'drew-macgibbon',
-    routing: {
-      offers: '/offers',
-      success: '/success',
-    },
+    routing: {},
   },
 })
