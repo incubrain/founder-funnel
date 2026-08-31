@@ -89,7 +89,7 @@ nuxtApp.hook('events:track', (payload: { id?: string, type?: string, target?: st
               v-if="!rows.length"
               class="st-mono px-4 py-6 !text-[0.78rem]"
             >
-              — the stylus is down. scroll, hover, click: your first row appears here the moment this page emits it —
+              — stylus down. scroll or click: your first row lands here —
             </li>
             <li
               v-for="(row, i) in rows"
@@ -113,8 +113,7 @@ nuxtApp.hook('events:track', (payload: { id?: string, type?: string, target?: st
           </ol>
         </div>
         <figcaption class="st-mono mt-2">
-          Your session only — rows are mirrored from the emit hook as your browser sends
-          them; the server stamps each with its visitor class before it hits the drum.
+          Your session only — the server stamps each row's visitor class before it hits the drum.
         </figcaption>
       </figure>
     </div>

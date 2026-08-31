@@ -5,7 +5,7 @@ import { buildTracePath } from '../../utils/trace'
 const props = defineProps<{
   headline: string
   sub: string
-  install: string
+  pkg: string
   github: string
   events: TraceEvent[]
 }>()
@@ -17,16 +17,6 @@ const W = 1600
 const H = 340
 const tracePath = computed(() => buildTracePath(props.events, W, H))
 
-const copied = ref(false)
-async function copyInstall() {
-  trackEvent({ id: 'offer_click_service_hero_install', type: 'offer_click', target: 'service_internal' })
-  try {
-    await navigator.clipboard.writeText(props.install)
-    copied.value = true
-    setTimeout(() => (copied.value = false), 2000)
-  }
-  catch { /* clipboard unavailable — the command is selectable text */ }
-}
 function onGithub() {
   trackEvent({ id: 'offer_click_service_hero_github', type: 'offer_click', target: 'service_external' })
 }
@@ -158,22 +148,10 @@ function onGithub() {
         </p>
       </div>
       <div class="flex flex-col justify-end gap-3 md:col-span-5 md:items-end">
-        <button
-          type="button"
-          class="st-invert-verm group w-full border px-5 py-4 text-left md:max-w-md"
-          :style="{ borderColor: 'var(--st-light)' }"
-          :aria-label="`Copy install command: ${install}`"
-          @click="copyInstall"
-        >
-          <span
-            class="st-mono-label block"
-            style="color: var(--st-verm)"
-          >{{ copied ? 'copied to clipboard' : 'install · click to copy' }}</span>
-          <code
-            class="st-mono mt-1 block !text-[0.9rem]"
-            style="color: inherit; letter-spacing: 0"
-          >$ {{ install }}</code>
-        </button>
+        <InstallCommand
+          :pkg="pkg"
+          location="hero"
+        />
         <a
           :href="github"
           target="_blank"

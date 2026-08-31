@@ -174,7 +174,7 @@ const H = 300
           />
         </svg>
         <figcaption class="st-mono mt-2">
-          FIG. 1 — Agent traffic passed human activity on Cloudflare's network, May 2026. Projection: Cloudflare Q2 2026 earnings call. Recorded left of the mark; projected right, dashed.
+          FIG. 1 — Recorded left of the mark; projected right, dashed. Source: Cloudflare Q2 2026 earnings call.
         </figcaption>
       </figure>
     </div>

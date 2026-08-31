@@ -4,13 +4,13 @@ icon: i-lucide-info
 color: info
 items:
   - label: Is this really free?
-    content: Yes. MIT licensed. You own the code and the data. Use it for personal or commercial projects.
+    content: Yes. MIT licensed. You own the code and the data.
 
   - label: What is Foundry NOT?
-    content: Not a dashboard, not an analytics product, not an email-sequence tool, not a payment processor. Foundry ends at the stream — interpretation belongs to whatever consumes your signal export. Anything that doesn't help you validate demand faster is out of scope on purpose.
+    content: Not a dashboard, not analytics, not email sequences, not payments. Foundry ends at the stream — interpretation belongs to whatever pulls your export.
 
-  - label: Why should I trust the agent-traffic thesis?
-    content: Don't trust it — check it. Cloudflare reported agents passing human traffic on its network in May 2026 and projects 1,000× within five years; the sources are linked in the reading above. And because every Foundry site classifies its visitors, you'll see the shift (or its absence) in your own export, not in anyone's keynote.
+  - label: Why trust the agent-traffic thesis?
+    content: Don't — check it. The Cloudflare sources are linked above, and every Foundry site classifies its own visitors, so you'll see the shift (or its absence) in your own export.
 
   - label: Who runs this in production?
-    content: Two of our own sites today — astronera.org and incubrain.org. Nobody else yet; that's an open entry in the station log, not a secret.
+    content: Two of our own sites — astronera.org and incubrain.org. Nobody else yet; that's an open entry in the station log.

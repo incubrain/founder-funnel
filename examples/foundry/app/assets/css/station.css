@@ -111,7 +111,9 @@ a {
   border-color: var(--st-grat);
 }
 
-/* Full-inversion state (HyperCard raise): ink and ground flip, no fades */
+/* Full-inversion state (HyperCard raise): ink and ground flip, no fades.
+   Children flip WITH the parent — inline ink colors would otherwise vanish
+   into an inverted ground (vermilion label on vermilion hover). */
 .st-invert {
   transition: none;
 }
@@ -126,6 +128,12 @@ a {
   background: var(--st-verm) !important;
   color: var(--st-soot) !important;
   border-color: var(--st-verm) !important;
+}
+.st-invert:hover *,
+.st-invert:focus-visible *,
+.st-invert-verm:hover *,
+.st-invert-verm:focus-visible * {
+  color: inherit !important;
 }
 
 /* The governing datum rail (curved-crease raise): one line, whole page */
@@ -262,10 +270,18 @@ a {
 .st-details[open] summary .st-details-mark::before {
   content: '−';
 }
+.st-details summary:hover,
 .st-details[open] summary {
   background: var(--st-light);
   color: var(--st-soot);
 }
-.st-details[open] summary .st-display {
+.st-details summary:hover .st-display,
+.st-details summary:hover .st-mono,
+.st-details[open] summary .st-display,
+.st-details[open] summary .st-mono {
   color: var(--st-soot);
+}
+/* Air between the inverted header and the answer */
+.st-details[open] summary {
+  margin-bottom: 0.85rem;
 }

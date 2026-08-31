@@ -52,7 +52,7 @@ function onToggle(e: Event, label: string) {
             class="st-details border-t st-rule"
             @toggle="onToggle($event, item.label)"
           >
-            <summary class="flex items-baseline justify-between gap-4 px-1 py-4">
+            <summary class="flex items-baseline justify-between gap-4 px-3 py-4">
               <span class="st-display text-lg">{{ item.label }}</span>
               <span
                 class="st-mono st-details-mark !text-[1rem]"
@@ -60,7 +60,7 @@ function onToggle(e: Event, label: string) {
               />
             </summary>
             <p
-              class="max-w-[70ch] px-1 pb-5 text-sm leading-relaxed"
+              class="max-w-[70ch] px-3 pb-6 text-sm leading-relaxed"
               style="color: var(--st-dim)"
             >
               {{ item.content }}

@@ -4,13 +4,13 @@ icon: i-lucide-code
 color: warning
 items:
   - label: What's the stack?
-    content: Nuxt 4, Tailwind 4, TypeScript. Foundry is a Nuxt layer — `extends: ['@incubrain/foundry']` and your app inherits the sections, capture endpoints, SEO, RSS, and MCP surface.
+    content: Nuxt 4, Tailwind 4, TypeScript. Foundry is a Nuxt layer — one extends line in your config and your app inherits the sections, capture endpoints, SEO, RSS, and MCP surface.
 
   - label: Where do my signals go?
-    content: Into a capped ring buffer on your own server (10,000 rows by default). Nothing is pushed to a third party. You pull the raw record from GET /api/_signals/export with a bearer token you control.
+    content: Into a capped ring buffer on your own server. Nothing is pushed to a third party — you pull the raw record from the export endpoint with a token you control.
 
-  - label: What does "agent-readable" actually mean here?
-    content: Every page is server-rendered markdown — no JavaScript required to read it. Sites also emit sitemap.xml, robots.txt, and llms.txt, expose MCP tools for structured queries, and stamp every signal row with a human/agent/bot classification.
+  - label: What does "agent-readable" mean here?
+    content: Every page is server-rendered — no JavaScript needed to read it. Sites also emit sitemap, robots, and llms.txt, expose MCP tools, and classify every visitor as human, agent, or bot.
 
   - label: How hard is it to customize?
-    content: It's standard Vue and Nuxt. Content lives in YAML and markdown, sections are ordinary components, and the layer stays out of your way past that.
+    content: It's standard Vue and Nuxt. Content lives in YAML and markdown; sections are ordinary components.

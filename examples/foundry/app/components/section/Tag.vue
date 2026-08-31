@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
   headline: string
-  install: string
+  pkg: string
   github: string
   agents: { path: string, note: string }[]
   colophon: string
@@ -10,16 +10,6 @@ defineProps<{
 const { el } = useSectionSignal('tag')
 const { trackEvent } = useEvents()
 
-const copied = ref(false)
-async function copyInstall(cmd: string) {
-  trackEvent({ id: 'offer_click_service_close_install', type: 'offer_click', target: 'service_internal' })
-  try {
-    await navigator.clipboard.writeText(cmd)
-    copied.value = true
-    setTimeout(() => (copied.value = false), 2000)
-  }
-  catch { /* command stays selectable */ }
-}
 function onGithub() {
   trackEvent({ id: 'offer_click_service_close_github', type: 'offer_click', target: 'service_external' })
 }
@@ -39,23 +29,12 @@ function onGithub() {
         {{ headline }}
       </h2>
 
-      <div class="mt-10 flex flex-col gap-3 md:flex-row md:items-stretch">
-        <button
-          type="button"
-          class="st-invert-verm border px-6 py-5 text-left md:min-w-96"
-          :style="{ borderColor: 'var(--st-verm)' }"
-          :aria-label="`Copy install command: ${install}`"
-          @click="copyInstall(install)"
-        >
-          <span
-            class="st-mono-label block"
-            style="color: var(--st-verm)"
-          >{{ copied ? 'copied to clipboard' : 'install · click to copy' }}</span>
-          <code
-            class="st-mono mt-1 block !text-[1rem]"
-            style="color: inherit; letter-spacing: 0"
-          >$ {{ install }}</code>
-        </button>
+      <div class="mt-10 flex flex-col gap-3 md:flex-row md:items-end">
+        <InstallCommand
+          :pkg="pkg"
+          location="close"
+          class="md:min-w-96"
+        />
         <a
           :href="github"
           target="_blank"
