@@ -90,10 +90,12 @@ channels:
     detail: Section views and offer clicks — which promise pulled, which one died.
   - ch: CH 03
     name: Errors
-    detail: Server and client failures, same stream — a broken site is the loudest signal.
+    detail: Server and client failures, same stream — a broken site is the loudest
+      signal.
   - ch: CH 04
     name: Visitors
-    detail: Every row stamped human, agent, or bot — watch the species shift on your own site.
+    detail: Every row stamped human, agent, or bot — watch the species shift on your
+      own site.
 endpoints:
   - path: /api/_signals/export
     note: bearer · pull
@@ -111,8 +113,8 @@ endpoints:
     note: agent map
   - path: /robots.txt
     note: crawler policy
-body: "No dashboards, no on-site analytics — interpretation belongs to the
-  consumer. Four channels, one buffer, one authenticated export."
+body: No dashboards, no on-site analytics — interpretation belongs to the
+  consumer. Four channels, one buffer, one authenticated export.
 plate: PLATE III — CHANNELS
 title: One drum, every signal.
 ---
@@ -128,7 +130,8 @@ items:
       This page included.
     status: SHIPPED
   - name: Visitor classification
-    detail: Every row stamped human | agent | bot — agent traffic measured, not guessed.
+    detail: Every row stamped human | agent | bot — agent traffic measured, not
+      guessed.
     status: SHIPPED
   - name: MCP tools on every site
     detail: Agents query content and detect changes by hash instead of scraping.

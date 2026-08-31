@@ -236,6 +236,39 @@ a {
   }
 }
 
+/* Signal toast chips: land with the same inversion strike as tail rows,
+   leave instantly — stepped, never soft-faded. */
+.st-toast {
+  position: relative;
+}
+.st-toast::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--st-light);
+  mix-blend-mode: difference;
+  animation: st-tail-land 0.4s steps(2, end) both;
+}
+.st-toast-enter-active,
+.st-toast-leave-active {
+  transition: opacity 0.12s steps(2, end);
+}
+.st-toast-enter-from,
+.st-toast-leave-to {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .st-toast::after {
+    animation: none;
+    opacity: 0;
+  }
+  .st-toast-enter-active,
+  .st-toast-leave-active {
+    transition: none;
+  }
+}
+
 /* Instrument tables stack on narrow drums */
 @media (max-width: 640px) {
   .st-table-stack tr {

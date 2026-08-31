@@ -32,7 +32,7 @@ onUnmounted(() => clearInterval(timer))
     class="sticky top-0 z-40 border-b st-rule"
     style="background: var(--st-soot)"
   >
-    <div class="flex flex-wrap items-center justify-between gap-x-5 gap-y-1 px-5 py-2.5 sm:px-8">
+    <div class="flex flex-wrap items-center justify-between gap-x-5 gap-y-1 px-5 py-3 sm:px-8">
       <NuxtLink
         to="/"
         class="st-mono-label whitespace-nowrap !text-[0.62rem] sm:!text-[0.7rem]"
@@ -62,12 +62,12 @@ onUnmounted(() => clearInterval(timer))
           target="_blank"
           rel="noopener noreferrer"
           aria-label="X (Twitter)"
-          class="st-invert px-1"
+          class="st-invert inline-flex items-center px-1.5 py-1"
           style="color: var(--st-dim)"
           @click="onSocial('x')"
         ><UIcon
           name="i-simple-icons-x"
-          class="size-3.5 align-middle"
+          class="size-3.5 shrink-0"
         /></a>
         <a
           v-if="socials.github"
@@ -75,12 +75,12 @@ onUnmounted(() => clearInterval(timer))
           target="_blank"
           rel="noopener noreferrer"
           aria-label="GitHub"
-          class="st-invert px-1"
+          class="st-invert inline-flex items-center px-1.5 py-1"
           style="color: var(--st-dim)"
           @click="onSocial('github')"
         ><UIcon
           name="i-simple-icons-github"
-          class="size-3.5 align-middle"
+          class="size-3.5 shrink-0"
         /></a>
         <span class="flex items-center gap-2">
           <span
@@ -94,4 +94,5 @@ onUnmounted(() => clearInterval(timer))
       </p>
     </div>
   </header>
+  <SignalToasts />
 </template>
