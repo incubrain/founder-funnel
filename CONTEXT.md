@@ -8,8 +8,7 @@ anything reached only for deep work. Canonical terms are in `GLOSSARY.md`.
 ## Quick Start
 
 ```bash
-pnpm dev:ff          # Founder Funnel dev server
-pnpm dev:ib          # Incubrain dev server
+pnpm dev:foundry     # examples/foundry dev server (local layer)
 
 pnpm lint            # ESLint check
 pnpm lint:fix        # ESLint autofix
@@ -148,7 +147,7 @@ package and the error is in that release, not your local work.
 ## Architecture
 
 **In scope:** Landing pages (section-driven), signal capture (email/presales/bookings),
-event tracking (analytics-agnostic), webhook streaming.
+event tracking (analytics-agnostic), signal export for an external consumer to pull.
 
 **Out of scope:** Email sequences, authentication, payment processing, databases. Use
 external tools for these.
@@ -156,8 +155,13 @@ external tools for these.
 **Key patterns:**
 - Event-driven: action → `useEvents()` → handler → provider. Swap analytics without
   changing event code. See `modules/events/*`.
-- Webhook streaming: capture → encrypt → webhook → destination. No storage needed. See
-  `modules/events/server/handlers/webhook.ts`.
+- Signal pull, not webhook push: client events, server errors, and form captures all
+  call `appendSignal()` (`layer/modules/events/server/utils/signal-buffer.ts`) into a
+  capped ring buffer (`useStorage('signals')`, 10,000-row default). Ingest lands via
+  `POST /api/_signals/ingest` (client rows) and `POST /api/v1/webhook` (form capture);
+  an external consumer pulls everything back out with `GET /api/_signals/export`
+  (bearer `NUXT_SIGNAL_EXPORT_TOKEN`, `since`/`limit` params). There are no outbound webhooks and
+  no analytics providers — see `layer/modules/events/AGENTS.md`.
 - SSR: Nuxt 4, use `import.meta.client` guards for client-only APIs or
   `.client.ts|.server.ts` file naming.
 
@@ -187,7 +191,7 @@ deploy/                        → Dockerfiles and deployment configs
 Each module has its own AGENTS.md with detailed architecture, file maps, and modification
 guides. Read the relevant guide when working on that module (not autoloaded):
 
-- [layer/modules/events/AGENTS.md](layer/modules/events/AGENTS.md) — Event tracking and webhook streaming
+- [layer/modules/events/AGENTS.md](layer/modules/events/AGENTS.md) — Event tracking and signal export
 - [layer/modules/rss/AGENTS.md](layer/modules/rss/AGENTS.md) — RSS feed generation
 
 > The `changelog` module (`Changelog.vue`, `useChangelog`, `changelog` collection) was removed —

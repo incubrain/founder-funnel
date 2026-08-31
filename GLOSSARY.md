@@ -2,7 +2,7 @@
 
 | Term | Aliases | Meaning |
 |------|---------|---------|
-| Foundry | @incubrain/foundry, content-framework | Nuxt 4 content framework providing schemas, composables, and validation for Incubrain's sites. |
+| Foundry | @incubrain/foundry, content-framework | Nuxt 4 validation layer that wraps a site and streams the full signal of whether it's working — email capture, presales, bookings, errors — so founders prove demand before building product. |
 | Incubrain | platform | AI-accessibility platform for Marathi OCR and government document digitization using Foundry. |
 | Nuxt | nuxt, vue-framework | Vue 3 meta-framework for SSR and content-driven applications; Foundry's runtime. |
 | Nuxt Content | content-collection, cms | Content collection system for managing structured Markdown and YAML as queryable data. |
@@ -13,7 +13,6 @@
 | CSR | client-side-rendering | Rendering mode: components execute in browser after initial HTML load; slower for SEO. |
 | SEO | search-engine-optimization | Techniques for making sites discoverable via search engines; native Foundry concern. |
 | CLS | cumulative-layout-shift | Web Vital: measure of visual stability during page load; Foundry-relevant performance metric. |
-| Mentorship Network | mentor-graph, relationships | System for tracking founder/mentor relationships and decision authority across Incubrain teams. |
 | Configuration | config, settings | `nuxt.config.ts`, `app.config.ts`, `content.config.ts`; application and content behavior. |
 | Validation Path | validation-route, check | Procedural steps for validating configuration, content schemas, or deployment readiness. |
 | Documentation | docs, reference | Markdown guides and examples for using Foundry in a Nuxt 4 project. |

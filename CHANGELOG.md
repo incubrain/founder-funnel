@@ -13,6 +13,22 @@
 * **example:** pass STATUS_ICONS .name string to UIcon (icons failed to render); add browser launch config ([8b57342](https://github.com/incubrain/foundry/commit/8b573422335f5ee5abc0d82c6064dfbf4a1c01d4))
 * pin h3@1.15.11 in layer to resolve dual-h3 type mismatch; verification pass green (lint 0, typecheck 0, 81/81 tests, build ok) ([ba94e81](https://github.com/incubrain/foundry/commit/ba94e81c92a92a8d30a0de66cc4d8c335980434a))
 
+### Removed (breaking if you used these surfaces)
+
+*Added post-release: the auto-generated notes above only picked up `feat:`/`fix:` commits and missed the refocus removals. Shipped as a 0.x minor per pre-1.0 convention.*
+
+* **CLI package** — `cli/`, `create-foundry`, and the `.starters/default/` scaffolding ([916ddb7](https://github.com/incubrain/foundry/commit/916ddb7))
+* **Analytics & webhook notification machinery** — umami/console providers, Discord/Slack/Telegram formatters, webhook retry, anti-spam util; events collapsed to the single signal provider ([916ddb7](https://github.com/incubrain/foundry/commit/916ddb7), [1c6fffe](https://github.com/incubrain/foundry/commit/1c6fffe))
+* **`evlog` module & dependency** — errors now flow through h3 `createError` and the signal buffer's Nitro error hook ([916ddb7](https://github.com/incubrain/foundry/commit/916ddb7))
+* **`changelog` module + KaTeX math pipeline** ([6de1cc5](https://github.com/incubrain/foundry/commit/6de1cc5))
+* **`decisions` / founder-decision-log feature** — including the `list-decisions` and `get-decision` MCP tools; remaining MCP tools are `list-pages`, `get-page`, `what-changed` ([2636669](https://github.com/incubrain/foundry/commit/2636669), [1c6fffe](https://github.com/incubrain/foundry/commit/1c6fffe))
+* **`foundry-register` Nitro plugin** — the mentorship-network phone-home (`NUXT_FOUNDRY_REGISTER`) and its `foundryRegister` runtimeConfig key ([33e847d](https://github.com/incubrain/foundry/commit/33e847d))
+* **Env surface collapsed** — runtime env vars are now `NUXT_SIGNAL_EXPORT_TOKEN` and `NUXT_PUBLIC_SITE_ID` (plus `NUXT_PUBLIC_SITE_URL` for SEO)
+
+### Changed
+
+* **`docs` module extracted** to the separate `@incubrain/foundry-docs` package ([a1be8fc](https://github.com/incubrain/foundry/commit/a1be8fc))
+
 ## [0.7.2](https://github.com/incubrain/foundry/compare/v0.7.1...v0.7.2) (2026-05-22)
 
 ### Bug Fixes

@@ -2,7 +2,7 @@
 type: vision
 title: Every Foundry site streams the full signal of whether it is working — raw — to the consumer where the double-down-or-kill call is made.
 created: 2026-06-02
-updated: 2026-08-20
+updated: 2026-08-31
 status: active
 tags: [vision, project]
 applies-to: incubrain/foundry
@@ -37,8 +37,8 @@ Foundry ends at the stream. No charts, no dashboards, no anomaly detection insid
 — the consumer owns interpretation, and anomalies are the highest-value signal for deciding
 where to double down.
 
-None of this is true yet. As of August 2026 the layer runs two of our own websites, the
-transport is ratified but unbuilt, and the agent-readiness surface was on a chopping-block
+Most of this is not proven yet. As of August 2026 the layer runs two of our own websites,
+the transport shipped in 0.8.0, and the agent-readiness surface was on a chopping-block
 list a week ago.
 
 ## Value
