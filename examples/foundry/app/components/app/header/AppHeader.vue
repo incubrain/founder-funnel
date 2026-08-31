@@ -12,6 +12,11 @@ const headerData = inject<Ref<HeaderConfig>>('navigation_header')
 const nav = computed(() => headerData?.value?.navigation ?? [])
 const socials = computed(() => headerData?.value?.socials ?? {})
 
+const { trackEvent } = useEvents()
+function onSocial(name: string) {
+  trackEvent({ id: `offer_click_social_header_${name}`, type: 'offer_click', target: 'social_external' })
+}
+
 const utc = useState('station-utc', () => new Date().toISOString().slice(0, 19).replace('T', ' '))
 let timer: ReturnType<typeof setInterval> | undefined
 onMounted(() => {
@@ -59,6 +64,7 @@ onUnmounted(() => clearInterval(timer))
           aria-label="X (Twitter)"
           class="st-invert px-1"
           style="color: var(--st-dim)"
+          @click="onSocial('x')"
         ><UIcon
           name="i-simple-icons-x"
           class="size-3.5 align-middle"
@@ -71,6 +77,7 @@ onUnmounted(() => clearInterval(timer))
           aria-label="GitHub"
           class="st-invert px-1"
           style="color: var(--st-dim)"
+          @click="onSocial('github')"
         ><UIcon
           name="i-simple-icons-github"
           class="size-3.5 align-middle"

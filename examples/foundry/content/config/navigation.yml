@@ -11,6 +11,8 @@ header:
       to: /#reading
     - label: The Loop
       to: /#loop
+    - label: Live Tail
+      to: /#live
     - label: Station Log
       to: /#ledger
   showSearch: false

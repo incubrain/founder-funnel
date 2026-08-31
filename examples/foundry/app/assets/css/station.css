@@ -202,6 +202,32 @@ a {
   background-repeat: repeat;
 }
 
+/* Live tail: a new row lands as a full-inversion flash, then settles — the
+   stylus strike in the world's own state grammar. A difference-blend overlay
+   inverts ink and ground truly (light↔soot) without touching child colors. */
+@keyframes st-tail-land {
+  0%, 55% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.st-tail-row {
+  position: relative;
+}
+.st-tail-row:first-of-type::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--st-light);
+  mix-blend-mode: difference;
+  animation: st-tail-land 0.45s steps(2, end) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .st-tail-row:first-of-type::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
 /* Instrument tables stack on narrow drums */
 @media (max-width: 640px) {
   .st-table-stack tr {

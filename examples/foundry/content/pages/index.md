@@ -119,9 +119,21 @@ endpoints:
 ---
 ::
 
+::section-live
+---
+plate: PLATE IV — THE LIVE TAIL
+title: Watch this page record you.
+body: >
+  Not a mockup — the actual emit hook. Every scroll into a section and every click on
+  an offer becomes a signal row, and this panel mirrors each one the instant your
+  browser sends it to the buffer. Reading the record is itself recorded: the row this
+  section just emitted is already in the tail below.
+---
+::
+
 ::section-species
 ---
-plate: PLATE IV — BOTH SPECIES
+plate: PLATE V — BOTH SPECIES
 title: Built to be read by machines, watched by you.
 body: >
   Agents don't run your JavaScript and don't admire your gradients — they read structure,
@@ -154,7 +166,7 @@ items:
 
 ::section-ledger
 ---
-plate: PLATE V — STATION LOG
+plate: PLATE VI — STATION LOG
 title: A live experiment, honestly framed.
 quote:
   text: Most of this is not proven yet.
@@ -184,7 +196,7 @@ entries:
 
 ::section-questions
 ---
-plate: PLATE VI — QUESTIONS
+plate: PLATE VII — QUESTIONS
 title: Asked and answered.
 ---
 ::

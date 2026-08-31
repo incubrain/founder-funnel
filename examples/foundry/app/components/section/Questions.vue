@@ -10,6 +10,17 @@ defineProps<{
 const { el } = useSectionSignal('questions')
 
 const { data: faqs } = await useAsyncData('station-faq', () => queryCollection('faq').all())
+
+// First open of each answer is a signal row too — which questions get read
+// is exactly the kind of demand evidence the instrument exists to collect.
+const { trackEvent } = useEvents()
+const opened = new Set<string>()
+function onToggle(e: Event, label: string) {
+  if (!(e.target as HTMLDetailsElement).open || opened.has(label)) return
+  opened.add(label)
+  const slug = label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+  trackEvent({ id: `section_view_faq_${slug}`, type: 'section_view', target: `faq:${slug}` })
+}
 </script>
 
 <template>
@@ -39,6 +50,7 @@ const { data: faqs } = await useAsyncData('station-faq', () => queryCollection('
             v-for="item in group.items"
             :key="item.label"
             class="st-details border-t st-rule"
+            @toggle="onToggle($event, item.label)"
           >
             <summary class="flex items-baseline justify-between gap-4 px-1 py-4">
               <span class="st-display text-lg">{{ item.label }}</span>

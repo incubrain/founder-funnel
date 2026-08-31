@@ -14,6 +14,11 @@ const founding = computed(() => site?.value?.business?.foundingYear ?? year)
 const legal = computed(() => site?.value?.business?.legalName ?? 'Incubrain Pvt. Ltd.')
 const socials = computed(() => site?.value?.socials ?? {})
 const version = useAppConfig().foundry?.version
+
+const { trackEvent } = useEvents()
+function onSocial(name: string) {
+  trackEvent({ id: `offer_click_social_footer_${name}`, type: 'offer_click', target: 'social_external' })
+}
 </script>
 
 <template>
@@ -31,6 +36,7 @@ const version = useAppConfig().foundry?.version
           rel="noopener noreferrer"
           class="st-invert px-1 uppercase !tracking-[0.1em]"
           style="color: var(--st-dim)"
+          @click="onSocial(String(name))"
         >{{ name }}</a>
         <span>built with @incubrain/foundry{{ version ? ` v${version}` : '' }}</span>
       </p>
