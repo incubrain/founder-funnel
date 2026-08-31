@@ -162,6 +162,11 @@ external tools for these.
   an external consumer pulls everything back out with `GET /api/_signals/export`
   (bearer `NUXT_SIGNAL_EXPORT_TOKEN`, `since`/`limit` params). There are no outbound webhooks and
   no analytics providers — see `layer/modules/events/AGENTS.md`.
+- Monitorability: `GET /api/_health` (`layer/server/api/_health.get.ts`) gives external
+  monitors (Polaris) an unauthenticated liveness+identity check — `{ ok, service, version,
+  siteId, timestamp }`, `no-store`, no storage/content access. Page enumeration is
+  `/sitemap.xml` (via `@nuxtjs/seo`); the signal pipe's health is inferred from
+  `/api/_signals/export`'s 401/503-without-a-token response.
 - SSR: Nuxt 4, use `import.meta.client` guards for client-only APIs or
   `.client.ts|.server.ts` file naming.
 

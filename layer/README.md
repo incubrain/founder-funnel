@@ -50,7 +50,9 @@ lives in markdown and YAML, edited without touching code.
 content components, and `SectionWrapper` — an accessible section primitive that fires a
 `section_view_<id>` event on intersection.
 
-**Agent-readiness.** MCP tools (`list-pages`, `get-page`, `what-changed`) served by
+**Agent-readiness.** `GET /api/_health` — unauthenticated liveness+identity check for
+external monitors (Polaris), pure computation with `Cache-Control: no-store`. MCP tools
+(`list-pages`, `get-page`, `what-changed`) served by
 `@nuxtjs/mcp-toolkit`; the `markdown-rewrite` module, which writes Vercel edge redirects so
 `Accept: text/markdown` requests get raw markdown and `/` serves `llms.txt`; `@nuxtjs/seo`
 for sitemap, robots, schema.org, link checking, and canonical redirects; a Satori OG image
