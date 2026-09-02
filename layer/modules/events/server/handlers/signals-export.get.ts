@@ -3,7 +3,7 @@ import { checkExportAuth, parseExportParams } from '../utils/signal-export'
 import type { SignalExportResponse } from '../../runtime/types/signal'
 
 /**
- * GET /api/_signals/export?since=<seq>&limit=<n≤1000>
+ * GET /api/_signals/export?since=<seq>&limit=<n≤2000>
  * Cursor-based pull for external consumers (Polaris). Bearer auth required.
  */
 export default defineEventHandler(async (event): Promise<SignalExportResponse> => {

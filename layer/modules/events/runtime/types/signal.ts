@@ -34,6 +34,14 @@ export interface SignalRow {
   page?: string
   referrer?: string
   utm?: Record<string, string>
+  /**
+   * Review-session tag, from a `?polaris_review=<token>` query param on the
+   * page the event was emitted from. Its own top-level field — never squatted
+   * into `utm` — and deliberately NOT persisted: only rows emitted during that
+   * one page load carry it, which is all an external reviewer needs to bind the
+   * tag to a `visitor.anonId`. See `pageContext()` in `runtime/utils/signal.ts`.
+   */
+  review?: string
   data?: Record<string, unknown>
 }
 

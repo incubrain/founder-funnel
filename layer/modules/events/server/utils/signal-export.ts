@@ -50,7 +50,7 @@ export interface ExportParams {
   limit: number
 }
 
-/** `?since=<seq>&limit=<n≤1000>` — clamped, never NaN. */
+/** `?since=<seq>&limit=<n≤2000>` — clamped, never NaN. */
 export function parseExportParams(query: Record<string, unknown>): ExportParams {
   const toInt = (value: unknown, fallback: number) => {
     const parsed = Number.parseInt(String(value ?? ''), 10)

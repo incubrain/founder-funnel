@@ -55,8 +55,8 @@ describe('parseExportParams', () => {
     expect(parseExportParams({ since: '42', limit: '10' })).toEqual({ since: 42, limit: 10 })
   })
 
-  it('clamps limit to 1000 and at least 1', () => {
-    expect(parseExportParams({ limit: '99999' }).limit).toBe(1000)
+  it('clamps limit to the export maximum and at least 1', () => {
+    expect(parseExportParams({ limit: '99999' }).limit).toBe(2000)
     expect(parseExportParams({ limit: '0' }).limit).toBe(1)
     expect(parseExportParams({ limit: '-5' }).limit).toBe(1)
   })

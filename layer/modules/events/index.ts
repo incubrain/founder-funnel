@@ -13,7 +13,7 @@ import type { ModuleOptions } from './runtime/types/events'
 // Not imported directly: that file is nitro-server-only (relies on h3/nitro
 // auto-imports) and pulling it into this module-setup file drags it into the
 // Nuxt "node" typecheck project, which doesn't have those globals.
-const DEFAULT_SIGNAL_CAPACITY = 10_000
+const DEFAULT_SIGNAL_CAPACITY = 100_000
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -92,6 +92,12 @@ export default defineNuxtModule<ModuleOptions>({
       // The only provider: every tracked event becomes a signal row
       addPlugin({
         src: resolver.resolve('./runtime/providers/signal.ts'),
+        mode: 'client',
+      })
+
+      // Always-on identity stream: ui.click / ui.section / ui.page.
+      addPlugin({
+        src: resolver.resolve('./runtime/plugins/identity.client.ts'),
         mode: 'client',
       })
 

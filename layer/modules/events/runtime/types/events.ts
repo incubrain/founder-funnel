@@ -9,6 +9,10 @@ export type TrackedEvents
     | 'form_error'
     | 'offer_click'
     | 'section_view'
+    // Always-on, content-free identity stream — see runtime/utils/identity.ts.
+    | 'ui.click'
+    | 'ui.section'
+    | 'ui.page'
 
 export type EventTarget = OfferTarget
 

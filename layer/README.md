@@ -32,9 +32,17 @@ Optional peer dependencies, added in your own app when you want them: `nuxt-llms
 **Signal capture.** Client events (`useEvents()`) and client errors are batched to
 `POST /api/_signals/ingest`; form captures and Nitro request errors are appended
 server-side. All of it becomes one `SignalRow` envelope in a capped ring buffer, pulled by
-a consumer at `GET /api/_signals/export?since=<seq>&limit=<n≤1000>` behind a bearer token.
+a consumer at `GET /api/_signals/export?since=<seq>&limit=<n≤2000>` behind a bearer token.
 Every row carries a server-derived `visitor.class` of `human`, `agent`, or `bot`. Nothing
 is pushed out — no webhook forwarders, no analytics vendors, no second destination.
+
+**Identity events.** Always on, for every visitor: `ui.click`, `ui.section`, and `ui.page`
+rows describing *which* authored thing was touched — never *what* was typed. No pixel
+coordinates, no input values, no keystrokes. Sections are identified by `data-section` (or a
+plain `<section id>`); `SectionWrapper` stamps it automatically. A `?polaris_review=<token>`
+query param rides along as the row's own `review` field for one page load only, letting an
+external reviewer bind a review session to an anonymous visitor. Details in
+`modules/events/AGENTS.md`.
 
 **Convert components** — the intent-capture surface, each wired to the event stream:
 `ConvertForm`, `ConvertExternal`, `ConvertInternal`, `ConvertPricing`, `ConvertSocial`,
@@ -72,7 +80,7 @@ NUXT_PUBLIC_SITE_URL=https://example.com   # canonical URL, consumed by @nuxtjs/
 ```ts
 // nuxt.config.ts
 events: {
-  signals: { enabled: true, capacity: 10_000, captureErrors: true },
+  signals: { enabled: true, capacity: 100_000, captureErrors: true },
   debug: true,
 }
 ```

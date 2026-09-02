@@ -157,7 +157,8 @@ external tools for these.
   changing event code. See `modules/events/*`.
 - Signal pull, not webhook push: client events, server errors, and form captures all
   call `appendSignal()` (`layer/modules/events/server/utils/signal-buffer.ts`) into a
-  capped ring buffer (`useStorage('signals')`, 10,000-row default). Ingest lands via
+  capped ring buffer (`useStorage('signals')`, 100,000-row default — sized for the
+  always-on identity-event stream). Ingest lands via
   `POST /api/_signals/ingest` (client rows) and `POST /api/v1/webhook` (form capture);
   an external consumer pulls everything back out with `GET /api/_signals/export`
   (bearer `NUXT_SIGNAL_EXPORT_TOKEN`, `since`/`limit` params). There are no outbound webhooks and

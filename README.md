@@ -51,7 +51,7 @@ client errors  → errors.client ───┼→ POST /api/_signals/ingest ─�
                                   │                             ├→ ring buffer (unstorage)
 form captures  → /api/v1/webhook ─┘                             │        ↓
 server errors  → signal-errors plugin ──────────────────────────┘   GET /api/_signals/export
-                                                                    ?since=<seq>&limit=<n≤1000>
+                                                                    ?since=<seq>&limit=<n≤2000>
                                                                     → { rows, cursor, site }
 ```
 
@@ -64,12 +64,19 @@ SignalRow {
   name,
   severity?,   // logs
   visitor?,    // { class: 'human' | 'agent' | 'bot', ... } — stamped server-side
-  page?, referrer?, utm?, data?
+  page?, referrer?, utm?,
+  review?,     // ?polaris_review=<token> — this page load only, never persisted
+  data?
 }
 ```
 
 - **Client events** go through `useEvents()` → the signal provider → a debounced batch
   queue, flushed with `sendBeacon` on `pagehide`.
+- **Identity events** are always on for every visitor: `ui.click` (`{ target, label?,
+  section? }`), `ui.section` (`{ section, visible }`), and `ui.page` (`{ from? }`). They are
+  content-free by construction — authored element identity and labels only, never pixel
+  coordinates, input values, or keystrokes. Sections are named by `data-section` or a plain
+  `<section id>`; `SectionWrapper` stamps it for you. `data-signal-ignore` excludes a subtree.
 - **Client errors** (`window.onerror`, `unhandledrejection`, Vue `errorHandler`) land in the
   same stream as `kind: 'log'` rows. So do Nitro request errors, server-side.
 - **Form captures** POST to `/api/v1/webhook` (historical route name — it is the
@@ -88,7 +95,7 @@ curl -H "Authorization: Bearer $NUXT_SIGNAL_EXPORT_TOKEN" \
 ```
 
 The endpoint fails closed: with `NUXT_SIGNAL_EXPORT_TOKEN` unset it returns 503, never open
-data. Rows live in `useStorage('signals')` — memory by default, 10 000 rows, oldest
+data. Rows live in `useStorage('signals')` — memory by default, 100 000 rows, oldest
 evicted. Mount `nitro.storage.signals` to an fs/KV driver if they must survive a restart.
 
 ## Agent-readiness
@@ -163,7 +170,7 @@ capture signal.
 events: {
   signals: {
     enabled: true,        // signal capture on/off
-    capacity: 10_000,     // ring buffer size
+    capacity: 100_000,    // ring buffer size
     captureErrors: true,  // client errors → the stream
   },
   debug: true,            // echo events to the console in dev

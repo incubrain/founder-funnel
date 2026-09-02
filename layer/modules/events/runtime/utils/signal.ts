@@ -3,11 +3,23 @@ import type { SignalInput } from '../types/signal'
 
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content']
 
+/** `?polaris_review=<token>` — the review-session tag. Never merged into `utm`. */
+const REVIEW_KEY = 'polaris_review'
+const MAX_REVIEW = 128
+
 export const truncate = (value: unknown, max: number): string | undefined =>
   value === undefined || value === null ? undefined : String(value).slice(0, max)
 
-/** Page + referrer + utm context for the current client navigation. */
-export function pageContext(): Pick<SignalInput, 'page' | 'referrer' | 'utm'> {
+/**
+ * Page + referrer + utm + review context for the current client navigation.
+ *
+ * `review` is read straight off `location.search` on every call and is never
+ * written to storage: only rows emitted while the tagged URL is the current one
+ * carry it. That is deliberate — an external reviewer needs exactly one tagged
+ * row to learn the visitor's `anonId`, and persisting the tag would stamp every
+ * later row on every later page instead.
+ */
+export function pageContext(): Pick<SignalInput, 'page' | 'referrer' | 'utm' | 'review'> {
   if (!import.meta.client) return {}
 
   const params = new URLSearchParams(window.location.search)
@@ -17,10 +29,13 @@ export function pageContext(): Pick<SignalInput, 'page' | 'referrer' | 'utm'> {
     if (value) utm[key] = value.slice(0, 256)
   }
 
+  const review = params.get(REVIEW_KEY)?.trim()
+
   return {
     page: window.location.pathname,
     referrer: document.referrer || undefined,
     utm: Object.keys(utm).length ? utm : undefined,
+    review: review ? review.slice(0, MAX_REVIEW) : undefined,
   }
 }
 

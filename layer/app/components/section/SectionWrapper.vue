@@ -45,6 +45,7 @@ defineSlots<PageSectionSlots>()
       :id="sectionId"
       :aria-labelledby="headingId"
       :data-testid="sectionId ? `section-${sectionId}` : undefined"
+      :data-section="sectionId"
     >
       <!-- Inject heading ID for aria-labelledby when title comes from prop -->
       <template

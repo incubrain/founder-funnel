@@ -2,7 +2,13 @@ import { useDebounceFn, useEventListener } from '@vueuse/core'
 import type { SignalInput } from '../types/signal'
 
 const ENDPOINT = '/api/_signals/ingest'
-const MAX_QUEUE = 25
+/**
+ * Rows buffered before an immediate flush. Raised from 25 with the identity-event
+ * stream so a click burst batches instead of firing extra requests; still well
+ * under the ingest handler's 100-row cap and under `sendBeacon`'s ~64 KB limit
+ * (50 rows ≈ 20 KB).
+ */
+const MAX_QUEUE = 50
 
 const queue: SignalInput[] = []
 let listening = false

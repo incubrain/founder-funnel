@@ -19,6 +19,14 @@ describe('SectionWrapper: Landmark Attributes', () => {
     expect(section.attributes('data-testid')).toBe('section-offer')
   })
 
+  it('stamps data-section so identity events can name the section', async () => {
+    const wrapper = await mountSuspended(SectionWrapper, {
+      props: { sectionId: 'offer', title: 'Stop Building in the Dark' },
+    })
+
+    expect(wrapper.find('section').attributes('data-section')).toBe('offer')
+  })
+
   it('renders heading with correct id for aria-labelledby', async () => {
     const wrapper = await mountSuspended(SectionWrapper, {
       props: {
@@ -43,5 +51,6 @@ describe('SectionWrapper: Landmark Attributes', () => {
     expect(section.exists()).toBe(true)
     expect(section.attributes('aria-labelledby')).toBeUndefined()
     expect(section.attributes('data-testid')).toBeUndefined()
+    expect(section.attributes('data-section')).toBeUndefined()
   })
 })

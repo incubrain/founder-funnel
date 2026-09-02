@@ -2,8 +2,11 @@ import { z } from 'zod'
 import { appendSignal } from '../utils/signal-buffer'
 import { classifyVisitor } from '../utils/visitor-class'
 
-const MAX_BODY_BYTES = 64 * 1024
-const MAX_ROWS = 50
+// Sized for the identity-event stream (ui.click / ui.section / ui.page): the
+// client batches at most `MAX_QUEUE` rows per POST (useSignalQueue.ts), so
+// MAX_ROWS is that with headroom and MAX_BODY_BYTES covers 100 fat rows.
+const MAX_BODY_BYTES = 128 * 1024
+const MAX_ROWS = 100
 
 const rowSchema = z.object({
   id: z.string().max(64).optional(),
@@ -19,6 +22,7 @@ const rowSchema = z.object({
   page: z.string().max(512).optional(),
   referrer: z.string().max(512).optional(),
   utm: z.record(z.string().max(32), z.string().max(256)).optional(),
+  review: z.string().max(128).optional(),
   data: z.record(z.string(), z.unknown()).optional(),
 })
 

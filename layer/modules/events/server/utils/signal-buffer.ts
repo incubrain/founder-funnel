@@ -2,8 +2,21 @@ import type { Storage } from 'unstorage'
 import type { H3Event } from 'h3'
 import type { SignalInput, SignalRow } from '../../runtime/types/signal'
 
-export const DEFAULT_SIGNAL_CAPACITY = 10_000
-export const MAX_EXPORT_LIMIT = 1000
+/**
+ * Ring-buffer depth, sized from the identity-event stream.
+ *
+ * Before identity events a visit produced ~5-8 rows (a couple of section views,
+ * maybe an offer click, the odd error). The always-on click + section-visibility
+ * stream adds roughly 10-50 rows per visitor-minute; at ~30/min over a ~2 minute
+ * engaged session that is ~60 rows per visit — about 10x the old volume. Raising
+ * 10_000 → 100_000 keeps the retention the old number bought: at a modelled 200
+ * sessions/day (~12k rows/day) the buffer holds ~8 days, so an external consumer
+ * can be down for a week without losing rows. Cost is bounded — ~350 bytes of
+ * serialised row, so ~35 MB at a full 100_000 in the default memory driver.
+ */
+export const DEFAULT_SIGNAL_CAPACITY = 100_000
+/** Raised with the buffer: a consumer catching up over a 10x deeper buffer pages half as often. */
+export const MAX_EXPORT_LIMIT = 2000
 
 const META_KEY = 'meta'
 const rowKey = (seq: number) => `row:${seq}`

@@ -42,9 +42,9 @@ describe('createSignalBuffer', () => {
     expect(row.ts).toBe(42)
   })
 
-  it('defaults to a 10_000 row capacity', () => {
+  it('defaults to a 100_000 row capacity (sized for the identity-event stream)', () => {
     expect(makeBuffer().capacity).toBe(DEFAULT_SIGNAL_CAPACITY)
-    expect(DEFAULT_SIGNAL_CAPACITY).toBe(10_000)
+    expect(DEFAULT_SIGNAL_CAPACITY).toBe(100_000)
   })
 
   it('keeps only the newest rows once capacity is exceeded (wraparound)', async () => {
@@ -123,7 +123,7 @@ describe('signal buffer cursor semantics', () => {
 
     const { rows } = await buffer.read(0, MAX_EXPORT_LIMIT + 5000)
     expect(rows).toHaveLength(5)
-    expect(MAX_EXPORT_LIMIT).toBe(1000)
+    expect(MAX_EXPORT_LIMIT).toBe(2000)
   })
 
   it('keeps seq monotonic under concurrent appends', async () => {

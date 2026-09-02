@@ -81,7 +81,13 @@ const triggerEvent = async () => {
   // Clear previous tracking
   eventChainTracking.value = []
 
-  const eventType = selectedEvent.value as TrackedEvents
+  // The select hands back the whole item, not the bare value.
+  const selected = selectedEvent.value as SelectMenuItem & { value?: TrackedEvents }
+  const eventType = (
+    typeof selected === 'object' && selected !== null && 'value' in selected
+      ? selected.value
+      : selected
+  ) as TrackedEvents
 
   // Generate minimal test data based on event type
   let payload: EventInput
@@ -133,8 +139,12 @@ const triggerEvent = async () => {
     }
   }
   else {
-    // Fallback for any unmapped type (shouldn't happen)
-    return
+    // Everything else (the ui.* identity stream) needs no mock shape.
+    payload = {
+      id: `devtools_${Date.now()}`,
+      type: eventType,
+      _devToolsTriggered: true,
+    }
   }
 
   await trackEvent(payload as Parameters<typeof trackEvent>[0])

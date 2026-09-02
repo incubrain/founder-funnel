@@ -8,6 +8,9 @@
  *
  * Uses Web Crypto API (built-in, no dependencies)
  */
+/** Only used when persistent storage is unavailable — see the catch in `getUserId`. */
+let volatileUserId: string | undefined
+
 export const useUserIdentity = () => {
   const { local } = useAppStorage()
   const USER_ID_KEY = 'userId'
@@ -22,16 +25,25 @@ export const useUserIdentity = () => {
     // SSR guard
     if (import.meta.server) return ''
 
-    // Check if ID already exists
-    let userId = local.get(USER_ID_KEY)
+    try {
+      // Check if ID already exists
+      let userId = local.get(USER_ID_KEY)
 
-    // If not, create and store it
-    if (!userId) {
-      userId = `user_${crypto.randomUUID()}`
-      local.set(USER_ID_KEY, userId)
+      // If not, create and store it
+      if (!userId) {
+        userId = `user_${crypto.randomUUID()}`
+        local.set(USER_ID_KEY, userId)
+      }
+
+      return userId
     }
-
-    return userId
+    catch {
+      // localStorage can throw outright — private mode, blocked site data. Fall
+      // back to a per-page-load id so rows still correlate with each other
+      // instead of the whole event pipeline throwing on every visitor.
+      volatileUserId ||= `user_${crypto.randomUUID()}`
+      return volatileUserId
+    }
   }
 
   return { getUserId }
