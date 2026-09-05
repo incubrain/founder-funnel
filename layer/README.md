@@ -23,9 +23,13 @@ export default defineNuxtConfig({
 
 **Requirements:** Nuxt 4.x, Node 22+.
 
-Optional peer dependencies, added in your own app when you want them: `nuxt-llms`
-(`llms.txt` generation), `nuxt-studio` (visual content editing),
-`@iconify-json/lucide` and `@iconify-json/simple-icons` (icon sets), `better-sqlite3`.
+`nuxt-llms` ships as a real dependency — every site gets `/llms.txt` and
+`/llms-full.txt` with zero config, sections auto-populated from your content
+collections; set `llms: {...}` in your own `nuxt.config.ts` to override.
+
+Optional peer dependencies, added in your own app when you want them: `nuxt-studio`
+(visual content editing), `@iconify-json/lucide` and `@iconify-json/simple-icons` (icon
+sets), `better-sqlite3`.
 
 ## What you get
 

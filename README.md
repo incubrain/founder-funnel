@@ -104,7 +104,7 @@ evicted. Mount `nitro.storage.signals` to an fs/KV driver if they must survive a
 |---|---|
 | `/api/_health` | Unauthenticated liveness+identity check for external monitors (Polaris): `{ ok, service: 'foundry', version, siteId, timestamp }`, `Cache-Control: no-store`. Pure computation — no storage or content access. |
 | MCP tools | `list-pages`, `get-page`, `what-changed` — auto-registered from `server/mcp/tools/`, served by `@nuxtjs/mcp-toolkit`. Visit `/_mcp/tools` in dev to verify. |
-| `llms.txt` | Via `nuxt-llms` (optional peer dep — add the module and an `llms:` config in your app; see `examples/foundry/nuxt.config.ts`). |
+| `llms.txt` | `/llms.txt` + `/llms-full.txt` ship by default via `nuxt-llms` (a real layer dependency, zero config); sections auto-populate from your content collections. Override with an `llms:` config in your app — see `examples/foundry/nuxt.config.ts`. |
 | Raw markdown | The `markdown-rewrite` module writes Vercel edge redirects so `Accept: text/markdown` or a `curl/*` UA on a page URL serves `/raw/<path>.md`, and `/` serves `llms.txt`. No-op off Vercel and in dev. |
 | SEO / OG | `@nuxtjs/seo` (sitemap, robots, schema.org, link checker, canonical redirects) plus a Satori OG image component for landing pages. |
 | RSS | Config-driven feeds from any content collection — `rss: { feeds: {} }` in your app config, served at `/rss/{key}`. |

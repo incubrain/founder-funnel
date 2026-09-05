@@ -50,8 +50,15 @@ export default defineNuxtModule({
     const siteOpts = (opts.site ?? {}) as Record<string, unknown>
     const siteName = (siteOpts.name as string) || meta.name || ''
 
+    // nuxt-llms silently skips registering `/llms.txt` (and `/llms-full.txt`)
+    // when `llms.domain` is falsy (see nuxt-llms/dist/module.mjs) — always
+    // give it a value, even in local dev/test where no deploy-platform URL
+    // env var is present, so every Foundry site ships both routes with zero
+    // per-site config (product-validator-m0f.9).
+    const llmsDomain = url || (siteOpts.url as string) || 'http://localhost:3000'
+
     opts.llms = defu(opts.llms as Record<string, unknown>, {
-      domain: url,
+      domain: llmsDomain,
       title: siteName,
       description: meta.description || '',
       full: {
