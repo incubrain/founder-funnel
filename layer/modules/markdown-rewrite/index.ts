@@ -1,18 +1,25 @@
-import { defineNuxtModule, logger } from '@nuxt/kit'
-import { resolve } from 'node:path'
+import { addServerHandler, createResolver, defineNuxtModule, logger } from '@nuxt/kit'
+import { join, resolve } from 'node:path'
+import { existsSync } from 'node:fs'
 import { readFile, writeFile } from 'node:fs/promises'
 import type { Nitro } from 'nitropack'
+import { CONTENT_ASSET_BASE } from './utils/negotiation'
 
 /**
- * Vercel edge redirects for agent-friendly markdown.
+ * Agent-friendly raw markdown, on two layers.
  *
- * On Vercel builds, when a request to a docs page URL carries an
- * `Accept: text/markdown` header or a `curl/*` User-Agent, the edge
- * redirects it to the corresponding /raw/<path>.md file (served by
- * nuxt-llms). The same mechanism redirects `/` to `/llms.txt`.
+ * 1. **Nitro (general).** A middleware serves the raw source of any content
+ *    page for `<route>.md` and for `Accept: text/markdown` on the canonical
+ *    URL. Works on every preset — Docker/Railway/standalone Node and dev —
+ *    which is where `deploy/` actually points. This is the path that matters.
  *
- * No-op outside Vercel (Railway/Docker/standalone Node) and in dev.
- * Adopted from upstream docus v5.5.0 #1264.
+ * 2. **Vercel edge (legacy).** On Vercel builds only, `config.json` gets
+ *    redirect rules so `/` serves `llms.txt` for `Accept: text/markdown` and
+ *    `curl/*`. Adopted from upstream docus v5.5.0 #1264. Its per-page rules
+ *    are derived from `llms.txt` links whose pathname starts with `/raw/` —
+ *    nuxt-llms 0.2 emits canonical page links, so in practice only the two
+ *    `/` rules survive the filter. Kept for the `/` → `llms.txt` behaviour;
+ *    a candidate for retirement now that (1) covers every page route.
  */
 
 const log = logger.withTag('foundry')
@@ -22,6 +29,32 @@ export default defineNuxtModule({
     name: 'markdown-rewrite',
   },
   setup(_options, nuxt) {
+    const resolver = createResolver(import.meta.url)
+
+    // --- 1. General Nitro path -------------------------------------------
+    const contentDir = join(nuxt.options.rootDir, 'content')
+
+    if (existsSync(contentDir)) {
+      // The content DB holds a parsed AST, not the original file, so mount the
+      // content directory as a server asset — bundled into `.output/server` at
+      // build time, read from disk in dev.
+      nuxt.options.nitro.serverAssets ||= []
+      nuxt.options.nitro.serverAssets.push({
+        baseName: CONTENT_ASSET_BASE,
+        dir: contentDir,
+      })
+
+      addServerHandler({
+        middleware: true,
+        handler: resolver.resolve('./server/middleware/raw-markdown'),
+      })
+    }
+    else {
+      // Expected when the layer itself is prepared/typechecked standalone.
+      log.debug(`markdown-rewrite: no content/ directory at ${contentDir}, raw markdown disabled`)
+    }
+
+    // --- 2. Vercel edge path (legacy) ------------------------------------
     nuxt.hooks.hook('nitro:init', (nitro: Nitro) => {
       if (nitro.options.dev || !nitro.options.preset.includes('vercel')) {
         return
@@ -101,3 +134,14 @@ export default defineNuxtModule({
     })
   },
 })
+
+export {
+  parseMarkdownRequest,
+  prefersMarkdown,
+  normalizeContentPath,
+  contentAssetKeys,
+  assetKeyToContentPath,
+  CONTENT_ASSET_BASE,
+  CONTENT_PAGES_DIR,
+} from './utils/negotiation'
+export type { MarkdownRequest, MarkdownRequestMode } from './utils/negotiation'

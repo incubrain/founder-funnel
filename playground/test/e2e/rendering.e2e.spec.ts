@@ -305,3 +305,103 @@ describe('structural equivalence — same layout, both sources', () => {
     }
   })
 })
+
+// ---------------------------------------------------------------------------
+// Raw markdown surface (product-validator-m0f.8)
+//
+// A coding agent — or an MCP-less LLM browsing the site — must be able to get
+// the *source* of a content page on plain Nitro (the Docker/Railway path), not
+// only on Vercel edge. Two access patterns, one Nitro middleware.
+//
+// These live in this file rather than their own spec on purpose: a second
+// `setup()` boots a second dev server against the same @nuxt/content SQLite
+// file and the suite dies with "database is locked".
+// ---------------------------------------------------------------------------
+
+// The literal source of playground/content/pages/render-default.md.
+const MD_FRONTMATTER = 'title: Render Default'
+const MD_BODY = 'content-driven: this page is served by the layer catch-all'
+
+describe('raw markdown — .md suffix', () => {
+  it('serves the raw source of the content document, frontmatter included', async () => {
+    const res = await fetch(new URL('/render-default.md', testBase()))
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('content-type')).toBe('text/markdown; charset=utf-8')
+
+    const body = await res.text()
+    expect(body.startsWith('---')).toBe(true)
+    expect(body).toContain(MD_FRONTMATTER)
+    expect(body).toContain(MD_BODY)
+    // The source, not a re-render.
+    expect(body).not.toContain('<html')
+    expect(body).not.toContain('<div')
+  })
+
+  it('points back at the canonical HTML route', async () => {
+    const res = await fetch(new URL('/render-default.md', testBase()))
+    expect(res.headers.get('link')).toBe('</render-default>; rel="canonical"')
+  })
+
+  it('serves nested content routes', async () => {
+    const res = await fetch(new URL('/offers/booking.md', testBase()))
+    expect(res.status).toBe(200)
+    expect(res.headers.get('content-type')).toBe('text/markdown; charset=utf-8')
+  })
+
+  it('404s for a route with no content document', async () => {
+    // /render-layout-default is an app page — there is no markdown source.
+    expect((await fetch(new URL('/render-layout-default.md', testBase()))).status).toBe(404)
+    expect((await fetch(new URL('/definitely-not-a-page.md', testBase()))).status).toBe(404)
+  })
+})
+
+describe('raw markdown — Accept: text/markdown negotiation', () => {
+  it('serves the raw source from the canonical URL', async () => {
+    const res = await fetch(new URL('/render-default', testBase()), {
+      headers: { accept: 'text/markdown' },
+    })
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('content-type')).toBe('text/markdown; charset=utf-8')
+    // Two representations behind one URL — caches must key on the header.
+    expect(res.headers.get('vary')).toContain('Accept')
+
+    const body = await res.text()
+    expect(body).toContain(MD_FRONTMATTER)
+    expect(body).toContain(MD_BODY)
+  })
+
+  it('falls through to HTML when the route has no markdown representation', async () => {
+    // Negotiation is a preference, not a demand: an app page still renders.
+    const res = await fetch(new URL('/render-layout-default', testBase()), {
+      headers: { accept: 'text/markdown' },
+    })
+    expect(res.status).toBe(200)
+    expect(res.headers.get('content-type')).toContain('text/html')
+  })
+
+  it('never intercepts API routes', async () => {
+    const res = await fetch(new URL('/api/_health', testBase()), {
+      headers: { accept: 'text/markdown' },
+    })
+    expect(res.status).toBe(200)
+    expect(res.headers.get('content-type')).toContain('application/json')
+  })
+})
+
+describe('raw markdown — HTML remains the default', () => {
+  it('serves rendered HTML with no Accept header', async () => {
+    const html = await $fetch<string>('/render-default')
+    expect(html).toContain('<html')
+    expect(html).toContain('content-driven:')
+  })
+
+  it('serves rendered HTML for a browser Accept header', async () => {
+    const res = await fetch(new URL('/render-default', testBase()), {
+      headers: { accept: 'text/html,application/xhtml+xml,*/*;q=0.8' },
+    })
+    expect(res.status).toBe(200)
+    expect(res.headers.get('content-type')).toContain('text/html')
+  })
+})

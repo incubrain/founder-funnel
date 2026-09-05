@@ -65,10 +65,27 @@ content components, and `SectionWrapper` — an accessible section primitive tha
 **Agent-readiness.** `GET /api/_health` — unauthenticated liveness+identity check for
 external monitors (Polaris), pure computation with `Cache-Control: no-store`. MCP tools
 (`list-pages`, `get-page`, `what-changed`) served by
-`@nuxtjs/mcp-toolkit`; the `markdown-rewrite` module, which writes Vercel edge redirects so
-`Accept: text/markdown` requests get raw markdown and `/` serves `llms.txt`; `@nuxtjs/seo`
+`@nuxtjs/mcp-toolkit`; the `markdown-rewrite` module (see below); `@nuxtjs/seo`
 for sitemap, robots, schema.org, link checking, and canonical redirects; a Satori OG image
 component for landing pages.
+
+**Raw markdown.** Every content page also serves its own source, so a coding agent or an
+MCP-less LLM can read the document instead of scraping rendered HTML. Two access patterns,
+both handled by a Nitro middleware and so live on any Node/Docker/Railway deploy (and in
+dev), not just Vercel:
+
+```bash
+GET /blog/post.md                          # `.md` suffix (also `/raw/blog/post.md`)
+GET /blog/post  -H 'Accept: text/markdown' # content negotiation on the canonical URL
+```
+
+Both answer `text/markdown; charset=utf-8` with the file verbatim, frontmatter included —
+the source, not a re-render. `Vary: Accept` is set so caches key on the header, and the
+`.md` form carries a `Link: <…>; rel="canonical"` back to the HTML route. A `.md` URL with
+no content document 404s; `Accept: text/markdown` on a route with no markdown
+representation simply falls through to HTML. API, asset, and Nitro-internal routes are
+never intercepted. On Vercel the module additionally writes the legacy edge rules that make
+`/` serve `llms.txt`.
 
 **RSS.** Config-driven feeds from any content collection — declare `rss: { feeds: {} }` in
 your app config and they are served at `/rss/{key}`.

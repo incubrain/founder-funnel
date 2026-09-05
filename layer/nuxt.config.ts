@@ -15,6 +15,9 @@ export default defineNuxtConfig({
     resolve('./modules/ai-robots'),
     resolve('./modules/events'),
     resolve('./modules/rss'),
+    // Order matters: markdown-rewrite's Nitro middleware CLOSES the request for
+    // a matched `.md`/`Accept: text/markdown` route, so it must stay after
+    // ./modules/events — agent traffic has to reach the signal middleware first.
     resolve('./modules/markdown-rewrite'),
     () => {
       // Auto-register the consumer's app/assets/icons/ SVGs under the `custom:` prefix.

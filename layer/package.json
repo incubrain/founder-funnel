@@ -25,7 +25,7 @@
     "modules/ai-robots.ts",
     "modules/config.ts",
     "modules/css.ts",
-    "modules/markdown-rewrite.ts",
+    "modules/markdown-rewrite",
     "modules/events/index.ts",
     "modules/events/runtime",
     "modules/events/server",
