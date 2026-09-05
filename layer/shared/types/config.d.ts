@@ -22,15 +22,14 @@ type CollectionConfig
 declare module 'nuxt/schema' {
   interface AppConfig {
     content: {
-      collections: {
-        pages: CollectionConfig
-        team: CollectionConfig
-        faq: CollectionConfig
-        config: CollectionConfig
-        navigation: CollectionConfig
-        searchable: string[]
-      }
+      // Keyed by collection name (pages, team, faq, config, navigation, ...).
+      // Kept as an index type rather than fixed keys so consumers can add
+      // their own collections without fighting the layer's type.
+      collections: Record<string, CollectionConfig>
       routeMap?: Record<string, string>
+      // Flat — sibling of `collections`, NOT nested under it. This is the
+      // shape app.config.ts sets and useSearch/useNavigation read.
+      // See product-validator-ebi.1.
       searchable?: string[]
       pagesBackLabel?: string
       pagesPrefix?: string
@@ -86,8 +85,12 @@ declare module 'nuxt/schema' {
           legalName?: string
           socials?: Record<string, string>
         }
-        searchable?: string[]
       }
+      routeMap?: Record<string, string>
+      // Flat — sibling of `collections`. See product-validator-ebi.1.
+      searchable?: string[]
+      pagesBackLabel?: string
+      pagesPrefix?: string
       defaultAuthor?: string
       routing?: Record<string, string>
     }
