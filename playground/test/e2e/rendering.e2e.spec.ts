@@ -40,6 +40,18 @@ describe('default SSR (content catch-all)', () => {
   })
 })
 
+describe('UPageHero SSR ownership (product-validator-s5s)', () => {
+  it('renders the hero server-side for hero:true content (owned by the page, not the layout)', async () => {
+    const html = await $fetch<string>('/render-hero')
+    // The hero title/description must be present in the raw SSR HTML — if the
+    // layout (rather than pages/[...slug].vue) owned the hero, SSR would emit
+    // only a v-if comment placeholder here and the text would be absent until
+    // client hydration, causing a CLS-inducing hydration mismatch.
+    expect(html).toContain('Render Hero')
+    expect(html).toContain('UPageHero SSR/CSR hydration-mismatch bug')
+  })
+})
+
 describe('app pages override content', () => {
   it('serves app/pages/render-static.vue, not content/pages/render-static.md', async () => {
     const html = await $fetch<string>('/render-static')

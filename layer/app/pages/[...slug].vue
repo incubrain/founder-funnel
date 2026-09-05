@@ -43,6 +43,11 @@ watchEffect(() => {
 
 <template>
   <div>
+    <UPageHero
+      v-if="page?.hero && (page?.title || page?.description)"
+      :title="page?.title"
+      :description="page?.description"
+    />
     <ContentRenderer
       v-if="context?.page"
       :key="(context.page as ContentDoc).path"
