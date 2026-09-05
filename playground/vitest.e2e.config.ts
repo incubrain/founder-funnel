@@ -14,5 +14,11 @@ export default defineConfig({
     // Each `setup()` is expensive; keep specs single-threaded so they share.
     pool: 'forks',
     poolOptions: { forks: { singleFork: true } },
+    // `singleFork` only pins every spec file to one OS process — Vitest can
+    // still interleave multiple files' async `beforeAll` hooks inside that
+    // process. Two files booting @nuxt/content's Nuxt fixture at once race
+    // on the same `.data/content/contents.sqlite` and one loses with
+    // "database is locked". Force strictly sequential file execution.
+    fileParallelism: false,
   },
 })
