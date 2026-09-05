@@ -8,7 +8,10 @@ const SITE_URL
 export default defineNuxtConfig({
   extends: ['@incubrain/foundry'],
 
-  modules: ['nuxt-studio', 'nuxt-llms'],
+  // nuxt-llms ships from the layer itself now (product-validator-m0f.9) —
+  // this `llms` config below is a full override of the layer's defaults,
+  // proving consumer config still wins.
+  modules: ['nuxt-studio'],
 
   css: [resolve('./app/assets/css/station.css')],
 

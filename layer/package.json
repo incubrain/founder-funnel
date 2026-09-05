@@ -58,6 +58,7 @@
     "defu": "^6.1.6",
     "exsolve": "^1.1.1",
     "motion-v": "^2.3.0",
+    "nuxt-llms": "^0.2.0",
     "tailwindcss": "^4.3.3",
     "ufo": "^1.6.3",
     "zod": "^4.4.3",
@@ -76,7 +77,6 @@
     "@iconify-json/simple-icons": "*",
     "better-sqlite3": "12.x",
     "nuxt": "4.x",
-    "nuxt-llms": "^0.2.0",
     "nuxt-studio": "^1.2.0"
   },
   "peerDependenciesMeta": {
@@ -90,9 +90,6 @@
       "optional": true
     },
     "nuxt-studio": {
-      "optional": true
-    },
-    "nuxt-llms": {
       "optional": true
     }
   },

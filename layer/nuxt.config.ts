@@ -31,6 +31,13 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@nuxtjs/seo',
     '@nuxt/content',
+    // Ships /llms.txt + /llms-full.txt with zero per-site config
+    // (product-validator-m0f.9). @nuxt/content auto-populates `llms.sections`
+    // from every page-type content collection as long as the consumer hasn't
+    // declared their own sections — see modules/config.ts for the domain/
+    // title/description defaults that make the module actually register its
+    // routes (it silently no-ops without a `domain`).
+    'nuxt-llms',
     '@nuxt/image',
     '@nuxtjs/mcp-toolkit',
     '@vueuse/nuxt',
