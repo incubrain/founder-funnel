@@ -41,7 +41,7 @@ watchEffect(() => {
   <UMain>
     <UPage>
       <UContainer>
-        <UPageHeader>
+        <UPageHeader :title="article?.title">
           <template #headline>
             <UButton
               :to="pagesPrefix"
@@ -51,10 +51,6 @@ watchEffect(() => {
               size="sm"
               :label="pagesBackLabel"
             />
-          </template>
-
-          <template #title>
-            {{ article?.title }}
           </template>
 
           <template #description>
