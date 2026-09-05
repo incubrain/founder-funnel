@@ -1,7 +1,6 @@
 import { queryCollection } from '@nuxt/content/server'
 import type { Collections } from '@nuxt/content'
 import { computeContentHash } from '../../utils/content-hash'
-import { captureMcpToolCall } from '../../utils/mcp-signal'
 
 export default defineMcpTool({
   description: `Lists all available documentation pages with their categories and basic information.
@@ -25,9 +24,10 @@ OUTPUT: Returns a structured list with:
   inputSchema: {},
   cache: '1h',
   handler: async () => {
+    // Signal capture for this call happens in `server/middleware/mcp-request.ts`,
+    // which sees the raw POST before this (cached) handler ever runs — see
+    // `server/utils/mcp-request.ts` for why it can't live here anymore.
     const event = useEvent()
-
-    captureMcpToolCall('list-pages', {}, event)
 
     const siteUrl = import.meta.dev
       ? 'http://localhost:3000'
