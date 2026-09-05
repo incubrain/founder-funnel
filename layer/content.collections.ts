@@ -37,6 +37,22 @@ export const basePageSchema = z.object({
   navigation: z.boolean().optional(),
   layout: z.string().optional(),
   hero: z.boolean().optional().default(true),
+  // Answer-first content (product-validator-m0f.7): a direct, quotable
+  // summary an author sets once in frontmatter instead of hand-placing an
+  // AnswerBlock in every article body. Optional and additive — existing
+  // pages without it render exactly as before.
+  answer: z.string().optional(),
+  // Whole-page source citations, rendered as a visible "Sources" list by
+  // layouts that support it (currently `article`). Optional and additive,
+  // same rationale as `answer` above.
+  sources: z
+    .array(
+      z.object({
+        label: z.string(),
+        href: z.string(),
+      }),
+    )
+    .optional(),
   links: z
     .array(
       z.object({

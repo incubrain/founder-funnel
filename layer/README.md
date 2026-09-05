@@ -55,12 +55,16 @@ external reviewer bind a review session to an anonymous visitor. Details in
 **Content collections.** Zod schemas — `basePageSchema`, `baseFaqSchema`,
 `baseConfigSchema`, `baseNavigationSchema`, `baseTeamSchema`, `bannerSchema` — exported
 from `@incubrain/foundry/schemas` and composed in your own `content.config.ts`. Content
-lives in markdown and YAML, edited without touching code.
+lives in markdown and YAML, edited without touching code. `basePageSchema` carries two
+optional citation-first fields (see **GEO content guide** below): `answer` (a direct
+summary rendered before the body) and `sources` (a visible citation list rendered after
+it) — both additive, existing pages are unaffected.
 
 **Page structure.** `default`, `article`, and `landing` layouts selected per route with an
 `appLayout` route rule, a catch-all content page, header/footer/banner components, MDC
-content components, and `SectionWrapper` — an accessible section primitive that fires a
-`section_view_<id>` event on intersection.
+content components (`AnswerBlock`, `StatGroup`, `CaseStudy`, `ComparisonList`,
+`FeatureGrid`, `FounderBio`, `FaqAccordion`), and `SectionWrapper` — an accessible section
+primitive that fires a `section_view_<id>` event on intersection.
 
 **Agent-readiness.** `GET /api/_health` — unauthenticated liveness+identity check for
 external monitors (Polaris), pure computation with `Cache-Control: no-store`. MCP tools
@@ -89,6 +93,57 @@ never intercepted. On Vercel the module additionally writes the legacy edge rule
 
 **RSS.** Config-driven feeds from any content collection — declare `rss: { feeds: {} }` in
 your app config and they are served at `/rss/{key}`.
+
+## GEO content guide
+
+Research (Princeton/Georgia Tech) found inline citations, statistics, and named-expert
+quotes lift AI-citation rates 22–40% — more than any markup tactic. Nothing here requires
+new tooling: it's four content patterns, all optional and additive.
+
+**1. Answer-first structure.** Open a page or section with a direct, quotable answer
+before the supporting detail — the shape generative engines lift verbatim.
+- Page-level: set `answer` in frontmatter; the `article` layout renders it in an
+  `AnswerBlock` before the prose body automatically.
+  ```md
+  ---
+  title: Does Foundry replace Google Analytics?
+  answer: No — Foundry streams raw signal for you to interpret; it ships no dashboards.
+  ---
+  ```
+- Mid-article: drop `::answer-block` inline wherever a section needs its own summary:
+  `::answer-block{answer="..." label="In short"}`.
+
+**2. Statistics need a named source.** A bare number is a claim; a sourced number is
+citable. Use `StatGroup` for a row of stats, each with an optional visible source:
+```md
+::stat-group
+---
+stats:
+  - value: "22–40%"
+    label: AI-citation lift from citation-first content
+    source: Princeton/Georgia Tech GEO study
+    href: https://example.com/study
+---
+::
+```
+Omit `source`/`href` for a plain number — they're optional, but a stat without one is
+just decoration.
+
+**3. Named-expert quotes.** `CaseStudy` doubles as the expert-quote pattern: give it
+`client` (name + role, `company` optional) and `quote`; add `sourceUrl` (where the quote
+was published) to get a semantic `<blockquote cite>` plus a visible citation line. Skip
+`partner`/`website` for a bare attributed quote — those are for customer testimonials.
+
+**4. Page-level sources.** Set `sources` in frontmatter (`[{ label, href }]`) for a
+whole-page citation list; the `article` layout renders it as a visible, linked list after
+the body.
+
+**Checklist before publishing a page you want AI engines to cite:**
+- [ ] Does the page (or its key sections) answer the question in the first paragraph?
+- [ ] Is every load-bearing statistic attributed to a named, checkable source?
+- [ ] Are expert claims attached to a real name and role, not "our team"?
+- [ ] Would the page still make sense read with zero JavaScript (SSR-rendered, no
+      `<ClientOnly>` around anything a crawler needs)?
 
 ## Configuration
 

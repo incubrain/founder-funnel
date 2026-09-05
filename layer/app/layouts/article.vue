@@ -113,9 +113,42 @@ watchEffect(() => {
       </UContainer>
 
       <UPageBody class="max-w-3xl mx-auto">
+        <!-- Answer-first (product-validator-m0f.7): a frontmatter `answer`
+             renders before the prose body — no per-article component
+             placement required. -->
+        <AnswerBlock
+          v-if="article?.answer"
+          :answer="article.answer"
+        />
+
         <article class="prose prose-lg max-w-none">
           <slot />
         </article>
+
+        <!-- Visible source citations (product-validator-m0f.7), from
+             frontmatter `sources`. -->
+        <section
+          v-if="article?.sources?.length"
+          aria-label="Sources"
+          class="mt-12 pt-6 border-t border-default"
+        >
+          <h2 class="text-sm font-semibold text-highlighted mb-3">
+            Sources
+          </h2>
+          <ol class="space-y-1 text-sm text-muted">
+            <li
+              v-for="source in article.sources"
+              :key="source.href"
+            >
+              <a
+                :href="source.href"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="underline hover:text-primary"
+              ><cite>{{ source.label }}</cite></a>
+            </li>
+          </ol>
+        </section>
 
         <template v-if="surround?.filter(Boolean).length">
           <USeparator class="my-12" />

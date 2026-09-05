@@ -84,7 +84,16 @@ const CRITICAL_CONTENT: Array<{ route: string, must: string[] }> = [
   // Hero frontmatter → UPageHero, owned by the page (product-validator-s5s).
   { route: '/render-hero', must: ['Render Hero', 'UPageHero SSR/CSR hydration-mismatch bug'] },
   // Layout variants must not swallow the body.
-  { route: '/render-article', must: ['route-rule-applayout:'] },
+  // Also covers answer-first content (product-validator-m0f.7): `answer` and
+  // `sources` frontmatter, rendered by the article layout without JS.
+  {
+    route: '/render-article',
+    must: [
+      'route-rule-applayout:',
+      'routeRules.appLayout maps this content route to the article layout',
+      'Foundry GEO content guide',
+    ],
+  },
   { route: '/render-landing', must: ['frontmatter-layout:'] },
   // Conversion copy resolved from the pages collection by ConvertInternal.
   // Regression guard for the `lazy: true, server: false` offer query.
@@ -387,6 +396,48 @@ describe('raw markdown — Accept: text/markdown negotiation', () => {
     })
     expect(res.status).toBe(200)
     expect(res.headers.get('content-type')).toContain('application/json')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Citation-first content patterns (product-validator-m0f.7)
+//
+// Answer-first blocks, sourced statistics, and attributed quotes must render
+// with real semantic markup in the raw SSR HTML — the shape generative
+// engines are documented to lift and cite more often. `renderedBody()`
+// (defined above) strips <script> so a payload-only hit cannot pass.
+// ---------------------------------------------------------------------------
+
+describe('answer-first + sources (product-validator-m0f.7)', () => {
+  it('renders the frontmatter `answer` via AnswerBlock, no-JS', async () => {
+    const body = renderedBody(await $fetch<string>('/render-article'))
+    expect(body).toContain('data-testid="answer-block"')
+    expect(body).toContain('routeRules.appLayout maps this content route to the article layout')
+  })
+
+  it('renders the frontmatter `sources` as a visible, linked citation list, no-JS', async () => {
+    const body = renderedBody(await $fetch<string>('/render-article'))
+    expect(body).toContain('aria-label="Sources"')
+    expect(body).toContain('<cite>Foundry GEO content guide</cite>')
+    expect(body).toContain('href="https://github.com/incubrain/foundry"')
+  })
+})
+
+describe('sourced statistics + named-expert quotes (product-validator-m0f.7)', () => {
+  it('StatGroup renders each stat as a <figure> with a visible, linked source', async () => {
+    const body = renderedBody(await $fetch<string>('/render-citations'))
+    expect(body).toContain('<figure')
+    expect(body).toContain('<figcaption')
+    expect(body).toContain('<cite>Princeton/Georgia Tech GEO study</cite>')
+    expect(body).toContain('href="https://example.com/geo-study"')
+  })
+
+  it('CaseStudy renders the quote as a semantic <blockquote cite> with a visible source link', async () => {
+    const body = renderedBody(await $fetch<string>('/render-citations'))
+    expect(body).toContain('<blockquote')
+    expect(body).toContain('cite="https://example.com/expert-interview"')
+    expect(body).toContain('href="https://example.com/expert-interview"')
+    expect(body).toContain('<cite>Dr. Jane Doe</cite>')
   })
 })
 
