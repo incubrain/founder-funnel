@@ -17,9 +17,13 @@ import {
  * Ordering: this is registered by the `markdown-rewrite` module, which sits
  * AFTER `./modules/events` in the layer's `modules` array, so every middleware
  * the events module registers (page-request signal capture included) runs
- * first and still sees `.md` traffic — agent requests are signal too. Anything
- * registered after this middleware is skipped for a matched `.md` request,
- * because returning a value from Nitro middleware closes the request.
+ * first. `isPageRequest()` (`modules/events/server/utils/page-request.ts`)
+ * admits `.md` suffixes, `Accept: text/markdown` negotiation, and
+ * `/llms.txt` / `/llms-full.txt`, so a `page_request` row is appended for
+ * this traffic before it ever reaches this handler — agent requests are
+ * signal too. Anything registered after this middleware is skipped for a
+ * matched `.md` request, because returning a value from Nitro middleware
+ * closes the request.
  */
 export default defineEventHandler(async (event) => {
   if (event.method !== 'GET' && event.method !== 'HEAD') return

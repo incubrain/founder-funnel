@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   isPageRequest,
   pageFromPath,
+  pageRequestFormat,
 } from '@incubrain/foundry/modules/events/server/utils/page-request'
 
 /** A bare crawler GET: no Sec-Fetch-Dest, wildcard Accept. */
@@ -85,7 +86,6 @@ describe('isPageRequest', () => {
       '/favicon.ico',
       '/robots.txt',
       '/sitemap.xml',
-      '/llms.txt',
       '/img/hero.png',
       '/styles/main.css',
       '/bundle.js.map',
@@ -94,6 +94,31 @@ describe('isPageRequest', () => {
     ]
 
     for (const path of paths) expect(isPageRequest(crawlerGet(path)), path).toBe(false)
+  })
+
+  it('accepts a `.md` content route (product-validator-m0f.15)', () => {
+    expect(isPageRequest(crawlerGet('/blog/post.md'))).toBe(true)
+    expect(isPageRequest(crawlerGet('/docs/getting-started.md'))).toBe(true)
+  })
+
+  it('accepts a canonical route negotiated with `Accept: text/markdown`', () => {
+    expect(isPageRequest({ method: 'GET', path: '/blog/post', accept: 'text/markdown' }))
+      .toBe(true)
+    expect(isPageRequest({
+      method: 'GET',
+      path: '/blog/post',
+      accept: 'text/markdown, text/html;q=0.5',
+    })).toBe(true)
+  })
+
+  it('accepts /llms.txt and /llms-full.txt (product-validator-m0f.15)', () => {
+    expect(isPageRequest(crawlerGet('/llms.txt'))).toBe(true)
+    expect(isPageRequest(crawlerGet('/llms-full.txt'))).toBe(true)
+  })
+
+  it('still rejects an unrelated .txt asset', () => {
+    expect(isPageRequest(crawlerGet('/security.txt'))).toBe(false)
+    expect(isPageRequest(crawlerGet('/changelog.txt'))).toBe(false)
   })
 
   it('rejects non-document fetches from a real browser', () => {
@@ -116,6 +141,27 @@ describe('isPageRequest', () => {
 
   it('rejects prerender-build traffic', () => {
     expect(isPageRequest({ ...crawlerGet('/pricing'), prerender: true })).toBe(false)
+  })
+})
+
+describe('pageRequestFormat', () => {
+  it('labels a `.md` suffix as markdown', () => {
+    expect(pageRequestFormat(crawlerGet('/blog/post.md'))).toBe('markdown')
+  })
+
+  it('labels /llms.txt and /llms-full.txt as markdown', () => {
+    expect(pageRequestFormat(crawlerGet('/llms.txt'))).toBe('markdown')
+    expect(pageRequestFormat(crawlerGet('/llms-full.txt'))).toBe('markdown')
+  })
+
+  it('labels an Accept: text/markdown negotiated fetch as markdown', () => {
+    expect(pageRequestFormat({ method: 'GET', path: '/blog/post', accept: 'text/markdown' }))
+      .toBe('markdown')
+  })
+
+  it('labels an ordinary page as html', () => {
+    expect(pageRequestFormat(crawlerGet('/pricing'))).toBe('html')
+    expect(pageRequestFormat(browserNavigation('/pricing'))).toBe('html')
   })
 })
 
