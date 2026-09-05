@@ -34,10 +34,15 @@ declare module 'nuxt/schema' {
       pagesBackLabel?: string
       pagesPrefix?: string
       defaultAuthor?: string
+      // Keep in lockstep with the `content` group of `nuxt.schema.ts`: that
+      // file compiles into `CustomAppConfig`, which `AppConfigInput` extends,
+      // so a key declared here but missing there is still TS2353 in a
+      // consumer's app.config (product-validator-918).
       routing: {
         sources?: string
         offers?: string
         success?: string
+        glossary?: string
       }
     }
     seo: {

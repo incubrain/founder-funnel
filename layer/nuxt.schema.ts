@@ -147,6 +147,49 @@ export default defineNuxtSchema({
             }),
           },
         }),
+        // EVERY key the layer's AppConfig type (`shared/types/config.d.ts`)
+        // allows under `content` has to be declared here too.
+        //
+        // `defineNuxtSchema` is not just Studio metadata: Nuxt compiles this
+        // file into `.nuxt/schema/nuxt.schema.d.ts`, which ends with
+        // `interface CustomAppConfig extends _CustomAppConfig {}` — and
+        // `AppConfigInput extends CustomAppConfig`. That REPLACES the schema's
+        // `[key: string]: unknown` index signature with this concrete shape, so
+        // anything omitted here becomes an excess property in a consumer's
+        // `defineAppConfig({ content: … })` — TS2353 "'routeMap' does not exist
+        // in type …" from astronera on 0.8.0 (product-validator-918), even
+        // though `shared/types/config.d.ts` declares it.
+        //
+        // Keep this list and the `content` block of `shared/types/config.d.ts`
+        // in lockstep.
+        routeMap: field({
+          type: 'object',
+          title: 'Route Map',
+          description: 'Route prefix → collection name mapping (e.g. { "/blog": "blog" }). Read by useContentConfig to resolve which collection serves a URL.',
+          icon: 'i-lucide-signpost',
+          default: {},
+        }),
+        pagesBackLabel: field({
+          type: 'string',
+          title: 'Pages Back Label',
+          description: 'Back-navigation label used by the article layout.',
+          icon: 'i-lucide-arrow-left',
+          default: 'Back',
+        }),
+        pagesPrefix: field({
+          type: 'string',
+          title: 'Pages Prefix',
+          description: 'URL prefix for the pages collection.',
+          icon: 'i-lucide-link',
+          default: '/',
+        }),
+        defaultAuthor: field({
+          type: 'string',
+          title: 'Default Author',
+          description: 'Fallback author slug for content without explicit frontmatter authorship.',
+          icon: 'i-lucide-user',
+          default: '',
+        }),
         // Flat, sibling of `collections` — matches the shape `app.config.ts` sets
         // and `useSearch`/`useNavigation` read (appConfig.content.searchable).
         // Do not nest this under `collections` — see product-validator-ebi.1.
@@ -182,6 +225,14 @@ export default defineNuxtSchema({
               description: 'URL path for success pages.',
               icon: 'i-lucide-check-circle',
               default: '/success',
+            }),
+            // Read by useContentConfig's `routing.glossary` (getRoutingPath).
+            glossary: field({
+              type: 'string',
+              title: 'Glossary Path',
+              description: 'URL path for the glossary page.',
+              icon: 'i-lucide-book-a',
+              default: '/glossary',
             }),
           },
         }),

@@ -2,6 +2,23 @@ import { inject, type Ref } from 'vue'
 import type { ContentNavigationItem, Collections } from '@nuxt/content'
 
 /**
+ * The layer ships compiled into consumers, so its files are typechecked against
+ * the CONSUMER's generated `Collections` map — which may not contain `pages`,
+ * and is `{}` (so `keyof Collections` is `never`) in a consumer that defines no
+ * collections at all. Every literal collection name in the layer therefore has
+ * to survive a `Collections` it cannot know: `'pages' satisfies keyof
+ * Collections` was TS2322 "Type '\"pages\"' is not assignable to type 'never'"
+ * from inside node_modules/@incubrain/foundry (product-validator-918).
+ *
+ * Route → collection resolution is a runtime string lookup against
+ * `app.config.content.routeMap`; the alias below keeps the public signature
+ * honest (callers still get `keyof Collections`) while the constant carries the
+ * layer's documented default past a collection set that may not include it.
+ */
+type CollectionKey = keyof Collections
+const DEFAULT_COLLECTION = 'pages' as unknown as CollectionKey
+
+/**
  * Centralized composable for content route resolution and path helpers.
  *
  * Most consumers should use `queryCollection('collectionName')` directly
@@ -23,14 +40,14 @@ export const useContentConfig = () => {
    * This is a simple { prefix: collectionName } object.
    * Sorted by prefix length descending for specificity.
    */
-  const getRouteMap = (): Array<{ prefix: string, collection: keyof Collections }> => {
+  const getRouteMap = (): Array<{ prefix: string, collection: CollectionKey }> => {
     const routeMap = appConfig.content?.routeMap as Record<string, string> | undefined
     if (!routeMap) return []
 
     return Object.entries(routeMap)
       .map(([prefix, collection]) => ({
         prefix,
-        collection: collection as keyof Collections,
+        collection: collection as unknown as CollectionKey,
       }))
       .sort((a, b) => b.prefix.length - a.prefix.length)
   }
@@ -41,7 +58,7 @@ export const useContentConfig = () => {
    * @param path - The route path to match (e.g., '/darksky/intro')
    * @returns The collection key that should be queried
    */
-  const getCollectionForRoute = (path: string): keyof Collections => {
+  const getCollectionForRoute = (path: string): CollectionKey => {
     const routes = getRouteMap()
 
     const normalizedPath
@@ -56,7 +73,7 @@ export const useContentConfig = () => {
       }
     }
 
-    return 'pages' as keyof Collections
+    return DEFAULT_COLLECTION
   }
 
   /* -------------------------------------------------------------------------- */
@@ -81,7 +98,7 @@ export const useContentConfig = () => {
    */
   const resolveInternalPath = (
     path: string,
-    collection: keyof Collections = 'pages',
+    collection: CollectionKey = DEFAULT_COLLECTION,
   ): string => {
     if (!path) return '/'
 
