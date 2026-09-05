@@ -66,8 +66,8 @@ client events  → signal provider ─┐
 client errors  → errors.client ───┼→ POST /api/_signals/ingest ─┐
                                   │                             ├→ ring buffer (unstorage)
 form submits   → webhook.post.ts ─┘                             │        ↓
-server errors  → server/plugins/signal-errors.ts ───────────────┘   GET /api/_signals/export
-                                                                    ?since=<seq>&limit=<n≤2000>
+server errors  → server/plugins/signal-errors.ts ───────────────┤   GET /api/_signals/export
+MCP tool calls → server/utils/mcp-signal.ts ────────────────────┘   ?since=<seq>&limit=<n≤2000>
                                                                     → { rows, cursor, site }
 ```
 
@@ -81,7 +81,9 @@ server errors  → server/plugins/signal-errors.ts ─────────�
   'human' | 'agent' | 'bot'` server-side from the request's `User-Agent`
   (`server/utils/visitor-class.ts`) — a hand-rolled matcher, checked against
   `isbot` first but skipped since it can't separate AI agents from classic
-  crawlers and isn't in this monorepo's lockfile. Client-supplied `visitor.class`
+  crawlers and isn't in this monorepo's lockfile. Its AI user-agent list is
+  `layer/shared/ai-agents.ts`, shared with the robots.txt policy in
+  `layer/modules/ai-robots.ts` so the two can't drift. Client-supplied `visitor.class`
   is always overwritten, never trusted. Left unset only when a path has no
   request context to read a UA from (e.g. the Nitro error hook on a crash with
   no event). Agentic vs human traffic split is a core KPI (VISION.md) — this is
@@ -95,6 +97,15 @@ server errors  → server/plugins/signal-errors.ts ─────────�
   token → 401. Token not configured → 503 (never open by default).
 - **Client batching:** `useSignalQueue()` debounces POSTs (~800 ms, max 50 rows) and flushes
   with `navigator.sendBeacon` on pagehide. The ingest handler caps a request at 100 rows / 128 KB.
+- **MCP tool calls:** every tool in `layer/server/mcp/tools/` calls
+  `captureMcpToolCall()` (`layer/server/utils/mcp-signal.ts`) →
+  `{ kind: 'event', name: 'mcp_tool_called', visitor: { class: 'agent' },
+  data: { tool, args, userAgent } }`. `visitor.class` is stamped `agent` from the
+  transport, not the UA — MCP is agent-only, and MCP clients send inconsistent
+  User-Agents that `classifyVisitor()` would read as `bot`. Fire-and-forget: a
+  failed append never surfaces to the agent. Tools declaring a `cache` window only
+  reach the capture on a cache miss, so repeat identical calls inside the window
+  are not counted separately.
 
 ### Identity Events (always on, content-free)
 `runtime/plugins/identity.client.ts` emits a behaviour stream for **every** visitor through the

@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { queryCollection } from '@nuxt/content/server'
 import type { Collections } from '@nuxt/content'
 import { computeContentHash } from '../../utils/content-hash'
+import { captureMcpToolCall } from '../../utils/mcp-signal'
 import { inferSiteURL } from '../../../shared/utils/meta'
 
 export default defineMcpTool({
@@ -28,6 +29,8 @@ WORKFLOW: This tool returns the complete page content including title, descripti
   handler: async ({ path }) => {
     const event = useEvent()
     const siteUrl = import.meta.dev ? 'http://localhost:3000' : inferSiteURL()
+
+    captureMcpToolCall('get-page', { path }, event)
 
     try {
       const page = await queryCollection(

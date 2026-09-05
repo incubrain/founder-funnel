@@ -12,6 +12,7 @@ export default defineNuxtConfig({
   modules: [
     resolve('./modules/config'),
     resolve('./modules/css'),
+    resolve('./modules/ai-robots'),
     resolve('./modules/events'),
     resolve('./modules/rss'),
     resolve('./modules/markdown-rewrite'),
@@ -185,6 +186,13 @@ export default defineNuxtConfig({
       )
       globals.forEach((c: { global?: boolean | 'sync' }) => (c.global = true))
     },
+  },
+
+  // robots.txt AI policy — answer engines always allowed (AI-answer visibility),
+  // training crawlers a per-site call. Override `training: 'disallow'` in the
+  // consumer's nuxt.config to keep a site out of training corpora.
+  aiRobots: {
+    training: 'allow',
   },
 
   // Signal capture — client events + errors → ring buffer → /api/_signals/export

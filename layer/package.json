@@ -22,6 +22,7 @@
     "nuxt.schema.ts",
     "README.md",
     "app",
+    "modules/ai-robots.ts",
     "modules/config.ts",
     "modules/css.ts",
     "modules/markdown-rewrite.ts",
