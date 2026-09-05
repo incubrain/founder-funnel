@@ -50,6 +50,7 @@
     "@nuxtjs/mcp-toolkit": "^0.18.1",
     "@nuxtjs/mdc": "^0.23.1",
     "@nuxtjs/seo": "^5.3.12",
+    "@unhead/vue": "^3.1.0",
     "@vueuse/core": "^14.4.0",
     "@vueuse/integrations": "^14.4.0",
     "@vueuse/nuxt": "^14.4.0",
