@@ -70,9 +70,13 @@ client errors  → errors.client ───┼→ POST /api/_signals/ingest ─�
                                   │                             ├→ ring buffer (unstorage)
 form submits   → webhook.post.ts ─┘                             │        ↓
 server errors  → server/plugins/signal-errors.ts ───────────────┤   GET /api/_signals/export
-MCP tool calls → server/utils/mcp-signal.ts ────────────────────┤   ?since=<seq>&limit=<n≤2000>
+MCP tool calls → server/middleware/mcp-request.ts ───────────────┤   ?since=<seq>&limit=<n≤2000>
 page GETs      → server/middleware/page-request.ts ─────────────┘   → { rows, cursor, site }
 ```
+
+`server/middleware/mcp-request.ts` and `server/utils/mcp-request.ts` live in the root layer
+(`layer/server/`, alongside `layer/server/mcp/tools/` and `layer/server/utils/mcp-signal.ts`),
+not inside this module — this module's own File Map above only covers `layer/modules/events/`.
 
 - **Envelope:** `{ id, seq, ts, site, kind: 'event'|'log', name, severity?, visitor?, page?, referrer?, utm?, review?, data? }`,
   where `visitor` is `{ anonId?, class?, subclass? }`.
@@ -123,15 +127,23 @@ page GETs      → server/middleware/page-request.ts ─────────
   token → 401. Token not configured → 503 (never open by default).
 - **Client batching:** `useSignalQueue()` debounces POSTs (~800 ms, max 50 rows) and flushes
   with `navigator.sendBeacon` on pagehide. The ingest handler caps a request at 100 rows / 128 KB.
-- **MCP tool calls:** every tool in `layer/server/mcp/tools/` calls
-  `captureMcpToolCall()` (`layer/server/utils/mcp-signal.ts`) →
+- **MCP tool calls:** every `tools/call` JSON-RPC request reaching `/mcp` (or a
+  named `/mcp/<handler>` route) is parsed once by Nitro middleware
+  (`layer/server/middleware/mcp-request.ts` + pure JSON-RPC extraction in
+  `layer/server/utils/mcp-request.ts`), which appends via `captureMcpToolCall()`
+  (`layer/server/utils/mcp-signal.ts`) →
   `{ kind: 'event', name: 'mcp_tool_called', visitor: { class: 'agent' },
   data: { tool, args, userAgent } }`. `visitor.class` is stamped `agent` from the
   transport, not the UA — MCP is agent-only, and MCP clients send inconsistent
   User-Agents that `classifyVisitor()` would read as `bot`. Fire-and-forget: a
-  failed append never surfaces to the agent. Tools declaring a `cache` window only
-  reach the capture on a cache miss, so repeat identical calls inside the window
-  are not counted separately.
+  failed append never surfaces to the agent. The middleware reads the raw POST
+  body *before* `defineMcpTool`'s `cache` option (`@nuxtjs/mcp-toolkit`, which
+  wraps a tool's `handler` in Nitro's `defineCachedFunction` outside the tool
+  code) can serve a cached response, so a repeat call inside a tool's cache
+  window is counted exactly like a cache miss — this used to be the gap here.
+  Tool handlers under `layer/server/mcp/tools/` no longer call
+  `captureMcpToolCall()` themselves, so a cache *miss* isn't double-counted
+  either: the middleware is the only call site.
 
 ### Server-Side Page Visits (`page_request`)
 `server/middleware/page-request.ts` (rules + append in `server/utils/page-request.ts`)

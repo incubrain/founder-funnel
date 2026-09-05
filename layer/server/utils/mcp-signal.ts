@@ -6,9 +6,9 @@ import { appendSignal } from '../../modules/events/server/utils/signal-buffer'
  *
  * An agent calling `get-page` has read the site, decided which page it wants and
  * asked for it by name. That is the highest-intent traffic a Foundry site sees,
- * and until now it was the only traffic that left no row behind. Every tool in
- * `server/mcp/tools/` calls this so the agentic side of the human-vs-agent split
- * (VISION.md) is measured, not assumed.
+ * and until now it was the only traffic that left no row behind. `server/middleware/
+ * mcp-request.ts` calls this once per `tools/call` JSON-RPC request so the agentic
+ * side of the human-vs-agent split (VISION.md) is measured, not assumed.
  *
  * Deliberately fire-and-forget: signal capture must never fail, slow, or change
  * the result of a tool call.
@@ -54,8 +54,13 @@ export function summariseToolArgs(
  * `classifyVisitor()` would read as `bot`. The raw UA is kept in `data` so the
  * consumer can still tell clients apart.
  *
- * Note: tools that declare a `cache` window only reach this on a cache miss, so
- * repeated identical calls inside the window are not counted separately.
+ * Call site: `server/utils/mcp-request.ts`'s Nitro middleware, exactly once per
+ * `tools/call` request it parses off the raw POST body — *before*
+ * `defineMcpTool`'s `cache` option (which wraps the tool `handler` outside this
+ * function) can serve a cached response. A repeat call inside a tool's cache
+ * window is therefore counted exactly like a cache miss. Individual tool
+ * handlers under `server/mcp/tools/` do not call this themselves, so a cache
+ * miss isn't double-counted either — this is the single call site.
  */
 export function captureMcpToolCall(
   tool: string,
