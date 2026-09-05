@@ -18,6 +18,7 @@ const mission = computed(() => siteConfig.value?.business?.mission ?? '')
     <NuxtLink
       to="/"
       class="flex items-center gap-2"
+      :aria-label="siteConfig?.business?.name || 'Home'"
     >
       <AppLogo :title="siteConfig?.business?.name" />
     </NuxtLink>
