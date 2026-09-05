@@ -126,7 +126,14 @@ at publish time and consumers will see "module not found" errors.
 picked up by `pnpm dev:foundry` / `pnpm build:foundry` without needing to publish.
 
 **To verify the published npm package (`@incubrain/foundry@<version>`) builds cleanly** —
-useful before cutting a release — temporarily swap the spec:
+useful before cutting a release — temporarily swap the spec. TWO gotchas (learned 2026-09-05):
+`pnpm add @incubrain/foundry@<exact> --registry …` inside this workspace silently keeps the
+workspace symlink while `link-workspace-packages=true` is set in `.npmrc` — comment that line
+out (the .npmrc comment says so) AND add `@incubrain:registry=http://localhost:4873` for a
+verdaccio version, then `rm -rf examples/foundry/node_modules && pnpm install`. That install
+re-resolves the graph and can trip `minimumReleaseAge` on versions the lockfile already holds —
+pass `--config.minimumReleaseAge=0` for that one install (it resolves to the already-locked
+versions, nothing newer). Revert `.npmrc` + package.json + lockfile when done:
 
 ```bash
 # Switch examples back to the published package
