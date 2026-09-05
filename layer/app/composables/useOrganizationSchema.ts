@@ -23,7 +23,18 @@ export function useOrganizationSchema(
   business: OrganizationSchemaBusiness | undefined,
   socials: Record<string, string> | undefined,
 ) {
-  if (!business?.name) return
+  // No business identity (no `config/site.yml`, or one without `business`):
+  // still contribute the site-level baseline rather than returning without
+  // touching the graph at all. This composable is the layer's only
+  // `useSchemaOrg` call on every page, so an early return left the layer
+  // contributing nothing and made an empty `data-nuxt-schema-org` payload
+  // possible instead of valid WebSite/WebPage output (product-validator-918).
+  // Both nodes resolve to stable `#website` / `#webpage` @ids, so this merges
+  // with @nuxtjs/seo's own defaults rather than duplicating them.
+  if (!business?.name) {
+    useSchemaOrg([defineWebSite({}), defineWebPage({})])
+    return
+  }
 
   const sameAs = Object.values(socials ?? {}).filter(Boolean)
 

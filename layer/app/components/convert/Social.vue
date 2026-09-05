@@ -9,7 +9,27 @@ import type { Collections } from '@nuxt/content'
 // consumers (product-validator-ebi.2). `Collections` is the package's own
 // stable generic map and matches the pattern used elsewhere in the layer
 // (useContentConfig, useSearch, useNavigation).
-type TeamCollectionItem = Collections['team']
+//
+// Guarded behind a conditional because the layer is typechecked against the
+// CONSUMER's `Collections` map, and a consumer is free to define no `team`
+// collection — an unguarded `Collections['team']` is then TS2339 ("Property
+// 'team' does not exist on type 'Collections'") reported from inside
+// node_modules/@incubrain/foundry (product-validator-918). The fallback is
+// the shape this component actually reads, so the template stays typed
+// either way.
+interface FounderLike {
+  email?: string
+  givenName?: string
+  links?: Array<{ label: string, url: string, icon?: string }>
+}
+
+// `infer` rather than `'team' extends keyof Collections ? Collections['team']`:
+// the indexed access in the true branch is still checked eagerly, so it is
+// TS2538 ("'team' cannot be used as an index type") wherever the key is
+// absent — including the layer's own typecheck.
+type TeamCollectionItem = Collections extends { team: infer T }
+  ? T
+  : FounderLike
 
 interface Props {
   location: string
@@ -31,7 +51,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const { data: founder } = await useAsyncData('app-founder', () =>
-  queryCollection('team').where('isFounder', '=', true).first() as Promise<TeamCollectionItem | null>,
+  queryCollection('team').where('isFounder', '=', true).first() as unknown as Promise<TeamCollectionItem | null>,
 )
 const { trackEvent } = useEvents()
 

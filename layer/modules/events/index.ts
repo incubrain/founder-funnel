@@ -6,6 +6,7 @@ import {
   addServerHandler,
   addServerPlugin,
   addComponentsDir,
+  addTypeTemplate,
 } from '@nuxt/kit'
 import type { ModuleOptions } from './runtime/types/events'
 
@@ -35,6 +36,43 @@ export default defineNuxtModule<ModuleOptions>({
 
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
+
+    // Ship the `RuntimeNuxtHooks` augmentation (`events:track` / `events:dev`)
+    // into every consumer's generated types.
+    //
+    // `runtime/types/events-hooks.d.ts` is a loose ambient file. TypeScript
+    // only picks it up when the layer itself is the project root (its own
+    // generated tsconfig globs the layer's runtime dirs). A consumer that
+    // extends the layer from `node_modules` never walks in to find it, so the
+    // hook keys vanish and every `nuxtApp.hook('events:track', …)` /
+    // `callHook('events:dev', …)` inside the shipped runtime fails with TS2345
+    // ("not assignable to HookKeys<RuntimeNuxtHooks>") — errors pointing into
+    // node_modules/@incubrain/foundry (product-validator-918).
+    //
+    // Same mechanism as the AppConfig augmentation in modules/config.ts:
+    // `addTypeTemplate` pushes a `prepare:types` reference into the build's
+    // generated `nuxt.d.ts` (and into vite's `globalTypeFiles`, so `.vue`
+    // SFCs see it too) no matter which layer's module registered it.
+    //
+    // The contents are re-emitted rather than the file re-referenced because
+    // the ambient file's `./events` import is relative to its own directory.
+    // Deliberately app-project only (no `node`/`nitro` context): a
+    // `declare module 'nuxt/app'` augmentation in the node tsconfig project
+    // fails with TS2664, which is why the ambient file was split out of
+    // `runtime/types/events.ts` in the first place.
+    const eventsTypesPath = resolver
+      .resolve('./runtime/types/events')
+      .replace(/\\/g, '/')
+    addTypeTemplate({
+      filename: 'types/foundry-events-hooks.d.ts',
+      getContents: () => `import type { EventsHooks } from ${JSON.stringify(eventsTypesPath)}
+
+declare module 'nuxt/app' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  interface RuntimeNuxtHooks extends EventsHooks {}
+}
+`,
+    })
 
     // Add core plugin (always)
     addPlugin({
