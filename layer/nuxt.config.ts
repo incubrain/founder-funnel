@@ -140,6 +140,7 @@ export default defineNuxtConfig({
       debug: true,
       siteUrl: '',
       siteId: '', // NUXT_PUBLIC_SITE_ID — stamped on every signal row (falls back to request host)
+      signalEnv: '', // NUXT_PUBLIC_SIGNAL_ENV — override for the env:'local' debug marker (see events/AGENTS.md)
     },
     signalExportToken: '', // NUXT_SIGNAL_EXPORT_TOKEN — bearer token for GET /api/_signals/export
   },

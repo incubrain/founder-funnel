@@ -32,6 +32,7 @@ interface SignalRow {
   page?: string
   visitor?: { class?: string, subclass?: string }
   data?: Record<string, unknown>
+  env?: string
 }
 
 const testBase = () => useTestContext().url!
@@ -135,5 +136,10 @@ describe('server-side page capture (product-validator-m0f.3)', () => {
     ).length
 
     expect(after - before).toBe(1)
+  })
+
+  it('stamps env:"local" on every row under the dev-mode test server (polaris local-debug marker)', () => {
+    expect(rows.length).toBeGreaterThan(0)
+    expect(rows.every(r => r.env === 'local')).toBe(true)
   })
 })

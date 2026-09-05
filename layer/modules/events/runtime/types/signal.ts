@@ -64,6 +64,17 @@ export interface SignalRow {
    */
   review?: string
   data?: Record<string, unknown>
+  /**
+   * Local/debug marker. `'local'` when the row was produced by a dev-mode (or
+   * explicitly marked) server; **absent** otherwise. Additive on purpose —
+   * Polaris stores rows verbatim and its contract is "absent when it does not
+   * apply", so a production row must never carry this key (zero migration for
+   * existing consumers). Stamped once, server-side, in `appendSignal()`
+   * (`server/utils/signal-buffer.ts`), from `resolveSignalEnv()`
+   * (`server/utils/signal-env.ts`) — see that file for the precedence rule and
+   * `AGENTS.md`'s "Local debugging against Polaris" note.
+   */
+  env?: 'local'
 }
 
 /** What callers hand to `appendSignal()` — the buffer fills in `seq`/`id`/`ts`/`site`. */

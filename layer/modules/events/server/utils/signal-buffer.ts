@@ -1,6 +1,7 @@
 import type { Storage } from 'unstorage'
 import type { H3Event } from 'h3'
 import type { SignalInput, SignalRow } from '../../runtime/types/signal'
+import { resolveSignalEnv } from './signal-env'
 
 /**
  * Ring-buffer depth, sized from the identity-event stream.
@@ -132,10 +133,28 @@ export function resolveSite(event?: H3Event): string {
   return (event && getRequestHost(event)) || 'unknown'
 }
 
+/**
+ * `SignalRow.env` for this append. `import.meta.dev` is the default signal;
+ * `runtimeConfig.public.signalEnv` (`NUXT_PUBLIC_SIGNAL_ENV`) is the explicit
+ * override — see `resolveSignalEnv()` for the precedence rule.
+ */
+function resolveEnvMarker(event?: H3Event): 'local' | undefined {
+  const configured = useRuntimeConfig(event).public.signalEnv as string | undefined
+  return resolveSignalEnv({ isDev: import.meta.dev, configuredEnv: configured })
+}
+
+/**
+ * The one choke point every capture path funnels through (ingest, webhook,
+ * error hook, page_request middleware, mcp middleware) — so `site` and the
+ * `env: 'local'` debug marker are stamped exactly once, here, rather than at
+ * each call site.
+ */
 export function appendSignal(input: SignalInput, event?: H3Event): Promise<SignalRow> {
+  const env = input.env ?? resolveEnvMarker(event)
   return getSignalBuffer().append({
     ...input,
     site: input.site || resolveSite(event),
+    ...(env ? { env } : {}),
   })
 }
 
