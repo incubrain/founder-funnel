@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { appendSignal } from '../utils/signal-buffer'
-import { classifyVisitor } from '../utils/visitor-class'
+import { describeVisitor } from '../utils/visitor-class'
 
 // Sized for the identity-event stream (ui.click / ui.section / ui.page): the
 // client batches at most `MAX_QUEUE` rows per POST (useSignalQueue.ts), so
@@ -16,8 +16,10 @@ const rowSchema = z.object({
   severity: z.enum(['error', 'warning']).optional(),
   visitor: z.object({
     anonId: z.string().max(128).optional(),
-    // Accepted but ignored — `class` is always overwritten server-side below.
+    // Accepted but ignored — `class`/`subclass` are always overwritten
+    // server-side below, from the request UA.
     class: z.enum(['human', 'agent', 'bot']).optional(),
+    subclass: z.enum(['search', 'live-user-fetch', 'training', 'automation']).optional(),
   }).optional(),
   page: z.string().max(512).optional(),
   referrer: z.string().max(512).optional(),
@@ -52,13 +54,15 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Classify once per request — client-supplied `visitor.class` is never trusted.
-  const visitorClass = classifyVisitor(getHeader(event, 'user-agent'))
+  // Classify once per request — client-supplied `visitor.class`/`subclass` are
+  // never trusted. `subclass` is spread last so an agent matched only by a
+  // vendor hint clears any client-sent value rather than inheriting it.
+  const visitor = describeVisitor(getHeader(event, 'user-agent'))
 
   for (const row of parsed.data.rows) {
     await appendSignal({
       ...row,
-      visitor: { ...row.visitor, class: visitorClass },
+      visitor: { ...row.visitor, class: visitor.class, subclass: visitor.subclass },
     }, event)
   }
 

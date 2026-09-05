@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { appendSignal } from '../utils/signal-buffer'
-import { classifyVisitor } from '../utils/visitor-class'
+import { describeVisitor } from '../utils/visitor-class'
 
 // Strict schema matching FieldDef types from useFormCapture
 const captureSchema = z.object({
@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
   await appendSignal({
     kind: 'event',
     name: 'form_submitted',
-    visitor: { class: classifyVisitor(getHeader(event, 'user-agent')) },
+    visitor: describeVisitor(getHeader(event, 'user-agent')),
     data: { formData: parsed.data.formData },
   }, event)
 

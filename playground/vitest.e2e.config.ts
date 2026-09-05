@@ -11,8 +11,14 @@ export default defineConfig({
     // E2E boots Nuxt — needs a long startup budget.
     testTimeout: 120_000,
     hookTimeout: 180_000,
-    // Each `setup()` is expensive; keep specs single-threaded so they share.
     pool: 'forks',
-    poolOptions: { forks: { singleFork: true } },
+    // Spec files MUST run one at a time. Every `setup()` boots a Nuxt fixture
+    // against the same `rootDir`, and two of those alive at once race on
+    // @nuxt/content's SQLite database — the second loses with
+    // `UNIQUE constraint failed: _content_info.__hash__` before a single
+    // assertion runs. This replaces the old `poolOptions.forks.singleFork`,
+    // which Vitest 4 removed and silently ignored, leaving the suite parallel.
+    fileParallelism: false,
+    maxWorkers: 1,
   },
 })

@@ -35,12 +35,15 @@ layer/modules/events/
     │   ├── webhook.post.ts           # POST /api/v1/webhook (form capture)
     │   ├── signals-ingest.post.ts    # POST /api/_signals/ingest (client rows)
     │   └── signals-export.get.ts     # GET  /api/_signals/export (cursor pull)
+    ├── middleware/
+    │   └── page-request.ts           # Every document GET → `page_request` row (non-JS visitors)
     ├── plugins/
     │   └── signal-errors.ts          # Nitro request errors → signal buffer
     └── utils/
+        ├── page-request.ts           # Page-visit filter rules + fire-and-forget append
         ├── signal-buffer.ts          # Capped ring buffer (unstorage) + appendSignal
         ├── signal-export.ts          # Bearer auth check + query parsing
-        └── visitor-class.ts          # UA → human/agent/bot classification
+        └── visitor-class.ts          # UA → human/agent/bot + agent sub-class
 ```
 
 ## Key Architecture
@@ -67,11 +70,12 @@ client errors  → errors.client ───┼→ POST /api/_signals/ingest ─�
                                   │                             ├→ ring buffer (unstorage)
 form submits   → webhook.post.ts ─┘                             │        ↓
 server errors  → server/plugins/signal-errors.ts ───────────────┤   GET /api/_signals/export
-MCP tool calls → server/utils/mcp-signal.ts ────────────────────┘   ?since=<seq>&limit=<n≤2000>
-                                                                    → { rows, cursor, site }
+MCP tool calls → server/utils/mcp-signal.ts ────────────────────┤   ?since=<seq>&limit=<n≤2000>
+page GETs      → server/middleware/page-request.ts ─────────────┘   → { rows, cursor, site }
 ```
 
-- **Envelope:** `{ id, seq, ts, site, kind: 'event'|'log', name, severity?, visitor?, page?, referrer?, utm?, review?, data? }`.
+- **Envelope:** `{ id, seq, ts, site, kind: 'event'|'log', name, severity?, visitor?, page?, referrer?, utm?, review?, data? }`,
+  where `visitor` is `{ anonId?, class?, subclass? }`.
 - **Review binding:** `review` is its own top-level field, read from a `?polaris_review=<token>`
   query param by `pageContext()`. It is **never** merged into `utm` and **never** persisted —
   only rows emitted while that tagged URL is current carry it. That is the whole design: an
@@ -88,6 +92,28 @@ MCP tool calls → server/utils/mcp-signal.ts ───────────�
   request context to read a UA from (e.g. the Nitro error hook on a crash with
   no event). Agentic vs human traffic split is a core KPI (VISION.md) — this is
   itself signal, not metadata.
+- **Agent sub-class:** `visitor.subclass` splits agent traffic by *what the fetch
+  is for*, from the same taxonomy file's purpose grouping
+  (`AI_AGENT_PURPOSE_GROUPS`), so the robots.txt split and the analytics split
+  are the same split by construction:
+
+  | `subclass` | source list | meaning |
+  | --- | --- | --- |
+  | `search` | `AI_SEARCH_AGENTS` | answer-engine index crawlers — presence here is distribution |
+  | `live-user-fetch` | `AI_USER_FETCHERS` | the `*-User` family; a human is waiting on this fetch right now |
+  | `training` | `AI_TRAINING_CRAWLERS` | corpus crawls; no click, no citation back |
+  | `automation` | `AI_AUTOMATION_AGENTS` | headless browsers / test runtimes; never in robots.txt |
+
+  **`subclass` is strictly additive — `class` stays `'human' | 'agent' | 'bot'`.**
+  Polaris already groups exported rows on `class`, so widening that enum would
+  silently reclassify historical traffic; a consumer that ignores `subclass`
+  keeps working unchanged. Set only for `class: 'agent'`, and only when a
+  *published* token matched: an agent recognised solely by a loose vendor
+  substring (`AI_VENDOR_HINTS`) carries no subclass, because the vendor doesn't
+  say what the fetch was for. Published tokens are matched longest-first, so
+  `Applebot-Extended` beats a shorter `Applebot` and `Ai2Bot-Dolma` beats
+  `AI2Bot`. `describeVisitor()` returns `{ class, subclass? }`;
+  `classifyVisitor()` remains the class-only shorthand.
 - **Cursor:** `seq` is monotonic. Consumers send back the last `cursor` they saw.
 - **Buffer:** `useStorage('signals')` (memory by default — mount fs/KV in `nitro.storage`
   to survive restarts). Capacity `events.signals.capacity`, default 100 000 rows; oldest evicted.
@@ -106,6 +132,47 @@ MCP tool calls → server/utils/mcp-signal.ts ───────────�
   failed append never surfaces to the agent. Tools declaring a `cache` window only
   reach the capture on a cache miss, so repeat identical calls inside the window
   are not counted separately.
+
+### Server-Side Page Visits (`page_request`)
+`server/middleware/page-request.ts` (rules + append in `server/utils/page-request.ts`)
+appends one row per document GET **before any Vue code runs**, so visitors that never
+execute JavaScript still leave signal. GPTBot, ClaudeBot and PerplexityBot do a plain GET,
+parse the HTML and leave — without this they were invisible, and the every-visit-is-signal
+claim was false for exactly the traffic the agentic-vs-human KPI is about.
+
+```
+{ kind: 'event', name: 'page_request', page, referrer?,
+  visitor: { class, subclass? }, data: { userAgent } }
+```
+
+**Double-count policy — `page_request` and `ui.page` are different facts. Do not sum them.**
+
+| | `page_request` (server) | `ui.page` (client) |
+| --- | --- | --- |
+| fires on | every document GET reaching the server | every route the client rendered |
+| SPA route change | no (no request is made) | yes |
+| no-JS visitor | yes | never |
+| use it for | documents served; the agent/bot traffic split | pages a real browser rendered |
+
+A JS-capable human doing a hard navigation legitimately produces one of each. That is two
+facts, not one fact double-counted, and the distinct `name` is what lets a consumer choose:
+`ui.page` for browser page-views, `page_request` filtered on `visitor.class` /
+`visitor.subclass` for agent traffic. The alternative — emitting `page_request` only for
+non-humans — was rejected: it would make a no-JS *human* invisible, which is the same bug
+one class over.
+
+**Filtering** (all in `isPageRequest()`, pure and unit-tested). A request is a page visit
+only if it is a `GET`, is not the prerenderer crawling us during `nuxi generate`
+(`import.meta.prerender` / `x-nitro-prerender`), is not under `/api/`, `/_nuxt/`, `/_ipx/`,
+`/_scripts/`, `/_signals/`, `/_health`, `/_vercel/`, `/.well-known/`, `/@vite/`, `/@id/`,
+`/@fs/`, `/node_modules/`, `/__nuxt*`, has no non-`.html` file extension (favicon.ico,
+robots.txt, sitemap.xml, *.js, *.css, *.png all drop out), and looks like a document fetch:
+`Sec-Fetch-Dest` decides when present (`document`/`iframe` only, so browser `$fetch` and
+prefetches drop), otherwise an `Accept` header that names a type must name an HTML-ish one —
+a wildcard or missing `Accept` passes, because that is what a bare crawler GET looks like.
+
+Fire-and-forget like `captureMcpToolCall()`: the middleware returns nothing, awaits nothing,
+and swallows every failure. A dropped row costs a data point; a thrown one costs the page.
 
 ### Identity Events (always on, content-free)
 `runtime/plugins/identity.client.ts` emits a behaviour stream for **every** visitor through the
