@@ -64,10 +64,8 @@ function formatViolation(v: AxeViolation): string {
 }
 
 // Routes covered: the content-driven marketing/rendering pages an editor
-// actually authors via `playground/content/pages/*.md` plus the one
-// component-driven conversion fixture. `/render-citations` and
-// `/render-seo` (named in the original task) do not exist as routes in this
-// playground — there is nothing to gate until those fixtures are added.
+// actually authors via `playground/content/pages/*.md` plus the
+// component-driven conversion, citation, and schema-org fixtures.
 //
 // Per-route rule exclusions (empty by default). Add an entry ONLY with a
 // reason — see the module doc comment above.
@@ -77,6 +75,8 @@ const ROUTES: Array<{ path: string, exclude?: Record<string, string> }> = [
   { path: '/render-article' },
   { path: '/render-landing' },
   { path: '/render-convert' },
+  { path: '/render-citations' },
+  { path: '/render-seo' },
 ]
 
 describe('accessibility (axe-core, wcag2a + wcag2aa)', () => {
