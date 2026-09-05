@@ -13,6 +13,7 @@
 //   - Redirects via `routeRules.redirect`
 //   - Layout selection via `routeRules.appLayout` (Nuxt 4 native)
 //   - Layout selection via content frontmatter (`layout:`)
+//   - No-JS critical content (what a zero-JavaScript crawler actually sees)
 //
 // Each `expect` documents the *intended* contract. Failures here are real
 // bugs in the layer or in the consumer setup — not flaky tests.
@@ -49,6 +50,74 @@ describe('UPageHero SSR ownership (product-validator-s5s)', () => {
     // client hydration, causing a CLS-inducing hydration mismatch.
     expect(html).toContain('Render Hero')
     expect(html).toContain('UPageHero SSR/CSR hydration-mismatch bug')
+  })
+})
+
+// ----------------------------------------------------------------------------
+// No-JS critical content (product-validator-m0f.4)
+//
+// AI crawlers execute zero JavaScript. Anything a marketing or docs route
+// depends on must therefore be in the *rendered* SSR markup — not merely
+// present in the page somewhere.
+//
+// The distinction matters: Nuxt serializes fetched documents into the
+// `__NUXT__` payload `<script>`, so a naive `expect(html).toContain(text)`
+// passes even when the text is only in the payload and gets painted after
+// hydration. `renderedBody()` strips every `<script>` block first, which is a
+// faithful stand-in for what a zero-JS client sees.
+// ----------------------------------------------------------------------------
+
+/**
+ * The zero-JS view of a response: markup with all `<script>` blocks removed,
+ * so assertions cannot be satisfied by the serialized Nuxt payload.
+ */
+function renderedBody(html: string): string {
+  return html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+}
+
+// Each entry: a content or marketing route, and the critical strings that must
+// survive with JavaScript disabled. Add a row whenever a new content surface
+// ships — this is the cheap regression net for CSR-only content creeping back.
+const CRITICAL_CONTENT: Array<{ route: string, must: string[] }> = [
+  // Content catch-all body copy.
+  { route: '/render-default', must: ['content-driven:', 'layer catch-all'] },
+  // Hero frontmatter → UPageHero, owned by the page (product-validator-s5s).
+  { route: '/render-hero', must: ['Render Hero', 'UPageHero SSR/CSR hydration-mismatch bug'] },
+  // Layout variants must not swallow the body.
+  { route: '/render-article', must: ['route-rule-applayout:'] },
+  { route: '/render-landing', must: ['frontmatter-layout:'] },
+  // Conversion copy resolved from the pages collection by ConvertInternal.
+  // Regression guard for the `lazy: true, server: false` offer query.
+  {
+    route: '/render-convert',
+    must: [
+      'convert-ssr:',
+      'Book A Validation Call',
+      'Offer copy that ConvertInternal resolves from the pages collection.',
+    ],
+  },
+]
+
+describe('no-JS critical content (product-validator-m0f.4)', () => {
+  it.each(CRITICAL_CONTENT)(
+    '$route renders its critical content without JavaScript',
+    async ({ route, must }) => {
+      const body = renderedBody(await $fetch<string>(route))
+      for (const text of must) {
+        expect(
+          body,
+          `${route}: "${text}" is missing from the rendered SSR markup — a zero-JS crawler would never see it`,
+        ).toContain(text)
+      }
+    },
+  )
+
+  it('does not fall back to the generic CTA label when the offer document resolves', async () => {
+    // If the offer query regresses to a client-only fetch, ConvertInternal
+    // renders its hardcoded 'Learn More' fallback server-side instead.
+    const body = renderedBody(await $fetch<string>('/render-convert'))
+    expect(body).toContain('data-testid="convert-internal"')
+    expect(body).not.toContain('Learn More')
   })
 })
 

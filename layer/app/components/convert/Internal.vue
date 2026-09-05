@@ -39,17 +39,18 @@ const props = withDefaults(defineProps<Props>(), {
   size: 'md',
 })
 
-// 🎯 Use composable
-const { data: offer } = useAsyncData(
+// Resolve the offer document server-side. This query feeds the CTA's label,
+// description and icon — i.e. the conversion copy itself. Fetching it after
+// hydration (`server: false`) meant crawlers, which execute zero JS, only ever
+// saw the generic "Learn More" fallback. Awaited so SSR emits the real copy.
+const { data: offer } = await useAsyncData(
   `offer-${props.offerSlug}`,
   () =>
-    queryCollection('pages')
-      .path(`${routing.offers}/${props.offerSlug}`)
-      .first(),
-  {
-    lazy: true,
-    server: false,
-  },
+    props.offerSlug
+      ? queryCollection('pages')
+          .path(`${routing.offers}/${props.offerSlug}`)
+          .first()
+      : Promise.resolve(null),
 )
 
 // Compute final values
