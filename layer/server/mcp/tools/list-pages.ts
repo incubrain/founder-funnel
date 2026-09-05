@@ -1,6 +1,7 @@
 import { queryCollection } from '@nuxt/content/server'
 import type { Collections } from '@nuxt/content'
 import { computeContentHash } from '../../utils/content-hash'
+import { captureMcpToolCall } from '../../utils/mcp-signal'
 
 export default defineMcpTool({
   description: `Lists all available documentation pages with their categories and basic information.
@@ -25,6 +26,8 @@ OUTPUT: Returns a structured list with:
   cache: '1h',
   handler: async () => {
     const event = useEvent()
+
+    captureMcpToolCall('list-pages', {}, event)
 
     const siteUrl = import.meta.dev
       ? 'http://localhost:3000'

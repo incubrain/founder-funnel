@@ -158,10 +158,17 @@ external tools for these.
 - Signal pull, not webhook push: client events, server errors, and form captures all
   call `appendSignal()` (`layer/modules/events/server/utils/signal-buffer.ts`) into a
   capped ring buffer (`useStorage('signals')`, 10,000-row default). Ingest lands via
-  `POST /api/_signals/ingest` (client rows) and `POST /api/v1/webhook` (form capture);
-  an external consumer pulls everything back out with `GET /api/_signals/export`
-  (bearer `NUXT_SIGNAL_EXPORT_TOKEN`, `since`/`limit` params). There are no outbound webhooks and
-  no analytics providers — see `layer/modules/events/AGENTS.md`.
+  `POST /api/_signals/ingest` (client rows), `POST /api/v1/webhook` (form capture), and
+  `POST /mcp` tool calls (`layer/server/utils/mcp-signal.ts` → `mcp_tool_called`, always
+  `visitor.class: 'agent'`); an external consumer pulls everything back out with
+  `GET /api/_signals/export` (bearer `NUXT_SIGNAL_EXPORT_TOKEN`, `since`/`limit` params).
+  There are no outbound webhooks and no analytics providers — see
+  `layer/modules/events/AGENTS.md`.
+- AI-crawler policy: `layer/modules/ai-robots.ts` writes robots.txt groups from the same
+  UA taxonomy the visitor classifier uses (`layer/shared/ai-agents.ts`). Answer engines
+  (`OAI-SearchBot`, `Claude-SearchBot`, `PerplexityBot`, the `*-User` fetchers) are always
+  allowed; training crawlers (`GPTBot`, `Google-Extended`, `CCBot`, …) default to `allow`
+  and are flipped per site with `aiRobots: { training: 'disallow' }` in nuxt.config.
 - Monitorability: `GET /api/_health` (`layer/server/api/_health.get.ts`) gives external
   monitors (Polaris) an unauthenticated liveness+identity check — `{ ok, service, version,
   siteId, timestamp }`, `no-store`, no storage/content access. Page enumeration is

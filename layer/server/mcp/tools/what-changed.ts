@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { queryCollection } from '@nuxt/content/server'
 import type { Collections } from '@nuxt/content'
 import { computeContentHash } from '../../utils/content-hash'
+import { captureMcpToolCall } from '../../utils/mcp-signal'
 import { inferSiteURL } from '../../../shared/utils/meta'
 
 export default defineMcpTool({
@@ -20,6 +21,8 @@ OUTPUT: Returns path, collection name, contentHash (SHA-256), and modifiedAt for
     const event = useEvent()
     const siteUrl = import.meta.dev ? 'http://localhost:3000' : inferSiteURL()
     const sinceDate = since ? new Date(since) : null
+
+    captureMcpToolCall('what-changed', { since }, event)
 
     try {
       const collections = ['pages'] as const

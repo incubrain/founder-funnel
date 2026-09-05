@@ -1,45 +1,33 @@
 import type { VisitorClass } from '../../runtime/types/signal'
+import { AI_AGENT_TOKENS, AI_VENDOR_HINTS } from '../../../../shared/ai-agents'
 
 /**
  * `visitor.class` classification — server-side only, from the request User-Agent.
  * Client-supplied `visitor.class` is never trusted (see signals-ingest.post.ts,
  * which strips it before append).
  *
+ * The AI/agent side of the taxonomy lives in `shared/ai-agents.ts` — one list,
+ * shared with the robots.txt policy in `modules/ai-robots.ts`, so a crawler can
+ * never be "an agent" for analytics and unknown to robots.txt (or vice versa).
+ *
  * Kept as a small hand-rolled matcher rather than pulling in `isbot`: this repo's
  * library-first rule was checked, but `isbot`'s single `isbot()` boolean doesn't
  * separate "classic crawler" from "AI agent" — the split this task needs — and it
- * isn't installed anywhere in this monorepo's lockfile, so adding it here would
- * require a `pnpm install` this task is not allowed to run (and would leave the
- * required test run unable to execute). The pattern lists below are short enough
- * to stay readable; swap in `isbot` for the classic-crawler branch later if its
- * broader coverage turns out to matter.
+ * isn't installed anywhere in this monorepo's lockfile. The pattern lists below
+ * are short enough to stay readable; swap in `isbot` for the classic-crawler
+ * branch later if its broader coverage turns out to matter.
  *
  * Order matters: AI/agent patterns are checked before classic bot patterns, so a
- * UA that could match both (e.g. a future "GPT-Googlebot") resolves to `agent`.
+ * UA that could match both (e.g. `Claude-SearchBot`, which also matches `bot\b`)
+ * resolves to `agent`.
  */
 
-// AI agents, assistant fetchers, and automation/headless browsers.
-const AGENT_PATTERNS: RegExp[] = [
-  /GPTBot/i,
-  /ChatGPT-User/i,
-  /OAI-SearchBot/i,
-  /ClaudeBot/i,
-  /Claude-User/i,
-  /claude-web/i,
-  /anthropic/i,
-  /PerplexityBot/i,
-  /Perplexity-User/i,
-  /Google-Extended/i,
-  /CCBot/i,
-  /Bytespider/i,
-  /Amazonbot/i,
-  /Applebot-Extended/i,
-  /cohere/i,
-  /OpenAI/i,
-  /HeadlessChrome/i,
-  /Playwright/i,
-  /Puppeteer/i,
-]
+const escapeRegExp = (token: string) => token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+// AI agents, assistant fetchers, and automation/headless browsers, built from
+// the shared taxonomy plus the loose vendor substrings it carries.
+const AGENT_PATTERNS: RegExp[] = [...AI_AGENT_TOKENS, ...AI_VENDOR_HINTS]
+  .map(token => new RegExp(escapeRegExp(token), 'i'))
 
 // Classic search/scrape crawlers and non-browser HTTP clients (isbot-style).
 const BOT_PATTERNS: RegExp[] = [
