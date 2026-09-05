@@ -65,10 +65,21 @@ const IGNORED_PREFIXES = [
 
 /**
  * Anything with a file extension is an asset, not a page — favicon.ico,
- * robots.txt, sitemap.xml, *.js, *.css, *.png, *.map. `.html` is the exception:
- * a prerendered site serves real pages at `/about.html`.
+ * robots.txt, sitemap.xml, *.js, *.css, *.png, *.map. `.html` and `.md` are
+ * the exceptions: a prerendered site serves real pages at `/about.html`, and
+ * `markdown-rewrite`'s `raw-markdown.ts` middleware serves the same content
+ * page's source at `/about.md` — an agent-native document, not an asset.
  */
-const ASSET_EXTENSION = /\.(?!html?$)[a-z0-9]{1,8}$/i
+const ASSET_EXTENSION = /\.(?!html?$|md$)[a-z0-9]{1,8}$/i
+
+/**
+ * Root-level agent documents `nuxt-llms` ships with a `.txt` extension
+ * (`layer/nuxt.config.ts`). `ASSET_EXTENSION` would otherwise drop them the
+ * same way it drops robots.txt/sitemap.xml — an exact-path allowlist rather
+ * than widening the extension rule, since `.txt` stays a real asset
+ * extension everywhere else.
+ */
+const AGENT_DOCUMENT_PATHS = new Set(['/llms.txt', '/llms-full.txt'])
 
 export interface PageRequestCandidate {
   method: string
@@ -91,13 +102,17 @@ export interface PageRequestCandidate {
  * 2. **Prerender-build traffic.** `nuxi generate` crawls the whole site through
  *    the same middleware; those are our own build's fetches, not visitors.
  * 3. **Internal / framework routes** (`IGNORED_PREFIXES`).
- * 4. **Assets** — any path with a non-`.html` file extension.
+ * 4. **Assets** — any path with a non-`.html`/`.md` file extension, unless
+ *    it's one of the named `AGENT_DOCUMENT_PATHS` (`/llms.txt`,
+ *    `/llms-full.txt`). `.md` and the two `llms*.txt` documents are the
+ *    agent-native surfaces `markdown-rewrite` and `nuxt-llms` serve — real
+ *    document GETs, not assets, even though they aren't HTML.
  * 5. **Non-document fetches.** `Sec-Fetch-Dest` is authoritative when present
  *    (`document` / `iframe` pass, `script`/`image`/`empty` don't), which drops
  *    `$fetch` calls and prefetches from real browsers. When it's absent — the
  *    normal case for a crawler — an `Accept` header that names a type must name
- *    an HTML-ish one; a wildcard `Accept` and a missing `Accept` both pass,
- *    because that is what a bare crawler GET looks like.
+ *    an HTML- or markdown-ish one; a wildcard `Accept` and a missing `Accept`
+ *    both pass, because that is what a bare crawler GET looks like.
  */
 export function isPageRequest(candidate: PageRequestCandidate): boolean {
   const { method, path, accept, secFetchDest, prerender } = candidate
@@ -108,18 +123,32 @@ export function isPageRequest(candidate: PageRequestCandidate): boolean {
   const pathname = (path.split('?')[0] || '/').toLowerCase()
 
   if (IGNORED_PREFIXES.some(prefix => pathname.startsWith(prefix))) return false
-  if (ASSET_EXTENSION.test(pathname)) return false
+  if (!AGENT_DOCUMENT_PATHS.has(pathname) && ASSET_EXTENSION.test(pathname)) return false
 
   if (secFetchDest) return secFetchDest === 'document' || secFetchDest === 'iframe'
 
   if (accept) {
-    const wantsHtml = accept.includes('text/html')
+    const wantsDocument = accept.includes('text/html')
       || accept.includes('application/xhtml')
+      || accept.includes('text/markdown')
       || accept.includes('*/*')
-    if (!wantsHtml) return false
+    if (!wantsDocument) return false
   }
 
   return true
+}
+
+/**
+ * Was this row served as markdown rather than HTML? Purely a labelling
+ * concern — it never affects whether {@link isPageRequest} admits the
+ * request — so it's kept separate and only consulted once a candidate has
+ * already passed the filter, to stamp `data.format` on the emitted row.
+ */
+export function pageRequestFormat(candidate: PageRequestCandidate): 'markdown' | 'html' {
+  const pathname = (candidate.path.split('?')[0] || '/').toLowerCase()
+  if (pathname.endsWith('.md') || AGENT_DOCUMENT_PATHS.has(pathname)) return 'markdown'
+  if (candidate.accept?.includes('text/markdown')) return 'markdown'
+  return 'html'
 }
 
 /** Query string stripped: `page` matches `pageContext()` on the client, which reports `location.pathname`. */
@@ -140,14 +169,15 @@ const truncate = (value: string | undefined, max: number) =>
 export function capturePageRequest(event: H3Event): void {
   try {
     const userAgent = getHeader(event, 'user-agent')
-
-    if (!isPageRequest({
+    const candidate: PageRequestCandidate = {
       method: event.method,
       path: event.path,
       accept: getHeader(event, 'accept'),
       secFetchDest: getHeader(event, 'sec-fetch-dest'),
       prerender: isPrerenderRequest(event),
-    })) return
+    }
+
+    if (!isPageRequest(candidate)) return
 
     void appendSignal({
       kind: 'event',
@@ -157,6 +187,11 @@ export function capturePageRequest(event: H3Event): void {
       referrer: truncate(getHeader(event, 'referer'), MAX_REFERRER),
       data: {
         userAgent: truncate(userAgent, MAX_USER_AGENT) ?? null,
+        // Additive field, no schema migration needed (`data` is a free-form
+        // bag). Lets a consumer compute the agent-native-document share of
+        // page_request without guessing format back out of `page`; see
+        // AGENTS.md's page_request table.
+        format: pageRequestFormat(candidate),
       },
     }, event).catch(() => {
       // Buffer append failed — never surfaces to the visitor.

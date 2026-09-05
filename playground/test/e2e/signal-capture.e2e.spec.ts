@@ -61,6 +61,9 @@ describe('server-side page capture (product-validator-m0f.3)', () => {
     await crawl('/render-default', GPT_BOT)
     await crawl('/render-hero', CHATGPT_USER)
     await crawl('/render-article', CLAUDE_SEARCH)
+    // … an agent-native markdown fetch, which must ALSO produce a row
+    // (product-validator-m0f.15) …
+    await crawl('/render-article.md', CLAUDE_SEARCH)
     // … and traffic that must NOT produce a page-visit row.
     await crawl('/robots.txt', GPT_BOT)
     await crawl('/api/_health', GPT_BOT)
@@ -78,6 +81,19 @@ describe('server-side page capture (product-validator-m0f.3)', () => {
     expect(hit!.visitor?.class).toBe('agent')
     expect(hit!.visitor?.subclass).toBe('training')
     expect(String(hit!.data?.userAgent)).toContain('GPTBot')
+  })
+
+  it('captures a `.md` document fetch and labels it markdown (product-validator-m0f.15)', () => {
+    const hit = rows.find(r => r.name === 'page_request' && r.page === '/render-article.md')
+
+    expect(
+      hit,
+      'a `.md` fetch left no row — agent-native document requests must count as page_request',
+    ).toBeDefined()
+    expect(hit!.data?.format).toBe('markdown')
+
+    const htmlHit = rows.find(r => r.name === 'page_request' && r.page === '/render-article')
+    expect(htmlHit!.data?.format).toBe('html')
   })
 
   it('stamps the sub-class from the request UA (product-validator-m0f.2)', () => {

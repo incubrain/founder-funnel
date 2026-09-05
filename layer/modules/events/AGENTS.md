@@ -142,8 +142,17 @@ claim was false for exactly the traffic the agentic-vs-human KPI is about.
 
 ```
 { kind: 'event', name: 'page_request', page, referrer?,
-  visitor: { class, subclass? }, data: { userAgent } }
+  visitor: { class, subclass? }, data: { userAgent, format: 'html' | 'markdown' } }
 ```
+
+`data.format` (product-validator-m0f.15) distinguishes the served representation —
+`'markdown'` for a `.md`-suffixed content route, an `Accept: text/markdown` negotiated
+fetch, or `/llms.txt` / `/llms-full.txt`; `'html'` for everything else. Additive field on
+the existing free-form `data` bag, no envelope/schema change: it exists so a consumer can
+compute the agent-native-document share of `page_request` without inferring format back out
+of `page` (a bare `.md` suffix is visible there, but negotiated and `llms*.txt` requests
+aren't). It never affects `isPageRequest()`'s admit/reject decision — computed separately by
+`pageRequestFormat()` only after a candidate has already passed the filter.
 
 **Double-count policy — `page_request` and `ui.page` are different facts. Do not sum them.**
 
@@ -165,11 +174,17 @@ one class over.
 only if it is a `GET`, is not the prerenderer crawling us during `nuxi generate`
 (`import.meta.prerender` / `x-nitro-prerender`), is not under `/api/`, `/_nuxt/`, `/_ipx/`,
 `/_scripts/`, `/_signals/`, `/_health`, `/_vercel/`, `/.well-known/`, `/@vite/`, `/@id/`,
-`/@fs/`, `/node_modules/`, `/__nuxt*`, has no non-`.html` file extension (favicon.ico,
-robots.txt, sitemap.xml, *.js, *.css, *.png all drop out), and looks like a document fetch:
-`Sec-Fetch-Dest` decides when present (`document`/`iframe` only, so browser `$fetch` and
-prefetches drop), otherwise an `Accept` header that names a type must name an HTML-ish one —
-a wildcard or missing `Accept` passes, because that is what a bare crawler GET looks like.
+`/@fs/`, `/node_modules/`, `/__nuxt*`, has no non-`.html`/`.md` file extension (favicon.ico,
+robots.txt, sitemap.xml, *.js, *.css, *.png all drop out — except `/llms.txt` and
+`/llms-full.txt`, admitted by an exact-path allowlist since `.txt` otherwise stays an asset
+extension), and looks like a document fetch: `Sec-Fetch-Dest` decides when present
+(`document`/`iframe` only, so browser `$fetch` and prefetches drop), otherwise an `Accept`
+header that names a type must name an HTML- or markdown-ish one (`text/html`,
+`application/xhtml`, `text/markdown`) — a wildcard or missing `Accept` passes, because that
+is what a bare crawler GET looks like. `.md` suffixes, `Accept: text/markdown` negotiation
+and the two `llms*.txt` documents are agent-native surfaces `markdown-rewrite` and
+`nuxt-llms` serve (product-validator-m0f.15) — real document GETs, not assets, even though
+none of them are HTML.
 
 Fire-and-forget like `captureMcpToolCall()`: the middleware returns nothing, awaits nothing,
 and swallows every failure. A dropped row costs a data point; a thrown one costs the page.

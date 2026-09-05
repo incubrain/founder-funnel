@@ -1,7 +1,7 @@
 # Agent-traffic share report — decision + spec
 
-Bead: `product-validator-m0f.12`. Status: design ratified, zero Foundry-side code planned
-except the one gap in §3.
+Bead: `product-validator-m0f.12`. Status: design ratified, zero Foundry-side code planned;
+the one capture-side gap in §3 is fixed (`product-validator-m0f.15`).
 
 > Code cited here lives on `main` (`68b4f4e`). This branch is 10 commits behind it — the
 > `page_request` capture is on local `main` only, not yet on `origin/main`.
@@ -59,25 +59,26 @@ back-fill it from the vendor.
 Everything metrics 1–5 need is already on the wire from
 `GET /api/_signals/export?since=<seq>&limit=<n≤2000>` (`SignalExportResponse`): `seq`
 (cursor), `ts`, `site`, `name`, `visitor.class`, `visitor.subclass`, `page`, `data.tool`.
-**No new envelope field is required.** One capture-side gap blocks metrics 1–3:
+**No new envelope field is required.**
 
-> **Gap — agent-native surfaces emit no `page_request` row.** `isPageRequest()`
-> (`layer/modules/events/server/utils/page-request.ts`) rejects any path whose extension is
-> not `.html` (`ASSET_EXTENSION`), and rejects a request whose `Accept` names a type but no
-> HTML-ish one. So both shapes the `markdown-rewrite` module exists to serve are dropped:
-> `/blog/post.md` (suffix mode) fails the extension test, and `/blog/post` with
-> `Accept: text/markdown` fails the Accept test unless the client also sends `*/*`.
-> `llms.txt` is dropped too. These are exactly the surfaces built for agents, so the
-> headline agent share is systematically biased **down** against the most agent-native
-> traffic on the site.
-
-This also contradicts the docblock in
-`layer/modules/markdown-rewrite/server/middleware/raw-markdown.ts`, which asserts that
-page-request capture "runs first and still sees `.md` traffic — agent requests are signal
-too". The ordering claim is correct; the filter defeats the intent. Fixing this is a
-Foundry-side change (allow `.md`/`llms.txt` past the filter, add `text/markdown` to the
-Accept allow-list) and belongs in its own bead — Polaris cannot recover a row that was never
-appended.
+> **Fixed (`product-validator-m0f.15`) — agent-native surfaces now emit a `page_request`
+> row.** `isPageRequest()` (`layer/modules/events/server/utils/page-request.ts`) used to
+> reject any path whose extension wasn't `.html` (`ASSET_EXTENSION`), and any request whose
+> `Accept` named a type but no HTML-ish one. Both shapes the `markdown-rewrite` module
+> serves were dropped as a result: `/blog/post.md` (suffix mode) failed the extension test,
+> and `/blog/post` with `Accept: text/markdown` failed the Accept test unless the client
+> also sent `*/*`. `/llms.txt` and `/llms-full.txt` were dropped too. `isPageRequest()` now
+> admits a `.md` suffix, `Accept: text/markdown`, and the two `llms*.txt` paths (an
+> exact-path allowlist, since `.txt` stays an asset extension everywhere else) — real assets
+> (js/css/images/fonts/etc.), API routes and internal routes are still rejected exactly as
+> before. The emitted row also carries `data.format: 'markdown' | 'html'` so metrics 1–3 can
+> report the agent-native-document share without inferring format from `page`; see
+> `layer/modules/events/AGENTS.md`'s `page_request` table for the row shape.
+>
+> The docblock in `layer/modules/markdown-rewrite/server/middleware/raw-markdown.ts` claimed
+> page-request capture "runs first and still sees `.md` traffic" before this fix landed —
+> the ordering was always correct, but the filter defeated the claim. It now matches
+> reality and has been reworded accordingly.
 
 ## 4. Known blind spots
 
@@ -113,7 +114,8 @@ Each verified against the code, not assumed.
 ## 5. Non-goals
 
 - **No Foundry-side compute.** No aggregate endpoint, no counters, no report route, no UI.
-  Scope for this bead is zero new Foundry code; the §3 gap is a separate capture fix.
+  Scope for this bead is zero new Foundry code; the §3 gap was a separate capture fix
+  (`product-validator-m0f.15`), now landed.
 - **No real-time.** The consumer polls a cursor. Freshness is the poll interval; nothing
   here is a live counter.
 - **No session stitching or unique visitors.** `page_request` has no `anonId` and this
