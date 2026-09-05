@@ -89,6 +89,15 @@ export default defineNuxtModule<ModuleOptions>({
         handler: resolver.resolve('./server/handlers/signals-export.get'),
       })
 
+      // Server-side page visits. The client identity stream only ever sees
+      // visitors that run JS; this is the ingest path for the ones that don't
+      // (GPTBot, ClaudeBot, PerplexityBot, no-JS browsers). Emits `page_request`
+      // — deliberately NOT `ui.page`, see server/utils/page-request.ts.
+      addServerHandler({
+        middleware: true,
+        handler: resolver.resolve('./server/middleware/page-request'),
+      })
+
       // The only provider: every tracked event becomes a signal row
       addPlugin({
         src: resolver.resolve('./runtime/providers/signal.ts'),

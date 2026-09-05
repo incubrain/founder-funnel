@@ -159,17 +159,23 @@ external tools for these.
   call `appendSignal()` (`layer/modules/events/server/utils/signal-buffer.ts`) into a
   capped ring buffer (`useStorage('signals')`, 100,000-row default — sized for the
   always-on identity-event stream). Ingest lands via
-  `POST /api/_signals/ingest` (client rows), `POST /api/v1/webhook` (form capture), and
+  `POST /api/_signals/ingest` (client rows), `POST /api/v1/webhook` (form capture),
   `POST /mcp` tool calls (`layer/server/utils/mcp-signal.ts` → `mcp_tool_called`, always
-  `visitor.class: 'agent'`); an external consumer pulls everything back out with
-  `GET /api/_signals/export` (bearer `NUXT_SIGNAL_EXPORT_TOKEN`, `since`/`limit` params).
-  There are no outbound webhooks and no analytics providers — see
-  `layer/modules/events/AGENTS.md`.
+  `visitor.class: 'agent'`), and every document GET
+  (`layer/modules/events/server/middleware/page-request.ts` → `page_request`, the only
+  ingest path a visitor that runs no JavaScript reaches); an external consumer pulls
+  everything back out with `GET /api/_signals/export` (bearer `NUXT_SIGNAL_EXPORT_TOKEN`,
+  `since`/`limit` params). There are no outbound webhooks and no analytics providers — see
+  `layer/modules/events/AGENTS.md`, which also carries the `page_request` vs `ui.page`
+  dedupe rule (they are different facts; never sum them).
 - AI-crawler policy: `layer/modules/ai-robots.ts` writes robots.txt groups from the same
   UA taxonomy the visitor classifier uses (`layer/shared/ai-agents.ts`). Answer engines
   (`OAI-SearchBot`, `Claude-SearchBot`, `PerplexityBot`, the `*-User` fetchers) are always
   allowed; training crawlers (`GPTBot`, `Google-Extended`, `CCBot`, …) default to `allow`
-  and are flipped per site with `aiRobots: { training: 'disallow' }` in nuxt.config.
+  and are flipped per site with `aiRobots: { training: 'disallow' }` in nuxt.config. The
+  same grouping is what `visitor.subclass` reports on every row
+  (`search` / `live-user-fetch` / `training` / `automation`), additive to the unchanged
+  `visitor.class` enum.
 - Monitorability: `GET /api/_health` (`layer/server/api/_health.get.ts`) gives external
   monitors (Polaris) an unauthenticated liveness+identity check — `{ ok, service, version,
   siteId, timestamp }`, `no-store`, no storage/content access. Page enumeration is
