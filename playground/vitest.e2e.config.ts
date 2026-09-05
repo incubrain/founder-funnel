@@ -12,7 +12,15 @@ export default defineConfig({
     testTimeout: 120_000,
     hookTimeout: 180_000,
     // Each `setup()` is expensive; keep specs single-threaded so they share.
+    // `singleFork` alone only pins every file to one process — vitest still
+    // schedules files' top-level `await setup()` concurrently within it by
+    // default, which races multiple Nuxt dev-server boots against the same
+    // @nuxt/content sqlite db file (playground rootDir is shared across all
+    // e2e spec files) and intermittently throws `SQLITE_BUSY: database is
+    // locked`. `fileParallelism: false` forces one file's suite to finish
+    // before the next starts.
     pool: 'forks',
     poolOptions: { forks: { singleFork: true } },
+    fileParallelism: false,
   },
 })

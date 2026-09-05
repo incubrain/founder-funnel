@@ -1,0 +1,8 @@
+business:
+  name: Foundry Playground
+  legalName: Foundry Playground Ltd.
+  foundingYear: 2024
+  logo: /favicon.ico
+  mission: Fixture site config for the SEO JSON-LD e2e suite (product-validator-m0f.6).
+socials:
+  github: https://github.com/incubrain/foundry

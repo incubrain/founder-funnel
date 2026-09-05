@@ -53,6 +53,10 @@ const displayItems = computed(() => {
   )
 })
 
+// FAQPage JSON-LD (product-validator-m0f.6) — emitted from the same content
+// model the accordion renders, no separate content format.
+useFaqSchema(displayItems)
+
 // Build UI items for Nuxt UI Accordion
 const uiItems = computed<AccordionItem[]>(() =>
   displayItems.value.map((item, i) => ({

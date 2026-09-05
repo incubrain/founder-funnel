@@ -4,7 +4,7 @@ import { useSearch } from '#search'
 
 const { title, seo } = useAppConfig()
 
-const { data: site } = useAsyncData('app-config', () =>
+const { data: site } = await useAsyncData('app-config', () =>
   queryCollection('config').where('stem', '=', 'config/site').first(),
 )
 
@@ -34,6 +34,9 @@ useSeoMeta({
   ogSiteName: title as string | undefined,
   twitterCard: 'summary_large_image',
 })
+
+// Organization JSON-LD (product-validator-m0f.6), mapped from config/site.yml.
+useOrganizationSchema(site.value?.business, site.value?.socials)
 
 /* -------------------------------------------------------------------------- */
 /*                              GLOBAL PROVIDES                                */

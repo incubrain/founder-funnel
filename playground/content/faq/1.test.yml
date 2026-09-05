@@ -1,0 +1,7 @@
+type: general
+label: General
+icon: i-lucide-circle-help
+color: info
+items:
+  - label: Is this a fixture FAQ?
+    content: Yes — it exists only to give the JSON-LD e2e suite (product-validator-m0f.6) real FAQPage content to render.
