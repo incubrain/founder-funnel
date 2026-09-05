@@ -1,12 +1,16 @@
 import { describe, it, expect } from 'vitest'
 import { buildAiRobotsGroups } from '@incubrain/foundry/modules/ai-robots'
 import {
+  AI_AGENT_PURPOSE_GROUPS,
   AI_ANSWER_AGENTS,
   AI_SEARCH_AGENTS,
   AI_TRAINING_CRAWLERS,
   AI_USER_FETCHERS,
 } from '@incubrain/foundry/shared/ai-agents'
-import { classifyVisitor } from '@incubrain/foundry/modules/events/server/utils/visitor-class'
+import {
+  classifyVisitor,
+  describeVisitor,
+} from '@incubrain/foundry/modules/events/server/utils/visitor-class'
 
 describe('AI user-agent taxonomy', () => {
   it('keeps answer engines and training crawlers disjoint', () => {
@@ -26,11 +30,34 @@ describe('AI user-agent taxonomy', () => {
     expect(AI_TRAINING_CRAWLERS).toContain('GPTBot')
     expect(AI_TRAINING_CRAWLERS).toContain('Google-Extended')
     expect(AI_TRAINING_CRAWLERS).toContain('CCBot')
+    expect(AI_TRAINING_CRAWLERS).toContain('Meta-ExternalAgent')
   })
 
   it('is the same list the visitor classifier uses', () => {
     for (const ua of [...AI_ANSWER_AGENTS, ...AI_TRAINING_CRAWLERS]) {
       expect(classifyVisitor(`Mozilla/5.0 (compatible; ${ua}/1.0)`)).toBe('agent')
+    }
+  })
+
+  it('is the same grouping the sub-classifier reports', () => {
+    // Every published token resolves to its own group's purpose — the taxonomy
+    // is the single source of truth for `visitor.subclass`, not a parallel list.
+    for (const { purpose, tokens } of AI_AGENT_PURPOSE_GROUPS) {
+      for (const token of tokens) {
+        expect(describeVisitor(`Mozilla/5.0 (compatible; ${token}/1.0)`), token)
+          .toEqual({ class: 'agent', subclass: purpose })
+      }
+    }
+  })
+
+  it('assigns every published token exactly one purpose', () => {
+    const seen = new Map<string, string>()
+
+    for (const { purpose, tokens } of AI_AGENT_PURPOSE_GROUPS) {
+      for (const token of tokens) {
+        expect(seen.has(token.toLowerCase()), `${token} appears in two groups`).toBe(false)
+        seen.set(token.toLowerCase(), purpose)
+      }
     }
   })
 })

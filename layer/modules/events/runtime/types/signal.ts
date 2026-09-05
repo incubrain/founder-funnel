@@ -6,9 +6,23 @@
  * `GET /api/_signals/export`.
  */
 
+import type { AiAgentPurpose } from '../../../../shared/ai-agents'
+
 export type SignalKind = 'event' | 'log'
 export type SignalSeverity = 'error' | 'warning'
 export type VisitorClass = 'human' | 'agent' | 'bot'
+
+/**
+ * What an `agent`'s fetch is for. **Additive** to `class`, never a replacement:
+ * `class` stays a stable three-value enum because external consumers (Polaris)
+ * already group exported rows on it, and widening that enum would silently
+ * reclassify historical traffic. A consumer that knows nothing about `subclass`
+ * keeps working; one that does can split agent traffic by intent.
+ *
+ * Owned by the shared AI taxonomy (`layer/shared/ai-agents.ts`) — the same
+ * grouping robots.txt is generated from.
+ */
+export type VisitorSubclass = AiAgentPurpose
 
 export interface SignalVisitor {
   anonId?: string
@@ -19,6 +33,13 @@ export interface SignalVisitor {
    * (e.g. a Nitro error hook with no request context).
    */
   class?: VisitorClass
+  /**
+   * Agent sub-class. Only ever set when `class === 'agent'` **and** the UA
+   * matched a published token whose purpose is known — an agent recognised only
+   * by a loose vendor substring (`AI_VENDOR_HINTS`) carries no subclass, because
+   * the vendor does not tell you what the fetch was for.
+   */
+  subclass?: VisitorSubclass
 }
 
 export interface SignalRow {

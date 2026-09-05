@@ -1,5 +1,5 @@
 import { appendSignal } from '../utils/signal-buffer'
-import { classifyVisitor } from '../utils/visitor-class'
+import { describeVisitor } from '../utils/visitor-class'
 
 const MAX_MESSAGE = 500
 const MAX_STACK = 1000
@@ -18,7 +18,7 @@ export default defineNitroPlugin((nitroApp) => {
       severity: 'error',
       name: 'server_error',
       page: ctx.event?.path,
-      visitor: userAgent ? { class: classifyVisitor(userAgent) } : undefined,
+      visitor: userAgent ? describeVisitor(userAgent) : undefined,
       data: {
         message: String(err?.message ?? err).slice(0, MAX_MESSAGE),
         stack: err?.stack?.slice(0, MAX_STACK),

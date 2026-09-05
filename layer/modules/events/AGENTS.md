@@ -71,7 +71,8 @@ MCP tool calls → server/utils/mcp-signal.ts ───────────�
                                                                     → { rows, cursor, site }
 ```
 
-- **Envelope:** `{ id, seq, ts, site, kind: 'event'|'log', name, severity?, visitor?, page?, referrer?, utm?, review?, data? }`.
+- **Envelope:** `{ id, seq, ts, site, kind: 'event'|'log', name, severity?, visitor?, page?, referrer?, utm?, review?, data? }`,
+  where `visitor` is `{ anonId?, class?, subclass? }`.
 - **Review binding:** `review` is its own top-level field, read from a `?polaris_review=<token>`
   query param by `pageContext()`. It is **never** merged into `utm` and **never** persisted —
   only rows emitted while that tagged URL is current carry it. That is the whole design: an
@@ -88,6 +89,28 @@ MCP tool calls → server/utils/mcp-signal.ts ───────────�
   request context to read a UA from (e.g. the Nitro error hook on a crash with
   no event). Agentic vs human traffic split is a core KPI (VISION.md) — this is
   itself signal, not metadata.
+- **Agent sub-class:** `visitor.subclass` splits agent traffic by *what the fetch
+  is for*, from the same taxonomy file's purpose grouping
+  (`AI_AGENT_PURPOSE_GROUPS`), so the robots.txt split and the analytics split
+  are the same split by construction:
+
+  | `subclass` | source list | meaning |
+  | --- | --- | --- |
+  | `search` | `AI_SEARCH_AGENTS` | answer-engine index crawlers — presence here is distribution |
+  | `live-user-fetch` | `AI_USER_FETCHERS` | the `*-User` family; a human is waiting on this fetch right now |
+  | `training` | `AI_TRAINING_CRAWLERS` | corpus crawls; no click, no citation back |
+  | `automation` | `AI_AUTOMATION_AGENTS` | headless browsers / test runtimes; never in robots.txt |
+
+  **`subclass` is strictly additive — `class` stays `'human' | 'agent' | 'bot'`.**
+  Polaris already groups exported rows on `class`, so widening that enum would
+  silently reclassify historical traffic; a consumer that ignores `subclass`
+  keeps working unchanged. Set only for `class: 'agent'`, and only when a
+  *published* token matched: an agent recognised solely by a loose vendor
+  substring (`AI_VENDOR_HINTS`) carries no subclass, because the vendor doesn't
+  say what the fetch was for. Published tokens are matched longest-first, so
+  `Applebot-Extended` beats a shorter `Applebot` and `Ai2Bot-Dolma` beats
+  `AI2Bot`. `describeVisitor()` returns `{ class, subclass? }`;
+  `classifyVisitor()` remains the class-only shorthand.
 - **Cursor:** `seq` is monotonic. Consumers send back the last `cursor` they saw.
 - **Buffer:** `useStorage('signals')` (memory by default — mount fs/KV in `nitro.storage`
   to survive restarts). Capacity `events.signals.capacity`, default 100 000 rows; oldest evicted.
