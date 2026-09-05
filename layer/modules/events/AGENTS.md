@@ -42,6 +42,7 @@ layer/modules/events/
     └── utils/
         ├── page-request.ts           # Page-visit filter rules + fire-and-forget append
         ├── signal-buffer.ts          # Capped ring buffer (unstorage) + appendSignal
+        ├── signal-env.ts             # Pure env:'local' precedence rule (dev default vs explicit override)
         ├── signal-export.ts          # Bearer auth check + query parsing
         └── visitor-class.ts          # UA → human/agent/bot + agent sub-class
 ```
@@ -78,7 +79,7 @@ page GETs      → server/middleware/page-request.ts ─────────
 (`layer/server/`, alongside `layer/server/mcp/tools/` and `layer/server/utils/mcp-signal.ts`),
 not inside this module — this module's own File Map above only covers `layer/modules/events/`.
 
-- **Envelope:** `{ id, seq, ts, site, kind: 'event'|'log', name, severity?, visitor?, page?, referrer?, utm?, review?, data? }`,
+- **Envelope:** `{ id, seq, ts, site, kind: 'event'|'log', name, severity?, visitor?, page?, referrer?, utm?, review?, data?, env? }`,
   where `visitor` is `{ anonId?, class?, subclass? }`.
 - **Review binding:** `review` is its own top-level field, read from a `?polaris_review=<token>`
   query param by `pageContext()`. It is **never** merged into `utm` and **never** persisted —
@@ -118,6 +119,20 @@ not inside this module — this module's own File Map above only covers `layer/m
   `Applebot-Extended` beats a shorter `Applebot` and `Ai2Bot-Dolma` beats
   `AI2Bot`. `describeVisitor()` returns `{ class, subclass? }`;
   `classifyVisitor()` remains the class-only shorthand.
+- **Local debugging against Polaris:** `env: 'local'` is stamped on every row by
+  `appendSignal()` (`server/utils/signal-buffer.ts`) — the single choke point every
+  capture path funnels through — whenever the server is running in dev mode
+  (`import.meta.dev`). It exists so rows produced on a developer's machine and pulled
+  into a local Polaris store stay **permanently** distinguishable from production
+  traffic, even after Polaris has stored them verbatim; there is no way to tell them
+  apart after the fact otherwise. Strictly additive — Polaris's contract is "absent
+  when it does not apply", so the key is simply missing on a production row, not
+  `env: 'production'` (zero migration, no schema change on the consumer side). A
+  locally-**built** (non-dev) server can still opt in via `NUXT_PUBLIC_SIGNAL_ENV=local`,
+  and setting it to `production` suppresses the stamp even under dev mode (escape
+  hatch). Explicit config always wins over the dev-mode default — see
+  `resolveSignalEnv()` (`server/utils/signal-env.ts`) for the precedence rule, unit-tested
+  in isolation from Nitro.
 - **Cursor:** `seq` is monotonic. Consumers send back the last `cursor` they saw.
 - **Buffer:** `useStorage('signals')` (memory by default — mount fs/KV in `nitro.storage`
   to survive restarts). Capacity `events.signals.capacity`, default 100 000 rows; oldest evicted.
@@ -286,8 +301,11 @@ That's the whole surface. There is no `providers` and no `webhook` option.
 
 - `NUXT_SIGNAL_EXPORT_TOKEN` — Bearer token for `GET /api/_signals/export` (unset → 503)
 - `NUXT_PUBLIC_SITE_ID` — Site identifier stamped on every row (defaults to request host)
+- `NUXT_PUBLIC_SIGNAL_ENV` — Overrides the `env:'local'` debug marker's dev-mode default;
+  `local` stamps it even on a non-dev server, `production` suppresses it even under
+  `import.meta.dev`. See "Local debugging against Polaris" above.
 
-Nothing else. If you're adding a third env var to this module, you're probably adding a
+Nothing else. If you're adding a fourth env var to this module, you're probably adding a
 feature that doesn't capture signal.
 
 ## Design Principles
