@@ -1,9 +1,15 @@
 <!-- apps/docs/app/components/content/CaseStudy.vue -->
+<!--
+  Also the layer's named-expert-quote pattern (product-validator-m0f.7):
+  omit `client.company` and `partner`/`website` for a bare attributed quote
+  from a subject-matter expert. `sourceUrl` (where the quote was published)
+  renders as a visible citation and backs the semantic `<blockquote cite>`.
+-->
 <script setup lang="ts">
 interface Client {
   name: string
   role: string
-  company: string
+  company?: string
   avatar?: string
   website?: string
   action?: string
@@ -12,6 +18,7 @@ interface Client {
 interface Props {
   client: Client
   quote: string
+  sourceUrl?: string
   partner?: {
     label?: string
     logos?: Array<{ src: string, alt: string }>
@@ -39,15 +46,30 @@ defineProps<Props>()
               {{ client.name }}
             </h3>
             <p class="text-sm text-muted">
-              {{ client.role }} • {{ client.company }}
+              {{ client.role }}<span v-if="client.company"> • {{ client.company }}</span>
             </p>
           </div>
         </div>
 
         <!-- Quote -->
         <div class="pt-3 border-t border-default">
-          <p class="text-base italic text-highlighted leading-relaxed">
+          <blockquote
+            :cite="sourceUrl"
+            class="text-base italic text-highlighted leading-relaxed m-0"
+          >
             "{{ quote }}"
+          </blockquote>
+          <p
+            v-if="sourceUrl"
+            class="text-xs text-muted mt-2"
+          >
+            Source:
+            <a
+              :href="sourceUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="underline hover:text-primary"
+            ><cite>{{ client.name }}</cite></a>
           </p>
         </div>
 

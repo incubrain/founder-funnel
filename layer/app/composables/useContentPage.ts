@@ -14,6 +14,9 @@ export type ContentDoc = {
   image?: string
   path?: string
   seo?: { title?: string, description?: string }
+  // Citation-first content (product-validator-m0f.7) — see basePageSchema.
+  answer?: string
+  sources?: Array<{ label: string, href: string }>
 } & Record<string, unknown>
 
 export interface ContentPageContext {
