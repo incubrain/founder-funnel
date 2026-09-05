@@ -12,9 +12,7 @@ import {
 export const useSearch = async () => {
   const appConfig = useAppConfig()
   const searchableCollections
-    = appConfig.content?.collections?.searchable
-      || appConfig.content?.searchable
-      || ['pages']
+    = appConfig.content?.searchable || ['pages']
 
   const { data: searchFiles } = useLazyAsyncData(
     'search_files',

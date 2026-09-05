@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import type { ButtonProps } from '@nuxt/ui'
-import type { TeamCollectionItem } from '@nuxt/content'
+import type { Collections } from '@nuxt/content'
+
+// Derived from `Collections['team']` rather than importing the generated
+// `TeamCollectionItem` interface directly — the named export depends on
+// `@nuxt/content`'s per-consumer type generation lining up exactly, which
+// caused TS2614 ("not exported by '@nuxt/content'") for downstream
+// consumers (product-validator-ebi.2). `Collections` is the package's own
+// stable generic map and matches the pattern used elsewhere in the layer
+// (useContentConfig, useSearch, useNavigation).
+type TeamCollectionItem = Collections['team']
 
 interface Props {
   location: string

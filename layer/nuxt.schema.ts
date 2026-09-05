@@ -145,14 +145,17 @@ export default defineNuxtSchema({
                 }),
               },
             }),
-            searchable: field({
-              type: 'array',
-              title: 'Searchable Collections',
-              description: 'Collections to include in search results.',
-              icon: 'i-lucide-search',
-              default: ['pages'],
-            }),
           },
+        }),
+        // Flat, sibling of `collections` — matches the shape `app.config.ts` sets
+        // and `useSearch`/`useNavigation` read (appConfig.content.searchable).
+        // Do not nest this under `collections` — see product-validator-ebi.1.
+        searchable: field({
+          type: 'array',
+          title: 'Searchable Collections',
+          description: 'Collections to include in search results.',
+          icon: 'i-lucide-search',
+          default: ['pages'],
         }),
         routing: group({
           title: 'Routing',
